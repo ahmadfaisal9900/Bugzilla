@@ -1,0 +1,14 @@
+# Initial study scope from docs/reference/research_roadmap.tex.
+# Values remain planned until confirmed during the data audit.
+project: "Memorize, Retrieve, or Query?"
+domain: "Mozilla Firefox-product Bugzilla history"
+benchmark:
+  candidate_questions: 180
+  families: [F1, F2, F3, F4, F5, F6]
+  development_items: 36
+  locked_test_items: 144
+methods:
+  core: [M0_closed_book, M1_bm25_rag, M2_hybrid_rag, M3_structured_sql]
+  optional_later: [M4_lightweight_graph, M5_router]
+temporal_evaluation: planned_later
+data_snapshot: not_selected

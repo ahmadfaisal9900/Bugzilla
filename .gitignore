@@ -1,0 +1,53 @@
+# Source datasets and the nested upstream preprocessing repository
+/Dataset/
+
+# Generated outputs, run logs, and local data snapshots
+/outputs/*
+!/outputs/.gitkeep
+/logs/*
+!/logs/.gitkeep
+/data/raw/
+/data/normalized/
+/data/snapshots/
+**/embeddings/
+**/indexes/
+
+# Large generated databases and serialized/vector artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+*.parquet
+*.arrow
+*.faiss
+*.index
+*.pkl
+*.pickle
+
+# Model weights and checkpoints
+/models/
+*.safetensors
+*.gguf
+*.ckpt
+*.pth
+*.pt
+
+# Credentials and local environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.*
+
+# Python environments, caches, and test/tool output
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+*.log
