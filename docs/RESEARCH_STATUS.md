@@ -2,7 +2,7 @@
 
 ## Current phase
 
-**Phase 3B VERIFIED; Phase 4 NEXT.** User-run full normalization completed and was checked from latest run `run-20261022T023542Z-1182018` (manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`). See `docs/PHASE_LOG.md` and `docs/PHASE03B_NORMALIZATION.md` for measured counts and limits.
+**Phase 3B VERIFIED; Phase 4 IMPLEMENTED, AWAITING_USER_API_SMOKE.** User-run full normalization completed and was checked from latest run `run-20261022T023542Z-1182018` (manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`). Phase 4 planner, public unauthenticated client, sidecar adapter, temporal QC and fixtures are implemented; no live API call was made. See `docs/PHASE04_API_ENRICHMENT.md` and `docs/TEMPORAL_VALIDITY.md`.
 
 ## Completed
 
@@ -20,7 +20,7 @@
 - **F4:** parsed snapshot links only; historical validity, past target status and complete link coverage need enrichment. 79,350 recorded targets are outside this canonical bug set.
 - CSV source event times parsed, but original snapshot/export date is UNKNOWN (`snapshot_as_of_utc` NULL). Phase 3A observation time and Phase 3B ingestion time are separately recorded; this export cannot recreate a historical snapshot.
 - Source redistribution/license review remains unresolved. Private/unknown privacy comment bodies are withheld; local public text can still contain personal data. Do not publish/redistribute derived text without review.
-- No final question set/T0/T1 selected. 180 remains a generated question target; developer-hours cannot be inferred from elapsed days.
+- No genuine historical source-time T0/T1 or final question set is verified. Phase 4 selects a controlled base-corpus/API-refresh comparison. 180 remains a generated question target; developer-hours cannot be inferred from elapsed days.
 
 ## Environment and repository
 
@@ -31,4 +31,4 @@
 
 ## Next gate
 
-Phase 4 may begin from the authoritative roadmap. Keep F2/F4 limitations explicit, preserve this verified run, and do not choose T0/T1 until source-time coverage and history enrichment are addressed.
+Run the capped five-ID Phase 4 API smoke from the existing root, inspect its aggregate summary/response shape, then run and verify the 50-bug pilot before deciding whether to enlarge the selective cohort. F2 is still UNKNOWN until history ingestion is reviewed; F4 historical link validity is still unsupported. The selected comparison is controlled evidence addition/refresh, not real-time concept drift. Preserve the verified Phase 3B run and do not begin Phase 5 until Phase 4 results or an explicitly approved narrow fallback are verified.

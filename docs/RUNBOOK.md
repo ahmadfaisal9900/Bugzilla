@@ -76,4 +76,25 @@ bash scripts/phases/run_phase03b_normalize.sh
 
 For a separate bounded prefix run use `--limit 20`. To resume the latest version use `--resume` with exactly the same original options. Default seed 317 / target 3000 / product Firefox; all products stay in canonical tables. Free DuckDB exports Parquet directly; no PyArrow/API needed. Reserve 5–10 GB disk; DuckDB budget 512 MB plus Python row/batch memory; runtime unmeasured. Never launch this actual-data job in the agent session.
 
-Verified run: `outputs/normalization/phase03b/run-20261022T023542Z-1182018/`, manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`. Full-run artifact and aggregate validation are recorded in `docs/PHASE03B_NORMALIZATION.md`; status is **VERIFIED; Phase 4 NEXT**. Preserve outputs and manifest. Do not rerun or overwrite the verified version. F2 requires validated `/history`; F4 is limited to recorded snapshot links, with 79,350 targets outside the corpus. Source export snapshot date is unknown and first-FIXED durations remain UNKNOWN.
+Verified run: `outputs/normalization/phase03b/run-20261022T023542Z-1182018/`, manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`. Full-run artifact and aggregate validation are recorded in `docs/PHASE03B_NORMALIZATION.md`; Phase 3B is VERIFIED and Phase 4 is implemented, awaiting user API smoke. Preserve outputs and manifest. Do not rerun or overwrite the verified version. F2 requires validated `/history`; F4 is limited to recorded snapshot links, with 79,350 targets outside the corpus. Source export snapshot date is unknown and first-FIXED durations remain UNKNOWN.
+
+## Phase 4 selective API enrichment
+
+Phase 4 planning and temporal QC are offline. First create the deterministic local candidate manifest; then use the five-ID smoke before the 50-bug pilot. Public network calls occur only when you invoke the smoke/enrichment scripts in your terminal. Each GET counts toward the required cumulative `--max-requests`; resume with the same plan and a cap at least as large as the total requests already spent. Do not pass credentials or fetch private bugs.
+
+```bash
+PYTHONPATH=src python -m bugzilla_qa.data.phase04 plan --root . --study-size 200
+bash scripts/phases/run_phase04_api_smoke.sh --limit 5 --max-requests 40
+bash scripts/phases/run_phase04_enrich.sh --pilot --max-requests 588 --resume
+```
+
+The smoke uses the first five IDs in the planned 50-ID pilot and requests only `/history` and current `/bug/<id>` metadata. Inspect its `summary.json`, endpoint errors, response shape/version and logs before the pilot. The user-run pilot may request `/comment` only where the frozen CSV has zero comments or empty/missing bodies; set `--no-comments` to disable that optional endpoint. Its 588 cap is a worst-case total for the 50-bug plan (100 required calls + 47 comment calls, with up to 3 retries each); expected calls are 147. The default 200-bug plan expects 588 and has a 2,352 worst-case cap. Consider study size 100–300 only after reviewing pilot signal and privacy. Use `--dry-run` first; `--study --limit 100` (or 200/300) selects a larger cohort after review and `--resume` continues the same checkpoint.
+
+Machine outputs, compressed raw API responses, databases, comments and reports are ignored under `outputs/phase04/`; scripts write timestamped logs there. Review `summary.json` and sanitized aggregate counts without dumping the raw cache. Do not overwrite Phase 3B. Link-change parsing requires explicit `--link-field FIELD=RELATION` configuration after smoke confirms the history field names. For offline cutoff eligibility after enrichment:
+
+```bash
+bash scripts/phases/run_phase04_temporal_qc.sh --mode strict --cutoff "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+bash scripts/phases/run_phase04_temporal_qc.sh --mode retrospective-replay --cutoff 2024-12-31T23:59:59Z
+```
+
+Strict mode requires event, observed and ingested times by cutoff. Retrospective replay is not historical availability evidence. The selected experiment is controlled evidence addition/refresh, not real-time drift; see `docs/TEMPORAL_VALIDITY.md`. Phase 5 is gated on review of the user-run Phase 4 outputs.
