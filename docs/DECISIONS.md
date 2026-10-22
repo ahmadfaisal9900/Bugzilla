@@ -15,5 +15,6 @@
 | D-011 | Use Python's standard-library CSV parser and an ignored SQLite index for streaming audit counts and duplicate/join checks. | Avoid bulk CSV loads and new package dependencies; resumability is at completed-file boundaries. |
 | D-012 | Verify comment Parts 1/2 with full SHA-256 on an unlimited user-run audit and report overlapping record IDs. | Equal sizes/headers alone do not prove duplicate content; limited scans never claim checksum verification. |
 | D-013 | Treat license/redistribution and private/contributor-field authorization as unresolved until human review. | The audit reports evidence and field presence, not legal permission or a privacy approval. |
+| D-014 | Strip embedded NUL characters only in the audit's streamed parser input and record their counts; never rewrite the source CSVs. | Python's CSV reader rejects NUL characters; transparent, non-persistent sanitation allows schema/count auditing while preserving source bytes. |
 
 These decisions establish workspace and study scope only; they do not select a dataset snapshot or implement an experiment.

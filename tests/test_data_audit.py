@@ -106,6 +106,45 @@ class DataAuditTests(unittest.TestCase):
             self.assertFalse(report["files"]["metadata"]["scan_complete"])
             self.assertEqual(report["comment_parts_comparison"]["verification"], "skipped")
 
+    def test_embedded_nul_is_removed_and_counted(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp = Path(temp_dir)
+            reports = temp / "reports_with_nul.csv"
+            reports.write_bytes(
+                (FIXTURES / "reports.csv").read_bytes().replace(
+                    b"Fixture report one", b"Fixture \x00 report one", 1
+                )
+            )
+            config = temp / "paths.yaml"
+            config.write_text(
+                "\n".join(
+                    (
+                        f"metadata_csv: {FIXTURES / 'metadata.csv'}",
+                        f"reports_csv: {reports}",
+                        f"comments_part_1_csv: {FIXTURES / 'comments_part_1.csv'}",
+                        f"comments_part_2_csv: {FIXTURES / 'comments_part_2.csv'}",
+                    )
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            report = run_audit(
+                SimpleNamespace(
+                    config=str(config),
+                    root=str(ROOT),
+                    output_dir=str(temp / "outputs"),
+                    limit=None,
+                    progress_every=0,
+                    resume=False,
+                    skip_checksum=False,
+                    skip=set(),
+                )
+            )
+            result = report["files"]["reports"]
+            self.assertEqual(result["rows_scanned"], 5)
+            self.assertEqual(result["input_sanitization"]["nul_characters_removed"], 1)
+            self.assertEqual(result["input_sanitization"]["physical_lines_with_nul"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

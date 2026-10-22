@@ -136,6 +136,18 @@ def _choose_mapping(headers: list[str]) -> dict[str, str | None]:
     return map_fields(headers)
 
 
+def _nul_safe_lines(handle: Iterable[str], counts: Counter[str]) -> Iterable[str]:
+    """Strip embedded NULs so csv.reader can continue, while recording sanitation."""
+    for line in handle:
+        nul_count = line.count("\x00")
+        if nul_count:
+            counts["nul_characters_removed"] += nul_count
+            counts["physical_lines_with_nul"] += 1
+            yield line.replace("\x00", "")
+        else:
+            yield line
+
+
 def _scan_file(
     label: str,
     path: Path,
@@ -150,8 +162,9 @@ def _scan_file(
     db.commit()
 
     csv.field_size_limit(sys.maxsize)
+    nul_counts: Counter[str] = Counter()
     with path.open("r", encoding="utf-8-sig", errors="surrogateescape", newline="") as handle:
-        reader = csv.DictReader(handle)
+        reader = csv.DictReader(_nul_safe_lines(handle, nul_counts))
         headers = reader.fieldnames or []
         mapping = _choose_mapping(headers)
         if not headers:
@@ -239,6 +252,12 @@ def _scan_file(
             logical: row_count - nonempty[logical]
             for logical, field in mapping.items()
             if field is not None
+        },
+        "input_sanitization": {
+            **dict(nul_counts),
+            "nul_characters_removed": nul_counts["nul_characters_removed"],
+            "physical_lines_with_nul": nul_counts["physical_lines_with_nul"],
+            "scope": "complete file" if scan_complete else "scanned portion only",
         },
         "timestamp_parse_rate": {
             "field": timestamp_field,
@@ -529,7 +548,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"unknown --skip dataset label(s): {', '.join(sorted(unknown))}")
     try:
         run_audit(args)
-    except (OSError, ValueError, sqlite3.Error, json.JSONDecodeError) as exc:
+    except (OSError, ValueError, sqlite3.Error, csv.Error, json.JSONDecodeError) as exc:
         _log(f"audit failed: {exc}")
         return 2
     return 0
