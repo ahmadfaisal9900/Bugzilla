@@ -1,14 +1,16 @@
 # Initial study scope from docs/reference/research_roadmap.tex.
+# The 180 item count is a generated candidate target, not a manual authoring quota.
 # Values remain planned until confirmed during the data audit.
 project: "Memorize, Retrieve, or Query?"
 domain: "Mozilla Firefox-product Bugzilla history"
+api_cost_budget_usd: 0
 benchmark:
-  candidate_questions: 180
+  generated_candidate_target: 180
   families: [F1, F2, F3, F4, F5, F6]
   development_items: 36
   locked_test_items: 144
 methods:
-  core: [M0_closed_book, M1_bm25_rag, M2_hybrid_rag, M3_structured_sql]
-  optional_later: [M4_lightweight_graph, M5_router]
-temporal_evaluation: planned_later
+  mandatory: [M0_closed_book, M1_bm25_rag, M2_hybrid_rag, M3_parameterized_sql]
+  optional_later: [M4_small_graph, M5_router]
+temporal_snapshots: [v0, v1]
 data_snapshot: not_selected
