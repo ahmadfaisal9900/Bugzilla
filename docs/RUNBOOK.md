@@ -42,7 +42,7 @@ bash scripts/phases/run_phase03a_explore.sh
 
 For a non-dry-run bounded smoke profile, add `--limit 20`; for a path/size-only plan, use `--dry-run --limit 20`. Resume completed source checkpoints after interruption with `--resume`. The profiler stores `profile.json`, small `summary.json`, `checkpoint.json`, `profile_index.sqlite3`, logs, and five SVG plots under `outputs/data_exploration/<run-id>/`. It reuses the verified Part 1/2 full SHA only while both current file size and modification-time signatures match; otherwise full mode computes hashes while streaming. Limited sources have prefix-only counts and no whole-file checksum claim. Do not commit these machine outputs.
 
-After the user's full run, inspect the machine report and update `docs/DATA_EXPLORATION.md`, `docs/DATA_AUDIT_SUMMARY.md`, and `docs/RESEARCH_STATUS.md` with sanitized aggregates only. Do not select T0/T1 or begin ingestion before reviewing duplicate populations, selection bias, source rights, and privacy.
+After the user's full run, inspect the machine report and update `docs/DATA_EXPLORATION.md`, `docs/DATA_AUDIT_SUMMARY.md`, and `docs/RESEARCH_STATUS.md` with sanitized aggregates only. Full 3A QC is now reviewed in `docs/PHASE03A_QC.md`; Phase 3B source selection and local privacy handling are documented below. Do not choose T0/T1 or redistribute data without the remaining evidence/rights review.
 
 Previous Phase 2 invocation was:
 
@@ -61,3 +61,19 @@ Before committing, run the relevant bounded tests, inspect `git diff`, and revie
 ## Logs and result validation
 
 Execution logs may live under `logs/` or beside a phase's outputs; generated indexes, tables, predictions, and other artifacts belong under `outputs/`. Both are Git-ignored. Before reporting a result, inspect the run log and output files, verify the recorded configuration, snapshot, and seed, and update the relevant phase docs with the observed state.
+
+## Phase 3B canonical normalization — awaiting terminal run
+
+The user's full 3A run was verified. Base inputs are metadata and comment Parts 1/3; Part 2 is a proven duplicate, quality-scored exports optional/separate. See `docs/PHASE03B_NORMALIZATION.md` for canonical tables, dedup keys, UNKNOWN history, stratification and acceptance.
+
+From this existing Project root, in the Python environment intended for the job:
+
+```bash
+python -m pip install duckdb==1.4.4
+bash scripts/phases/run_phase03b_normalize.sh --dry-run
+bash scripts/phases/run_phase03b_normalize.sh
+```
+
+For a separate bounded prefix run use `--limit 20`. To resume the latest version use `--resume` with exactly the same original options. Default seed 317 / target 3000 / product Firefox; all products stay in canonical tables. Free DuckDB exports Parquet directly; no PyArrow/API needed. Reserve 5–10 GB disk; DuckDB budget 512 MB plus Python row/batch memory; runtime unmeasured. Never launch this actual-data job in the agent session.
+
+Expected ignored outputs: `outputs/normalization/phase03b/<run>/canonical.duckdb`, partitioned versioned Parquet, `manifest.json` (input/output hashes), `qc_report.json`, `summary.json`, `sample_manifest.json`, `anonymized_examples.json`, and timestamped terminal log. Check row accounting, hashes, joins, product/outcome coverage, missing history and 20 examples before accepting the phase. No exact first-FIXED durations are available without explicit history; F4 remains recorded snapshot links only. Do not interpret manifest COMPLETE as independently reviewed scientific validation.

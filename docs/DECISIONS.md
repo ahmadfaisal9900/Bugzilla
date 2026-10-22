@@ -22,4 +22,13 @@
 | D-018 | Keep the Phase 3A full profile user-run; the agent session may run only fixture tests and a tiny bounded sample. | The largest source is 1.6 GB and the operating contract prohibits long corpus jobs in-session. |
 | D-019 | Phase 3B candidates are metadata + one verified comment copy + filtered reports, subject to Phase 3A results and rights/privacy review. | Together they provide snapshot facts, dated comment evidence, and report fields with high Phase 2 ID join coverage; the shortlist is not a final corpus or snapshot choice. |
 
-These decisions establish workspace and study scope only; they do not select a dataset snapshot, T0/T1, or final corpus.
+| D-020 | Accept the user-run full 3A QC and select metadata + comment Parts 1/3 for Phase 3B base. | Supersedes the conditional shortlist in D-016/D-019: Parts 1/3 add complementary records, all parents join; Part 2 duplicates Part 1. Metadata-all is a near-repeat with anomalies. See PHASE03A_QC. |
+| D-021 | Keep filtered reports/steps optional in a separate QUALITY tier; sample broad metadata without requiring comments. | All selected comment rows are FIXED-selected; open/non-FIXED outcomes exist in metadata and must survive sampling. |
+| D-022 | Dedup comments by parent, nullable comment ID, UTC event time, exact parser-visible text hash and privacy flag. | Retain distinct comments and content versions; first metadata row wins deterministically with duplicate/conflict variants retained in provenance. |
+| D-023 | Store nullable event/snapshot times and explicit UNKNOWN history; compute first FIXED only from actual qualifying transitions. | No source transition history exists; elapsed days are not engineer-hours. Reopening does not reset first FIXED. |
+| D-024 | Use verified QC time as conservative observed-at, new-run time as ingested-at, and leave source snapshot date unknown. | Neither file mtime nor creation time establishes when snapshot status was true. Dual event/observation cutoffs prevent backdating evidence. |
+| D-025 | Add pinned free DuckDB 1.4.4 for transactional streaming import and native Parquet export. | No PyArrow, paid API, crawler or MongoDB required; versioned outputs and complete manifests remain ignored. |
+| D-026 | Reserve each observed status/resolution outcome before seeded component/year/outcome stratification. | 3,000 Firefox-product bugs is a planning target, not guaranteed coverage; retain smaller populations and zero-comment negative cases. No T0/T1 chosen. |
+| D-027 | Withhold private/unknown-privacy bodies; retain local minimal row lineage and quarantines. | Preserve joins/accounting without treating absent authorization as public visibility. Dataset redistribution rights remain unresolved. |
+
+Phase 3B source selection is implemented, not yet normalized/validated on actual inputs. No dataset snapshot, T0/T1, final benchmark corpus or model has been selected.

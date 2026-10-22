@@ -9,6 +9,9 @@ description = "Course research project on question answering over software proje
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+data = ["duckdb==1.4.4"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["bugzilla_qa*"]

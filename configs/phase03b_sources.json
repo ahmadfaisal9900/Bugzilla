@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "base": ["metadata", "comments_part_1", "comments_part_3"],
+  "optional_quality": ["filtered_reports", "steps_merged"],
+  "excluded": {
+    "comments_part_2": "Verified byte duplicate of comments_part_1; verify QC signatures and count once.",
+    "metadata_all": "Near-repeat with malformed status values; retain cleaner metadata as base.",
+    "contributors": "Identifying contributor population is outside canonical QA scope.",
+    "upstream_sample": "Separate dated population; do not pool snapshots."
+  },
+  "metadata_winner": "First logical CSV row for a bug ID; preserve alternate mappings and flag conflicts.",
+  "scope": "All audited products retained for QC and negative coverage; sampling defaults to Firefox product only.",
+  "history": "No selected CSV supplies ordered field changes; history and fix duration remain UNKNOWN."
+}
