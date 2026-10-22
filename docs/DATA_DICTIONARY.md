@@ -1,6 +1,6 @@
 # BugsRepo data dictionary and source-field mapping
 
-This dictionary records observed column semantics from headers, bounded safe samples, the source PDF, and the verified Phase 2 audit. A type marked “candidate” is inferred from examples, not a source guarantee. The user-run full Phase 3A report is verified in [PHASE03A_QC.md](PHASE03A_QC.md); canonical Phase 3B counts await its terminal run.
+This dictionary records observed column semantics from headers, bounded safe samples, the source PDF, and the verified Phase 2 audit. A type marked “candidate” is inferred from examples, not a source guarantee. The user-run full Phase 3A report is verified in [PHASE03A_QC.md](PHASE03A_QC.md); Phase 3B canonical counts are verified in [PHASE03B_NORMALIZATION.md](PHASE03B_NORMALIZATION.md). Phase 3B did not change the canonical schema.
 
 ## Canonical entities
 

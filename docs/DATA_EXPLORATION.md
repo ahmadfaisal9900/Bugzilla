@@ -2,7 +2,7 @@
 
 ## Scope and execution state
 
-Phase 2's saved full audit is verified in [DATA_AUDIT_SUMMARY.md](DATA_AUDIT_SUMMARY.md). **The user's full Phase 3A profile is now verified**, with exact counts/hashes/overlaps in [PHASE03A_QC.md](PHASE03A_QC.md). The earlier `smoke-20261021` profile remains prefix-only historical evidence. Phase 3B implementation is AWAITING_TERMINAL_RUN; see [PHASE03B_NORMALIZATION.md](PHASE03B_NORMALIZATION.md). No actual input was ingested by the Phase 3B agent.
+Phase 2's saved full audit is verified in [DATA_AUDIT_SUMMARY.md](DATA_AUDIT_SUMMARY.md). **The user's full Phase 3A profile is verified**, with exact counts/hashes/overlaps in [PHASE03A_QC.md](PHASE03A_QC.md). The earlier `smoke-20261021` profile remains prefix-only historical evidence. **Phase 3B's user full run is VERIFIED**; measured aggregates and limitations are in [PHASE03B_NORMALIZATION.md](PHASE03B_NORMALIZATION.md). The Phase 3B agent validated aggregate outputs only and did not ingest source CSVs.
 
 The profiler reads `configs/data_paths.local.yaml`, continues one CSV record at a time (including quoted multiline cells), hashes completed sources while reading, and stores join/dedup keys in ignored SQLite output. It detects UTF-8, Windows-1252, or Latin-1 fallback, tracks malformed row widths and NULs, and never writes comment/report text, email values, names, or raw bug IDs to JSON. Full completed files get exact row/hash labels; a limited scan is explicitly `observed_prefix_only` and has no whole-file checksum claim. Resume reuses complete source checkpoints matching path, size, modification time, limit, seed, and profiler version; an interrupted source restarts from its beginning.
 
@@ -40,7 +40,7 @@ These counts are product labels, not unique bug counts. The 29,919 Firefox-produ
 
 Status and resolution are different fields. Status expresses a workflow state such as `NEW`, `RESOLVED`, or `VERIFIED`; resolution gives the outcome/reason, such as `FIXED`, `DUPLICATE`, `INVALID`, `INCOMPLETE`, or `WONTFIX`. A bounded first metadata row was `RESOLVED` with resolution `INCOMPLETE`, showing directly why `RESOLVED` is not synonymous with `FIXED`. A `FIXED` snapshot still does not reveal when the bug first became fixed or whether it reopened.
 
-The roadmap describes the published BugsRepo population as 119,585 resolved/fixed-or-closed bugs, while the filtered report CSV is explicitly filtered and quality-oriented. The verified full 3A profile now confirms that all 511,057 Part 1/3 comment rows have FIXED snapshot resolution. Broad metadata includes 37,275 NEW and 2,408 REOPENED source rows and numerous DUPLICATE/INVALID/INCOMPLETE outcomes; see PHASE03A_QC for full aggregate denominators. Keep those metadata bugs even if selected comments are absent. Canonical per-bug proportions await Phase 3B.
+The roadmap describes the published BugsRepo population as 119,585 resolved/fixed-or-closed bugs, while the filtered report CSV is explicitly filtered and quality-oriented. The verified full 3A profile now confirms that all 511,057 Part 1/3 comment rows have FIXED snapshot resolution. Broad metadata includes 37,275 NEW and 2,408 REOPENED source rows and numerous DUPLICATE/INVALID/INCOMPLETE outcomes; see PHASE03A_QC for full aggregate denominators. Keep those metadata bugs even if selected comments are absent. Phase 3B's canonical per-bug product/status/resolution counts and the Firefox sample strata are reported in `docs/PHASE03B_NORMALIZATION.md`.
 
 ## What F1–F6 can use from CSVs alone
 

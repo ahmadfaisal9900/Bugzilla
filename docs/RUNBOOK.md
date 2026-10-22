@@ -62,7 +62,7 @@ Before committing, run the relevant bounded tests, inspect `git diff`, and revie
 
 Execution logs may live under `logs/` or beside a phase's outputs; generated indexes, tables, predictions, and other artifacts belong under `outputs/`. Both are Git-ignored. Before reporting a result, inspect the run log and output files, verify the recorded configuration, snapshot, and seed, and update the relevant phase docs with the observed state.
 
-## Phase 3B canonical normalization — awaiting terminal run
+## Phase 3B canonical normalization — verified terminal run
 
 The user's full 3A run was verified. Base inputs are metadata and comment Parts 1/3; Part 2 is a proven duplicate, quality-scored exports optional/separate. See `docs/PHASE03B_NORMALIZATION.md` for canonical tables, dedup keys, UNKNOWN history, stratification and acceptance.
 
@@ -76,4 +76,4 @@ bash scripts/phases/run_phase03b_normalize.sh
 
 For a separate bounded prefix run use `--limit 20`. To resume the latest version use `--resume` with exactly the same original options. Default seed 317 / target 3000 / product Firefox; all products stay in canonical tables. Free DuckDB exports Parquet directly; no PyArrow/API needed. Reserve 5–10 GB disk; DuckDB budget 512 MB plus Python row/batch memory; runtime unmeasured. Never launch this actual-data job in the agent session.
 
-Expected ignored outputs: `outputs/normalization/phase03b/<run>/canonical.duckdb`, partitioned versioned Parquet, `manifest.json` (input/output hashes), `qc_report.json`, `summary.json`, `sample_manifest.json`, `anonymized_examples.json`, and timestamped terminal log. Check row accounting, hashes, joins, product/outcome coverage, missing history and 20 examples before accepting the phase. No exact first-FIXED durations are available without explicit history; F4 remains recorded snapshot links only. Do not interpret manifest COMPLETE as independently reviewed scientific validation.
+Verified run: `outputs/normalization/phase03b/run-20261022T023542Z-1182018/`, manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`. Full-run artifact and aggregate validation are recorded in `docs/PHASE03B_NORMALIZATION.md`; status is **VERIFIED; Phase 4 NEXT**. Preserve outputs and manifest. Do not rerun or overwrite the verified version. F2 requires validated `/history`; F4 is limited to recorded snapshot links, with 79,350 targets outside the corpus. Source export snapshot date is unknown and first-FIXED durations remain UNKNOWN.

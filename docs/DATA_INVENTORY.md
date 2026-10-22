@@ -9,10 +9,10 @@ Inspected 2026-10-21 from the Project root. Only top-level Dataset filenames/siz
 | `0_Dataset_Info.pdf.pdf` | 263,303 | Readable three-page PDF; describes bug metadata, comments, contributors; copyright held by owner/author(s), publication rights licensed to ACM; no clear dataset reuse license stated. |
 | `100k_filtered_raw_bug_reports.xlsx` | 34,268,503 | Workbook container inspected only; no sheet body loaded. |
 | `Bug_meta_data.csv` | 350,195,270 | UTF-8 BOM; 299 columns; full Phase 2 audit completed. |
-| `Bug_meta_data_230k_all.csv` | 350,150,509 | UTF-8 BOM; same 299-column header; full identity/overlap still pending. |
+| `Bug_meta_data_230k_all.csv` | 350,150,509 | UTF-8 BOM; full Phase 3A found a near-repeat (not byte-identical), 196,630 IDs shared with base metadata, and malformed statuses; excluded from Phase 3B base. |
 | `Bug_meta_data_230k_excel.xlsx` | 75,501,128 | Workbook container inspected only. |
 | `CSV_100k_filtered_bug_reports.csv` | 151,977,568 | UTF-8 BOM; 9 columns; full Phase 2 audit completed. |
-| `CSV_Bug_reports_with_steps_to_reproduce (1).csv` | 57,298,353 | 315 columns; header used Windows-1252/Latin-1 fallback; derived/merged role needs full profile. |
+| `CSV_Bug_reports_with_steps_to_reproduce (1).csv` | 57,298,353 | Full Phase 3A: 12,614 rows / 8,522 bugs, all join metadata; optional quality-tier input, not base population. |
 | `CSV_Contribution_information_dataset.csv` | 7,412,934 | 17 columns; contributor identifying fields present. |
 | `CTQRS_Scoring_Code.py` | 23,862 | Not executed; not needed for the profiler. |
 | `Contribution_information_dataset.xlsx` | 4,294,980 | Workbook container inspected only. |
@@ -20,7 +20,7 @@ Inspected 2026-10-21 from the Project root. Only top-level Dataset filenames/siz
 | `Good_CTQRS_filtered_bug_report.xlsx` | 2,846,157 | Workbook dimensions indicate 10,351 data rows; body not loaded. |
 | `comments_Dataset_Part_1.csv` | 1,617,552,267 | UTF-8 BOM; 315 columns; 500,000 rows in full audit. |
 | `comments_Dataset_Part_2.csv` | 1,617,552,267 | Full SHA-256 matches Part 1; count once. |
-| `comments_Dataset_Part_3.csv` | 36,310,793 | 315-column header; full count and overlap pending. |
+| `comments_Dataset_Part_3.csv` | 36,310,793 | Full Phase 3A: 11,057 rows / 1,480 bugs; 1,479 new bug IDs vs Part 1 and zero shared profiled comment keys; all parents join metadata. |
 
 ## Upstream clone
 

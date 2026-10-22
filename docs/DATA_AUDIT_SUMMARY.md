@@ -20,6 +20,6 @@ The duplicate-key count uses the audit's selected record-key field; it is not th
 
 The metadata creation timestamp and comment `creation_time_x` parsed at 100%; the filtered-report `creation_time` field parsed at 99.615%. The saved audit found no explicit ordered change-event fields in the scanned headers. `last_change_time` is only a snapshot's latest-change timestamp and does not reconstruct status transitions.
 
-The Phase 2 audit did not publish report status/resolution frequencies, so it does not quantify fixed/open selection bias. The data paper and roadmap describe a resolved/fixed-or-closed collection, and the report CSV is filtered; treat it as likely selected toward resolved cases until Phase 3A's full status/resolution profile measures the mix. The saved Phase 2 license/privacy status remains pending human review.
+The Phase 2 audit itself did not publish report status/resolution frequencies. Later full Phase 3A QC found the comment Parts 1/3 population entirely FIXED-selected while broad metadata contains open and non-FIXED cases; see `docs/PHASE03A_QC.md`. The saved license/redistribution question remains pending human review.
 
-Phase 3A reuses this verified summary and skips a second Part 2 scan only while current size and modification-time signatures match. Phase 3A's separate full profile remains **AWAITING_TERMINAL_RUN**.
+Phase 3A reused this verified summary and skipped a second Part 2 scan while current size and modification-time signatures matched. Its separate full user profile is verified in `docs/PHASE03A_QC.md`; Phase 3B normalization is verified in `docs/PHASE03B_NORMALIZATION.md`.

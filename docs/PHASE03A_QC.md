@@ -22,7 +22,7 @@ Part 1/3 union has **52,243 distinct bug IDs**, all present in metadata. One bug
 - All selected metadata creation/last-change and comment event values parsed in 3A; semantic roles still differ. In merged comments, `creation_time_x` is comment time; `creation_time_y` is joined bug creation. No selected file contains ordered history events.
 - Phase 3A's relationship-field nonempty counts include serialized `[]`; they are not edge counts. Phase 3B parses explicit targets before reporting edges.
 - Part 1 has 74 embedded NUL characters. Parser sanitation is transient and counted; original bytes remain untouched.
-- Product metadata row counts remain Firefox 29,919; Core 93,645; Toolkit 10,370; other 91,262. Distinct canonical product counts await Phase 3B, whose metadata winner rule can change these denominators.
+- Product metadata raw row counts are Firefox 29,919; Core 93,645; Toolkit 10,370; other 91,262. Phase 3B selected first-row canonicalization yields 25,025 distinct Firefox-product bugs; canonical counts by all product labels are in the run QC. Firefox-product is not all Firefox engineering.
 
 ## Frozen selected input hashes
 
