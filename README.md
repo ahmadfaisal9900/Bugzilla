@@ -1,6 +1,6 @@
 # Bugzilla
 
-## Firefox project-history QA course study
+## Firefox project-history QA 
 
 This repository hosts **Memorize, Retrieve, or Query? LLMs Answering Questions about a Software Project's History**. The authoritative plan is [`docs/reference/research_roadmap.tex`](docs/reference/research_roadmap.tex).
 
