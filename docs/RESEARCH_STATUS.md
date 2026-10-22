@@ -2,39 +2,39 @@
 
 ## Current phase
 
-Phase 2 — implement a bounded, resumable dataset audit. The full audit remains user-run.
+**Phase 3A — deeper BugsRepo exploration: AWAITING_TERMINAL_RUN.** The full profile has not been run in the agent session. Run `bash scripts/phases/run_phase03a_explore.sh` from the Project root and review its ignored summary before choosing the Phase 3B corpus.
 
 ## Completed
 
-- Phase 0 scaffold was committed locally as `e706e3f`.
-- Phase 1 repository consolidation was committed locally as `35d32c7`; `Project/` remains the only project Git root and `origin` remains the existing Bugzilla repository.
-- Phase 2 adds a standard-library streaming CSV audit, disk-backed ID index, a 20-row fixture, unit tests, ignored local data-path config, and a user-run full-scan script.
-- Read only the roadmap's data-source and canonical-data-model sections (`docs/reference/research_roadmap.tex`, lines 135–200).
-- Inspected the relevant dataset file sizes, CSV headers, and two deterministic rows per CSV. Sampled values were limited to IDs' presence/length and non-sensitive categories; no report/comment text or contributor values were exposed.
-- Inspected upstream GindeLab/EASE_2025_Data_paper at commit `e0f44e656ab8fee2f93a0adbce881dca5bdc8c9e`; collection code uses requests, pandas, and MongoDB. No dependency manifest was found in the inspected upstream paths. No crawler or database utility was run or copied.
-- Phase 2 reports schema/mappings, row counts, timestamps, ID joins, duplicate keys, product counts, NUL sanitation counts, private-field presence, history-field gaps, and Parts 1/2 SHA-256 and shared IDs when run without a limit.
+- Phase 0 scaffold: local commit `e706e3f`.
+- Phase 1 consolidation: local commit `35d32c7`; the existing `Project/` root and `origin` remain authoritative.
+- Phase 2 full audit: user-run, verified from `outputs/audit/phase02/run-20261022T010528Z-1096580/audit_summary.json` and `audit_report.json`; aggregate results are in `docs/DATA_AUDIT_SUMMARY.md`.
+- Phase 2 established exact 500,000-row counts for each comment Part 1/2, equal SHA-256, 408,401 shared record IDs, and full metadata/report/comment bug-ID joins. Count Parts 1/2 once.
+- Phase 3A profile module, resumable terminal script, 20-row overlapping/malformed-date fixture, and tests are implemented. Targeted tests passed. A 12-row-per-source profile and script dry-run ran; neither is a corpus result.
+- Added dataset exploration, data dictionary, plots under ignored `outputs/data_exploration/`, and source paths to the tracked example plus ignored machine-local path config.
+- Read the authoritative roadmap's data-source, canonical model, and F1–F6 question sections. The roadmap remains unchanged.
 
-## Not yet completed
+## Open decisions / limitations
 
-- The user's full-audit run stopped on `csv.Error: line contains NUL` while starting comment Part 1. Its checkpoint records completed metadata (225,196 rows) and reports (120,047 rows); comment Part 1 was not completed. The parser now strips and counts NUL characters, and the latest checkpoint can be resumed.
-- No source file was modified. No full comment scan or whole-file checksum has completed. Matching sizes and headers for Parts 1/2 do not establish that they are duplicates.
-- Source license/redistribution terms and privacy authorization still need human review before research use.
-- History/event coverage is currently inferred from headers only; audit output must be reviewed before selecting a corpus.
-- The full audit's row counts, join coverage, duplicate counts, and timestamp rates will be recorded in `docs/DATA_AUDIT_SUMMARY.md` after the user returns its summary report.
-- Local commits are ahead of `origin/main`; pushes have previously failed because HTTPS credentials are unavailable in the non-interactive environment.
+- Phase 3A full profiling remains pending: complete status/resolution counts, Part 3 overlaps, metadata-all hash/ID overlap, quality-export relationships, and exact per-source null/date/provenance profile are not yet verified.
+- The roadmap describes a resolved/fixed-or-closed collection; the filtered report export is selected. Quantify status/resolution bias before sampling and include open/non-fixed/reopened cases only if source evidence supports them.
+- CSVs contain snapshot status plus `last_change_time`, not ordered status-change events. F2/as-of claims need validated `/history` data; do not infer transitions from last-change timestamps.
+- The dataset PDF's copyright/publication statement does not establish redistribution permission. License/privacy review remains unresolved; contributor names/emails and private comments require minimization/exclusion.
+- `Bug_meta_data_230k_all.csv` is a likely re-export based on size/schema and a bounded ID sample, not proven identical. Part 3's unique contribution is unknown.
+- No T0/T1 cutoff, final corpus, or benchmark question set is selected. The 180-question value is a generation target across F1–F6, not a manual authoring quota.
 
-## Repository and data assumptions
+## Environment and repository assumptions
 
-- Repository root: `/home/ict317/master's/ENSF 621/Project/`.
-- Existing remote: `https://github.com/ahmadfaisal9900/Bugzilla.git`; never initialize or use a nested project repository.
-- Dataset paths are in ignored `configs/data_paths.local.yaml`; the tracked template is `configs/data_paths.example.yaml`. The root `Dataset/` remains ignored and unmodified.
-- Audit input is CSV. It streams rows; the distinct identifier index is stored under ignored run output. Relative paths resolve from the project root.
-- No paid API, external package, crawler, proxy, or MongoDB access is required by this phase.
+- Project root: `/home/ict317/master's/ENSF 621/Project/`; only project Git root. Existing `origin` is `https://github.com/ahmadfaisal9900/Bugzilla.git`.
+- Inputs stay under ignored root-level `Dataset/`; the GindeLab upstream clone remains unmodified. Paths resolve from `configs/data_paths.local.yaml`; tracked template is `configs/data_paths.example.yaml`.
+- Current default interpreter: Python 3.13.13 / SQLite 3.51.2; tests also pass under the available Python 3.9.25 environment used for Phase 2 compatibility. The profile uses only the standard library. No paid APIs, new dependencies, crawler, proxy rotation, or MongoDB are required.
+- Current filesystem reports 137 GiB free; raw candidate inputs remain in place. The profiler streams rows and writes ignored SQLite/output artifacts.
+- Local `main` is ahead of `origin/main`; previous push attempts failed because HTTPS credentials are unavailable non-interactively. Preserve the existing remote and history.
 
 ## Scientific scope
 
-Compare mandatory methods M0 closed-book, M1 BM25 RAG, M2 hybrid RAG, and M3 parameterized SQL. The benchmark target is 180 generated candidate questions across F1–F6, with temporal v0/v1 evaluation; this is not a manual question-writing quota. M4 small graph remains optional. No corpus snapshot or benchmark questions have been selected.
+Mandatory methods: M0 closed-book, M1 BM25-RAG, M2 hybrid RAG, M3 parameterized SQL. M4 small graph is optional. F1–F6 and temporal v0/v1 follow `docs/reference/research_roadmap.tex`. Firefox-product scope is not all Firefox engineering.
 
-## Next action
+## Next gate
 
-Resume the stopped user run with `bash scripts/run_phase02_audit.sh --resume`. Inspect the completed `audit_summary.json` and `audit_report.json`; then update the tracked data-audit summary and resolve rights/privacy/history decisions. Do not start preprocessing before that review.
+Run the full Phase 3A profile from the user's terminal, review `outputs/data_exploration/<run>/summary.json` and `profile.json`, then record only sanitized aggregate results. Do not begin Phase 3B ingestion or choose T0/T1 before that review and rights/privacy decisions.

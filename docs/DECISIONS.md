@@ -16,5 +16,10 @@
 | D-012 | Verify comment Parts 1/2 with full SHA-256 on an unlimited user-run audit and report overlapping record IDs. | Equal sizes/headers alone do not prove duplicate content; limited scans never claim checksum verification. |
 | D-013 | Treat license/redistribution and private/contributor-field authorization as unresolved until human review. | The audit reports evidence and field presence, not legal permission or a privacy approval. |
 | D-014 | Strip embedded NUL characters only in the audit's streamed parser input and record their counts; never rewrite the source CSVs. | Python's CSV reader rejects NUL characters; transparent, non-persistent sanitation allows schema/count auditing while preserving source bytes. |
+| D-015 | Count comment Part 1/2 once because the full Phase 2 audit verified matching SHA-256 values and 408,401 shared record IDs. | Exact byte equality is stronger than a matching filename/header; Phase 3A reuses this result only while file size and modification-time signatures match. |
+| D-016 | Do not merge `Bug_meta_data_230k_all.csv`, Part 3, or quality-selected exports until full hashes, ID overlap, and comment-key overlap are profiled. | A similar schema, filename, or bounded prefix overlap cannot establish whether an export is a subset, superset, or repeat. |
+| D-017 | Interpret status and resolution separately; never use `last_change_time` as a substitute for ordered history. | A sampled row is RESOLVED/INCOMPLETE, and Phase 2 headers do not expose event-time transitions. F2/as-of questions require validated history evidence. |
+| D-018 | Keep the Phase 3A full profile user-run; the agent session may run only fixture tests and a tiny bounded sample. | The largest source is 1.6 GB and the operating contract prohibits long corpus jobs in-session. |
+| D-019 | Phase 3B candidates are metadata + one verified comment copy + filtered reports, subject to Phase 3A results and rights/privacy review. | Together they provide snapshot facts, dated comment evidence, and report fields with high Phase 2 ID join coverage; the shortlist is not a final corpus or snapshot choice. |
 
-These decisions establish workspace and study scope only; they do not select a dataset snapshot or implement an experiment.
+These decisions establish workspace and study scope only; they do not select a dataset snapshot, T0/T1, or final corpus.

@@ -1,0 +1,6 @@
+id,product,component,status,resolution,creation_time,last_change_time,blocks,reporter_email
+101,Firefox,Widget,RESOLVED,FIXED,2024-01-02T12:00:00Z,2024-02-01T12:00:00Z,,private@example.test
+102,Core,DOM,NEW,,bad-date,2024-03-01T00:00:00Z,101,person@example.test
+not-a-number,Toolkit,UI,RESOLVED,INCOMPLETE,2023-05-03,2023-05-04,,hidden@example.test
+104,Firefox,Widget,VERIFIED,FIXED,2024-04-05T00:00:00Z,2024-04-06T00:00:00Z,,other@example.test
+101,Firefox,Widget,REOPENED,,2024-01-02T12:00:00Z,2024-05-01T00:00:00Z,,private@example.test

@@ -1,0 +1,6 @@
+id,bug_id,creation_time_x,text,is_private,product,status,resolution
+c1,101,2024-01-03T00:00:00Z,"first harmless note",False,Firefox,RESOLVED,FIXED
+c2,101,2024-01-04T00:00:00Z,"quoted note line one
+quoted note line two",False,Firefox,RESOLVED,FIXED
+c3,102,broken-time,short note,True,Core,NEW,
+c3,102,broken-time,short note,True,Core,NEW,

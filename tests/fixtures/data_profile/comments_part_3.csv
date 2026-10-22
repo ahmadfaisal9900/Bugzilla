@@ -1,0 +1,5 @@
+id,bug_id,creation_time_x,text,is_private,product,status,resolution
+c4,103,2023-05-04T00:00:00Z,another note,False,Toolkit,RESOLVED,INCOMPLETE
+c6,105,2022-10-02T00:00:00Z,one more note,False,Core,RESOLVED,DUPLICATE
+c7,105,2022-10-03T00:00:00Z,follow-up note,False,Core,RESOLVED,DUPLICATE
+c8,105,2022-10-04T00:00:00Z,final note,False,Core,RESOLVED,DUPLICATE

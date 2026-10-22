@@ -5,3 +5,7 @@ reports_csv: Dataset/CSV_100k_filtered_bug_reports.csv
 comments_part_1_csv: Dataset/comments_Dataset_Part_1.csv
 comments_part_2_csv: Dataset/comments_Dataset_Part_2.csv
 upstream_sample_csv: Dataset/EASE_2025_Data_paper/Sample_Dataset/bugs-2025-02-23.csv
+metadata_all_csv: Dataset/Bug_meta_data_230k_all.csv
+steps_reports_csv: "Dataset/CSV_Bug_reports_with_steps_to_reproduce (1).csv"
+contribution_csv: Dataset/CSV_Contribution_information_dataset.csv
+comments_part_3_csv: Dataset/comments_Dataset_Part_3.csv
