@@ -1,1 +1,1 @@
-"""Benchmark construction package (implementation planned)."""
+"""Deterministic benchmark construction and human review gates."""

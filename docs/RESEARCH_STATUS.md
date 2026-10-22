@@ -2,7 +2,7 @@
 
 ## Current phase
 
-**Phase 3B VERIFIED; Phase 4 IMPLEMENTED, AWAITING_USER_API_SMOKE.** User-run full normalization completed and was checked from latest run `run-20261022T023542Z-1182018` (manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`). Phase 4 planner, public unauthenticated client, sidecar adapter, temporal QC and fixtures are implemented; no live API call was made. See `docs/PHASE04_API_ENRICHMENT.md` and `docs/TEMPORAL_VALIDITY.md`.
+**Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 IMPLEMENTED, AWAITING_USER_GENERATION_AND_HUMAN_REVIEW.** The completed 50-bug API pilot was independently checked from local artifacts/caches as the Phase 5 input gate. Benchmark generation/review/freeze runners and fixture tests are implemented; no full benchmark or locked test exists yet. See `docs/PHASE05_BENCHMARK.md`.
 
 ## Completed
 
@@ -12,11 +12,12 @@
 - Phase 3B full input: 736,253 source rows; 196,633 unique canonical bugs; 419,458 canonical comments; 308,132 explicit recorded links; zero source quarantines/orphans. 28,533 metadata duplicates, 30 conflicting metadata variants, 91,599 Part 1 duplicate comments; Part 3 adds 11,057 comments. Frozen hashes/counts match 3A; Part 2 duplicate and metadata-all near-repeat excluded.
 - Firefox product: 25,025 distinct bugs. Seed 317 sample contains 3,000 unique Firefox bugs and represents all 18 eligible status/resolution groups; includes 757 open/reopened bugs and 2,539 zero-comment bugs.
 - DuckDB, Parquet, aggregate QC, sample manifest and 20 sanitized examples are in ignored run outputs. All 19 manifest-listed artifacts exist at recorded sizes with SHA-256 fields. No private/unknown-privacy bodies appear in comments/search documents.
-- `field_changes` is empty; all 196,633 first-FIXED durations are UNKNOWN. Full validation details are recorded in the Phase 3B docs.
+- Base `field_changes` stays empty; its 196,633 first-FIXED durations remain UNKNOWN. The separate verified Phase 4 pilot `cohort-8bb3150d29a598d8` has 50 parsed histories, 884 changes, 13 first-FIXED cases / 37 UNKNOWN, and 17 REOPENED entries. Six overlay hashes and 147 cached response hashes/identities match; no new requests were made.
+- Phase 5 pins that pilot and the verified 3B manifest. Before metadata/partition filters, 9 first-FIXED cases remain after excluding source differences and same-time ambiguity. Full candidate/family/split counts await the user run; 180 is a target.
 
 ## Evidence gaps and limits
 
-- **F2:** exact first-FIXED times, reopen sequence and historical state remain unsupported until validated `/history` enrichment. Never infer from latest-change time.
+- **F2:** validated event answers exist only for eligible pilot cases. Base-only durations and missing transitions remain UNKNOWN; historical snapshot state and original data availability are unverified. Never infer from latest-change time.
 - **Paper/data reconciliation:** the paper's 119,585 curated reports and 10,351 quality-selected reports are distinct populations from the 196,633-unique-bug broad metadata base. Local schemas and inspected upstream code have no ordered field-change events; paper-reported October 2024 coverage does not certify every CSV field's exact snapshot time. See `docs/PAPER_DATASET_RECONCILIATION.md`.
 - **F4:** parsed snapshot links only; historical validity, past target status and complete link coverage need enrichment. 79,350 recorded targets are outside this canonical bug set.
 - CSV source event times parsed, but original snapshot/export date is UNKNOWN (`snapshot_as_of_utc` NULL). Phase 3A observation time and Phase 3B ingestion time are separately recorded; this export cannot recreate a historical snapshot.
@@ -32,4 +33,4 @@
 
 ## Next gate
 
-Run the capped five-ID Phase 4 API smoke from the existing root, inspect its aggregate summary/response shape, then run and verify the 50-bug pilot before deciding whether to enlarge the selective cohort. F2 is still UNKNOWN until history ingestion is reviewed; F4 historical link validity is still unsupported. The selected comparison is controlled evidence addition/refresh, not real-time concept drift. Preserve the verified Phase 3B run and do not begin Phase 5 until Phase 4 results or an explicitly approved narrow fallback are verified.
+Run Phase 5 generation and prepare-review, inspect actual coverage, review ALL retained F5 and challenge candidates plus required factual/F6 spot checks, and sign off before validate-freeze. See exact terminal commands in `docs/PHASE05_BENCHMARK.md`. No phase beyond benchmark construction is started; no locked test or experiment result is claimed.

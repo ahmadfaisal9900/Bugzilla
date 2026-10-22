@@ -30,3 +30,5 @@ The Phase 4 design therefore remains a controlled evidence addition/refresh usin
 ## Resulting action
 
 Keep the frozen Phase 3B inputs and normalization decisions. Continue with the existing capped five-ID user-run API smoke, then the deterministic 50-bug pilot only after reviewing that smoke. `/history` remains the source for explicit status/resolution transitions; current `/bug/<id>` metadata remains a separate consistency refresh. No API requests were made during this reconciliation.
+
+Subsequent Phase 5 prerequisite check: the user completed the 50-bug API pilot and its local artifacts/history parsing are now verified. See [Phase 5 benchmark status](PHASE05_BENCHMARK.md). The CSV/history and snapshot-date distinctions above remain applicable.

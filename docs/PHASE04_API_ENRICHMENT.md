@@ -2,11 +2,11 @@
 
 ## State and gate
 
-**IMPLEMENTED; fixtures pass; AWAITING_USER_API_SMOKE.** No live Bugzilla request, full enrichment run, preprocessing job, or model evaluation was run in the agent session. The latest verified base is Phase 3B run `run-20261022T023542Z-1182018`, identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`.
+**USER PILOT VERIFIED as Phase 5 input; no 200-bug study run claimed.** Completed run `cohort-8bb3150d29a598d8` has 50/50 histories and metadata responses, 147 successful GET attempts, 884 changes, 13 first-FIXED cases and 37 UNKNOWN. Six small overlay hashes and 147 cached response hashes were checked offline; parsed histories, timestamps, current-metadata differences and event hashes match. There are 17 REOPENED entries, 7 retained source/current field differences, one same-time group and zero configured API link events. Source snapshot time remains UNKNOWN. See `docs/PHASE05_BENCHMARK.md` for the exact pinned identity and candidate exclusions. No new live request was made by the agent. Base run remains `run-20261022T023542Z-1182018`.
 
 The BugsRepo paper/data reconciliation found no ordered field-change events in the selected CSV headers, normalized Phase 3B data, or bounded inspection of upstream extraction code at commit `e0f44e656ab8fee2f93a0adbce881dca5bdc8c9e`. The paper's October 2024 date is reported collection coverage, not a verified exact snapshot time for every local CSV field. Existing extraction and normalization choices stand; see [PAPER_DATASET_RECONCILIATION.md](PAPER_DATASET_RECONCILIATION.md).
 
-## Local evidence gap, measured on the seed-317 sample
+## Original local evidence gap, measured on the frozen Phase 3B seed-317 sample
 
 The planner read only the 3,000 sampled Firefox bug IDs and aggregate comment/link counts from the frozen Phase 3B DuckDB. It did not read or emit comment bodies.
 
@@ -60,4 +60,7 @@ The smoke uses only the two required endpoints. The user-run pilot may request `
 
 ## Acceptance
 
-Phase 4 remains **AWAITING_USER_API_SMOKE** until the live public response shape is reviewed. It remains **AWAITING_USER_ENRICHMENT** until the planned user-run histories have been audited. The run summary must report requested/successful IDs, history parse errors, FIXED transitions, valid F2 cases, inaccessible/unknown cases, API link coverage, source conflicts, privacy withholding, timestamp eligibility and actual GET attempts. Do not proceed to Phase 5 until that review or an explicitly documented narrow fallback.
+The completed user pilot now passes the offline verification gate. A larger cohort still needs a separate reviewed run. API link-history coverage remains zero because no field adapter was configured. Preserve all counts, explicit event timestamps, source conflicts and privacy decisions in the pinned reports; only eligible conflict-free history cases can enter Phase 5. The source snapshot date remains UNKNOWN.
+
+
+The completed user pilot passes the bounded offline prerequisite audit recorded in Phase 5. Pilot evidence is sufficient to implement reduced-coverage benchmark construction; it does not establish 30 valid F2 duration questions, historical snapshot availability, or a larger study cohort.

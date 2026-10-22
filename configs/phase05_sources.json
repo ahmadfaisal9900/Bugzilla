@@ -1,0 +1,14 @@
+{
+  "base_counts": {
+    "bugs": 196633,
+    "comments": 419458,
+    "field_changes": 0,
+    "sample_membership": 3000
+  },
+  "base_identity": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663",
+  "base_run": "outputs/normalization/phase03b/run-20261022T023542Z-1182018",
+  "candidate_identity": "8bb3150d29a598d8a623c13d5237a9a43bb58c42df761c5b1570762c1cd2c248",
+  "phase04_run": "outputs/phase04/enrichment/cohort-8bb3150d29a598d8",
+  "phase04_summary_sha256": "831252b846a70cea4594b8d422300ae3a3f22af7941c1862552156ed04d1519c",
+  "sample_seed": 317
+}

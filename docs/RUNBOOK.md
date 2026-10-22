@@ -76,11 +76,11 @@ bash scripts/phases/run_phase03b_normalize.sh
 
 For a separate bounded prefix run use `--limit 20`. To resume the latest version use `--resume` with exactly the same original options. Default seed 317 / target 3000 / product Firefox; all products stay in canonical tables. Free DuckDB exports Parquet directly; no PyArrow/API needed. Reserve 5–10 GB disk; DuckDB budget 512 MB plus Python row/batch memory; runtime unmeasured. Never launch this actual-data job in the agent session.
 
-Verified run: `outputs/normalization/phase03b/run-20261022T023542Z-1182018/`, manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`. Full-run artifact and aggregate validation are recorded in `docs/PHASE03B_NORMALIZATION.md`; Phase 3B is VERIFIED and Phase 4 is implemented, awaiting user API smoke. Preserve outputs and manifest. Do not rerun or overwrite the verified version. F2 requires validated `/history`; F4 is limited to recorded snapshot links, with 79,350 targets outside the corpus. Source export snapshot date is unknown and first-FIXED durations remain UNKNOWN.
+Verified run: `outputs/normalization/phase03b/run-20261022T023542Z-1182018/`, manifest identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`. Full-run artifact and aggregate validation are recorded in `docs/PHASE03B_NORMALIZATION.md`; Phase 3B is VERIFIED; the user Phase 4 50-bug pilot is now independently verified as the Phase 5 input gate. Preserve outputs and manifest. Do not rerun or overwrite the verified version. F2 requires validated `/history`; F4 is limited to recorded snapshot links, with 79,350 targets outside the corpus. Source export snapshot date is unknown; base-only first-FIXED durations remain UNKNOWN. The separate API pilot supplies eligible event answers only for its verified subset.
 
 ## Phase 4 selective API enrichment
 
-Phase 4 planning and temporal QC are offline. First create the deterministic local candidate manifest; then use the five-ID smoke before the 50-bug pilot. Public network calls occur only when you invoke the smoke/enrichment scripts in your terminal. Each GET counts toward the required cumulative `--max-requests`; resume with the same plan and a cap at least as large as the total requests already spent. Do not pass credentials or fetch private bugs.
+The completed 50-bug cohort is verified; do not repeat collection for that frozen pilot. The following describes the original terminal collection flow. Phase 4 planning and temporal QC are offline. First create the deterministic local candidate manifest; then use the five-ID smoke before the 50-bug pilot. Public network calls occur only when you invoke the smoke/enrichment scripts in your terminal. Each GET counts toward the required cumulative `--max-requests`; resume with the same plan and a cap at least as large as the total requests already spent. Do not pass credentials or fetch private bugs.
 
 ```bash
 PYTHONPATH=src python -m bugzilla_qa.data.phase04 plan --root . --study-size 200
@@ -97,4 +97,26 @@ bash scripts/phases/run_phase04_temporal_qc.sh --mode strict --cutoff "$(date -u
 bash scripts/phases/run_phase04_temporal_qc.sh --mode retrospective-replay --cutoff 2024-12-31T23:59:59Z
 ```
 
-Strict mode requires event, observed and ingested times by cutoff. Retrospective replay is not historical availability evidence. The selected experiment is controlled evidence addition/refresh, not real-time drift; see `docs/TEMPORAL_VALIDITY.md`. Phase 5 is gated on review of the user-run Phase 4 outputs.
+Strict mode requires event, observed and ingested times by cutoff. Retrospective replay is not historical availability evidence. The selected experiment is controlled evidence addition/refresh, not real-time drift; see `docs/TEMPORAL_VALIDITY.md`. The user-run 50-bug Phase 4 pilot now passes that input-review gate; Phase 5 still needs generation and signed candidate review.
+
+
+## Phase 5 — generate, inspect, review, freeze
+
+Run from the existing Project root, in the free DuckDB Python environment:
+
+```bash
+bash scripts/run_phase05_generate_benchmark.sh --dry-run --seed 317
+bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume
+bash scripts/run_phase05_prepare_review.sh --seed 317 --resume
+```
+
+Inspect `outputs/benchmark/phase05/LATEST_RUN`, its `summary.json`, `review.html`, and `review_queue.csv`. Review required rows, every retained F5 explanation and challenge, then fill `review_signoff.json`. `--f5-target 10` at generation is an optional smaller review workload; actual coverage must be acknowledged. `--limit 2` creates a smoke prefix that cannot freeze. Resume preserves review edits and recomputes required spot checks after rejections. Full details and review fields: [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md).
+
+After source review and human sign-off only:
+
+```bash
+bash scripts/run_phase05_validate_freeze.sh --dry-run --seed 317
+bash scripts/run_phase05_validate_freeze.sh --seed 317 --resume
+```
+
+Freeze reads/hashes the 1.89-GB canonical DB once per validation, recomputes deterministic gold, and writes checksummed question/gold artifacts. No source CSV, API job or model call runs. Keep gold/SQL/templates/review text out of inference/retrieval logs; only question exports enter later methods. Do not tune on test/challenge questions. Report actual candidate/review/frozen counts before beginning a later phase.

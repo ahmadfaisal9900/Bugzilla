@@ -33,3 +33,8 @@ Missing/invalid dates remain excluded or UNKNOWN. A future event later than its 
 ## Phase 4 interpretation
 
 The base/enriched comparison can support a controlled evidence-addition statement only, with the exact candidate list, endpoint success/denial counts, response and ingestion clocks, and request budget reported. History-derived answers may be temporally reconstructed from explicit events, but historical information availability remains unknown unless a trustworthy archived observation exists. No such independent dated v0/v1 source snapshot has been verified. Do not call results “concept drift,” “real-time freshness,” or “as-of 2024” on the current evidence.
+
+
+## Phase 5 benchmark constraints
+
+The user-run Phase 4 pilot is now verified from local cache/artifact hashes and replayed parsing (50 histories, 884 changes, 13 first-FIXED cases). Its fetched/ingested clocks remain in 2026. Eligible F2 items ask about substantiated event durations or explicit reopen entries; they do not assert that the system observed the evidence in 2024. Snapshot lookup and relationship questions explicitly retain UNKNOWN archive date/edge validity. The generated benchmark reports actual temporal coverage; no historical cutoff/status or 48-cutoff-question target is claimed. Full candidate generation and human F5 review are still pending. The primary experiment remains controlled evidence addition/refresh.
