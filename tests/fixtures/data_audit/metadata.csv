@@ -1,0 +1,6 @@
+id,product,component,status,resolution,creation_time,summary
+101,Firefox,Sidebar,RESOLVED,FIXED,2024-01-01T10:00:00Z,Fixture one
+102,Core,DOM,VERIFIED,FIXED,2024-01-02 11:00:00,Fixture two
+103,Firefox,Networking,NEW,,2024-01-03T12:00:00+00:00,Fixture three
+105,Firefox,Layout,RESOLVED,FIXED,2024-01-04T13:00:00Z,Fixture four
+105,Firefox,Layout,RESOLVED,FIXED,not-a-date,Fixture duplicate

@@ -11,5 +11,9 @@
 | D-007 | Use a zero API spend budget and free/local methods. | Course constraint; model and hardware feasibility remain unresolved. |
 | D-008 | Treat 180 as a generated candidate-question target across F1–F6. | The roadmap's target is not a quota for manually authored questions. |
 | D-009 | Preserve metadata-only source notes in `docs/DATA_INVENTORY.md`; do not hash, import, or alter large source files during setup. | The comments files are multi-gigabyte and may include duplicate/private/contributor data. |
+| D-010 | Resolve local dataset paths from ignored `configs/data_paths.local.yaml`; keep a tracked example with repository-relative paths. | Machine-specific paths must not enter Git, while audit runs need an explicit source manifest. |
+| D-011 | Use Python's standard-library CSV parser and an ignored SQLite index for streaming audit counts and duplicate/join checks. | Avoid bulk CSV loads and new package dependencies; resumability is at completed-file boundaries. |
+| D-012 | Verify comment Parts 1/2 with full SHA-256 on an unlimited user-run audit and report overlapping record IDs. | Equal sizes/headers alone do not prove duplicate content; limited scans never claim checksum verification. |
+| D-013 | Treat license/redistribution and private/contributor-field authorization as unresolved until human review. | The audit reports evidence and field presence, not legal permission or a privacy approval. |
 
 These decisions establish workspace and study scope only; they do not select a dataset snapshot or implement an experiment.

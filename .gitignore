@@ -39,6 +39,7 @@
 *.pem
 *.key
 credentials.*
+/configs/data_paths.local.yaml
 
 # Python environments, caches, and test/tool output
 .venv/

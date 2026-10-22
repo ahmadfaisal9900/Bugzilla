@@ -1,0 +1,7 @@
+# Copy to data_paths.local.yaml and adjust paths for this machine.
+# Paths are relative to the Project/ repository root unless absolute.
+metadata_csv: Dataset/Bug_meta_data.csv
+reports_csv: Dataset/CSV_100k_filtered_bug_reports.csv
+comments_part_1_csv: Dataset/comments_Dataset_Part_1.csv
+comments_part_2_csv: Dataset/comments_Dataset_Part_2.csv
+upstream_sample_csv: Dataset/EASE_2025_Data_paper/Sample_Dataset/bugs-2025-02-23.csv

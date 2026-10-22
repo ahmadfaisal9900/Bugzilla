@@ -1,6 +1,6 @@
-# Data inventory (metadata-only inspection)
+# Data inventory and bounded sample inspection
 
-Inspected on 2026-10-21. Paths below are under the root-level Git-ignored `Dataset/` and remain unchanged. Sizes are filesystem metadata. CSV column counts and selected names came from the first header record only; no data rows or checksums were read.
+Inspected on 2026-10-21. Paths below are under the root-level Git-ignored `Dataset/` and remain unchanged. Sizes are filesystem metadata. Header inspection and a two-row deterministic sample per CSV were performed; sample review recorded only field presence/length and non-sensitive categories, not report/comment text or contributor values. No whole-file checksums were read.
 
 ## Downloaded inputs: `Dataset/`
 
@@ -25,11 +25,15 @@ Inspected on 2026-10-21. Paths below are under the root-level Git-ignored `Datas
 ## Upstream clone: `Dataset/EASE_2025_Data_paper/`
 
 - Existing independent upstream Git root at commit `e0f44e6`; it remains inside ignored `Dataset/` and was not modified.
+- Upstream remote: `https://github.com/GindeLab/EASE_2025_Data_paper.git`; inspected commit: `e0f44e656ab8fee2f93a0adbce881dca5bdc8c9e`.
 - README describes metadata/comment collection and analysis scripts, MongoDB use, and a sample CSV. Some README-mentioned scripts use proxies; do not run them.
-- `Dataset/EASE_2025_Data_paper/Sample_Dataset/bugs-2025-02-23.csv`: 1,668,674 bytes, 9 header columns (`Bug ID`, `Type`, `Summary`, `Product`, `Component`, `Assignee`, `Status`, `Resolution`, `Updated`). No rows read.
+- `Dataset/EASE_2025_Data_paper/Sample_Dataset/bugs-2025-02-23.csv`: 1,668,674 bytes, 9 header columns (`Bug ID`, `Type`, `Summary`, `Product`, `Component`, `Assignee`, `Status`, `Resolution`, `Updated`). Two deterministic rows were sampled with values suppressed as described above.
+- The inspected metadata/comment scripts import requests, pandas, and pymongo; no requirements/pyproject/setup/environment manifest was found in the inspected upstream paths. The safe reusable idea is row-wise CSV reading and field naming from `Comments_Data_Gather/Bug_comment.py`; the audit independently implements its own `csv.DictReader` stream and does not reuse network, MongoDB, proxy, or DataFrame logic. Attribution: GindeLab, `EASE_2025_Data_paper`, commit `e0f44e656ab8fee2f93a0adbce881dca5bdc8c9e`.
 
 ## Audit cautions
 
 - The two largest comments parts have equal byte sizes. The roadmap flags a possible duplicate checksum; equality is not established because full-file hashing was intentionally not run.
 - Headers expose contributor identifiers/email fields and a private-comment flag. Later ingestion needs a privacy/minimization decision.
-- These headers do not establish field completeness, license/redistribution rights, history-event coverage, or a valid Firefox-product sampling frame. Resolve those in Phase 1 before processing.
+- These headers do not establish field completeness, license/redistribution rights, history-event coverage, or a valid Firefox-product sampling frame. Resolve those before corpus selection.
+- Two-row sample inspection found initial metadata/report products including `Core`, and the upstream sample included both `Core` and `Firefox`; this is not a product distribution estimate. The comments Parts 1/2 sampled the same first two bug/comment IDs, which is only a potential overlap signal; no equality assumption is made.
+- Local audit paths are mapped in ignored `configs/data_paths.local.yaml`; `configs/data_paths.example.yaml` is the tracked template. Full row counts, timestamp rates, join coverage, duplicate totals, and Parts 1/2 SHA-256 remain pending the manual run.

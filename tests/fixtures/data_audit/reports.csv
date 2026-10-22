@@ -1,0 +1,6 @@
+bug_id,creation_time,text,status,resolution,author_id
+101,2024-01-01T10:00:00Z,Fixture report one,RESOLVED,FIXED,fixture-user-a
+102,2024-01-02T11:00:00Z,Fixture report two,VERIFIED,FIXED,fixture-user-b
+106,2024-01-03T12:00:00Z,Fixture report three,NEW,,fixture-user-c
+107,bad-time,Fixture report four,NEW,,fixture-user-d
+108,2024-01-05T14:00:00Z,Fixture report five,RESOLVED,FIXED,fixture-user-e

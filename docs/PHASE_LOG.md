@@ -1,7 +1,9 @@
 # Phase log
 
-| Phase | Scope | State | Acceptance criteria |
+| Phase | Scope | State | Acceptance criteria / next gate |
 |---|---|---|---|
-| 0 | Project structure, Git/data safety, and research workspace | Validated; commit/push pending | Required skeleton and tracking docs exist; roadmap is unchanged; datasets, outputs, secrets, and generated artifacts are ignored; import and structure smoke checks pass; exact staged list contains only intended files; commit and push are recorded. |
+| 0 | Project structure, Git safety, and research workspace | Local commit `e706e3f`; push pending | Required skeleton and tracking docs exist; roadmap unchanged; datasets and generated artifacts ignored; bounded import/structure checks passed. |
+| 1 | Consolidate project foundation into the existing repository | Local commit `35d32c7`; push pending | Project root and existing remote retained; no nested project Git root remains in the project; roadmap and Dataset preserved. |
+| 2 | Streaming dataset audit tooling and a bounded fixture | Implemented; 4 repository tests (including 3 audit tests) and a two-row-per-file real-data smoke check passed; full audit not run | Full audit must verify row counts, null/empty rates, ID joins, timestamps, duplicate keys, product mix, privacy/license flags, history fields, and comment-parts equality; human review needed before corpus selection. |
 
-No data-processing, model-development, or research-result phase has been completed.
+Phase 2's full scan and full-file checksums are intentionally deferred to the user's terminal. No preprocessing, model development, or experiment results are claimed.

@@ -2,37 +2,38 @@
 
 ## Current phase
 
-Phase 0 — project structure, Git safety, and research workspace.
+Phase 2 — implement a bounded, resumable dataset audit. The full audit remains user-run.
 
-## Completed steps
+## Completed
 
-- Inspected the working tree, branch, configured remote, tracked files, and existing project files.
-- Read the research roadmap and recorded its SHA-256 before setup: `1b2b2ec9fade96437eda58a1e6e3d026dc7b1999a4fd25fffc21bf7d0debd971`.
-- Created the source-package skeleton, experiment/documentation directories, initial configuration, and Git safety rules.
-- The initial repository commit inspected before Phase 0 was `9353e1119b5e8831c774ba3b7767dc7cf4215aa1`; Phase 0 changes are pending their requested commit at initial documentation time.
-- The package imports and structure/ignore smoke checks passed.
-- The roadmap still matches its recorded SHA-256. No dataset was modified, copied, or processed. No model or QA system was implemented.
+- Phase 0 scaffold was committed locally as `e706e3f`.
+- Phase 1 repository consolidation was committed locally as `35d32c7`; `Project/` remains the only project Git root and `origin` remains the existing Bugzilla repository.
+- Phase 2 adds a standard-library streaming CSV audit, disk-backed ID index, a 20-row fixture, unit tests, ignored local data-path config, and a user-run full-scan script.
+- Read only the roadmap's data-source and canonical-data-model sections (`docs/reference/research_roadmap.tex`, lines 135–200).
+- Inspected the relevant dataset file sizes, CSV headers, and two deterministic rows per CSV. Sampled values were limited to IDs' presence/length and non-sensitive categories; no report/comment text or contributor values were exposed.
+- Inspected upstream GindeLab/EASE_2025_Data_paper at commit `e0f44e656ab8fee2f93a0adbce881dca5bdc8c9e`; collection code uses requests, pandas, and MongoDB. No dependency manifest was found in the inspected upstream paths. No crawler or database utility was run or copied.
+- Phase 2 reports schema/mappings, row counts, timestamps, ID joins, duplicate keys, product counts, private-field presence, history-field gaps, and Parts 1/2 SHA-256 and shared IDs when run without a limit.
 
-## Pending steps
+## Not yet completed
 
-- Commit and push the validated Phase 0 scaffold; record the resulting commit and push status.
-- Phase 1: perform the roadmap's bounded literature and data-source audit; choose a data snapshot only after measuring available fields and history coverage.
-- Later: build the audited data pipeline and benchmark before implementing the QA methods.
+- No full scan, whole-file checksum, preprocessing, API access, or model evaluation has run. The matching sizes and headers for comment Parts 1/2 do not establish that they are duplicates.
+- Source license/redistribution terms and privacy authorization still need human review before research use.
+- History/event coverage is currently inferred from headers only; audit output must be reviewed before selecting a corpus.
+- The full audit's row counts, join coverage, duplicate counts, and timestamp rates will be recorded in `docs/DATA_AUDIT_SUMMARY.md` after the user returns its summary report.
+- Local commits are ahead of `origin/main`; pushes have previously failed because HTTPS credentials are unavailable in the non-interactive environment.
 
-## Repository and dataset locations
+## Repository and data assumptions
 
-- Repository: `/home/ict317/master's/ENSF 621/Project/`
-- Existing dataset bundle and upstream preprocessing source: `/home/ict317/master's/ENSF 621/Project/Dataset/` (must remain local and Git-ignored)
-- Authoritative roadmap: `docs/reference/research_roadmap.tex`
+- Repository root: `/home/ict317/master's/ENSF 621/Project/`.
+- Existing remote: `https://github.com/ahmadfaisal9900/Bugzilla.git`; never initialize or use a nested project repository.
+- Dataset paths are in ignored `configs/data_paths.local.yaml`; the tracked template is `configs/data_paths.example.yaml`. The root `Dataset/` remains ignored and unmodified.
+- Audit input is CSV. It streams rows; the distinct identifier index is stored under ignored run output. Relative paths resolve from the project root.
+- No paid API, external package, crawler, proxy, or MongoDB access is required by this phase.
 
-## Current scientific scope
+## Scientific scope
 
-Compare M0 closed-book, M1 BM25 RAG, M2 hybrid RAG, and M3 structured SQL for questions about Mozilla Firefox-product Bugzilla history. The planned benchmark has 180 candidate questions across six families (F1–F6), with temporal evaluation and optional graph retrieval later. These are roadmap targets, not implemented systems or experimental results. No corpus snapshot or benchmark items have been selected or generated.
-
-## Last verified commit
-
-Baseline commit inspected at Phase 0 start: `9353e1119b5e8831c774ba3b7767dc7cf4215aa`. The validated Phase 0 changes are awaiting commit and push.
+Compare mandatory methods M0 closed-book, M1 BM25 RAG, M2 hybrid RAG, and M3 parameterized SQL. The benchmark target is 180 generated candidate questions across F1–F6, with temporal v0/v1 evaluation; this is not a manual question-writing quota. M4 small graph remains optional. No corpus snapshot or benchmark questions have been selected.
 
 ## Next action
 
-Complete the Phase 0 commit and push. Then begin Phase 1 by rereading this status and the roadmap and planning a bounded source audit; do not run large data processing or API collection interactively.
+Run `bash scripts/run_phase02_audit.sh` from the user's terminal after reviewing local data-path configuration. Inspect `outputs/audit/phase02/<run-id>/audit_summary.json` and `audit_report.json`; then update the tracked data-audit summary and resolve rights/privacy/history decisions. Do not start preprocessing before that review.
