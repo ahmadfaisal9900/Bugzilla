@@ -4,6 +4,8 @@
 
 **IMPLEMENTED; fixtures pass; AWAITING_USER_API_SMOKE.** No live Bugzilla request, full enrichment run, preprocessing job, or model evaluation was run in the agent session. The latest verified base is Phase 3B run `run-20261022T023542Z-1182018`, identity `0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663`.
 
+The BugsRepo paper/data reconciliation found no ordered field-change events in the selected CSV headers, normalized Phase 3B data, or bounded inspection of upstream extraction code at commit `e0f44e656ab8fee2f93a0adbce881dca5bdc8c9e`. The paper's October 2024 date is reported collection coverage, not a verified exact snapshot time for every local CSV field. Existing extraction and normalization choices stand; see [PAPER_DATASET_RECONCILIATION.md](PAPER_DATASET_RECONCILIATION.md).
+
 ## Local evidence gap, measured on the seed-317 sample
 
 The planner read only the 3,000 sampled Firefox bug IDs and aggregate comment/link counts from the frozen Phase 3B DuckDB. It did not read or emit comment bodies.

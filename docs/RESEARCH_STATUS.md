@@ -17,6 +17,7 @@
 ## Evidence gaps and limits
 
 - **F2:** exact first-FIXED times, reopen sequence and historical state remain unsupported until validated `/history` enrichment. Never infer from latest-change time.
+- **Paper/data reconciliation:** the paper's 119,585 curated reports and 10,351 quality-selected reports are distinct populations from the 196,633-unique-bug broad metadata base. Local schemas and inspected upstream code have no ordered field-change events; paper-reported October 2024 coverage does not certify every CSV field's exact snapshot time. See `docs/PAPER_DATASET_RECONCILIATION.md`.
 - **F4:** parsed snapshot links only; historical validity, past target status and complete link coverage need enrichment. 79,350 recorded targets are outside this canonical bug set.
 - CSV source event times parsed, but original snapshot/export date is UNKNOWN (`snapshot_as_of_utc` NULL). Phase 3A observation time and Phase 3B ingestion time are separately recorded; this export cannot recreate a historical snapshot.
 - Source redistribution/license review remains unresolved. Private/unknown privacy comment bodies are withheld; local public text can still contain personal data. Do not publish/redistribute derived text without review.
