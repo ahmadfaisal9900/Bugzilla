@@ -78,6 +78,21 @@ def fixture(root):
         metric = p4.classify_first_fixed(hist, row['creation_time'])
         results[bug] = {'bug_id': i, 'changes': hist['changes'], 'history': {k:v for k,v in hist.items() if k != 'changes'},
                         'fix_metric': metric, 'history_fetch': meta, 'source_consistency_differences': []}
+        if i == 1:
+            # Exercise the same filing-time comparison that failed on Python 3.9.
+            payload_bug = {'bugs': [{'id': i, 'creation_time': row['creation_time'],
+                'last_change_time': row['last_change_time'], 'product': row['product'],
+                'component': row['component'], 'status': row['status'],
+                'resolution': row['resolution'], 'is_open': False}]}
+            body_bug = json.dumps(payload_bug); bug_hash = hashlib.sha256(body_bug.encode()).hexdigest()
+            bug_url = p4.BASE_URL + '/bug/' + bug
+            bug_cache = cache.with_name('bug.json.gz')
+            bug_env = {**env, 'endpoint': 'bug', 'url': bug_url, 'body_sha256': bug_hash, 'body_utf8': body_bug}
+            with gzip.open(bug_cache, 'wt') as f: json.dump(bug_env, f)
+            metadata.append({**meta, 'endpoint': 'bug', 'url': bug_url, 'cache_path': str(bug_cache), 'raw_sha256': bug_hash})
+            current, error = p4.parse_current_bug(payload_bug, i, FETCH)
+            assert error is None
+            results[bug]['current_metadata'] = {**current, 'fetched_at_utc': FETCH}
         for x in hist['changes']:
             e = {'bug_id': i, 'source_dataset': 'bugzilla_rest_history', 'source_row_key': n.digest(x), 'source_url': url,
                  'event_time_utc': x['event_time_utc'], 'observed_at_utc': FETCH, 'ingested_at_utc': API_ING,
@@ -130,6 +145,17 @@ class BenchmarkTests(unittest.TestCase):
         self.assertTrue(all('3' not in q['bug_ids'] for q in qs if q['family']=='F5'))
         self.assertEqual(qs,b.complete_candidates(self.root,self.pins,per_family=5,f5_target=5)[0])
         self.assertTrue(all(c['question'] != next(q['question'] for q in qs if q['qid']==c['variant_of']) for c in chs))
+
+    def test_python39_timestamp_format_and_missing_generation(self):
+        # The metadata response in the fixture forces verify_inputs through its
+        # creation-time comparison. Old SQL ::VARCHAR emitted Python-3.9-invalid +00.
+        self.assertEqual(b.verify_inputs(self.root, self.pins)['histories'], 20)
+        with self.assertRaisesRegex(SystemExit, 'No completed Phase 5 generation'):
+            b.load_run(args(self.root))
+        partial=self.root/'partial';partial.mkdir()
+        a=args(self.root);a.run=partial
+        with self.assertRaisesRegex(SystemExit, 'no completed candidate manifest'):
+            b.load_run(a)
 
     def test_future_context_and_target_tampering_rejected(self):
         q=b.complete_candidates(self.root,self.pins,per_family=5,f5_target=5)[0][0]

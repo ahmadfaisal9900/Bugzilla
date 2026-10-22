@@ -106,7 +106,7 @@ Run from the existing Project root, in the free DuckDB Python environment:
 
 ```bash
 bash scripts/run_phase05_generate_benchmark.sh --dry-run --seed 317
-bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume
+bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume &&
 bash scripts/run_phase05_prepare_review.sh --seed 317 --resume
 ```
 
@@ -120,3 +120,5 @@ bash scripts/run_phase05_validate_freeze.sh --seed 317 --resume
 ```
 
 Freeze reads/hashes the 1.89-GB canonical DB once per validation, recomputes deterministic gold, and writes checksummed question/gold artifacts. No source CSV, API job or model call runs. Keep gold/SQL/templates/review text out of inference/retrieval logs; only question exports enter later methods. Do not tune on test/challenge questions. Report actual candidate/review/frozen counts before beginning a later phase.
+
+Phase 5 v1.1 fixes Python 3.9 timestamp compatibility. Retry the chained generation/review commands above in `iqfm`; the corrected version uses a new run identity and retains failed outputs. No source import, API collection, or deletion is required.

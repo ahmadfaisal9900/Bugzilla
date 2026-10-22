@@ -22,7 +22,7 @@ from bugzilla_qa.data.normalize import digest, file_hash, write_json
 if not __debug__:
     raise RuntimeError("Phase 5 integrity checks require Python without -O")
 
-VERSION = "phase05-v1"
+VERSION = "phase05-v1.1"
 FAMILIES = tuple("F" + str(i) for i in range(1, 7))
 UNKNOWN = "cannot be established from the specified evidence"
 FIELDS = ("product", "component", "snapshot_status", "snapshot_resolution")
@@ -104,8 +104,8 @@ def verify_inputs(root, pins, full_hash=False):
                   for t in ("bugs", "comments", "sample_membership", "field_changes")}
         for t, expected in pins["base_counts"].items():
             assert counts[t] == expected, "Unexpected canonical count: " + t
-        source_values = {r["bug_id"]: r for r in dictionaries(db, "SELECT bug_id, product, component, snapshot_status, snapshot_resolution, opened_at_utc::VARCHAR AS opened_at_utc FROM bugs WHERE bug_id IN (SELECT unnest(?))", [[str(x) for x in cp["candidate_results"]]])}
-        creations = dict(db.execute("SELECT bug_id, opened_at_utc::VARCHAR FROM bugs WHERE bug_id IN (SELECT unnest(?))",
+        source_values = {r["bug_id"]: r for r in dictionaries(db, "SELECT bug_id, product, component, snapshot_status, snapshot_resolution, strftime(opened_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS opened_at_utc FROM bugs WHERE bug_id IN (SELECT unnest(?))", [[str(x) for x in cp["candidate_results"]]])}
+        creations = dict(db.execute("SELECT bug_id, strftime(opened_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') FROM bugs WHERE bug_id IN (SELECT unnest(?))",
                                    [[str(x) for x in cp["candidate_results"]]]).fetchall())
         metrics, parsed_count = {}, 0
         for meta in summary["api_response_manifest"]:
@@ -215,10 +215,10 @@ def build_candidates(root, pins, seed=317, per_family=30, f5_target=30, limit=No
     db.execute("SET TimeZone='UTC'")
     db.execute("SET memory_limit='512MB'")
     try:
-        rows = dictionaries(db, """SELECT b.* REPLACE(b.opened_at_utc::VARCHAR AS opened_at_utc,
-           b.snapshot_as_of_utc::VARCHAR AS snapshot_as_of_utc, b.last_change_at_utc::VARCHAR AS last_change_at_utc,
-           b.event_time_utc::VARCHAR AS event_time_utc, b.observed_at_utc::VARCHAR AS observed_at_utc,
-           b.ingested_at_utc::VARCHAR AS ingested_at_utc), s.normalized_fields FROM bugs b
+        rows = dictionaries(db, """SELECT b.* REPLACE(strftime(b.opened_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS opened_at_utc,
+           strftime(b.snapshot_as_of_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS snapshot_as_of_utc, strftime(b.last_change_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS last_change_at_utc,
+           strftime(b.event_time_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS event_time_utc, strftime(b.observed_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS observed_at_utc,
+           strftime(b.ingested_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS ingested_at_utc), s.normalized_fields FROM bugs b
            JOIN sample_membership m USING(bug_id) JOIN source_records s USING(source_record_id)
            WHERE NOT EXISTS(SELECT 1 FROM source_records v WHERE v.bug_id=b.bug_id
                 AND v.source_dataset='metadata' AND v.disposition='CONFLICT_VARIANT') ORDER BY b.bug_id""")
@@ -346,8 +346,8 @@ def build_candidates(root, pins, seed=317, per_family=30, f5_target=30, limit=No
                              {"denominator": len(universe), "matching_bug_ids_sha256": digest(sorted(ids))})
             item["split"] = sp; items.append(item); counts["F3", sp] += 1
 
-        link_rows = dictionaries(db, """SELECT l.* REPLACE(event_time_utc::VARCHAR AS event_time_utc,
-          observed_at_utc::VARCHAR AS observed_at_utc, ingested_at_utc::VARCHAR AS ingested_at_utc) FROM bug_links l JOIN sample_membership m USING(bug_id)
+        link_rows = dictionaries(db, """SELECT l.* REPLACE(strftime(event_time_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS event_time_utc,
+          strftime(observed_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS observed_at_utc, strftime(ingested_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS ingested_at_utc) FROM bug_links l JOIN sample_membership m USING(bug_id)
                                         WHERE l.target_bug_id IS NOT NULL ORDER BY l.link_key""")
         links = defaultdict(list)
         for l in link_rows:
@@ -364,8 +364,8 @@ def build_candidates(root, pins, seed=317, per_family=30, f5_target=30, limit=No
                 others=targets, coverage={"historical_validity": "UNKNOWN", "url_only_targets_excluded": True})
 
         # Only CSV comments from the FIXED-selected subpopulation. Stream, never load bodies en masse.
-        sql = """SELECT c.* REPLACE(c.event_time_utc::VARCHAR AS event_time_utc,
-          c.observed_at_utc::VARCHAR AS observed_at_utc, c.ingested_at_utc::VARCHAR AS ingested_at_utc), s.normalized_fields FROM comments c JOIN sample_membership m USING(bug_id)
+        sql = """SELECT c.* REPLACE(strftime(c.event_time_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS event_time_utc,
+          strftime(c.observed_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS observed_at_utc, strftime(c.ingested_at_utc, '%Y-%m-%dT%H:%M:%S.%fZ') AS ingested_at_utc), s.normalized_fields FROM comments c JOIN sample_membership m USING(bug_id)
            JOIN bugs b USING(bug_id) JOIN source_records s ON s.source_record_id=c.source_record_id WHERE c.private_flag=false AND c.text_availability='AVAILABLE'
            AND b.snapshot_resolution='FIXED' AND c.body IS NOT NULL
            AND regexp_matches(c.body, '(?i)because|due to|blocked by|waiting for|delayed by')
@@ -549,7 +549,15 @@ def generate(args, root, pins):
 
 
 def load_run(args):
-    run = args.run if args.run else args.output / (args.output / "LATEST_RUN").read_text().strip()
+    if args.run:
+        run = args.run
+    else:
+        latest = args.output / "LATEST_RUN"
+        if not latest.is_file():
+            raise SystemExit("No completed Phase 5 generation exists. Run scripts/run_phase05_generate_benchmark.sh --seed 317 --resume successfully before preparing review.")
+        run = args.output / latest.read_text().strip()
+    if not (run / "manifest.json").is_file():
+        raise SystemExit("The selected run has no completed candidate manifest. Resume generation before preparing review.")
     m = read(run / "manifest.json")
     assert m["identity"]["code_hash"] == version_hash(), "Code changed; generate a new version"
     assert m["identity"]["options"]["seed"] == args.seed, "Seed mismatch"

@@ -33,7 +33,7 @@ From the existing Project root, using the Python environment with free DuckDB 1.
 
 ```bash
 bash scripts/run_phase05_generate_benchmark.sh --dry-run --seed 317
-bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume
+bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume &&
 bash scripts/run_phase05_prepare_review.sh --seed 317 --resume
 ```
 
@@ -69,3 +69,9 @@ Only `*.questions.jsonl` is an inference input: its keys are qid, question, and 
 The fixture suite uses 20 synthetic parents, synthetic history/cache responses and quoted source text. It checks all families, deterministic UTC math/year filters, relation sets, metadata-conflict exclusion, disjoint populations, candidate/answer-hint/future-context rejection, mandatory F5 review, interrupted/prefix guards, review preservation, freeze/resume checksums and inference-file separation. No fixture approval is a real human annotation or corpus result. Full generation and human review remain pending; no method experiment has run.
 
 Latest bounded check: **5 tests passed in 8.4 seconds**. The 20-parent synthetic fixture generated **30 candidates (5 per family), 6 development / 24 test, plus 6 challenges**. Its approvals/freeze are simulated test operations; they establish no real source review or corpus benchmark count.
+
+## Python 3.9 compatibility correction (v1.1)
+
+The first user generation attempt stopped at input verification: DuckDB's default timestamp string ends in `+00`, which Python 3.9 rejects. This introduced 50 false creation-time discrepancies; the actual saved Phase 4 differences were unchanged. All SQL timestamp projections now emit standard ISO UTC (`...Z`) explicitly. Creation-time comparisons and every input integrity gate remain enforced. Version v1.1 selects a new output identity and preserves the earlier failed directory; no dataset/API rerun or manual deletion is needed. Missing/incomplete generation now produces an actionable review-step message instead of an unexplained missing `LATEST_RUN` error. Chain generation and prepare-review with `&&` as above.
+
+Validation in the user's `iqfm` Python 3.9.25 environment: 6 fixture tests passed in 11.1 seconds, including a cached current-metadata response that exercises filing-time comparisons. The bounded real input verification also passed (50 histories, 884 changes, 13 first-FIXED metrics / 9 eligible before further filtering). No full real candidate generation was run by the agent; human review and freeze remain pending.

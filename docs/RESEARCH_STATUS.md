@@ -13,6 +13,7 @@
 - Firefox product: 25,025 distinct bugs. Seed 317 sample contains 3,000 unique Firefox bugs and represents all 18 eligible status/resolution groups; includes 757 open/reopened bugs and 2,539 zero-comment bugs.
 - DuckDB, Parquet, aggregate QC, sample manifest and 20 sanitized examples are in ignored run outputs. All 19 manifest-listed artifacts exist at recorded sizes with SHA-256 fields. No private/unknown-privacy bodies appear in comments/search documents.
 - Base `field_changes` stays empty; its 196,633 first-FIXED durations remain UNKNOWN. The separate verified Phase 4 pilot `cohort-8bb3150d29a598d8` has 50 parsed histories, 884 changes, 13 first-FIXED cases / 37 UNKNOWN, and 17 REOPENED entries. Six overlay hashes and 147 cached response hashes/identities match; no new requests were made.
+- Phase 5 v1.1 fixes Python 3.9 SQL timestamp formatting; 6 native-environment fixture tests and bounded real input verification pass. The failed terminal attempt produced no completed benchmark; rerun generation/review without reimporting data.
 - Phase 5 pins that pilot and the verified 3B manifest. Before metadata/partition filters, 9 first-FIXED cases remain after excluding source differences and same-time ambiguity. Full candidate/family/split counts await the user run; 180 is a target.
 
 ## Evidence gaps and limits
