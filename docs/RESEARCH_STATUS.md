@@ -2,7 +2,7 @@
 
 ## Current phase
 
-**Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 IMPLEMENTED, AWAITING_USER_GENERATION_AND_HUMAN_REVIEW.** The completed 50-bug API pilot was independently checked from local artifacts/caches as the Phase 5 input gate. Benchmark generation/review/freeze runners and fixture tests are implemented; no full benchmark or locked test exists yet. See `docs/PHASE05_BENCHMARK.md`.
+**Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 CANDIDATES GENERATED, AWAITING ASSISTED PREPARATION AND HUMAN REVIEW.** The user-run generation `run-65c5be3381f66811` contains 169 benchmark QIDs and 6 challenges at seed 317, with 592 development / 2,408 test population IDs. The read-only assisted review prep and deterministic validators are implemented and fixture-tested; no full packet audit, F5 judgment, locked test, freeze, or method evaluation has run in the agent session. See `docs/PHASE05_BENCHMARK.md` and `docs/PHASE05_ASSISTED_REVIEW_PROTOCOL.md`.
 
 ## Completed
 
@@ -13,8 +13,8 @@
 - Firefox product: 25,025 distinct bugs. Seed 317 sample contains 3,000 unique Firefox bugs and represents all 18 eligible status/resolution groups; includes 757 open/reopened bugs and 2,539 zero-comment bugs.
 - DuckDB, Parquet, aggregate QC, sample manifest and 20 sanitized examples are in ignored run outputs. All 19 manifest-listed artifacts exist at recorded sizes with SHA-256 fields. No private/unknown-privacy bodies appear in comments/search documents.
 - Base `field_changes` stays empty; its 196,633 first-FIXED durations remain UNKNOWN. The separate verified Phase 4 pilot `cohort-8bb3150d29a598d8` has 50 parsed histories, 884 changes, 13 first-FIXED cases / 37 UNKNOWN, and 17 REOPENED entries. Six overlay hashes and 147 cached response hashes/identities match; no new requests were made.
-- Phase 5 v1.1 fixes Python 3.9 SQL timestamp formatting; 6 native-environment fixture tests and bounded real input verification pass. The failed terminal attempt produced no completed benchmark; rerun generation/review without reimporting data.
-- Phase 5 pins that pilot and the verified 3B manifest. Before metadata/partition filters, 9 first-FIXED cases remain after excluding source differences and same-time ambiguity. Full candidate/family/split counts await the user run; 180 is a target.
+- Phase 5 v1.1 fixes Python 3.9 SQL timestamp formatting; 6 generation fixture tests and bounded real input verification pass. The user subsequently generated 169 candidates and 6 challenges. The queue and its pre-review backup remain byte-identical at SHA-256 `6d2030a6fa0d4abba1a4a6ab09a68465a6f12beb31e9056056ca67b807cb430c`; candidate/challenge SHA-256 values are pinned in the assisted review protocol. Ten fixture tests cover read-only assisted validators and privacy packet helpers. The benchmark is not frozen.
+- Phase 5 pins that pilot and the verified 3B manifest. Before metadata/partition filters, 9 first-FIXED cases remain after excluding source differences and same-time ambiguity. The user-run candidate set is 169 questions + 6 challenges at seed 317; 180 remains a target, not an achieved count. F5 still requires human rationale review.
 
 ## Evidence gaps and limits
 
@@ -34,4 +34,4 @@
 
 ## Next gate
 
-Run Phase 5 generation and prepare-review, inspect actual coverage, review ALL retained F5 and challenge candidates plus required factual/F6 spot checks, and sign off before validate-freeze. See exact terminal commands in `docs/PHASE05_BENCHMARK.md`. No phase beyond benchmark construction is started; no locked test or experiment result is claimed.
+Run `scripts/run_phase05_agent_review_prep.sh --batch 10 --resume` from the user's terminal, inspect its reports, then use Prompt 5B for one F5 packet batch at a time. The human owner must review all retained F5 and challenge candidates plus required factual/F6 spot checks, and sign off before validate-freeze. No phase beyond benchmark construction is started; no locked test or experiment result is claimed.

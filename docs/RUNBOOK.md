@@ -97,20 +97,19 @@ bash scripts/phases/run_phase04_temporal_qc.sh --mode strict --cutoff "$(date -u
 bash scripts/phases/run_phase04_temporal_qc.sh --mode retrospective-replay --cutoff 2024-12-31T23:59:59Z
 ```
 
-Strict mode requires event, observed and ingested times by cutoff. Retrospective replay is not historical availability evidence. The selected experiment is controlled evidence addition/refresh, not real-time drift; see `docs/TEMPORAL_VALIDITY.md`. The user-run 50-bug Phase 4 pilot now passes that input-review gate; Phase 5 still needs generation and signed candidate review.
+Strict mode requires event, observed and ingested times by cutoff. Retrospective replay is not historical availability evidence. The selected experiment is controlled evidence addition/refresh, not real-time drift; see `docs/TEMPORAL_VALIDITY.md`. The user-run 50-bug Phase 4 pilot and Phase 5 candidate-generation gate are complete; Phase 5 still needs assisted packet preparation and signed human review.
 
 
 ## Phase 5 — generate, inspect, review, freeze
 
-Run from the existing Project root, in the free DuckDB Python environment:
+The user's generated run is `outputs/benchmark/phase05/run-65c5be3381f66811/` (169 QIDs + 6 challenges, seed 317). Do not rerun generation or overwrite its queue. For source/gold-generation reproducibility on a future amended version, see [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md). To build read-only validation reports and sanitized comment packets for the current pinned run, execute from the existing Project root in the free DuckDB Python environment:
 
 ```bash
-bash scripts/run_phase05_generate_benchmark.sh --dry-run --seed 317
-bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume &&
-bash scripts/run_phase05_prepare_review.sh --seed 317 --resume
+bash scripts/run_phase05_agent_review_prep.sh --dry-run --batch 10
+bash scripts/run_phase05_agent_review_prep.sh --batch 10 --resume
 ```
 
-Inspect `outputs/benchmark/phase05/LATEST_RUN`, its `summary.json`, `review.html`, and `review_queue.csv`. Review required rows, every retained F5 explanation and challenge, then fill `review_signoff.json`. `--f5-target 10` at generation is an optional smaller review workload; actual coverage must be acknowledged. `--limit 2` creates a smoke prefix that cannot freeze. Resume preserves review edits and recomputes required spot checks after rejections. Full details and review fields: [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md).
+Then use Prompt 5B in [PHASE05_ASSISTED_REVIEW_PROTOCOL.md](PHASE05_ASSISTED_REVIEW_PROTOCOL.md) for one F5 packet batch at a time. Codex recommendations stay separate from the original CSV. The human reviewer checks all retained F5 and challenge items plus required factual/F6 spot checks, completes the exact CSV fields and `review_signoff.json`, then may run the freeze validator. Optional `--limit 10` creates a separate prefix and cannot replace the full packet report. See [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md) for source/gold logic and freeze checks.
 
 After source review and human sign-off only:
 
@@ -121,4 +120,4 @@ bash scripts/run_phase05_validate_freeze.sh --seed 317 --resume
 
 Freeze reads/hashes the 1.89-GB canonical DB once per validation, recomputes deterministic gold, and writes checksummed question/gold artifacts. No source CSV, API job or model call runs. Keep gold/SQL/templates/review text out of inference/retrieval logs; only question exports enter later methods. Do not tune on test/challenge questions. Report actual candidate/review/frozen counts before beginning a later phase.
 
-Phase 5 v1.1 fixes Python 3.9 timestamp compatibility. Retry the chained generation/review commands above in `iqfm`; the corrected version uses a new run identity and retains failed outputs. No source import, API collection, or deletion is required.
+Phase 5 v1.1 fixes Python 3.9 timestamp compatibility. The user-run generation now exists; the assisted prep tool operates only on that pinned run. No source import, API collection, or deletion is required.
