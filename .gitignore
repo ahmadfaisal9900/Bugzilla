@@ -4,6 +4,23 @@
 # Generated outputs, run logs, and local data snapshots
 /outputs/*
 !/outputs/.gitkeep
+
+# Small Phase 5 reviewer handoff only; keep all other outputs ignored.
+!/outputs/benchmark/
+/outputs/benchmark/*
+!/outputs/benchmark/phase05/
+/outputs/benchmark/phase05/*
+!/outputs/benchmark/phase05/agent_review/
+/outputs/benchmark/phase05/agent_review/*
+!/outputs/benchmark/phase05/agent_review/signoff/
+/outputs/benchmark/phase05/agent_review/signoff/*
+!/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/
+/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/*
+!/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/review_server.py
+!/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff.html
+!/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff_queue.csv
+!/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff_queue.before_review.csv
+!/outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/REVIEW_BUNDLE.json
 /logs/*
 !/logs/.gitkeep
 /data/raw/

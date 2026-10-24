@@ -1,0 +1,81 @@
+{
+  "benchmark_candidates": 169,
+  "challenges_counted_as_independent": false,
+  "coverage_limits": {
+    "F2_target_shortfall": 11,
+    "F5_population": "FIXED-selected public comments",
+    "historical_as_of_questions": 0
+  },
+  "decision_scope": "Recorded UI signoffs only; not an audited transfer to review_queue.csv or a freeze.",
+  "excluded": "Datasets, canonical databases/Parquet, full comment packets, API cache and unselected generated outputs are not redistributed. Request matching local evidence from owner if needed.",
+  "immutable_columns": [
+    "priority_rank",
+    "priority",
+    "qid",
+    "record_kind",
+    "parent_qid",
+    "benchmark_counted",
+    "required",
+    "review_requirement",
+    "family",
+    "split",
+    "question",
+    "typed_candidate_gold_json",
+    "agent_recommendation",
+    "agent_reason",
+    "agent_confidence_uncalibrated",
+    "agent_corrected_gold_suggestion_json",
+    "agent_corrected_question_suggestion",
+    "deterministic_status",
+    "deterministic_checks_failed",
+    "source_evidence_compact_json",
+    "exact_source_hashes_json",
+    "packet_path",
+    "packet_sha256",
+    "concern_uncertainty",
+    "second_reviewer",
+    "second_decision"
+  ],
+  "immutable_rows_sha256": "657c5157e2e03889b9227be9c10afb06f3e6d2ead94ecfae25075100e8695d73",
+  "mutable_checksum_note": "packaged_file_sha256.signoff_queue.csv is a historical packaging hash; subsequent genuine reviews change it. Compare immutable columns to the backup with review_server.py --check.",
+  "packaged_at_utc": "2026-10-24T00:09:16.448426+00:00",
+  "packaged_file_sha256": {
+    "review_server.py": "c7f4b4cc9fa201b35134635f1ce3d64a1745efee689cb2add874723eeb5b2e12",
+    "signoff.html": "1283f53a57b97e9323c09d20d0633251b946cf06adfd56a9a7ae5b3ec2bc8b6f",
+    "signoff_queue.before_review.csv": "5045f71ecad4c4687d8a3349d1324a9de352c783c19792c3527e1c19a5c35c14",
+    "signoff_queue.csv": "396d526304bcbbaf152086090667acf96b06a2fb8d95fa651b03fecc0068ddd3"
+  },
+  "packaged_required_decisions": {
+    "APPROVE": 6,
+    "PENDING": 58
+  },
+  "prior_prep_state_note": "Manifest remains RUNNING although checkpoint COMPLETE and summary PREPARED; artifacts are complete/hash-verified.",
+  "required_breakdown": {
+    "F1_F4_spotchecks": 22,
+    "F5_candidates": 30,
+    "F6_controls": 6,
+    "supplemental_challenges": 6
+  },
+  "required_rows": 64,
+  "review_guidance": "Do not use current live status as archive snapshot proof or Codex advice as a human source check. Skip if evidence is insufficient.",
+  "run_id": "run-65c5be3381f66811",
+  "schema_version": 1,
+  "seed": 317,
+  "source_hashes": {
+    "candidates_sha256": "3e3d0d8002c5fce2ef075fb8ded5611318954d2ffc808efb9994f9bdf39dfa38",
+    "challenges_sha256": "f668c668b96a1b16ec909fe37f4518d71e1c527cd7a7965f5b16e4a6a365f6b6",
+    "generation_manifest_sha256": "6a2c93a6e20cc93a0f4fea8003b5e284c465cd80943cbd353a68fccb9ed1c1ae",
+    "official_queue_backup_sha256": "6d2030a6fa0d4abba1a4a6ab09a68465a6f12beb31e9056056ca67b807cb430c",
+    "official_review_queue_sha256": "6d2030a6fa0d4abba1a4a6ab09a68465a6f12beb31e9056056ca67b807cb430c",
+    "phase03b_manifest_sha256": "3c924a3741c75230d3a307b7335814f7075108528eebc43a50e2f827bb5daccf",
+    "phase04_checkpoint_sha256": "a69ed2bedd6f5682441317b468e82a3d3349c312f305537bb473c9b51c7c7801",
+    "phase04_summary_sha256": "831252b846a70cea4594b8d422300ae3a3f22af7941c1862552156ed04d1519c",
+    "population_manifest_declared_sha256": "6acc0612bb8b2a03943c521aeb3ac87cfa8ce2826cad6b257bffea8aa1dd37e3",
+    "population_manifest_file_sha256": "24ccd964af2e2c2f0b319af4b9f8a82e8b4f054a3c717ce41a5991d8392f5d6a",
+    "recommendations_sha256": "b772b32b8e21d7b5edee07bd40843f8a29ae63c8d38d5f0398db114cc0ae7566",
+    "saved_assisted_summary_sha256": "8ab9f9b5da6308aeab4064b89e7956633ae36ed4edd7f4876fc2d6371c620e35",
+    "saved_assisted_validation_report_sha256": "1e0aa2ad675a4453466c143cb4335f7c65cab821647a16e2bdf8d033b5016749"
+  },
+  "state": "AWAITING_COMPLETED_HUMAN_REVIEW_AND_OWNER_VALIDATION",
+  "supplemental_challenges": 6
+}

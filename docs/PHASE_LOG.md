@@ -1,5 +1,7 @@
 # Phase log
 
+2026-10-23 — Phase 5 partner handoff: README now covers fresh-clone setup, the local review UI, decision semantics, 64 required source reviews, safe partner synchronization, and the owner-only freeze gate. `requirements.txt` pins the existing DuckDB dependency. Five named small review files are allowed under `outputs/`; datasets, API caches, full comment packets and all other generated outputs remain ignored. Packaging preserves all 175 qids, immutable evidence/source hashes, the pre-review backup and six existing recorded approvals (58 required pending). The browser now exposes saved compact evidence and exact source hashes in technical details. `.gitattributes` preserves both CSVs byte-for-byte across platforms, including their intentional CRLF endings. Bounded checks passed: isolated two-row review fixture (source/rationale guards, backup and immutable fields), browser script syntax, current queue `--check`, and packaged file hashes. This does not transfer signoffs, validate the answers, or freeze the benchmark. The planned `docs/Project Report.pdf` is documented as forthcoming.
+
 | Phase | Scope | State | Acceptance / next gate |
 |---|---|---|---|
 | 0 | Project structure, Git safety, and research workspace | Commit `e706e3f`; present in origin history | Required skeleton and tracking docs exist; roadmap unchanged; datasets and generated artifacts ignored; bounded structure checks passed. |

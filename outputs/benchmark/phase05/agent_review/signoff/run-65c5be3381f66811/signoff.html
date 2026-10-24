@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bugzilla research — review questions</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202935;background:#f6f8fc;font-size:15px}
+*{box-sizing:border-box} body{margin:0;min-height:100vh}button,input,textarea,select{font:inherit}
+header{background:#fff;border-bottom:1px solid #e2e8f1;padding:15px max(22px,calc((100vw - 1130px)/2));display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.logo{font-size:16px;font-weight:780;letter-spacing:-.35px}.muted{color:#677489;font-size:13px}.save-state{font-size:12px;color:#176956;font-weight:640}
+.shell{max-width:1130px;margin:22px auto;padding:0 22px;display:grid;grid-template-columns:265px 1fr;gap:20px;align-items:start}
+aside,.card,.hero{background:white;border:1px solid #e0e6ee;border-radius:14px;box-shadow:0 4px 14px rgba(25,39,57,.03)}aside{padding:18px;position:sticky;top:15px}
+main{min-width:0}.hero{padding:23px 26px;margin-bottom:16px}.hero h1{margin:0 0 5px;font-size:24px;letter-spacing:-.65px}.hero p{margin:4px 0;color:#607086;line-height:1.55}
+.progressrow{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-top:20px;font-weight:650}.track{height:9px;background:#edf0f5;border-radius:20px;overflow:hidden;margin:10px 0}.fill{width:0;height:100%;background:#2563eb;transition:width .2s}
+label{display:block;font-size:13px;font-weight:700;color:#344154;margin:0 0 7px}.textinput{display:block;width:100%;border:1px solid #ccd5e1;border-radius:9px;padding:11px 12px;outline:0;background:white;color:#1d2939}.textinput:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #e1edff}textarea.textinput{min-height:85px;resize:vertical;line-height:1.55}
+.btn{border:1px solid #d3dce8;border-radius:9px;background:white;color:#223046;padding:10px 13px;cursor:pointer;font-weight:650;line-height:1.2}.btn:hover{background:#f2f6ff}.btn:focus-visible{outline:3px solid #93c5fd}.btn.primary{background:#2563eb;border-color:#2563eb;color:white}.btn.primary:hover{background:#1954d4}.btn.good{background:#eaf6ef;color:#126742;border-color:#bee0cc}.btn.good:hover{background:#daf1e3}.btn.warn{color:#7b4a08;background:#fff8eb;border-color:#edd1a0}.btn.bad{color:#a02e35;background:#fff1f1;border-color:#efc2c3}.btn:disabled{opacity:.5;cursor:not-allowed}.btn.small{padding:8px 10px;font-size:12px}
+.stack{display:flex;flex-direction:column;gap:9px}.divider{border:0;border-top:1px solid #ecf0f5;margin:18px 0}.stat{display:flex;justify-content:space-between;gap:8px;margin:10px 0;font-size:13px}.stat strong{font-variant-numeric:tabular-nums}.chip{display:inline-block;border-radius:7px;background:#edf3ff;color:#3458a2;padding:5px 9px;font-size:12px;font-weight:680}.chip.orange{background:#fff1d9;color:#855a10}.chip.green{background:#e8f5ee;color:#206849}.chip.gray{background:#f0f2f4;color:#536076}
+.card{padding:24px 26px}.between{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.question{font-size:21px;line-height:1.5;letter-spacing:-.36px;margin:20px 0 8px;font-weight:720}.subtext{font-size:13px;color:#68768a;line-height:1.5}
+.answer{border:1px solid #dfebe6;background:#f4faf7;border-radius:11px;padding:17px 18px;margin:19px 0}.answer h3{margin:0 0 9px;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:#4b7462}.answer-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;line-height:1.6;color:#223e33;font-weight:590}
+.agent{background:#f6f8fc;border:1px solid #e5eaf3;border-radius:10px;padding:14px 17px;margin:15px 0}.agent strong{display:block;margin-bottom:6px;font-size:13px}.agent p{margin:0;color:#516074;font-size:13px;line-height:1.6}
+.evidence{margin:14px 0 18px}.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}.links a{border:1px solid #d7e1ed;background:white;color:#1d5da1;text-decoration:none;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:650}.links a:hover{background:#eef5ff}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 13px;border:1px solid #e2e8f0;border-radius:9px;margin-top:9px;cursor:pointer;font-weight:560;color:#344154;font-size:13px}.check input{width:17px;height:17px;margin-top:0;accent-color:#2563eb;flex-shrink:0}.check.secondary{background:#f9fbfd}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.nav{display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px solid #ebeff5;margin-top:20px;padding-top:18px}
+#editPane{margin-top:14px;background:#fff9ef;border:1px solid #f1d4a0;border-radius:10px;padding:16px}#editPane p{font-size:13px;color:#7d5b25;line-height:1.5}.hidden{display:none!important}
+details{font-size:12px;color:#6b7481;border-top:1px solid #edf0f4;padding:10px 0;margin-top:15px}summary{cursor:pointer;font-weight:620}pre{max-height:210px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;color:#536073;background:#f4f6fa;border-radius:8px;padding:12px}
+.toast{margin:12px 0;background:#fff1f1;color:#a32e2e;padding:11px 12px;border-radius:8px;font-size:13px}.welcome{line-height:1.7}.welcome .btn{margin:8px 8px 0 0}.footerhint{font-size:12px;color:#7a8595;margin:17px 0}.kicker{font-size:11px;font-weight:760;text-transform:uppercase;letter-spacing:.6px;color:#57709a}
+@media(max-width:800px){.shell{grid-template-columns:1fr;gap:12px;margin-top:12px}aside{position:static}.card,.hero{padding:19px}header{padding:12px 20px}.question{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+ <div><span class="logo">Bugzilla Research <span style="color:#8091a9;font-weight:500">/ Question review</span></span><div class="muted">Phase 5 · Human verification</div></div>
+ <span id="saveStatus" class="save-state">Opening review data…</span>
+</header>
+<div class="shell">
+ <aside>
+  <div class="kicker">Your progress</div>
+  <div style="font-size:31px;font-weight:780;letter-spacing:-.8px;margin:3px 0"><span id="doneCount">0</span><span style="color:#a6b0bd;font-size:19px"> / <span id="totalCount">64</span></span></div>
+  <div class="track"><div id="progress" class="fill"></div></div>
+  <p class="muted" style="margin:9px 0 18px">Decisions saved in the same CSV when using the local server.</p>
+  <label for="reviewer">Your name (required)</label>
+  <input class="textinput" id="reviewer" placeholder="e.g. Course project reviewer" autocomplete="name">
+  <hr class="divider">
+  <label for="filter">Show questions</label>
+  <select class="textinput" id="filter">
+    <option value="pending">Still needs review</option>
+    <option value="required">All 64 required</option>
+    <option value="F5">Explanation questions</option>
+    <option value="all">All 175 entries (read-only extras)</option>
+  </select>
+  <div class="stat"><span>Approved</span><strong id="nApproved">0</strong></div>
+  <div class="stat"><span>Corrected</span><strong id="nCorrected">0</strong></div>
+  <div class="stat"><span>Rejected</span><strong id="nRejected">0</strong></div>
+  <div class="stat"><span>Remaining</span><strong id="nRemaining">64</strong></div>
+  <hr class="divider">
+  <div class="stack">
+    <button class="btn small" id="csvOpen">Open a CSV file</button>
+    <button class="btn small" id="saveCSV">Save / export CSV</button>
+  </div>
+  <p class="muted" style="line-height:1.5;font-size:11px">If the local server is running, changes are saved automatically. If you opened this HTML directly, open your CSV first, then export it.</p>
+  <input type="file" id="fileInput" accept=".csv,text/csv" class="hidden">
+ </aside>
+ <main>
+  <section class="hero">
+   <h1>Check the answers, not the technical details.</h1>
+   <p>Read the question and proposed answer. Open the original evidence. Then choose whether it is correct, needs a change, or should be excluded.</p>
+  </section>
+  <section class="card" id="welcome">
+   <div class="welcome"><h2>Open your review list</h2>
+   <p>For the simplest experience, place <code>signoff.html</code>, <code>signoff_queue.csv</code>, and <code>review_server.py</code> in the same folder and run <code>python3 review_server.py</code>. The browser then saves every decision directly into the existing CSV.</p>
+   <p>Alternatively, open the CSV here, review the questions, then use <strong>Save / export CSV</strong> to save your edits.</p>
+   <button class="btn primary" id="chooseBtn">Open CSV</button>
+   </div>
+  </section>
+  <section class="card hidden" id="reviewCard">
+   <div class="between"><div><span id="family" class="chip"></span> <span id="kind" class="chip gray"></span></div><span class="muted" id="position"></span></div>
+   <h2 id="question" class="question"></h2>
+   <div class="subtext" id="scope"></div>
+   <div class="answer"><h3>Proposed answer</h3><div class="answer-body" id="answer"></div></div>
+   <div class="agent"><strong id="adviceTitle">Codex review suggestion</strong><p id="advice"></p></div>
+   <div class="evidence"><label>Check the original information</label><div class="links" id="sources"></div></div>
+   <label class="check"><input type="checkbox" id="checked"><span>I checked the original source or verified evidence. <span class="muted">Required before approving.</span></span></label>
+   <label class="check secondary hidden" id="rationaleRow"><input type="checkbox" id="rationale"><span>The developer's comment actually supports this explanation. <span class="muted">Required for explanation answers.</span></span></label>
+   <div id="editPane" class="hidden">
+    <label for="fixText" id="fixLabel">Corrected answer</label>
+    <textarea id="fixText" class="textinput" placeholder="Write a clear evidence-supported answer"></textarea>
+    <label for="fixQuestion" style="margin-top:10px">Corrected question (only if necessary)</label>
+    <textarea id="fixQuestion" class="textinput" rows="2"></textarea>
+    <p>For numerical or factual mistakes, usually choose <strong>Reject</strong> and ask Codex to regenerate the question. Gold answers must match independently verified calculations.</p>
+   </div>
+   <div style="margin-top:14px"><label for="note">Notes <span class="muted">(optional unless rejecting)</span></label><textarea id="note" rows="2" class="textinput" placeholder="What was unclear or incorrect?"></textarea></div>
+   <div class="actions">
+    <button class="btn good" id="approve">✓ Looks correct</button>
+    <button class="btn warn" id="correct">✎ Needs a fix</button>
+    <button class="btn bad" id="reject">✕ Reject this question</button>
+    <button class="btn" id="skip">Skip for now</button>
+   </div>
+   <div id="error" class="toast hidden" role="alert"></div>
+   <div class="nav"><button class="btn small" id="prev">← Previous</button><span id="navText" class="muted"></span><button class="btn small" id="next">Next →</button></div>
+   <details><summary>Full original question and technical audit details (optional)</summary><div><strong>Exact question</strong><p id="rawQuestion"></p><strong>Source tracking (unchanged)</strong><pre id="technical"></pre></div></details>
+  </section>
+  <p class="footerhint">No choices are pre-approved. Codex recommendations are suggestions, not evidence of human sign-off. Source hashes and all 37 existing CSV columns are preserved.</p>
+ </main>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let fields=[], rows=[], visible=[], index=0, server=false, handle=null, changes=0, loaded=false, editMode=false;
+const families={F1:'Bug facts',F2:'Bug lifecycle',F3:'Counts and statistics',F4:'Bug relationships',F5:'Developer explanations',F6:'Unanswerable questions'};
+const mutable=['human_review_state','human_review_classification','decision','reviewer','reviewed_at_utc','source_checked','rationale_present','corrected_gold_json','corrected_question','note'];
+function safeParse(s,fallback){try{return JSON.parse(s)}catch{return fallback}}
+function csvParse(text){
+ text=text.replace(/^\uFEFF/,'');let out=[],item='',row=[],quoted=false;
+ for(let i=0;i<text.length;i++){
+  const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){item+='"';i++}else if(c==='"')quoted=false;else item+=c}
+  else if(c==='"')quoted=true;else if(c===','){row.push(item);item=''}
+  else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(item);item='';if(row.length>1||row[0]!=='')out.push(row);row=[]}
+  else item+=c;
+ }
+ if(item!==''||row.length){row.push(item);out.push(row)}
+ if(out.length<2)throw Error('This CSV has no question records.');
+ const f=out.shift();if(f.length<30||!f.includes('qid')||!f.includes('decision'))throw Error('Unexpected CSV columns. Choose signoff_queue.csv.');
+ return {fields:f,rows:out.map((r,i)=>{if(r.length!==f.length)throw Error('Malformed CSV row '+(i+2));return Object.fromEntries(f.map((k,j)=>[k,r[j]]))})};
+}
+function csvWrite(f,r){return '\uFEFF'+[f,...r.map(x=>f.map(k=>x[k]??''))].map(cells=>cells.map(x=>{x=String(x);return /[",\r\n]/.test(x)?'"'+x.replaceAll('"','""')+'"':x}).join(',')).join('\r\n')+'\r\n'}
+function setStatus(s,color){$('saveStatus').textContent=s;$('saveStatus').style.color=color||'#176956'}
+function setData(data,fromServer){
+ fields=data.fields;rows=data.rows;server=fromServer;loaded=true;index=0;
+ if(new Set(rows.map(r=>r.qid)).size!==rows.length)throw Error('Duplicate question IDs in CSV');
+ $('welcome').classList.add('hidden');$('reviewCard').classList.remove('hidden');
+ setStatus(fromServer?'Connected · changes save automatically':'CSV opened · save when finished');refresh(true)
+}
+async function start(){
+ if(location.protocol.startsWith('http')){
+  try{let r=await fetch('/api/queue',{cache:'no-store'});if(r.ok){setData(await r.json(),true);return}}catch(e){}
+ }
+ $('welcome').classList.remove('hidden');setStatus('Open CSV to begin','#8b6419')
+}
+function required(r){return (r.required||'').toUpperCase()==='YES'}
+function pending(r){return (r.decision||'PENDING').toUpperCase()==='PENDING'}
+function currentFilter(){return $('filter').value}
+function refresh(reset=false){
+ if(!loaded)return;
+ const filter=currentFilter();const prev=visible[index]?.qid;
+ visible=rows.filter(r=>filter==='all'||(filter==='required'&&required(r))||(filter==='pending'&&required(r)&&pending(r))||(filter==='F5'&&r.family==='F5'&&required(r)));
+ if(reset)index=0;else if(prev){const k=visible.findIndex(r=>r.qid===prev);if(k>=0)index=k;else index=Math.min(index,visible.length-1)}
+ index=Math.min(Math.max(0,index),Math.max(0,visible.length-1));
+ const req=rows.filter(required),done=req.filter(r=>!pending(r));
+ $('doneCount').textContent=done.length;$('totalCount').textContent=req.length;
+ $('progress').style.width=(req.length?(done.length/req.length*100):0)+'%';
+ for(const [id,dec] of [['nApproved','APPROVE'],['nCorrected','CORRECT'],['nRejected','REJECT']]) $(id).textContent=done.filter(r=>r.decision===dec).length;
+ $('nRemaining').textContent=req.length-done.length;
+ render()
+}
+function answerText(r){
+ const g=safeParse(r.typed_candidate_gold_json,{});
+ switch(g.type){case 'string':case 'integer':return String(g.value??'');
+ case 'id_set':return (g.value||[]).map(x=>'Bug #'+x).join(', ')||'No recorded related bugs';
+ case 'calendar_duration':return `${Number(g.days||0).toFixed(2)} calendar days (${Number(g.hours||0).toFixed(2)} hours)\nFirst FIXED: ${g.first_fixed_at_utc||'unknown'}`;
+ case 'unknown':case 'unanswerable':return `Not established from the available evidence.\n${g.reason||''}`.trim();
+ case 'supported_explanation':return (g.claims||[]).map(x=>x.text).filter(Boolean).join('\n\n')||'No proposed explanation';
+ default:return JSON.stringify(g,null,2)
+ }
+}
+function friendlyQuestion(r){
+ let s=r.question||'';
+ if(r.family==='F5'){
+  const n=s.match(/(?:Firefox (?:issue|bug)|bug)\s+(\d+)/i);if(n)return `What reason or constraint does the developer mention about bug #${n[1]}?`;
+ }
+ if(r.family==='F2'){
+  let n=s.match(/(?:Firefox (?:issue|bug)|bug)\s+(\d+)/i);
+  if(n && /REOPENED|reopen/i.test(s))return `How many times was Firefox bug #${n[1]} recorded as reopened?`;
+  if(n && /FIXED/i.test(s))return `How many calendar hours did it take bug #${n[1]} to reach its first verified FIXED status?`;
+ }
+ if(r.family==='F3'){
+  const yr=s.match(/creation_year\s*=\s*(\d{4})/),part=s.match(/partition\s+(dev|test)/i);
+  if(yr&&part)return `How many distinct Firefox bugs were filed in ${yr[1]} in the ${part[1].toLowerCase()==='dev'?'development':'test'} sample?`;
+ }
+ s=s.replace(/^Consult the named archive\/evidence version\.\s*/,'').replace(/^Using the specified frozen evidence,\s*/,'');
+ const idx=s.indexOf(' The source snapshot date is UNKNOWN.');if(idx>=0)s=s.slice(0,idx).trim()+'.';
+ return s
+}
+function evidenceLinks(r){const a=safeParse(r.source_evidence_compact_json,[]), seen=new Set(),out=[];
+ for(const e of a){const url=e.source_url||'';if(!/^https:\/\/(bugzilla\.mozilla\.org|zenodo\.org)\//i.test(url)||seen.has(url))continue;seen.add(url);
+ let name=url.includes('zenodo')?'Dataset source':'Open original bug';if(url.includes('#c'))name='Open original comment';if(url.includes('/history'))name='Open bug history';
+ out.push({url,name});if(out.length>=5)break
+ }return out
+}
+function render(){
+ $('error').classList.add('hidden');$('editPane').classList.add('hidden');editMode=false;
+ if(!visible.length){$('reviewCard').classList.add('hidden');$('welcome').classList.remove('hidden');$('welcome').innerHTML='<div class="welcome"><h2>No questions left in this view</h2><p>All required reviews may be finished. Change the filter to inspect completed decisions.</p></div>';return}
+ $('reviewCard').classList.remove('hidden');$('welcome').classList.add('hidden');
+ const r=visible[index];$('position').textContent=`${index+1} of ${visible.length}`;
+ $('family').textContent=`${r.family} · ${families[r.family]||'Question'}`;
+ $('kind').textContent=r.record_kind==='SUPPLEMENTAL_CHALLENGE'?'Extra challenge':(r.split==='dev'?'Development':'Test')+' question';
+ $('question').textContent=friendlyQuestion(r);
+ $('scope').textContent=r.family==='F3'?'Count only the specified sample and partition — not all Mozilla bugs.':r.family==='F2'?'Calendar duration is not developer working time.':r.family==='F5'?'This question comes from comments associated with FIXED-resolution bugs.':'Answer from the saved dataset, not the website’s current status.';
+ $('answer').textContent=answerText(r);
+ const a=r.agent_recommendation;
+ $('adviceTitle').textContent= a==='RECOMMEND_APPROVE'?'Codex: likely correct':a==='RECOMMEND_CORRECT'?'Codex: suggests an improvement':a==='RECOMMEND_REJECT'?'Codex: suggests rejecting':a==='ESCALATE'?'Codex: uncertain — please check carefully':'Automated record check';
+ $('advice').textContent=r.agent_reason||'No special recommendation.';
+ const sources=$('sources');sources.replaceChildren();for(const x of evidenceLinks(r)){const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.name+' ↗';sources.append(a)}
+ if(!sources.children.length)sources.textContent='No public link in this review record. Check local evidence packet.';
+ $('rationaleRow').classList.toggle('hidden',r.family!=='F5');
+ $('checked').checked=r.source_checked==='YES';$('rationale').checked=r.rationale_present==='YES';
+ $('note').value=r.note||'';$('fixText').value='';$('fixQuestion').value=r.corrected_question||'';
+ $('fixLabel').textContent=r.family==='F5'?'Correct explanation (in plain English)':'Correct answer (if independently verifiable)';
+ if(r.family==='F5'){const sg=safeParse(r.agent_corrected_gold_suggestion_json,{});if(sg.claims?.length)$('fixText').value=sg.claims.map(x=>x.text||'').join('\n\n');}
+ $('rawQuestion').textContent=r.question;
+ $('technical').textContent=['QID: '+r.qid,'Decision: '+r.decision,'Automated checks: '+r.deterministic_status,'Issues: '+r.deterministic_checks_failed,'Candidate gold JSON: '+r.typed_candidate_gold_json,'Saved evidence fields: '+JSON.stringify(safeParse(r.source_evidence_compact_json,[]),null,2),'Exact source hashes: '+JSON.stringify(safeParse(r.exact_source_hashes_json,[]),null,2),'Source packet (local owner files): '+r.packet_path,'Packet hash: '+r.packet_sha256].join('\n');
+ const extra=!required(r);for(const b of ['approve','correct','reject','skip'])$(b).disabled=extra;
+ $('navText').textContent=extra?'Not selected for human review':(pending(r)?'Awaiting your decision':'Saved: '+r.decision);
+ $('prev').disabled=index===0;$('next').disabled=index===visible.length-1;
+}
+function makePayload(decision){
+ const r=visible[index];const reviewer=$('reviewer').value.trim();
+ if(decision!=='PENDING'&&!reviewer)throw Error('Enter your name in the left sidebar.');
+ const checked=$('checked').checked,rationale=$('rationale').checked,note=$('note').value.trim();
+ if(['APPROVE','CORRECT'].includes(decision)&&!checked)throw Error('Open the source and tick “I checked the original source.”');
+ if(r.family==='F5'&&['APPROVE','CORRECT'].includes(decision)&&!rationale)throw Error('Confirm the source comment actually explains the reason, or reject it.');
+ if(decision==='REJECT'&&!note)throw Error('Please add a brief rejection reason in Notes.');
+ let corrected_gold_json='',corrected_question='';
+ if(decision==='CORRECT'){
+  corrected_question=$('fixQuestion').value.trim();const corrected=$('fixText').value.trim();
+  if(r.family==='F5'){
+   if(corrected){const old=safeParse(r.typed_candidate_gold_json,{}),eid=old.claims?.[0]?.evidence_id;
+    if(!eid)throw Error('Missing evidence ID: ask Codex to repair this question instead.');
+    corrected_gold_json=JSON.stringify({type:'supported_explanation',claims:[{evidence_id:eid,text:corrected}]})
+   }
+  }else if(corrected){const obj=safeParse(r.typed_candidate_gold_json,{});
+   if(!['integer','string','id_set'].includes(obj.type))throw Error('This answer needs an agent-verified regeneration. Reject it and explain the error.');
+   if(obj.type==='integer'){if(!/^-?\d+$/.test(corrected))throw Error('Enter an exact integer');obj.value=Number(corrected)}
+   else if(obj.type==='id_set')obj.value=corrected.split(/[\s,]+/).map(x=>x.replace(/^#/,'')).filter(Boolean);
+   else obj.value=corrected;corrected_gold_json=JSON.stringify(obj)
+  }
+  if(!corrected_gold_json&&!corrected_question)throw Error('To correct an answer, write the replacement explanation or question. Otherwise choose Reject.');
+ }
+ return {qid:r.qid,decision,reviewer,source_checked:checked,rationale_present:rationale,note,corrected_gold_json,corrected_question}
+}
+function applyLocally(r,p){
+ r.decision=p.decision;r.reviewer=p.decision==='PENDING'?'':p.reviewer;
+ r.reviewed_at_utc=p.decision==='PENDING'?'':new Date().toISOString();
+ r.source_checked=p.decision==='PENDING'?'':p.source_checked?'YES':'NO';
+ r.rationale_present=r.family==='F5'&&p.decision!=='PENDING'?(p.rationale_present?'YES':'NO'):'';
+ r.corrected_gold_json=p.decision==='CORRECT'?p.corrected_gold_json:'';r.corrected_question=p.decision==='CORRECT'?p.corrected_question:'';
+ r.note=p.decision==='PENDING'?'':p.note;
+ r.human_review_state=p.decision==='PENDING'?'PENDING_NOT_HUMAN_VERIFIED':'HUMAN_REVIEWED';
+ r.human_review_classification=p.decision==='PENDING'?'PENDING':p.decision==='REJECT'?'HUMAN_REJECTED':'HUMAN_VERIFIED';
+}
+async function submit(decision){
+ try{
+  const p=makePayload(decision);const r=visible[index];
+  if(server){const response=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+   const result=await response.json();if(!response.ok)throw Error(result.error||'Could not save review');Object.assign(r,result.row);setStatus('Saved directly to signoff_queue.csv ✓');
+  }else{applyLocally(r,p);changes++;setStatus('Changes not yet exported','#9a650e');}
+  refresh(false)
+ }catch(e){$('error').textContent=e.message;$('error').classList.remove('hidden')}
+}
+async function openCSV(){
+ if(window.showOpenFilePicker){try{const picked=await showOpenFilePicker({types:[{description:'CSV data',accept:{'text/csv':['.csv']}}],multiple:false});handle=picked[0];const file=await handle.getFile();setData(csvParse(await file.text()),false);setStatus('CSV connected · Save writes into selected file');return}catch(e){if(e.name==='AbortError')return}}
+ $('fileInput').click()
+}
+async function saveCSV(){
+ if(!loaded){alert('Open signoff_queue.csv first.');return}
+ if(server){alert('Your reviews are saved automatically in signoff_queue.csv after every decision.');return}
+ const text=csvWrite(fields,rows);
+ if(handle){try{const w=await handle.createWritable();await w.write(text);await w.close();changes=0;setStatus('Saved directly to selected signoff_queue.csv ✓');return}catch(e){alert('Could not save in place. A downloadable CSV will be offered instead.')}}
+ const blob=new Blob([text],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='signoff_queue.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);changes=0;setStatus('CSV exported · replace the original file with the download','#9a650e')
+}
+$('reviewer').value=localStorage.getItem('bugzilla_reviewer')||'';$('reviewer').addEventListener('input',()=>localStorage.setItem('bugzilla_reviewer',$('reviewer').value));
+$('filter').addEventListener('change',()=>refresh(true));$('approve').onclick=()=>submit('APPROVE');$('reject').onclick=()=>submit('REJECT');$('skip').onclick=()=>submit('PENDING');
+$('correct').onclick=()=>{if(!editMode){editMode=true;$('editPane').classList.remove('hidden');$('correct').textContent='Save correction';return}submit('CORRECT')};
+$('prev').onclick=()=>{index--;render()};$('next').onclick=()=>{index++;render()};
+$('csvOpen').onclick=openCSV;$('chooseBtn').onclick=openCSV;$('saveCSV').onclick=saveCSV;
+$('fileInput').onchange=async e=>{const file=e.target.files[0];if(!file)return;handle=null;try{setData(csvParse(await file.text()),false)}catch(err){alert(err.message)}};
+window.addEventListener('beforeunload',e=>{if(!server&&changes){e.preventDefault();e.returnValue=''}});
+start();
+</script>
+</body></html>

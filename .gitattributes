@@ -1,0 +1,3 @@
+# Preserve reviewer CSV bytes/hashes across operating systems. CRLF is intentional.
+outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff_queue.csv -text whitespace=cr-at-eol
+outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff_queue.before_review.csv -text whitespace=cr-at-eol

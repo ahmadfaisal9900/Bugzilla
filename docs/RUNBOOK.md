@@ -1,5 +1,19 @@
 # Runbook
 
+## Partner human review (existing Phase 5 bundle)
+
+See `README.md` for fresh-clone setup, decision meanings, F5 rubric, partner Git synchronization and freeze commands. From the repository root:
+
+```bash
+cd "outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811"
+python3 review_server.py
+# Open http://127.0.0.1:8765/; enter your name and check source evidence.
+# After Ctrl+C:
+python3 review_server.py --check
+```
+
+The five-file tracked bundle preserves all 175 qids and its original queue backup. Only its 64 required rows need human decisions; six challenges remain supplemental. The server saves UI signoffs to `signoff_queue.csv`, not the original generation `review_queue.csv`. The owner must audit/transfer genuine decisions and sign the global declaration before full terminal validation. Saved full packets, population manifests and canonical data remain local; request them from the owner if a linked page and saved compact evidence are insufficient. All other outputs remain ignored. Do not rebuild completed data phases to open the UI.
+
 ## Environment setup
 
 The project root is `/home/ict317/master's/ENSF 621/Project/`. Phase 3A adds no runtime dependencies or install step; its wrapper sets `PYTHONPATH=src`. For a direct module invocation, use `PYTHONPATH=src python -m bugzilla_qa.data.profile`. Create an isolated environment only when a later phase adds required packages and a matching dependency manifest:

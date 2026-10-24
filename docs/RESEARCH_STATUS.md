@@ -2,7 +2,9 @@
 
 ## Current phase
 
-**Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 CANDIDATES GENERATED, AWAITING ASSISTED PREPARATION AND HUMAN REVIEW.** The user-run generation `run-65c5be3381f66811` contains 169 benchmark QIDs and 6 challenges at seed 317, with 592 development / 2,408 test population IDs. The read-only assisted review prep and deterministic validators are implemented and fixture-tested; no full packet audit, F5 judgment, locked test, freeze, or method evaluation has run in the agent session. See `docs/PHASE05_BENCHMARK.md` and `docs/PHASE05_ASSISTED_REVIEW_PROTOCOL.md`.
+**Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 CANDIDATES GENERATED, AWAITING COMPLETED HUMAN REVIEW AND VALIDATION.** The user-run generation `run-65c5be3381f66811` contains 169 benchmark QIDs and 6 supplemental challenges at seed 317, with 592 development / 2,408 test population IDs. Assisted review outputs and Codex recommendations are advisory; no frozen benchmark or method evaluation is claimed. See `docs/PHASE05_BENCHMARK.md` and `docs/PHASE05_ASSISTED_REVIEW_PROTOCOL.md`.
+
+The partner review bundle is explicitly tracked under `outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/`; setup and browser review instructions are in `README.md`. At packaging on 2026-10-23 it has six recorded approvals and 58 remaining of 64 required reviews. These are signoff-sheet records, not yet transferred to the original generation queue or verified by the freeze validator. The original pre-review backup is preserved. Only the review interface, queues and small provenance manifest are shared; raw/full comment packets, databases and other outputs remain ignored.
 
 ## Completed
 
@@ -28,10 +30,10 @@
 ## Environment and repository
 
 - Root: `/home/ict317/master's/ENSF 621/Project/`; `origin` remains `https://github.com/ahmadfaisal9900/Bugzilla.git`.
-- Inputs remain read-only in ignored `Dataset/`; generated databases, Parquet and reports remain ignored under `outputs/`.
+- Inputs remain read-only in ignored `Dataset/`; generated databases, Parquet and reports remain ignored under `outputs/`, with only the five named partner-review files allowed by `.gitignore`.
 - Free DuckDB 1.4.4; no paid API, PyArrow, crawler, proxy rotation or MongoDB job.
 - Full normalization used a 512 MB DuckDB budget; elapsed time was about 8m41s. Output database is about 1.89 GB. Sampling is Firefox-product only; that is not all Firefox engineering.
 
 ## Next gate
 
-Run `scripts/run_phase05_agent_review_prep.sh --batch 10 --resume` from the user's terminal, inspect its reports, then use Prompt 5B for one F5 packet batch at a time. The human owner must review all retained F5 and challenge candidates plus required factual/F6 spot checks, and sign off before validate-freeze. No phase beyond benchmark construction is started; no locked test or experiment result is claimed.
+Review the existing bundle using `python3 review_server.py` from its directory; do not regenerate completed phases. Complete retained F5/challenges plus seeded factual/F6 source checks, run `python3 review_server.py --check`, then have the owner audit/transfer only genuine decisions into the original queue and complete global signoff. Run the full validate-freeze command from the user's terminal with matching local data, inspect its QC, and only then consider Phase 5 VERIFIED/FROZEN. Missing source evidence remains pending. No phase beyond benchmark construction is started.
