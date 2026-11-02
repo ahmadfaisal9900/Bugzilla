@@ -1,3 +1,5 @@
 # Data and benchmark tooling. The local review server is standard-library only.
 # Keep aligned with pyproject.toml's data extra.
 duckdb==1.4.4
+# Required by DuckDB's Python client to fetch TIMESTAMPTZ values.
+pytz==2026.6
