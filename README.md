@@ -55,6 +55,8 @@ This reports outstanding reviews and checks immutable columns against `signoff_q
 
 ## Share reviews with your partner
 
+Need the actual sampled bug data? See [Sample data handoff](docs/SAMPLE_DATA_HANDOFF.md) to package the 3,000 sampled Firefox bugs and the separate 50-bug history overlay as one private archive, with DuckDB setup/query instructions. The data stays outside Git.
+
 Coordinate who reviews which questions, and avoid editing the same shared CSV simultaneously. Pull before starting a review session. After stopping the server and running `--check`, return to the repository root:
 
 ```bash
