@@ -25,6 +25,7 @@ if not __debug__:
 VERSION = "phase05-v1.1"
 FAMILIES = tuple("F" + str(i) for i in range(1, 7))
 UNKNOWN = "cannot be established from the specified evidence"
+F5_MISSING_RATIONALE = "The cited comment does not state the requested reason or constraint."
 FIELDS = ("product", "component", "snapshot_status", "snapshot_resolution")
 USER_COLUMNS = ("decision", "reviewer", "reviewed_at_utc", "source_checked",
                 "rationale_present", "corrected_gold_json", "corrected_question", "note",
@@ -68,6 +69,35 @@ def dt(value):
 
 def version_hash():
     return digest([file_hash(Path(__file__)), file_hash(Path(p4.__file__)), file_hash(Path(normalize.__file__))])
+
+
+def _is_compatible_review_amendment(manifest, run):
+    """Allow this one pinned run only when its candidate-generation source is byte-identical.
+
+    F5 review/validation functions changed to admit human-reviewed abstentions.
+    No candidate-generation function, dependency, ID, split or source pin may change.
+    The freeze still independently regenerates and compares every candidate.
+    """
+    old_code = "a1499fcc8a624186b1e6e712777fb322419e9ca55d4a09d21303a21803287b83"
+    old_file = "d8c5cd8e9d44b9006e8a2e80dd86c5bea1d5ff74fad6f6f0d7b855aaa7539ce6"
+    old_generator = "8e8dda8ced6497e56056402756a63ab7453dcafb34b06fcc1e50b00099c2ccc9"
+    reviewed_amendment = "7e0e2e16121db18e8bf363f3c4c328d8dcef085fcd0a43c4c7c12f5ad21a1d89"
+    if run.name != "run-65c5be3381f66811" or manifest["identity"].get("code_hash") != old_code:
+        return False
+    if manifest["identity"].get("version") != VERSION:
+        return False
+    if digest([old_file, file_hash(Path(p4.__file__)), file_hash(Path(normalize.__file__))]) != old_code:
+        return False
+    source = Path(__file__).read_text(encoding="utf-8")
+    review_blocks = re.findall(r"(?ms)^def (?:load_run|approved_gold|validate_freeze)\(.*?(?=^def |^if __name__ ==|\Z)", source)
+    review_constants = re.findall(r"^F5_MISSING_RATIONALE = .*$", source, flags=re.M)
+    if len(review_blocks) != 3 or len(review_constants) != 1:
+        return False
+    if hashlib.sha256("\n".join(review_constants + review_blocks).encode("utf-8")).hexdigest() != reviewed_amendment:
+        return False
+    source = re.sub(r"(?ms)^def (?:load_run|approved_gold|validate_freeze|_is_compatible_review_amendment)\(.*?(?=^def |^if __name__ ==|\Z)", "", source)
+    source = re.sub(r"^F5_MISSING_RATIONALE = .*\n", "", source, flags=re.M)
+    return hashlib.sha256(source.encode("utf-8")).hexdigest() == old_generator
 
 
 def paths(root, pins):
@@ -559,7 +589,7 @@ def load_run(args):
     if not (run / "manifest.json").is_file():
         raise SystemExit("The selected run has no completed candidate manifest. Resume generation before preparing review.")
     m = read(run / "manifest.json")
-    assert m["identity"]["code_hash"] == version_hash(), "Code changed; generate a new version"
+    assert m["identity"]["code_hash"] == version_hash() or _is_compatible_review_amendment(m, run), "Code changed; generate a new version"
     assert m["identity"]["options"]["seed"] == args.seed, "Seed mismatch"
     for n, h in m["artifacts"].items(): assert file_hash(run / n) == h, "Changed candidate artifact: " + n
     return run, m, read(run / "candidates.json"), read(run / "challenge_candidates.json")
@@ -640,11 +670,20 @@ def approved_gold(q, row):
         assert "ADJUDICATED" in row.get("note", ""), "Second-rater disagreement needs documented adjudication"
     assert decision != "CORRECT" or row.get("corrected_gold_json") or (q.get("variant_of") and row.get("corrected_question")), "Correction requires an explicit corrected value"
     gold = json.loads(row["corrected_gold_json"]) if decision == "CORRECT" and row.get("corrected_gold_json") else q["gold"]
+    assert isinstance(gold, dict), "Typed gold must be an object"
     if q["family"] == "F5":
-        assert row.get("rationale_present") == "YES", "Subjective rationale not signed off"
-        assert gold.get("type") == "supported_explanation" and gold.get("claims")
         ids = {e["id"] for e in q["evidence"]}
-        assert all(c.get("text", "").strip() and c.get("evidence_id") in ids for c in gold["claims"])
+        if gold.get("type") == "supported_explanation":
+            assert row.get("rationale_present") == "YES", "Subjective rationale not signed off"
+            assert gold.get("claims") and all(c.get("text", "").strip() and c.get("evidence_id") in ids for c in gold["claims"])
+        elif gold.get("type") == "unanswerable":
+            assert decision == "CORRECT" and row.get("rationale_present") == "NO", "Missing rationale must be explicitly source-reviewed"
+            assert set(gold) == {"type", "value", "missing_evidence", "evidence_ids"}
+            assert gold["value"] == UNKNOWN and gold["missing_evidence"] == F5_MISSING_RATIONALE
+            assert isinstance(gold["evidence_ids"], list) and all(isinstance(x, str) for x in gold["evidence_ids"])
+            assert len(gold["evidence_ids"]) == len(ids) and set(gold["evidence_ids"]) == ids and ids
+        else:
+            raise AssertionError("Unsupported F5 gold type")
         assert "@" not in json.dumps(gold), "Redact contributor identities in gold"
     else:
         assert gold == q["gold"], "Factual correction disagrees with recomputation; fix source/validator and regenerate"
@@ -690,7 +729,8 @@ def validate_freeze(args, root, pins):
                 out["question"] = r["corrected_question"].strip()
         else:
             out["human_review_state"] = "AUTO_VALIDATED; NOT_SELECTED_FOR_HUMAN_SPOTCHECK"
-        if out["family"] == "F5": out["answerability"] = "HUMAN_SUPPORTED"
+        if out["family"] == "F5":
+            out["answerability"] = "INSUFFICIENT_SPECIFIED_EVIDENCE" if out["gold"]["type"] == "unanswerable" else "HUMAN_SUPPORTED"
         if q.get("variant_of"):
             parent = next(x for x in retained if x["qid"] == q["variant_of"])
             assert out["gold"] == parent["gold"], "Challenge gold must match its reviewed parent"
@@ -717,6 +757,9 @@ def validate_freeze(args, root, pins):
     report.update(state="FROZEN_HUMAN_SIGNED", frozen_id=frozen_id, source_hashes=verified,
                   review_policy="all F5, 20% F1–F4, min(6,F6 count), all challenge; optional second rater",
                   review_signoff_sha256=file_hash(run / "review_signoff.json"), review_queue_sha256=file_hash(run / "review_queue.csv"))
+    report["f5_answerability"] = dict(Counter(q["answerability"] for q in retained if q["family"] == "F5"))
+    report["f5_challenge_answerability"] = dict(Counter(q["answerability"] for q in retained_ch if q["family"] == "F5"))
+    report["generation_code_compatibility"] = ("review-only F5 amendment; pinned generation source/dependencies unchanged; candidates independently recomputed" if m["identity"]["code_hash"] != version_hash() else "exact code hash")
     report["human_observed_issue_types_reviewed_only"] = dict(Counter(reviews[q["qid"]].get("issue_type_observed") or "UNKNOWN" for q in retained if q["human_review_state"] == "SIGNED_SOURCE_REVIEW"))
     write_json(dest / "quality_report.json", report)
     frozen = {"state": "FROZEN_HUMAN_SIGNED", "id": frozen_id, "created_at_utc": stamp(),

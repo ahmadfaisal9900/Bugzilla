@@ -50,6 +50,8 @@ def score(item, answer):
         return _result(item, answer, INCORRECT, answer["status"])
     if kind in ("unknown", "unanswerable"):
         if answer["abstained"] and answer["value"] is None:
+            if item["family"] == "F5":
+                return _result(item, answer, NEEDS_HUMAN, "f5_abstention_requires_context_review")
             return _result(item, answer, CORRECT, "correct_abstention")
         return _result(item, answer, INCORRECT, "answered_unanswerable")
     if answer["abstained"]:

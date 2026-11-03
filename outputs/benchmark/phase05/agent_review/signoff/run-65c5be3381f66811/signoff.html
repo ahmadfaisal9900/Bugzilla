@@ -80,7 +80,7 @@ details{font-size:12px;color:#6b7481;border-top:1px solid #edf0f4;padding:10px 0
    <div class="agent"><strong id="adviceTitle">Codex review suggestion</strong><p id="advice"></p></div>
    <div class="evidence"><label>Check the original information</label><div class="links" id="sources"></div></div>
    <label class="check"><input type="checkbox" id="checked"><span>I checked the original source or verified evidence. <span class="muted">Required before approving.</span></span></label>
-   <label class="check secondary hidden" id="rationaleRow"><input type="checkbox" id="rationale"><span>The developer's comment actually supports this explanation. <span class="muted">Required for explanation answers.</span></span></label>
+   <label class="check secondary hidden" id="rationaleRow"><input type="checkbox" id="rationale"><span id="rationaleLabel">The cited comment supports this explanation.</span></label>
    <div id="editPane" class="hidden">
     <label for="fixText" id="fixLabel">Corrected answer</label>
     <textarea id="fixText" class="textinput" placeholder="Write a clear evidence-supported answer"></textarea>
@@ -157,7 +157,7 @@ function answerText(r){
  switch(g.type){case 'string':case 'integer':return String(g.value??'');
  case 'id_set':return (g.value||[]).map(x=>'Bug #'+x).join(', ')||'No recorded related bugs';
  case 'calendar_duration':return `${Number(g.days||0).toFixed(2)} calendar days (${Number(g.hours||0).toFixed(2)} hours)\nFirst FIXED: ${g.first_fixed_at_utc||'unknown'}`;
- case 'unknown':case 'unanswerable':return `Not established from the available evidence.\n${g.reason||''}`.trim();
+ case 'unknown':case 'unanswerable':return `Cannot be established from the specified evidence.\n${g.missing_evidence||g.reason||''}`.trim();
  case 'supported_explanation':return (g.claims||[]).map(x=>x.text).filter(Boolean).join('\n\n')||'No proposed explanation';
  default:return JSON.stringify(g,null,2)
  }
@@ -202,21 +202,24 @@ function render(){
  $('family').textContent=`${r.family} · ${families[r.family]||'Question'}`;
  $('kind').textContent=r.record_kind==='SUPPLEMENTAL_CHALLENGE'?'Extra challenge':(r.split==='dev'?'Development':'Test')+' question';
  $('question').textContent=friendlyQuestion(r);
- $('scope').textContent=r.family==='F3'?'Count only the specified sample and partition — not all Mozilla bugs.':r.family==='F2'?'Calendar duration is not developer working time.':r.family==='F5'?'This question comes from comments associated with FIXED-resolution bugs.':'Answer from the saved dataset, not the website’s current status.';
+ $('scope').textContent=r.family==='F3'?'Count only the specified sample and partition — not all Mozilla bugs.':r.family==='F2'?'Calendar duration is not developer working time.':r.family==='F5'?'This question uses a FIXED-selected comment. If the comment states no reason or constraint, the answer is insufficient evidence.':'Answer from the saved dataset, not the website’s current status.';
  const suggestion=suggestionFor(r);
+ const insufficient=suggestion&&suggestion.status!=='CORRECT';
+ const savedInsufficient=r.decision==='CORRECT'&&safeParse(r.corrected_gold_json,{}).type==='unanswerable';
  $('answerLabel').textContent=suggestion?'Codex suggestion — human review required':r.decision==='CORRECT'?'Saved corrected answer':'Original candidate answer';
- $('answer').textContent=suggestion?(suggestion.answer||'There is no proposed answer to approve. Check the linked source: use Needs a fix if you can supply a supported answer, Reject if the comment gives no answer, or Skip if you are unsure.'):answerText(r);
+ $('answer').textContent=suggestion?(suggestion.answer||'The requested reason or constraint cannot be established from the specified comment.'):answerText(r);
  const a=r.agent_recommendation;
  $('adviceTitle').textContent= a==='RECOMMEND_APPROVE'?'Codex: likely correct':a==='RECOMMEND_CORRECT'?'Codex: suggests an improvement':a==='RECOMMEND_REJECT'?'Codex: suggests rejecting':a==='ESCALATE'?'Codex: uncertain — please check carefully':'Automated record check';
  $('advice').textContent=r.agent_reason||'No special recommendation.';
  if(suggestion){
-  $('adviceTitle').textContent=suggestion.status==='CORRECT'?'Suggested correction — check the source':suggestion.status==='REJECT'?'Suggested rejection — check the source':'Source check needed';
-  $('advice').textContent=suggestion.reason+(suggestion.status==='CORRECT'?' After checking the source, choose Looks correct to save this suggested answer as a correction, or Needs a fix to edit it.':' If the source supports an answer, choose Needs a fix and enter it. Otherwise choose Reject and give a short reason, or Skip if unsure.');
+  $('adviceTitle').textContent=insufficient?'Possible insufficient-evidence answer — check the complete comment':'Suggested correction — check the source';
+  $('advice').textContent=suggestion.reason+(insufficient?' If the complete cited comment gives no reason or constraint, confirm both checks and choose Looks correct. If it does, use Needs a fix. Skip if you cannot verify the full comment.':' After checking the source, choose Looks correct to save this suggested answer as a correction, or Needs a fix to edit it.');
  }
  const sources=$('sources');sources.replaceChildren();for(const x of evidenceLinks(r)){const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.name+' ↗';sources.append(a)}
  if(!sources.children.length)sources.textContent='No public link in this review record. Check local evidence packet.';
  $('rationaleRow').classList.toggle('hidden',r.family!=='F5');
- $('checked').checked=r.source_checked==='YES';$('rationale').checked=r.rationale_present==='YES';
+ $('rationaleLabel').textContent=insufficient||savedInsufficient?'I checked the complete cited comment and it does not state the requested reason or constraint.':'The cited comment supports this explanation.';
+ $('checked').checked=r.source_checked==='YES';$('rationale').checked=savedInsufficient?r.rationale_present==='NO':r.rationale_present==='YES';
  $('note').value=r.note||'';$('fixText').value='';$('fixQuestion').value=r.corrected_question||'';
  $('fixLabel').textContent=r.family==='F5'?'Correct explanation (in plain English)':'Correct answer (if independently verifiable)';
  if(suggestion&&suggestion.status==='CORRECT')$('fixText').value=suggestion.answer;
@@ -225,28 +228,33 @@ function render(){
  $('rawQuestion').textContent=r.question;
  $('technical').textContent=['QID: '+r.qid,'Decision: '+r.decision,'Automated checks: '+r.deterministic_status,'Issues: '+r.deterministic_checks_failed,'Candidate gold JSON: '+r.typed_candidate_gold_json,'Saved evidence fields: '+JSON.stringify(safeParse(r.source_evidence_compact_json,[]),null,2),'Exact source hashes: '+JSON.stringify(safeParse(r.exact_source_hashes_json,[]),null,2),'Source packet (local owner files): '+r.packet_path,'Packet hash: '+r.packet_sha256].join('\n');
  const extra=!required(r);for(const b of ['approve','correct','reject','skip'])$(b).disabled=extra;
- $('approve').textContent=suggestion&&suggestion.status==='CORRECT'?'✓ Looks correct — save suggested answer':'✓ Looks correct';
- if(suggestion&&suggestion.status!=='CORRECT')$('approve').disabled=true;
- $('approve').title=suggestion&&suggestion.status!=='CORRECT'?'There is no proposed answer to approve. Check the source, then correct, reject, or skip.':'';
+ $('approve').textContent=suggestion?(insufficient?'✓ Looks correct — save insufficient evidence':'✓ Looks correct — save suggested answer'):'✓ Looks correct';
+ if(r.decision==='CORRECT')$('approve').disabled=true;
+ $('approve').title=r.decision==='CORRECT'?'This correction is already saved; use Needs a fix to revise it.':'';
  $('navText').textContent=extra?'Not selected for human review':(pending(r)?'Awaiting your decision':'Saved: '+r.decision);
  $('prev').disabled=index===0;$('next').disabled=index===visible.length-1;
 }
 function makePayload(decision){
  const r=visible[index];const reviewer=$('reviewer').value.trim();
- const suggestion=suggestionFor(r),acceptSuggested=decision==='APPROVE'&&suggestion&&suggestion.status==='CORRECT';
- if(decision==='APPROVE'&&suggestion&&!acceptSuggested)throw Error('No supported answer is available to approve. Check the source, then correct, skip, or reject.');
+ const suggestion=suggestionFor(r),acceptSuggested=decision==='APPROVE'&&!!suggestion;
+ const absent=acceptSuggested&&suggestion.status!=='CORRECT';
+ if(decision==='APPROVE'&&r.decision==='CORRECT')throw Error('This correction is already saved; use Needs a fix to revise it.');
  if(acceptSuggested)decision='CORRECT';
  if(decision!=='PENDING'&&!reviewer)throw Error('Enter your name in the left sidebar.');
  const checked=$('checked').checked,rationale=$('rationale').checked,note=$('note').value.trim();
  if(['APPROVE','CORRECT'].includes(decision)&&!checked)throw Error('Open the source and tick “I checked the original source.”');
- if(r.family==='F5'&&['APPROVE','CORRECT'].includes(decision)&&!rationale)throw Error('Confirm the source comment actually explains the reason, or reject it.');
+ if(r.family==='F5'&&['APPROVE','CORRECT'].includes(decision)&&!rationale)throw Error(absent?'Confirm that the complete cited comment does not state the requested reason or constraint.':'Confirm the cited comment supports the explanation.');
  if(decision==='REJECT'&&!note)throw Error('Please add a brief rejection reason in Notes.');
  let corrected_gold_json='',corrected_question='';
  if(decision==='CORRECT'){
   corrected_question=!acceptSuggested&&r.record_kind==='SUPPLEMENTAL_CHALLENGE'?$('fixQuestion').value.trim():'';
-  const corrected=acceptSuggested?suggestion.answer:$('fixText').value.trim();
+  const corrected=acceptSuggested&&!absent?suggestion.answer:$('fixText').value.trim();
   if(r.family==='F5'){
-   if(corrected){const old=safeParse(r.typed_candidate_gold_json,{}),eid=old.claims?.[0]?.evidence_id;
+   if(absent){
+    const evidence=safeParse(r.source_evidence_compact_json,[]),ids=evidence.map(e=>e.evidence_id);
+    if(!ids.length||ids.some(x=>!x))throw Error('Missing source evidence IDs; ask for a repair.');
+    corrected_gold_json=JSON.stringify({type:'unanswerable',value:'cannot be established from the specified evidence',missing_evidence:'The cited comment does not state the requested reason or constraint.',evidence_ids:ids});
+   }else if(corrected){const old=safeParse(r.typed_candidate_gold_json,{}),eid=old.claims?.[0]?.evidence_id;
     if(!eid)throw Error('Missing evidence ID: ask Codex to repair this question instead.');
     corrected_gold_json=JSON.stringify({type:'supported_explanation',claims:[{evidence_id:eid,text:corrected}]})
    }
@@ -258,7 +266,7 @@ function makePayload(decision){
   }
   if(!corrected_gold_json&&!corrected_question)throw Error('To correct an answer, write the replacement explanation or question. Otherwise choose Reject.');
  }
- return {qid:r.qid,decision,reviewer,source_checked:checked,rationale_present:rationale,note,corrected_gold_json,corrected_question}
+ return {qid:r.qid,decision,reviewer,source_checked:checked,rationale_present:absent?false:rationale,absence_confirmed:!!(absent&&rationale),note,corrected_gold_json,corrected_question}
 }
 function applyLocally(r,p){
  r.decision=p.decision;r.reviewer=p.decision==='PENDING'?'':p.reviewer;
@@ -292,7 +300,7 @@ async function saveCSV(){
 }
 $('reviewer').value=localStorage.getItem('bugzilla_reviewer')||'';$('reviewer').addEventListener('input',()=>localStorage.setItem('bugzilla_reviewer',$('reviewer').value));
 $('filter').addEventListener('change',()=>refresh(true));$('approve').onclick=()=>submit('APPROVE');$('reject').onclick=()=>submit('REJECT');$('skip').onclick=()=>submit('PENDING');
-$('correct').onclick=()=>{if(!editMode){editMode=true;$('editPane').classList.remove('hidden');$('correct').textContent='Save correction';return}submit('CORRECT')};
+$('correct').onclick=()=>{if(!editMode){editMode=true;$('editPane').classList.remove('hidden');$('correct').textContent='Save correction';$('approve').disabled=true;if(visible[index].family==='F5'){if(suggestionFor(visible[index])?.status!=='CORRECT')$('rationale').checked=false;$('rationaleLabel').textContent='The cited comment supports this explanation.'}return}submit('CORRECT')};
 $('prev').onclick=()=>{index--;render()};$('next').onclick=()=>{index++;render()};
 $('csvOpen').onclick=openCSV;$('chooseBtn').onclick=openCSV;$('saveCSV').onclick=saveCSV;
 $('fileInput').onchange=async e=>{const file=e.target.files[0];if(!file)return;handle=null;try{setData(csvParse(await file.text()),false)}catch(err){alert(err.message)}};

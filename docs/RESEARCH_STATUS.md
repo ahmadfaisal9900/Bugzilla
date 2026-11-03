@@ -8,6 +8,8 @@ The partner review bundle is explicitly tracked under `outputs/benchmark/phase05
 
 On 2026-11-02 the local signoff sheet contained 36 recorded approvals and 28 required rows pending, including 22 F5 rows. A local ignored suggestion file supplies 19 source-attributed drafts for those pending F5 items and flags the other three for source checking or rejection. These are Codex recommendations, not human decisions; the human must verify and save each accepted correction. The original review queue and earlier signoffs were not changed by preparing these suggestions.
 
+Later on 2026-11-02 the signoff sheet contained 40 approvals, 21 corrections and three pending required F5 rows. Per D-043, the UI and validator now support a human-confirmed, source-scoped insufficient-evidence answer for F5, preserving the question rather than requiring rejection. No pending row was automatically approved or reclassified. The exact existing run remains compatible only under the fingerprinted review-only amendment; full freeze still independently recomputes candidate gold and requires actual human signoff. F5 model abstentions need human response review. Fixture tests passed; no real freeze or model evaluation was run.
+
 ## Completed
 
 - Phase 0/1 preserved the existing Project root and origin. Earlier commits: `e706e3f`, `35d32c7`.

@@ -210,5 +210,31 @@ class BenchmarkTests(unittest.TestCase):
         f5=next(q for q in qs if q['family']=='F5')
         with self.assertRaises(AssertionError): b.approved_gold(f5,{'decision':'APPROVE','reviewer':'r','source_checked':'YES','reviewed_at_utc':API_ING,'rationale_present':'NO'})
 
+    def test_reviewed_f5_abstention_survives_synthetic_freeze(self):
+        a=args(self.root);b.generate(a,self.root,self.pins);a.resume=True;b.prepare_review(a)
+        run,_,qs,ch=b.load_run(a)
+        f5ch=next(c for c in ch if c['family']=='F5')
+        parent=next(q for q in qs if q['qid']==f5ch['variant_of'])
+        gold={'type':'unanswerable','value':b.UNKNOWN,'missing_evidence':b.F5_MISSING_RATIONALE,
+              'evidence_ids':[e['id'] for e in parent['evidence']]}
+        path=run/'review_queue.csv'
+        with path.open() as handle: rows=list(csv.DictReader(handle))
+        for r in rows:
+            r.update(decision='APPROVE',reviewer='fixture-rater',reviewed_at_utc=API_ING,source_checked='YES',rationale_present='YES')
+            if r['qid'] in (parent['qid'],f5ch['qid']):
+                r.update(decision='CORRECT',rationale_present='NO',corrected_gold_json=json.dumps(gold))
+        with path.open('w',newline='') as f:
+            w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+        n.write_json(run/'review_signoff.json',{'approve_freeze':True,'acknowledge_actual_reduced_coverage':True,'reviewer':'fixture-rater','reviewed_at_utc':API_ING})
+        frozen=b.validate_freeze(a,self.root,self.pins);dest=run/('frozen-'+frozen['id'])
+        result=next(json.loads(line) for line in (dest/(parent['split']+'.gold.jsonl')).read_text().splitlines() if json.loads(line)['qid']==parent['qid'])
+        challenge=next(json.loads(line) for line in (dest/'challenge.gold.jsonl').read_text().splitlines() if json.loads(line)['qid']==f5ch['qid'])
+        self.assertEqual(result['gold'],gold);self.assertEqual(challenge['gold'],gold)
+        self.assertEqual(result['answerability'],'INSUFFICIENT_SPECIFIED_EVIDENCE')
+        report=json.loads((dest/'quality_report.json').read_text())
+        self.assertEqual(report['f5_answerability']['INSUFFICIENT_SPECIFIED_EVIDENCE'],1)
+        self.assertEqual(report['f5_challenge_answerability']['INSUFFICIENT_SPECIFIED_EVIDENCE'],1)
+        self.assertTrue(all('gold' not in json.loads(line) for line in (dest/(parent['split']+'.questions.jsonl')).read_text().splitlines()))
+
 
 if __name__ == '__main__': unittest.main()

@@ -23,7 +23,25 @@ MUTABLE = {
     'corrected_gold_json', 'corrected_question', 'note', 'issue_type_observed'
 }
 DECISIONS = {'APPROVE', 'CORRECT', 'REJECT', 'PENDING'}
+UNANSWERABLE = 'cannot be established from the specified evidence'
+MISSING_RATIONALE = 'The cited comment does not state the requested reason or constraint.'
 LOCK = threading.Lock()
+
+
+def is_f5_insufficient(row, gold):
+    """Accept only a source-scoped abstention covering the cited evidence."""
+    if not isinstance(gold, dict) or set(gold) != {'type', 'value', 'missing_evidence', 'evidence_ids'}:
+        return False
+    try:
+        source = json.loads(row['source_evidence_compact_json'])
+        ids = {entry['evidence_id'] for entry in source}
+        supplied = gold['evidence_ids']
+        return (gold['type'] == 'unanswerable' and gold['value'] == UNANSWERABLE
+                and gold['missing_evidence'] == MISSING_RATIONALE
+                and isinstance(supplied, list) and ids and len(supplied) == len(ids)
+                and set(supplied) == ids and '@' not in json.dumps(gold))
+    except (KeyError, TypeError, ValueError):
+        return False
 
 
 def read_queue(path):
@@ -62,18 +80,25 @@ def update(path, payload):
             raise ValueError('Enter your reviewer name first')
         if decision in ('APPROVE', 'CORRECT') and not checked:
             raise ValueError('Check the source evidence before approving or correcting')
-        if row['family'] == 'F5' and decision in ('APPROVE', 'CORRECT') and not rationale:
-            raise ValueError('F5 requires explicit evidence of the rationale')
+        corrected_obj = None
         if decision == 'CORRECT':
             if not corrected_gold and not corrected_question:
                 raise ValueError('Supply corrected answer or question')
             if corrected_gold:
                 try:
-                    obj=json.loads(corrected_gold)
-                    if not isinstance(obj,dict) or 'type' not in obj:
+                    corrected_obj=json.loads(corrected_gold)
+                    if not isinstance(corrected_obj,dict) or 'type' not in corrected_obj:
                         raise ValueError('Corrected gold needs typed JSON')
                 except (ValueError,TypeError) as e:
                     raise ValueError('Invalid corrected gold JSON') from e
+        if row['family'] == 'F5' and decision in ('APPROVE', 'CORRECT'):
+            if corrected_obj and corrected_obj.get('type') == 'unanswerable':
+                if not is_f5_insufficient(row, corrected_obj):
+                    raise ValueError('Insufficient-evidence answer must cite exactly the specified comment evidence')
+                if rationale or payload.get('absence_confirmed') is not True:
+                    raise ValueError('Confirm that the checked comment does not state the requested rationale')
+            elif not rationale:
+                raise ValueError('F5 requires explicit evidence of the rationale')
         if decision == 'REJECT' and not note:
             raise ValueError('Give a short reason for rejecting this question')
         values = {
@@ -197,8 +222,21 @@ def main():
             print('No pre-review backup found yet; cross-file integrity not verified')
         bad=[]
         for r in required:
-            if r['decision'] in ('APPROVE','CORRECT') and (not r['reviewer'] or r['source_checked']!='YES' or (r['family']=='F5' and r['rationale_present']!='YES')):
-                bad.append(r['qid'])
+            if r['decision'] in ('APPROVE','CORRECT'):
+                invalid = not r['reviewer'] or r['source_checked']!='YES'
+                if r['family']=='F5':
+                    try:
+                        gold=json.loads(r.get('corrected_gold_json') or '{}')
+                    except (TypeError, ValueError):
+                        gold={}
+                    if not isinstance(gold, dict):
+                        gold={}
+                        invalid=True
+                    if gold.get('type')=='unanswerable':
+                        invalid = invalid or r['decision']!='CORRECT' or r['rationale_present']!='NO' or not is_f5_insufficient(r, gold)
+                    else:
+                        invalid = invalid or r['rationale_present']!='YES'
+                if invalid: bad.append(r['qid'])
         if bad:raise SystemExit(f'ERROR: Approved/corrected reviews missing confirmation: {bad[:5]}')
         print('Review-field consistency: passed')
         if remaining: print('Review not complete; finish required rows before freezing.')
