@@ -211,7 +211,7 @@ function render(){
  $('advice').textContent=r.agent_reason||'No special recommendation.';
  if(suggestion){
   $('adviceTitle').textContent=suggestion.status==='CORRECT'?'Suggested correction — check the source':suggestion.status==='REJECT'?'Suggested rejection — check the source':'Source check needed';
-  $('advice').textContent=suggestion.reason+(suggestion.status==='CORRECT'?' To accept this suggested answer, choose Needs a fix and save it after checking the source.':' Skip or reject if the source does not support an answer.');
+  $('advice').textContent=suggestion.reason+(suggestion.status==='CORRECT'?' After checking the source, choose Looks correct to save this suggested answer as a correction, or Needs a fix to edit it.':' Skip or reject if the source does not support an answer.');
  }
  const sources=$('sources');sources.replaceChildren();for(const x of evidenceLinks(r)){const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.name+' ↗';sources.append(a)}
  if(!sources.children.length)sources.textContent='No public link in this review record. Check local evidence packet.';
@@ -225,13 +225,16 @@ function render(){
  $('rawQuestion').textContent=r.question;
  $('technical').textContent=['QID: '+r.qid,'Decision: '+r.decision,'Automated checks: '+r.deterministic_status,'Issues: '+r.deterministic_checks_failed,'Candidate gold JSON: '+r.typed_candidate_gold_json,'Saved evidence fields: '+JSON.stringify(safeParse(r.source_evidence_compact_json,[]),null,2),'Exact source hashes: '+JSON.stringify(safeParse(r.exact_source_hashes_json,[]),null,2),'Source packet (local owner files): '+r.packet_path,'Packet hash: '+r.packet_sha256].join('\n');
  const extra=!required(r);for(const b of ['approve','correct','reject','skip'])$(b).disabled=extra;
- if(suggestion)$('approve').disabled=true;
+ $('approve').textContent=suggestion&&suggestion.status==='CORRECT'?'✓ Looks correct — save suggested answer':'✓ Looks correct';
+ if(suggestion&&suggestion.status!=='CORRECT')$('approve').disabled=true;
  $('navText').textContent=extra?'Not selected for human review':(pending(r)?'Awaiting your decision':'Saved: '+r.decision);
  $('prev').disabled=index===0;$('next').disabled=index===visible.length-1;
 }
 function makePayload(decision){
  const r=visible[index];const reviewer=$('reviewer').value.trim();
- if(decision==='APPROVE'&&suggestionFor(r))throw Error('This is a suggested replacement. Choose Needs a fix to save it after checking the source.');
+ const suggestion=suggestionFor(r),acceptSuggested=decision==='APPROVE'&&suggestion&&suggestion.status==='CORRECT';
+ if(decision==='APPROVE'&&suggestion&&!acceptSuggested)throw Error('No supported answer is available to approve. Check the source, then correct, skip, or reject.');
+ if(acceptSuggested)decision='CORRECT';
  if(decision!=='PENDING'&&!reviewer)throw Error('Enter your name in the left sidebar.');
  const checked=$('checked').checked,rationale=$('rationale').checked,note=$('note').value.trim();
  if(['APPROVE','CORRECT'].includes(decision)&&!checked)throw Error('Open the source and tick “I checked the original source.”');
@@ -239,7 +242,8 @@ function makePayload(decision){
  if(decision==='REJECT'&&!note)throw Error('Please add a brief rejection reason in Notes.');
  let corrected_gold_json='',corrected_question='';
  if(decision==='CORRECT'){
-  corrected_question=r.record_kind==='SUPPLEMENTAL_CHALLENGE'?$('fixQuestion').value.trim():'';const corrected=$('fixText').value.trim();
+  corrected_question=!acceptSuggested&&r.record_kind==='SUPPLEMENTAL_CHALLENGE'?$('fixQuestion').value.trim():'';
+  const corrected=acceptSuggested?suggestion.answer:$('fixText').value.trim();
   if(r.family==='F5'){
    if(corrected){const old=safeParse(r.typed_candidate_gold_json,{}),eid=old.claims?.[0]?.evidence_id;
     if(!eid)throw Error('Missing evidence ID: ask Codex to repair this question instead.');
