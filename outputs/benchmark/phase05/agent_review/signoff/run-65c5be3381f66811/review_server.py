@@ -111,6 +111,7 @@ def update(path, payload):
 def make_handler(folder):
     html_path=folder/'signoff.html'
     csv_path=folder/'signoff_queue.csv'
+    suggestions_path=folder/'f5_suggestions.json'
     class Handler(BaseHTTPRequestHandler):
         def reply(self,status,obj):
             b=json.dumps(obj,ensure_ascii=False).encode('utf-8')
@@ -130,7 +131,13 @@ def make_handler(folder):
             elif self.path == '/api/queue':
                 try:
                     fields,rows=read_queue(csv_path)
-                    self.reply(200,{'fields':fields,'rows':rows})
+                    suggestions = {}
+                    if suggestions_path.is_file():
+                        data = json.loads(suggestions_path.read_text(encoding='utf-8'))
+                        if data.get('schema_version') != 1 or not isinstance(data.get('suggestions'), dict):
+                            raise ValueError('Invalid F5 suggestion file')
+                        suggestions = data['suggestions']
+                    self.reply(200,{'fields':fields,'rows':rows,'suggestions':suggestions})
                 except Exception as e:
                     self.reply(500,{'error':str(e)})
             else:

@@ -76,7 +76,7 @@ details{font-size:12px;color:#6b7481;border-top:1px solid #edf0f4;padding:10px 0
    <div class="between"><div><span id="family" class="chip"></span> <span id="kind" class="chip gray"></span></div><span class="muted" id="position"></span></div>
    <h2 id="question" class="question"></h2>
    <div class="subtext" id="scope"></div>
-   <div class="answer"><h3>Proposed answer</h3><div class="answer-body" id="answer"></div></div>
+   <div class="answer"><h3 id="answerLabel">Proposed answer</h3><div class="answer-body" id="answer"></div></div>
    <div class="agent"><strong id="adviceTitle">Codex review suggestion</strong><p id="advice"></p></div>
    <div class="evidence"><label>Check the original information</label><div class="links" id="sources"></div></div>
    <label class="check"><input type="checkbox" id="checked"><span>I checked the original source or verified evidence. <span class="muted">Required before approving.</span></span></label>
@@ -84,8 +84,8 @@ details{font-size:12px;color:#6b7481;border-top:1px solid #edf0f4;padding:10px 0
    <div id="editPane" class="hidden">
     <label for="fixText" id="fixLabel">Corrected answer</label>
     <textarea id="fixText" class="textinput" placeholder="Write a clear evidence-supported answer"></textarea>
-    <label for="fixQuestion" style="margin-top:10px">Corrected question (only if necessary)</label>
-    <textarea id="fixQuestion" class="textinput" rows="2"></textarea>
+    <div id="fixQuestionRow"><label for="fixQuestion" style="margin-top:10px">Corrected challenge wording (only if necessary)</label>
+    <textarea id="fixQuestion" class="textinput" rows="2"></textarea></div>
     <p>For numerical or factual mistakes, usually choose <strong>Reject</strong> and ask Codex to regenerate the question. Gold answers must match independently verified calculations.</p>
    </div>
    <div style="margin-top:14px"><label for="note">Notes <span class="muted">(optional unless rejecting)</span></label><textarea id="note" rows="2" class="textinput" placeholder="What was unclear or incorrect?"></textarea></div>
@@ -105,7 +105,7 @@ details{font-size:12px;color:#6b7481;border-top:1px solid #edf0f4;padding:10px 0
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
-let fields=[], rows=[], visible=[], index=0, server=false, handle=null, changes=0, loaded=false, editMode=false;
+let fields=[], rows=[], visible=[], index=0, server=false, handle=null, changes=0, loaded=false, editMode=false, suggestions={};
 const families={F1:'Bug facts',F2:'Bug lifecycle',F3:'Counts and statistics',F4:'Bug relationships',F5:'Developer explanations',F6:'Unanswerable questions'};
 const mutable=['human_review_state','human_review_classification','decision','reviewer','reviewed_at_utc','source_checked','rationale_present','corrected_gold_json','corrected_question','note'];
 function safeParse(s,fallback){try{return JSON.parse(s)}catch{return fallback}}
@@ -125,7 +125,7 @@ function csvParse(text){
 function csvWrite(f,r){return '\uFEFF'+[f,...r.map(x=>f.map(k=>x[k]??''))].map(cells=>cells.map(x=>{x=String(x);return /[",\r\n]/.test(x)?'"'+x.replaceAll('"','""')+'"':x}).join(',')).join('\r\n')+'\r\n'}
 function setStatus(s,color){$('saveStatus').textContent=s;$('saveStatus').style.color=color||'#176956'}
 function setData(data,fromServer){
- fields=data.fields;rows=data.rows;server=fromServer;loaded=true;index=0;
+ fields=data.fields;rows=data.rows;suggestions=data.suggestions||{};server=fromServer;loaded=true;index=0;
  if(new Set(rows.map(r=>r.qid)).size!==rows.length)throw Error('Duplicate question IDs in CSV');
  $('welcome').classList.add('hidden');$('reviewCard').classList.remove('hidden');
  setStatus(fromServer?'Connected · changes save automatically':'CSV opened · save when finished');refresh(true)
@@ -153,7 +153,7 @@ function refresh(reset=false){
  render()
 }
 function answerText(r){
- const g=safeParse(r.typed_candidate_gold_json,{});
+ const g=safeParse(r.decision==='CORRECT'&&r.corrected_gold_json?r.corrected_gold_json:r.typed_candidate_gold_json,{});
  switch(g.type){case 'string':case 'integer':return String(g.value??'');
  case 'id_set':return (g.value||[]).map(x=>'Bug #'+x).join(', ')||'No recorded related bugs';
  case 'calendar_duration':return `${Number(g.days||0).toFixed(2)} calendar days (${Number(g.hours||0).toFixed(2)} hours)\nFirst FIXED: ${g.first_fixed_at_utc||'unknown'}`;
@@ -162,10 +162,18 @@ function answerText(r){
  default:return JSON.stringify(g,null,2)
  }
 }
+function suggestionFor(r){
+ const s=suggestions[r.qid],g=safeParse(r.typed_candidate_gold_json,{});
+ if(!s||r.family!=='F5'||!pending(r)||s.packet_sha256!==r.packet_sha256||
+    !(g.claims||[]).some(c=>c.evidence_id===s.evidence_id)||
+    !['CORRECT','ESCALATE','REJECT'].includes(s.status))return null;
+ if(s.status==='CORRECT'&&(!s.answer||typeof s.answer!=='string'))return null;
+ return s;
+}
 function friendlyQuestion(r){
  let s=r.question||'';
  if(r.family==='F5'){
-  const n=s.match(/(?:Firefox (?:issue|bug)|bug)\s+(\d+)/i);if(n)return `What reason or constraint does the developer mention about bug #${n[1]}?`;
+  const n=s.match(/(?:Firefox (?:issue|bug)|bug)\s+(\d+)/i);if(n)return `What reason or constraint is stated in the linked comment on bug #${n[1]}?`;
  }
  if(r.family==='F2'){
   let n=s.match(/(?:Firefox (?:issue|bug)|bug)\s+(\d+)/i);
@@ -187,7 +195,7 @@ function evidenceLinks(r){const a=safeParse(r.source_evidence_compact_json,[]), 
  }return out
 }
 function render(){
- $('error').classList.add('hidden');$('editPane').classList.add('hidden');editMode=false;
+ $('error').classList.add('hidden');$('editPane').classList.add('hidden');$('correct').textContent='✎ Needs a fix';editMode=false;
  if(!visible.length){$('reviewCard').classList.add('hidden');$('welcome').classList.remove('hidden');$('welcome').innerHTML='<div class="welcome"><h2>No questions left in this view</h2><p>All required reviews may be finished. Change the filter to inspect completed decisions.</p></div>';return}
  $('reviewCard').classList.remove('hidden');$('welcome').classList.add('hidden');
  const r=visible[index];$('position').textContent=`${index+1} of ${visible.length}`;
@@ -195,25 +203,35 @@ function render(){
  $('kind').textContent=r.record_kind==='SUPPLEMENTAL_CHALLENGE'?'Extra challenge':(r.split==='dev'?'Development':'Test')+' question';
  $('question').textContent=friendlyQuestion(r);
  $('scope').textContent=r.family==='F3'?'Count only the specified sample and partition — not all Mozilla bugs.':r.family==='F2'?'Calendar duration is not developer working time.':r.family==='F5'?'This question comes from comments associated with FIXED-resolution bugs.':'Answer from the saved dataset, not the website’s current status.';
- $('answer').textContent=answerText(r);
+ const suggestion=suggestionFor(r);
+ $('answerLabel').textContent=suggestion?'Codex suggestion — human review required':r.decision==='CORRECT'?'Saved corrected answer':'Original candidate answer';
+ $('answer').textContent=suggestion?(suggestion.answer||'No supported rewrite prepared. Inspect the linked source before deciding.'):answerText(r);
  const a=r.agent_recommendation;
  $('adviceTitle').textContent= a==='RECOMMEND_APPROVE'?'Codex: likely correct':a==='RECOMMEND_CORRECT'?'Codex: suggests an improvement':a==='RECOMMEND_REJECT'?'Codex: suggests rejecting':a==='ESCALATE'?'Codex: uncertain — please check carefully':'Automated record check';
  $('advice').textContent=r.agent_reason||'No special recommendation.';
+ if(suggestion){
+  $('adviceTitle').textContent=suggestion.status==='CORRECT'?'Suggested correction — check the source':suggestion.status==='REJECT'?'Suggested rejection — check the source':'Source check needed';
+  $('advice').textContent=suggestion.reason+(suggestion.status==='CORRECT'?' To accept this suggested answer, choose Needs a fix and save it after checking the source.':' Skip or reject if the source does not support an answer.');
+ }
  const sources=$('sources');sources.replaceChildren();for(const x of evidenceLinks(r)){const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.name+' ↗';sources.append(a)}
  if(!sources.children.length)sources.textContent='No public link in this review record. Check local evidence packet.';
  $('rationaleRow').classList.toggle('hidden',r.family!=='F5');
  $('checked').checked=r.source_checked==='YES';$('rationale').checked=r.rationale_present==='YES';
  $('note').value=r.note||'';$('fixText').value='';$('fixQuestion').value=r.corrected_question||'';
  $('fixLabel').textContent=r.family==='F5'?'Correct explanation (in plain English)':'Correct answer (if independently verifiable)';
- if(r.family==='F5'){const sg=safeParse(r.agent_corrected_gold_suggestion_json,{});if(sg.claims?.length)$('fixText').value=sg.claims.map(x=>x.text||'').join('\n\n');}
+ if(suggestion&&suggestion.status==='CORRECT')$('fixText').value=suggestion.answer;
+ else if(r.decision==='CORRECT'&&r.corrected_gold_json)$('fixText').value=answerText(r);
+ $('fixQuestionRow').classList.toggle('hidden',r.record_kind!=='SUPPLEMENTAL_CHALLENGE');
  $('rawQuestion').textContent=r.question;
  $('technical').textContent=['QID: '+r.qid,'Decision: '+r.decision,'Automated checks: '+r.deterministic_status,'Issues: '+r.deterministic_checks_failed,'Candidate gold JSON: '+r.typed_candidate_gold_json,'Saved evidence fields: '+JSON.stringify(safeParse(r.source_evidence_compact_json,[]),null,2),'Exact source hashes: '+JSON.stringify(safeParse(r.exact_source_hashes_json,[]),null,2),'Source packet (local owner files): '+r.packet_path,'Packet hash: '+r.packet_sha256].join('\n');
  const extra=!required(r);for(const b of ['approve','correct','reject','skip'])$(b).disabled=extra;
+ if(suggestion)$('approve').disabled=true;
  $('navText').textContent=extra?'Not selected for human review':(pending(r)?'Awaiting your decision':'Saved: '+r.decision);
  $('prev').disabled=index===0;$('next').disabled=index===visible.length-1;
 }
 function makePayload(decision){
  const r=visible[index];const reviewer=$('reviewer').value.trim();
+ if(decision==='APPROVE'&&suggestionFor(r))throw Error('This is a suggested replacement. Choose Needs a fix to save it after checking the source.');
  if(decision!=='PENDING'&&!reviewer)throw Error('Enter your name in the left sidebar.');
  const checked=$('checked').checked,rationale=$('rationale').checked,note=$('note').value.trim();
  if(['APPROVE','CORRECT'].includes(decision)&&!checked)throw Error('Open the source and tick “I checked the original source.”');
@@ -221,7 +239,7 @@ function makePayload(decision){
  if(decision==='REJECT'&&!note)throw Error('Please add a brief rejection reason in Notes.');
  let corrected_gold_json='',corrected_question='';
  if(decision==='CORRECT'){
-  corrected_question=$('fixQuestion').value.trim();const corrected=$('fixText').value.trim();
+  corrected_question=r.record_kind==='SUPPLEMENTAL_CHALLENGE'?$('fixQuestion').value.trim():'';const corrected=$('fixText').value.trim();
   if(r.family==='F5'){
    if(corrected){const old=safeParse(r.typed_candidate_gold_json,{}),eid=old.claims?.[0]?.evidence_id;
     if(!eid)throw Error('Missing evidence ID: ask Codex to repair this question instead.');

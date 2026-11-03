@@ -6,6 +6,8 @@
 
 The partner review bundle is explicitly tracked under `outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/`; setup and browser review instructions are in `README.md`. At packaging on 2026-10-23 it has six recorded approvals and 58 remaining of 64 required reviews. These are signoff-sheet records, not yet transferred to the original generation queue or verified by the freeze validator. The original pre-review backup is preserved. Only the review interface, queues and small provenance manifest are shared; raw/full comment packets, databases and other outputs remain ignored.
 
+On 2026-11-02 the local signoff sheet contained 36 recorded approvals and 28 required rows pending, including 22 F5 rows. A local ignored suggestion file supplies 19 source-attributed drafts for those pending F5 items and flags the other three for source checking or rejection. These are Codex recommendations, not human decisions; the human must verify and save each accepted correction. The original review queue and earlier signoffs were not changed by preparing these suggestions.
+
 ## Completed
 
 - Phase 0/1 preserved the existing Project root and origin. Earlier commits: `e706e3f`, `35d32c7`.
