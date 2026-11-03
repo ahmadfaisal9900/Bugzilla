@@ -205,13 +205,13 @@ function render(){
  $('scope').textContent=r.family==='F3'?'Count only the specified sample and partition — not all Mozilla bugs.':r.family==='F2'?'Calendar duration is not developer working time.':r.family==='F5'?'This question comes from comments associated with FIXED-resolution bugs.':'Answer from the saved dataset, not the website’s current status.';
  const suggestion=suggestionFor(r);
  $('answerLabel').textContent=suggestion?'Codex suggestion — human review required':r.decision==='CORRECT'?'Saved corrected answer':'Original candidate answer';
- $('answer').textContent=suggestion?(suggestion.answer||'No supported rewrite prepared. Inspect the linked source before deciding.'):answerText(r);
+ $('answer').textContent=suggestion?(suggestion.answer||'There is no proposed answer to approve. Check the linked source: use Needs a fix if you can supply a supported answer, Reject if the comment gives no answer, or Skip if you are unsure.'):answerText(r);
  const a=r.agent_recommendation;
  $('adviceTitle').textContent= a==='RECOMMEND_APPROVE'?'Codex: likely correct':a==='RECOMMEND_CORRECT'?'Codex: suggests an improvement':a==='RECOMMEND_REJECT'?'Codex: suggests rejecting':a==='ESCALATE'?'Codex: uncertain — please check carefully':'Automated record check';
  $('advice').textContent=r.agent_reason||'No special recommendation.';
  if(suggestion){
   $('adviceTitle').textContent=suggestion.status==='CORRECT'?'Suggested correction — check the source':suggestion.status==='REJECT'?'Suggested rejection — check the source':'Source check needed';
-  $('advice').textContent=suggestion.reason+(suggestion.status==='CORRECT'?' After checking the source, choose Looks correct to save this suggested answer as a correction, or Needs a fix to edit it.':' Skip or reject if the source does not support an answer.');
+  $('advice').textContent=suggestion.reason+(suggestion.status==='CORRECT'?' After checking the source, choose Looks correct to save this suggested answer as a correction, or Needs a fix to edit it.':' If the source supports an answer, choose Needs a fix and enter it. Otherwise choose Reject and give a short reason, or Skip if unsure.');
  }
  const sources=$('sources');sources.replaceChildren();for(const x of evidenceLinks(r)){const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.name+' ↗';sources.append(a)}
  if(!sources.children.length)sources.textContent='No public link in this review record. Check local evidence packet.';
@@ -227,6 +227,7 @@ function render(){
  const extra=!required(r);for(const b of ['approve','correct','reject','skip'])$(b).disabled=extra;
  $('approve').textContent=suggestion&&suggestion.status==='CORRECT'?'✓ Looks correct — save suggested answer':'✓ Looks correct';
  if(suggestion&&suggestion.status!=='CORRECT')$('approve').disabled=true;
+ $('approve').title=suggestion&&suggestion.status!=='CORRECT'?'There is no proposed answer to approve. Check the source, then correct, reject, or skip.':'';
  $('navText').textContent=extra?'Not selected for human review':(pending(r)?'Awaiting your decision':'Saved: '+r.decision);
  $('prev').disabled=index===0;$('next').disabled=index===visible.length-1;
 }
