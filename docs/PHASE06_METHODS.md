@@ -1,6 +1,6 @@
 # Phase 6 model-free groundwork (2026-11-01)
 
-**State: model-free groundwork and M0/M1 generation are implemented and fixture-tested. Not executed with a real model or real data. No study result exists.** The benchmark is not frozen, no language model is chosen, and M2 and the study's M3 intent parser do not exist yet.
+**State: model-free groundwork and M0/M1 generation are implemented and fixture-tested. Not executed with a real model or real data. No study result exists.** The M3 intent parser is also fixture-tested. The benchmark freeze and real-model runs are pending.
 
 ## What exists
 
@@ -11,7 +11,8 @@
 | `methods/m3_sql.py` | Intent allowlist and read-only parameterized SQL for F1–F4 | Fixture-tested |
 | `retrieval/bm25.py` | Standard-library BM25, the shared text corpus, Recall@k and Precision@k | Fixture-tested |
 | `methods/local_model.py`, `methods/generation.py` | Local Ollama connection; M0 without records and M1 using bounded BM25 evidence | Fake-model and fixture-tested; no real model call |
-| `evaluation/phase06.py`, `scripts/run_phase06_baselines.sh` | Development-only runner for M0/M1/M3/BM25 with checkpoints and a summary JSON | Fixture-tested; real-input dry-run reports `BLOCKED` here |
+| `methods/m3_intent.py` | Local model classifies the question into a validated JSON intent for the SQL store | Fake-model and fixture-tested |
+| `evaluation/phase06.py`, `scripts/run_phase06_baselines.sh` | Development-only runner for M0/M1/M3/BM25 and the study M3 path with checkpoints and a summary JSON | Fixture-tested; real-input dry-run reports `BLOCKED` here |
 
 ## Scoring rules
 
@@ -41,13 +42,13 @@ Not shown: nothing has run against the real database, so real M3 accuracy and BM
 
 ## The parser limit
 
-`parse_dev_wording` is built from development wording only, and test wording deliberately returns `NO_INTENT`. Using it on test questions would score about zero and measure nothing. The study's M3 needs an intent parser, most likely the shared model, whose output passes `validate_intent`. Tune it on development questions only.
+`parse_dev_wording` is built from development wording only, and test wording deliberately returns `NO_INTENT`. Using it on test questions would score about zero and measure nothing. Use `m3-llm` for the study's M3. The model receives only the question text and returns a typed intent. The SQL store validates the intent, binds its parameters, and computes the answer with read-only connections. Tune it on development questions only.
 
 ## Next, in order
 
 1. Choose the shared model (see Blockers).
 2. Run the smoke commands below on the data machine and review the output. They need no freeze because they only use development questions.
-3. Smoke-test the implemented M0/M1 wrapper with the chosen model on development questions, then implement M2's embedding retrieval and M3's study intent parser.
+3. Smoke-test M0 and `m3-llm` with the same installed local model on development questions.
 4. After the freeze, run every arm once on the locked test. This needs a deliberate new option; today's runner has no way to select test.
 
 ```bash
@@ -61,7 +62,7 @@ Expected from the M3 smoke: every F1–F4 and F6 development row correct, and al
 ## Blockers
 
 - **Model choice (team decision).** The roadmap names the Gemini free tier and local Ollama. Gemini's free tier may use submitted content to improve Google's products, and bug text can hold personal data with redistribution rights unresolved. **Recommendation: local Ollama, if the data machine can run a suitable model at an acceptable speed.** Use the same model for every arm.
-- **Freeze.** 31 of 64 required reviews remain. See `RESEARCH_STATUS.md`. Provisional development acceptance does not complete these reviews.
+- **Freeze.** All 64 required rows have recorded decisions in Ahmad's tracked sheet. Transfer the decisions into the generation queue, complete owner signoff, and validate the freeze on the data machine.
 - **Data.** The database and overlay are only on the data machine.
 
 ## M0/M1 development step (2026-11-02)
@@ -89,3 +90,25 @@ Inspect `outputs/phase06/logs/` and the run's `summary.json`, `predictions.jsonl
 API references: [Ollama chat](https://docs.ollama.com/api/chat), [JSON outputs](https://docs.ollama.com/capabilities/structured-outputs).
 
 Verification on 2026-11-02: all 34 targeted tests pass (23 existing method/scoring tests plus 11 generation tests), and 15 Phase 4/5/scaffold regression tests pass. New tests exercise request caps, error handling, no-evidence M0, bounded-evidence M1, citation provenance, checkpoint resume, configuration isolation and provisional labels. The model calls in these tests are fake. Real-input M0/M1 dry-runs both report `BLOCKED` with zero model calls because their saved input files are absent.
+
+## M0 and M3 handoff
+
+On the data machine, use the original generation run, the pinned canonical database
+and history overlay, and an already installed Ollama model. Set `MODEL` to the exact
+installed model name and use it for both methods. Run the dry-runs first, then repeat
+the commands with `--dry-run` removed.
+
+```bash
+bash scripts/run_phase06_baselines.sh m0 --model "$MODEL" --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
+bash scripts/run_phase06_baselines.sh m3-llm --model "$MODEL" --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
+```
+
+Use `--resume` for the same configuration and raise `--limit` to progress beyond the
+first five answers. Inspect each run's predictions, scores, and summary. The provisional
+smoke reads candidate gold. After freeze, omit `--unfrozen-dev-smoke` to score against
+reviewed development gold. The runner accepts development questions only.
+
+Fixture checks cover intent validation, rejected raw SQL and malformed responses,
+the question-only prompt, computed gold, and capped checkpoint resume. M0 and
+`m3-llm` use no document index or embeddings. Existing M1/BM25 commands are inherited
+from main. M2 was excluded from this handoff.

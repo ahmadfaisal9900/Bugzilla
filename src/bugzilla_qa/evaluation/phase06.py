@@ -1,6 +1,6 @@
 """Phase 6: run development questions and score them afterwards.
 
-M3/BM25 are model-free; M0/M1 call an explicitly configured local Ollama model.
+M3/BM25 are model-free; M0/M1 and m3-llm call an explicitly configured local Ollama model.
 The split is development only. Full jobs belong in the user's terminal.
 """
 import argparse
@@ -15,8 +15,7 @@ import duckdb
 from bugzilla_qa.benchmark import phase05 as p5
 from bugzilla_qa.data.normalize import file_hash, write_json
 from bugzilla_qa.evaluation import scoring
-from bugzilla_qa.methods import m3_sql
-from bugzilla_qa.methods import generation
+from bugzilla_qa.methods import generation, m3_intent, m3_sql
 from bugzilla_qa.methods.local_model import OllamaClient
 from bugzilla_qa.retrieval import bm25
 
@@ -122,6 +121,17 @@ def run_bm25(questions, out, base, overlay, limit, top_k=10):
 def run_generation(questions, out, base, overlay, args):
     client = OllamaClient(args.model, args.endpoint, args.timeout,
                           args.max_requests, args.max_output_tokens, args.seed)
+    path = out / "predictions.jsonl"
+    previous = read_checkpoint(path)
+    remaining = [q for q in questions if q["qid"] not in previous][:args.max_requests]
+    if args.method == "m3-llm":
+        store = m3_sql.SqlStore(base / "canonical.duckdb", overlay / "api_enrichment.duckdb", args.seed)
+        try:
+            done = run_questions(remaining, path, lambda q: m3_intent.answer_question(store, q, client), args.limit)
+        finally:
+            store.close()
+        return done, client.calls
+
     index = None
     if args.method == "m1":
         db = duckdb.connect(str(base / "canonical.duckdb"), read_only=True)
@@ -133,9 +143,6 @@ def run_generation(questions, out, base, overlay, args):
         finally:
             db.close()
             api.close()
-    path = out / "predictions.jsonl"
-    previous = read_checkpoint(path)
-    remaining = [q for q in questions if q["qid"] not in previous][:args.max_requests]
     done = run_questions(remaining, path, lambda q: generation.answer_question(
         q, client, args.method.upper(), index, args.top_k, args.evidence_chars), args.limit)
     return done, client.calls
@@ -170,7 +177,7 @@ def missing_inputs(args, base, overlay):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("method", choices=("m0", "m1", "m3", "bm25"))
+    parser.add_argument("method", choices=("m0", "m1", "m3", "m3-llm", "bm25"))
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--sources", type=Path, default=Path("configs/phase05_sources.json"))
     parser.add_argument("--run", type=Path, default=Path("outputs/benchmark/phase05/run-65c5be3381f66811"))
@@ -181,7 +188,7 @@ def main(argv=None):
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--summary", type=Path)
-    parser.add_argument("--model", help="Already installed local Ollama model; required for m0/m1")
+    parser.add_argument("--model", help="Already installed local Ollama model; required for m0/m1/m3-llm")
     parser.add_argument("--endpoint", default="http://127.0.0.1:11434")
     parser.add_argument("--max-requests", type=int, default=5, help="Maximum local model calls per invocation")
     parser.add_argument("--max-output-tokens", type=int, default=512)
@@ -189,7 +196,7 @@ def main(argv=None):
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--evidence-chars", type=int, default=12000)
     args = parser.parse_args(argv)
-    generative = args.method in ("m0", "m1")
+    generative = args.method in ("m0", "m1", "m3-llm")
     if args.limit is not None and args.limit <= 0:
         parser.error("--limit must be positive")
     if args.top_k <= 0 or args.evidence_chars < 2:
@@ -206,6 +213,9 @@ def main(argv=None):
                           "top_k": args.top_k, "evidence_chars": args.evidence_chars,
                           "generation_sha256": file_hash(Path(generation.__file__)),
                           "adapter_sha256": file_hash(Path(sys.modules[OllamaClient.__module__].__file__))}
+        if args.method == "m3-llm":
+            model_settings["intent_sha256"] = file_hash(Path(m3_intent.__file__))
+            model_settings["sql_sha256"] = file_hash(Path(m3_sql.__file__))
     root = args.root.resolve()
     args.run = root / args.run
     pins, base, overlay = source_paths(root, root / args.sources)
