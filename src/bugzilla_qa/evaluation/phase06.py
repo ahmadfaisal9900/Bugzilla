@@ -128,7 +128,7 @@ def run_bm25(questions, out, base, overlay, limit, top_k=10):
 
 def run_generation(questions, out, base_db, overlay, args, population=None):
     client = OllamaClient(args.model, args.endpoint, args.timeout,
-                          args.max_requests, args.max_output_tokens, args.seed)
+                          args.max_requests, args.max_output_tokens, args.seed, cpu=args.cpu)
     path = out / "predictions.jsonl"
     previous = read_checkpoint(path)
     remaining = [q for q in questions if q["qid"] not in previous][:args.max_requests]
@@ -204,6 +204,7 @@ def main(argv=None):
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--summary", type=Path)
     parser.add_argument("--model", help="Already installed local Ollama model; required for m0/m1/m3-llm")
+    parser.add_argument("--cpu", action="store_true", help="Run the local model without GPU offloading")
     parser.add_argument("--endpoint", default="http://127.0.0.1:11434")
     parser.add_argument("--max-requests", type=int, default=5, help="Maximum local model calls per invocation")
     parser.add_argument("--max-output-tokens", type=int, default=512)
@@ -218,6 +219,8 @@ def main(argv=None):
     if args.review_bundle and (args.unfrozen_dev_smoke or (args.method != "m0" and not args.sample_bundle)):
         parser.error("Use --review-bundle for m0 or with --sample-bundle for M3; omit --unfrozen-dev-smoke")
     generative = args.method in ("m0", "m1", "m3-llm")
+    if args.cpu and not generative:
+        parser.error("--cpu is only for methods that call the local model")
     if args.limit is not None and args.limit <= 0:
         parser.error("--limit must be positive")
     if args.top_k <= 0 or args.evidence_chars < 2:
@@ -226,11 +229,11 @@ def main(argv=None):
     if generative:
         # Configuration validation makes no network call, including during dry-run.
         try:
-            OllamaClient(args.model, args.endpoint, args.timeout, args.max_requests, args.max_output_tokens, args.seed)
+            OllamaClient(args.model, args.endpoint, args.timeout, args.max_requests, args.max_output_tokens, args.seed, cpu=args.cpu)
         except ValueError as error:
             parser.error(str(error))
         model_settings = {"model": args.model, "endpoint": args.endpoint, "temperature": 0,
-                          "seed": args.seed, "max_output_tokens": args.max_output_tokens,
+                          "seed": args.seed, "max_output_tokens": args.max_output_tokens, "cpu": args.cpu,
                           "top_k": args.top_k, "evidence_chars": args.evidence_chars,
                           "generation_sha256": file_hash(Path(generation.__file__)),
                           "adapter_sha256": file_hash(Path(sys.modules[OllamaClient.__module__].__file__))}

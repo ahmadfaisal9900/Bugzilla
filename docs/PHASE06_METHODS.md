@@ -135,16 +135,21 @@ bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5 --d
 bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5
 ```
 
-The SQL-only check uses the development wording parser. After a local Ollama
-model is available, set `MODEL` to its installed name and run both study methods
-on the same five development questions.
+The SQL-only check uses the development wording parser. This Windows machine
+has the quantized Qwen 2.5 1.5B instruct model installed for the development
+smoke. Use `--cpu` for both methods here because the GPU warm-up timed out.
+Keep the same model and runtime setting for both arms.
 
 ```bash
-bash scripts/run_phase06_baselines.sh m0 --review-bundle "$REVIEW" --model "$MODEL" --limit 5 --max-requests 5
-bash scripts/run_phase06_baselines.sh m3-llm --sample-bundle "$SAMPLE" --model "$MODEL" --limit 5 --max-requests 5
+MODEL='qwen2.5:1.5b-instruct-q4_K_M'
+bash scripts/run_phase06_baselines.sh m0 --review-bundle "$REVIEW" --model "$MODEL" --cpu --limit 5 --max-requests 5
+bash scripts/run_phase06_baselines.sh m3-llm --sample-bundle "$SAMPLE" --model "$MODEL" --cpu --limit 5 --max-requests 5
 ```
 
 Use `--resume` to continue the same output. Inspect the logged path and the
 run's predictions, scores, and summary. The local dry run verified the two
 packaged database hashes, the population checksum, and 34 development questions.
-The local Ollama endpoint did not respond during the availability check.
+On CPU, the installed model passed synthetic checks for M0 abstention and M3
+intent validation. Generated answers use Ollama's JSON schema constraint and
+still pass through the strict answer parser. Run the commands above in your
+terminal to check responses on the real development quiz.

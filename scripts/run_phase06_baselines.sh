@@ -29,6 +29,7 @@ Options:
   --max-output-tokens N Output cap (default 512)
   --top-k N             M1 retrieval count (default 5)
   --evidence-chars N    M1 serialized evidence character budget (default 12000)
+  --cpu                 Run the local model without GPU offloading
   --timeout SECONDS     Local model response timeout (default 60)
 
 Outputs go to outputs/phase06/<method>-dev-<smoke|shared-smoke|frozen>-<question hash>/, with a checkpoint,

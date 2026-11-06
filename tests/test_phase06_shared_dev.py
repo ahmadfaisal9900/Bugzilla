@@ -10,6 +10,7 @@ from test_phase05 import fixture
 from bugzilla_qa.benchmark import phase05 as p5
 from bugzilla_qa.data.normalize import file_hash, write_json
 from bugzilla_qa.evaluation import phase06, shared_dev
+from bugzilla_qa.methods.contract import MODEL_KEYS
 from bugzilla_qa.methods.m3_sql import SqlStore
 
 
@@ -89,10 +90,14 @@ def test_shared_sample_smoke(tmp_path, capsys):
     })}}
     with patch("bugzilla_qa.methods.local_model._post", return_value=response) as post:
         assert phase06.main(["m0", "--root", str(tmp_path), "--sources", "pins.json",
-                             "--review-bundle", "review", "--model", "fixture", "--limit", "1"]) == 0
+                             "--review-bundle", "review", "--model", "fixture", "--cpu", "--limit", "1"]) == 0
     report = json.loads(capsys.readouterr().out)
     assert (report["model_calls"], report["table"][0]["correct"]) == (1, 1)
-    payload = json.loads(post.call_args.args[1]["messages"][1]["content"])
+    assert report["model_settings"]["cpu"] is True
+    request = post.call_args.args[1]
+    assert request["options"]["num_gpu"] == 0
+    assert set(request["format"]["required"]) == MODEL_KEYS
+    payload = json.loads(request["messages"][1]["content"])
     assert set(payload) == {"question", "scope"}
     assert payload["question"] == original["question"]
 

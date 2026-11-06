@@ -63,6 +63,7 @@ Phase 6 now accepts the existing 3,000-bug export and its 884 field changes for 
 separate development smoke. A local dry run verified both file hashes and the
 quiz's population checksum, and loaded 34 development questions with saved
 corrections applied. Tiny fixture checks exercised SQL scoring and held-out
-filtering. No real question was answered in the agent session. The local model
-endpoint was unavailable, and formal freeze validation still needs the original
-pinned generation files. See `PHASE06_METHODS.md` for the local commands.
+filtering. No real question was answered in the agent session. The installed
+Qwen 2.5 1.5B instruct model passed synthetic M0 and M3 checks on CPU after GPU
+warm-up timed out. Formal freeze validation still needs the original pinned
+generation files. See `PHASE06_METHODS.md` for the local commands.
