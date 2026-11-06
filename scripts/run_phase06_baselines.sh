@@ -11,12 +11,14 @@ m3-llm  Ask the local model for a typed intent, then answer with read-only SQL.
 bm25  Build the keyword index, retrieve for development questions, report Recall@5/10.
 
 Development questions only: this tool has no option for the locked test. M0/M1 and m3-llm require an
-already installed Ollama model on localhost. No model is downloaded. All methods except m0 need
-the local Phase 3B database and Phase 4 overlay, so run them on the data machine.
+already installed Ollama model on localhost. M3 can use the shared sample bundle.
+The full-source path uses the pinned Phase 3B database and Phase 4 overlay.
 
 Options:
   --unfrozen-dev-smoke  Use dev questions from the unreviewed candidates. Results are a code check,
-                        never a study result. Without this flag the benchmark must be frozen.
+                        never a study result. The default full-source mode requires a freeze.
+  --review-bundle PATH  Use only development rows from the signoff bundle for a smoke
+  --sample-bundle PATH  Use shared DuckDBs for M3, with the tracked review bundle by default
   --run PATH            Generation run (default: outputs/benchmark/phase05/run-65c5be3381f66811)
   --limit N             Answer at most N questions in total; the run is marked PARTIAL
   --resume              Continue an existing output from its checkpoint
@@ -29,7 +31,7 @@ Options:
   --evidence-chars N    M1 serialized evidence character budget (default 12000)
   --timeout SECONDS     Local model response timeout (default 60)
 
-Outputs go to outputs/phase06/<method>-dev-<smoke|frozen>-<question hash>/, with a checkpoint,
+Outputs go to outputs/phase06/<method>-dev-<smoke|shared-smoke|frozen>-<question hash>/, with a checkpoint,
 summary.json, and scores.jsonl for answer methods. Both SQL commands have no comment text,
 so F5 is an abstention by design. The study's M3 uses m3-llm.
 

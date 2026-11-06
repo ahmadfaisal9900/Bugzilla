@@ -44,7 +44,7 @@ Ahmad's tracked signoff sheet now has decisions for all 64 required rows (40 app
 
 Run `python3 review_server.py --check` in the existing review bundle, then have the owner audit and transfer the recorded decisions into the original queue and complete global signoff. Run the full validate-freeze command from the user's terminal with matching local data, inspect its QC, and only then consider Phase 5 VERIFIED/FROZEN. Missing source evidence remains pending.
 
-Phase 6's model-free code (answer contract, scorer, M3 SQL, BM25) and local M0/M1 generation are implemented and fixture-tested but have not run with a real model or real data. No model is chosen; The study's M3 model-to-SQL path is implemented and fixture-tested on `feature/m0-m3`; M2 is outside this branch's handoff. No method result exists. See `docs/PHASE06_METHODS.md`. The user authorized provisional acceptance of the remaining 31 answers for development only on 2026-11-02; this uses `--unfrozen-dev-smoke`, changes no official reviews and is not a freeze. The locked test stays closed until the freeze.
+Phase 6's model-free code (answer contract, scorer, M3 SQL, BM25) and local M0/M1 generation are implemented and fixture-tested but have not run with a real model or real data. No model is chosen. The study's M3 model-to-SQL path is implemented and fixture-tested on `feature/m0-m3`; M2 is outside this branch's handoff. No method result exists. See `docs/PHASE06_METHODS.md`. The user authorized provisional acceptance of the remaining 31 answers for development only on 2026-11-02; this uses `--unfrozen-dev-smoke`, changes no official reviews and is not a freeze. The locked test stays closed until the freeze.
 
 
 ## Additional development practice
@@ -55,3 +55,14 @@ checks gold against retained normalized source records. It writes a separate pra
 run and does not change the original candidate release, review queues, or locked test.
 The real supplement has not been generated. See `PHASE05_BENCHMARK.md` for the data-machine
 commands and the separate timing-coverage path.
+
+
+## Local sample handoff
+
+Phase 6 now accepts the existing 3,000-bug export and its 884 field changes for a
+separate development smoke. A local dry run verified both file hashes and the
+quiz's population checksum, and loaded 34 development questions with saved
+corrections applied. Tiny fixture checks exercised SQL scoring and held-out
+filtering. No real question was answered in the agent session. The local model
+endpoint was unavailable, and formal freeze validation still needs the original
+pinned generation files. See `PHASE06_METHODS.md` for the local commands.

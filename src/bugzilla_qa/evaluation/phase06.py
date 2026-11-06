@@ -14,7 +14,7 @@ import duckdb
 
 from bugzilla_qa.benchmark import phase05 as p5
 from bugzilla_qa.data.normalize import file_hash, write_json
-from bugzilla_qa.evaluation import scoring
+from bugzilla_qa.evaluation import scoring, shared_dev
 from bugzilla_qa.methods import generation, m3_intent, m3_sql
 from bugzilla_qa.methods.local_model import OllamaClient
 from bugzilla_qa.retrieval import bm25
@@ -93,8 +93,16 @@ def run_questions(questions, path, answer, limit):
     return done
 
 
-def run_m3(questions, out, base, overlay, seed, limit):
-    store = m3_sql.SqlStore(base / "canonical.duckdb", overlay / "api_enrichment.duckdb", seed)
+def open_sql_store(base_db, overlay, seed, population=None):
+    store = m3_sql.SqlStore(base_db, overlay / "api_enrichment.duckdb", seed)
+    if population is not None and store.population_sha256 != population:
+        store.close()
+        raise SystemExit("Sample population differs from the development quiz")
+    return store
+
+
+def run_m3(questions, out, base_db, overlay, seed, limit, population=None):
+    store = open_sql_store(base_db, overlay, seed, population)
     try:
         return run_questions(questions, out / "predictions.jsonl", lambda q: m3_sql.answer_question(store, q), limit)
     finally:
@@ -118,14 +126,14 @@ def run_bm25(questions, out, base, overlay, limit, top_k=10):
     return run_questions(questions, out / "retrievals.jsonl", retrieve, limit)
 
 
-def run_generation(questions, out, base, overlay, args):
+def run_generation(questions, out, base_db, overlay, args, population=None):
     client = OllamaClient(args.model, args.endpoint, args.timeout,
                           args.max_requests, args.max_output_tokens, args.seed)
     path = out / "predictions.jsonl"
     previous = read_checkpoint(path)
     remaining = [q for q in questions if q["qid"] not in previous][:args.max_requests]
     if args.method == "m3-llm":
-        store = m3_sql.SqlStore(base / "canonical.duckdb", overlay / "api_enrichment.duckdb", args.seed)
+        store = open_sql_store(base_db, overlay, args.seed, population)
         try:
             done = run_questions(remaining, path, lambda q: m3_intent.answer_question(store, q, client), args.limit)
         finally:
@@ -134,7 +142,7 @@ def run_generation(questions, out, base, overlay, args):
 
     index = None
     if args.method == "m1":
-        db = duckdb.connect(str(base / "canonical.duckdb"), read_only=True)
+        db = duckdb.connect(str(base_db), read_only=True)
         api = duckdb.connect(str(overlay / "api_enrichment.duckdb"), read_only=True)
         try:
             db.execute("SET TimeZone='UTC'")
@@ -169,6 +177,11 @@ def score_bm25(done, gold):
 
 
 def missing_inputs(args, base, overlay):
+    if args.review_bundle:
+        needed = [args.review_bundle / name for name in shared_dev.REVIEW_FILES]
+        if args.sample_bundle:
+            needed.extend(args.sample_bundle / name for name in shared_dev.SAMPLE_FILES)
+        return [str(p) for p in needed if not p.is_file()]
     needed = [] if args.method == "m0" else [base / "canonical.duckdb", base / "manifest.json",
                                             overlay / "api_enrichment.duckdb", overlay / "summary.json"]
     needed.append(args.run / ("candidates.json" if args.unfrozen_dev_smoke else "FROZEN"))
@@ -181,6 +194,8 @@ def main(argv=None):
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--sources", type=Path, default=Path("configs/phase05_sources.json"))
     parser.add_argument("--run", type=Path, default=Path("outputs/benchmark/phase05/run-65c5be3381f66811"))
+    parser.add_argument("--review-bundle", type=Path, help="Use the partner development review sheet for a separate smoke run")
+    parser.add_argument("--sample-bundle", type=Path, help="Use the exported sample databases for m3 or m3-llm")
     parser.add_argument("--output", type=Path, default=Path("outputs/phase06"))
     parser.add_argument("--seed", type=int, default=317)
     parser.add_argument("--limit", type=int)
@@ -196,6 +211,12 @@ def main(argv=None):
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--evidence-chars", type=int, default=12000)
     args = parser.parse_args(argv)
+    if args.sample_bundle:
+        if args.method not in ("m3", "m3-llm"):
+            parser.error("--sample-bundle is for m3 and m3-llm")
+        args.review_bundle = args.review_bundle or Path(shared_dev.DEFAULT_REVIEW)
+    if args.review_bundle and (args.unfrozen_dev_smoke or (args.method != "m0" and not args.sample_bundle)):
+        parser.error("Use --review-bundle for m0 or with --sample-bundle for M3; omit --unfrozen-dev-smoke")
     generative = args.method in ("m0", "m1", "m3-llm")
     if args.limit is not None and args.limit <= 0:
         parser.error("--limit must be positive")
@@ -219,29 +240,51 @@ def main(argv=None):
     root = args.root.resolve()
     args.run = root / args.run
     pins, base, overlay = source_paths(root, root / args.sources)
+    base_db = base / "canonical.duckdb"
+    if args.review_bundle:
+        args.review_bundle = root / args.review_bundle
+    if args.sample_bundle:
+        args.sample_bundle = root / args.sample_bundle
+        overlay = args.sample_bundle
+        base_db = overlay / "sample.duckdb"
     report = {"method": args.method, "split": SPLIT, "limit": args.limit, "network_requests": 0, "model_calls": 0, "started_at_utc": stamp()}
     if generative:
         report.update(model_settings=model_settings, max_requests=args.max_requests,
-                      provisional_answers=bool(args.unfrozen_dev_smoke))
+                      provisional_answers=bool(args.unfrozen_dev_smoke or args.review_bundle))
     missing = missing_inputs(args, base, overlay)
+    population = None
+    if args.review_bundle and not missing:
+        questions, gold, review_sources = shared_dev.load_review(args.review_bundle, pins, args.seed)
+        population = review_sources["population_manifest_declared_sha256"]
+        report.update(benchmark_state=shared_dev.STATE, questions=len(questions), provisional_answers=True,
+                      review_sha256=p5.digest(gold))
+        if args.sample_bundle:
+            report["sample_sha256"] = shared_dev.verify_sample(args.sample_bundle, pins, review_sources)
+            if args.dry_run:
+                open_sql_store(base_db, overlay, args.seed, population).close()
     if missing or args.dry_run:
         report.update(state="BLOCKED" if missing else "DRY_RUN", missing_inputs=missing)
     else:
-        if args.method != "m0":
-            check_pins(pins, base, overlay)
-        state, questions, load_gold = load_benchmark(args.run, args.unfrozen_dev_smoke)
-        fingerprint = hashlib.sha256(json.dumps(questions, sort_keys=True).encode()).hexdigest()[:12]
-        if generative:
-            fingerprint = hashlib.sha256(json.dumps([questions, model_settings], sort_keys=True).encode()).hexdigest()[:12]
-        out = root / args.output / f"{args.method}-{SPLIT}-{'smoke' if args.unfrozen_dev_smoke else 'frozen'}-{fingerprint}"
+        if args.review_bundle:
+            state, load_gold = shared_dev.STATE, lambda: gold
+            fingerprint = p5.digest([questions, model_settings, report["review_sha256"], report.get("sample_sha256")])[:12]
+            mode = "shared-smoke"
+        else:
+            if args.method != "m0":
+                check_pins(pins, base, overlay)
+            state, questions, load_gold = load_benchmark(args.run, args.unfrozen_dev_smoke)
+            fingerprint_input = [questions, model_settings] if generative else questions
+            fingerprint = hashlib.sha256(json.dumps(fingerprint_input, sort_keys=True).encode()).hexdigest()[:12]
+            mode = "smoke" if args.unfrozen_dev_smoke else "frozen"
+        out = root / args.output / f"{args.method}-{SPLIT}-{mode}-{fingerprint}"
         if out.exists() and not args.resume:
             raise SystemExit("Output exists; use --resume to continue it: " + str(out))
         out.mkdir(parents=True, exist_ok=True)
         if generative:
-            done, report["model_calls"] = run_generation(questions, out, base, overlay, args)
+            done, report["model_calls"] = run_generation(questions, out, base_db, overlay, args, population)
             scored = score_m3(done, load_gold(), out)
         elif args.method == "m3":
-            done = run_m3(questions, out, base, overlay, args.seed, args.limit)
+            done = run_m3(questions, out, base_db, overlay, args.seed, args.limit, population)
             scored = score_m3(done, load_gold(), out)
         else:
             done = run_bm25(questions, out, base, overlay, args.limit)

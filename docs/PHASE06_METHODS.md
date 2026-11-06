@@ -112,3 +112,39 @@ Fixture checks cover intent validation, rejected raw SQL and malformed responses
 the question-only prompt, computed gold, and capped checkpoint resume. M0 and
 `m3-llm` use no document index or embeddings. Existing M1/BM25 commands are inherited
 from main. M2 was excluded from this handoff.
+
+
+## Run locally with the shared sample
+
+The exported sample and the tracked partner review sheet can drive a separate
+development smoke run. This path verifies the sample and history file hashes,
+checks the source pins and bug population, uses saved corrections for signed rows,
+and uses candidate gold for optional unreviewed rows. It selects only development
+benchmark questions. The results carry the `SHARED_DEV_SMOKE` label and belong in
+development diagnostics. The benchmark freeze still uses the original pinned
+generation and canonical files.
+
+Run from the root of `feature/m0-m3` in Git Bash with the Python environment active.
+Set `SAMPLE` to your extracted sample folder. These commands use the verified
+local Windows location as an example.
+
+```bash
+SAMPLE='/c/Courses/ENSF 621/BUGZILLA/Bugzilla/data/firefox-sample-seed317-20261102'
+REVIEW='outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811'
+bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5 --dry-run
+bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5
+```
+
+The SQL-only check uses the development wording parser. After a local Ollama
+model is available, set `MODEL` to its installed name and run both study methods
+on the same five development questions.
+
+```bash
+bash scripts/run_phase06_baselines.sh m0 --review-bundle "$REVIEW" --model "$MODEL" --limit 5 --max-requests 5
+bash scripts/run_phase06_baselines.sh m3-llm --sample-bundle "$SAMPLE" --model "$MODEL" --limit 5 --max-requests 5
+```
+
+Use `--resume` to continue the same output. Inspect the logged path and the
+run's predictions, scores, and summary. The local dry run verified the two
+packaged database hashes, the population checksum, and 34 development questions.
+The local Ollama endpoint did not respond during the availability check.
