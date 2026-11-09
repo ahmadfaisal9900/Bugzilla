@@ -25,7 +25,7 @@ def chat_reply(content):
 
 
 def truthful_parser(url, payload, timeout):
-    """Stands in for a perfect model: exactly the development-wording parser's intent, as JSON text."""
+    """Return the expected intent from the development question parser."""
     return chat_reply(json.dumps(m3_sql.parse_dev_wording(payload["messages"][1]["content"])))
 
 
@@ -121,7 +121,7 @@ class RunnerTests(unittest.TestCase):
         computed = [s for s in scores if families[s["qid"]] != "F5"]
         self.assertTrue(computed)
         self.assertEqual({s["verdict"] for s in computed}, {scoring.CORRECT})
-        # M3 has no comment text by design, so F5 is an abstention on answerable gold: wrong, not a human case.
+        # Abstaining on an answerable F5 question counts as incorrect.
         self.assertEqual({s["verdict"] for s in scores if families[s["qid"]] == "F5"}, {scoring.INCORRECT})
 
     def test_m3_llm_with_a_useless_parser_scores_nothing(self):

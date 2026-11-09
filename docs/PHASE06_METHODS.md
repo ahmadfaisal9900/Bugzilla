@@ -153,3 +153,22 @@ On CPU, the installed model passed synthetic checks for M0 abstention and M3
 intent validation. Generated answers use Ollama's JSON schema constraint and
 still pass through the strict answer parser. Run the commands above in your
 terminal to check responses on the real development quiz.
+
+
+### Results from 6 November 2026
+
+We gave M0 and M3 the same five questions from the original practice set,
+using Qwen 2.5 1.5B on CPU.
+
+| Method | Correct | What happened |
+|---|---:|---|
+| M0 | 0/5 | One timeout, three abstentions and one wrong count |
+| M3 with the model | 4/5 | Missed the question asking for a reason from a comment |
+| Direct SQL check | 4/5 | Matched M3 |
+
+Two answers were still provisional, so this was a small trial.
+The saved answers and scores are in `outputs/phase06/paired-local-20261106T210403Z/`.
+
+We also added five new component and status questions. All five answers matched
+the database. These are separate from the five questions used in the model run.
+The new questions are in `outputs/benchmark/phase05/dev-supplement-shared-5/candidates.json`.

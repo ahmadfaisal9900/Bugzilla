@@ -15,8 +15,8 @@ already installed Ollama model on localhost. M3 can use the shared sample bundle
 The full-source path uses the pinned Phase 3B database and Phase 4 overlay.
 
 Options:
-  --unfrozen-dev-smoke  Use dev questions from the unreviewed candidates. Results are a code check,
-                        never a study result. The default full-source mode requires a freeze.
+  --unfrozen-dev-smoke  Use dev candidates for a code check. With --sample-bundle,
+                        --run must name a generated shared practice supplement.
   --review-bundle PATH  Use only development rows from the signoff bundle for a smoke
   --sample-bundle PATH  Use shared DuckDBs for M3, with the tracked review bundle by default
   --run PATH            Generation run (default: outputs/benchmark/phase05/run-65c5be3381f66811)
@@ -32,7 +32,7 @@ Options:
   --cpu                 Run the local model without GPU offloading
   --timeout SECONDS     Local model response timeout (default 60)
 
-Outputs go to outputs/phase06/<method>-dev-<smoke|shared-smoke|frozen>-<question hash>/, with a checkpoint,
+Outputs go to outputs/phase06/<method>-dev-<smoke|shared-smoke|shared-practice|frozen>-<question hash>/, with a checkpoint,
 summary.json, and scores.jsonl for answer methods. Both SQL commands have no comment text,
 so F5 is an abstention by design. The study's M3 uses m3-llm.
 

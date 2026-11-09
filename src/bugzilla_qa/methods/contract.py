@@ -1,7 +1,7 @@
-"""Phase 6: the one answer shape every method returns.
+"""Define the answer format used by every method.
 
-A method that failed to produce an answer reports a non-OK status. That status is never an
-abstention, so a broken parser or malformed model reply cannot earn credit on F6 or UNKNOWN gold.
+Keep failed responses separate from abstentions so failures cannot earn credit
+on questions whose correct answer is unknown.
 """
 import json
 import math

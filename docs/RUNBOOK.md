@@ -123,7 +123,7 @@ bash scripts/run_phase05_agent_review_prep.sh --dry-run --batch 10
 bash scripts/run_phase05_agent_review_prep.sh --batch 10 --resume
 ```
 
-Then use Prompt 5B in [PHASE05_ASSISTED_REVIEW_PROTOCOL.md](PHASE05_ASSISTED_REVIEW_PROTOCOL.md) for one F5 packet batch at a time. Codex recommendations stay separate from the original CSV. The human reviewer checks all retained F5 and challenge items plus required factual/F6 spot checks, completes the exact CSV fields and `review_signoff.json`, then may run the freeze validator. Optional `--limit 10` creates a separate prefix and cannot replace the full packet report. See [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md) for source/gold logic and freeze checks.
+Then use Prompt 5B in [PHASE05_ASSISTED_REVIEW_PROTOCOL.md](PHASE05_ASSISTED_REVIEW_PROTOCOL.md) for one F5 packet batch at a time. Automated recommendations stay separate from the original CSV. The human reviewer checks all retained F5 and challenge items plus required factual/F6 spot checks, completes the exact CSV fields and `review_signoff.json`, then may run the freeze validator. Optional `--limit 10` creates a separate prefix and cannot replace the full packet report. See [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md) for source/gold logic and freeze checks.
 
 After source review and human sign-off only:
 

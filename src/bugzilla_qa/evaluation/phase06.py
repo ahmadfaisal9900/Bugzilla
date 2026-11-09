@@ -1,7 +1,7 @@
-"""Phase 6: run development questions and score them afterwards.
+"""Run development questions and score the answers.
 
-M3/BM25 are model-free; M0/M1 and m3-llm call an explicitly configured local Ollama model.
-The split is development only. Full jobs belong in the user's terminal.
+The SQL control and BM25 can run without a model. Other methods use local Ollama.
+Run evaluations from the terminal.
 """
 import argparse
 import hashlib
@@ -39,13 +39,13 @@ def source_paths(root, sources):
 
 
 def check_pins(pins, base, overlay):
-    """Cheap identity checks. The 1.89-GB hash belongs to the freeze."""
+    """Check source identities. The full database hash is checked during the freeze."""
     assert p5.read(base / "manifest.json")["identity_hash"] == pins["base_identity"], "Canonical run differs from its pin"
     assert file_hash(overlay / "summary.json") == pins["phase04_summary_sha256"], "Phase 4 overlay differs from its pin"
 
 
 def load_benchmark(run, unfrozen):
-    """Returns (state, inference questions, a loader for gold). Gold stays unread until scoring."""
+    """Load the questions and return a separate loader for the answers used in scoring."""
     if unfrozen:
         items = [q for q in p5.read(run / "candidates.json") if q["split"] == SPLIT]
         return SMOKE, [{k: q[k] for k in ("qid", "question", "scope")} for q in items], lambda: items
@@ -63,7 +63,7 @@ def load_benchmark(run, unfrozen):
 
 
 def read_checkpoint(path):
-    """A crash can leave one torn final line. Drop it and continue from the last whole record."""
+    """Discard an incomplete final line so the run can resume after a crash."""
     if not path.is_file():
         return {}
     done, lines = {}, path.read_text(encoding="utf-8").splitlines()
@@ -181,6 +181,8 @@ def missing_inputs(args, base, overlay):
         needed = [args.review_bundle / name for name in shared_dev.REVIEW_FILES]
         if args.sample_bundle:
             needed.extend(args.sample_bundle / name for name in shared_dev.SAMPLE_FILES)
+            if args.unfrozen_dev_smoke:
+                needed.extend(args.run / name for name in shared_dev.PRACTICE_FILES)
         return [str(p) for p in needed if not p.is_file()]
     needed = [] if args.method == "m0" else [base / "canonical.duckdb", base / "manifest.json",
                                             overlay / "api_enrichment.duckdb", overlay / "summary.json"]
@@ -216,8 +218,9 @@ def main(argv=None):
         if args.method not in ("m3", "m3-llm"):
             parser.error("--sample-bundle is for m3 and m3-llm")
         args.review_bundle = args.review_bundle or Path(shared_dev.DEFAULT_REVIEW)
-    if args.review_bundle and (args.unfrozen_dev_smoke or (args.method != "m0" and not args.sample_bundle)):
-        parser.error("Use --review-bundle for m0 or with --sample-bundle for M3; omit --unfrozen-dev-smoke")
+    if args.review_bundle and not args.sample_bundle and (args.method != "m0" or args.unfrozen_dev_smoke):
+        parser.error("Use --review-bundle for m0 or with --sample-bundle for M3")
+    sample_practice = bool(args.sample_bundle and args.unfrozen_dev_smoke)
     generative = args.method in ("m0", "m1", "m3-llm")
     if args.cpu and not generative:
         parser.error("--cpu is only for methods that call the local model")
@@ -227,7 +230,7 @@ def main(argv=None):
         parser.error("--top-k must be positive and --evidence-chars at least 2")
     model_settings = None
     if generative:
-        # Configuration validation makes no network call, including during dry-run.
+        # Check the settings before making any model requests.
         try:
             OllamaClient(args.model, args.endpoint, args.timeout, args.max_requests, args.max_output_tokens, args.seed, cpu=args.cpu)
         except ValueError as error:
@@ -259,19 +262,27 @@ def main(argv=None):
     if args.review_bundle and not missing:
         questions, gold, review_sources = shared_dev.load_review(args.review_bundle, pins, args.seed)
         population = review_sources["population_manifest_declared_sha256"]
-        report.update(benchmark_state=shared_dev.STATE, questions=len(questions), provisional_answers=True,
-                      review_sha256=p5.digest(gold))
+        shared_state = shared_dev.STATE
+        report["review_sha256"] = p5.digest(gold)
         if args.sample_bundle:
             report["sample_sha256"] = shared_dev.verify_sample(args.sample_bundle, pins, review_sources)
+            if sample_practice:
+                questions, gold = shared_dev.load_practice(args.run, pins, args.seed, population, report["sample_sha256"])
+                shared_state = shared_dev.PRACTICE_STATE
+                report["practice_sha256"] = p5.digest(gold)
             if args.dry_run:
                 open_sql_store(base_db, overlay, args.seed, population).close()
+        report.update(benchmark_state=shared_state, questions=len(questions), provisional_answers=True)
     if missing or args.dry_run:
         report.update(state="BLOCKED" if missing else "DRY_RUN", missing_inputs=missing)
     else:
         if args.review_bundle:
-            state, load_gold = shared_dev.STATE, lambda: gold
-            fingerprint = p5.digest([questions, model_settings, report["review_sha256"], report.get("sample_sha256")])[:12]
-            mode = "shared-smoke"
+            state, load_gold = shared_state, lambda: gold
+            identity = [questions, model_settings, report["review_sha256"], report.get("sample_sha256")]
+            if sample_practice:
+                identity.append(report["practice_sha256"])
+            fingerprint = p5.digest(identity)[:12]
+            mode = "shared-practice" if sample_practice else "shared-smoke"
         else:
             if args.method != "m0":
                 check_pins(pins, base, overlay)

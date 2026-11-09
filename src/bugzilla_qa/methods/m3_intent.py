@@ -1,7 +1,7 @@
-"""Phase 6 M3: the local model turns a question into a JSON intent, then allowlisted SQL answers it.
+"""Use the model to choose a database lookup from the question text.
 
-The model sees only the question text. It never writes SQL, never sees rows, and never writes the
-answer. Examples use invented IDs and development wording only.
+Validate its JSON intent before running a SQL template. The database supplies
+the answer. Prompt examples use invented bug IDs and development wording.
 """
 import hashlib
 import json
@@ -34,14 +34,14 @@ Examples:
 
 
 def parse_intent(raw):
-    """Returns a dict or None. validate_intent stays the only gate on what can run."""
+    """Parse a JSON object. The caller validates it before querying the database."""
     try:
         intent = json.loads(raw)
     except (TypeError, ValueError):
         return None
     if not isinstance(intent, dict):
         return None
-    # A bare number is the one harmless model habit: 123 and 2023 mean the same as their strings.
+    # Accept integer IDs and filter values by converting them to strings.
     for key in ("bug_id", "value"):
         if type(intent.get(key)) is int:
             intent[key] = str(intent[key])

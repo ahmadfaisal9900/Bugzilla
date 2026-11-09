@@ -25,7 +25,7 @@ def test_practice_set_preserves_parent_and_runs_with_sql(tmp_path):
     original = phase05.read(run / "candidates.json")
     before = {path: file_hash(path) for path in run.rglob("*") if path.is_file()}
     opts = SimpleNamespace(root=tmp_path, run=run, sources=Path("sources.json"),
-                           limit=2, resume=False, dry_run=True)
+                           limit=2, resume=False, dry_run=True, sample_bundle=None)
     preview = dev_supplement.generate(opts)
     assert preview["state"] == "DRY_RUN"
     assert not Path(preview["output"]).exists()

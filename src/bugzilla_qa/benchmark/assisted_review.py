@@ -729,7 +729,7 @@ def _comment_packet(q, db, root):
         "question": safe_comment_text(q["question"]), "suggested_gold_json": {
             **q["gold"], "claims": [{**claim, "text": safe_comment_text(claim.get("text", ""))}
                 for claim in q.get("gold", {}).get("claims", [])]},
-        "codex_recommendation": {"state": "NOT_REVIEWED", "decision": None,
+        "review_recommendation": {"state": "NOT_REVIEWED", "decision": None,
                                  "note": "A model may recommend; only a human enters review_queue.csv decisions."},
         "deterministic_source_check": {"status": "PASS", "checks": checks},
         "evidence": {"comment_id": r["comment_id"], "comment_key": r["comment_key"],
@@ -919,7 +919,7 @@ def prepare(args):
                     "evidence_refs": [{k: (scrub_strings(e.get(k)) if q["family"] == "F5" else e.get(k))
                         for k in ("id", "bug_id", "source_dataset", "source_row_key", "source_url", "content_hash", "event_time_utc", "observed_at_utc", "ingested_at_utc", "fields")} for e in q["evidence"]],
                     "deterministic_validation": validation,
-                    "codex_recommendation": {"state": "NOT_REVIEWED", "decision": None,
+                    "review_recommendation": {"state": "NOT_REVIEWED", "decision": None,
                         "instruction": "Provide a recommendation only; do not write human review decisions or claim human source review."}}
                 if f5_packet:
                     packet["f5_full_comment_packet"] = f5_packet
@@ -965,7 +965,7 @@ def prepare(args):
         "f5_flag_codes": dict(flag_codes), "f5_flagged_qids": flagged_qids,
         "per_item_report": str((prep / "validation_report.json").relative_to(root)),
         "packet_directory": str((prep / "packets").relative_to(root)),
-        "human_review_state": "NOT_SIGNED; Codex recommendations are not independent annotation",
+        "human_review_state": "NOT_SIGNED; Automated recommendations are not independent annotation",
         "network_requests": 0}
     write_json(prep / "validation_report.json", {"version": VERSION, "benchmark_run": run.name,
         "input_integrity": integrity, "per_item": {q: reports[q] for q in selected_qids if q in reports}})

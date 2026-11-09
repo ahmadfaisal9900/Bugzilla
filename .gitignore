@@ -26,6 +26,7 @@
 /data/raw/
 /data/normalized/
 /data/snapshots/
+/data/firefox-sample-seed317-*/
 **/embeddings/
 **/indexes/
 

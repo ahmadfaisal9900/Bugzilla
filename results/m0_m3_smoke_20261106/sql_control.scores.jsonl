@@ -1,0 +1,5 @@
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_4486ec2813041522a208", "reason": "normalized_string", "verdict": "CORRECT"}
+{"exact": true, "family": "F2", "gold_type": "calendar_duration", "method": "M3", "qid": "q_09b006748d0b8d182253", "reason": "duration_tolerance", "verdict": "CORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_6815339a29fca2b0a6a7", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_2eca34f4e9431df809b7", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_639f25ec01824d49c28e", "reason": "false_abstention", "verdict": "INCORRECT"}

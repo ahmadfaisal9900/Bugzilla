@@ -1,6 +1,7 @@
 """Build a separate F1 practice set from the original development population."""
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import duckdb
 
 from bugzilla_qa.benchmark import phase05 as p5
 from bugzilla_qa.data.normalize import file_hash, write_json
+from bugzilla_qa.evaluation import shared_dev
 
 DEFAULT_RUN = Path("outputs/benchmark/phase05/run-65c5be3381f66811")
 ROWS_SQL = """
@@ -37,10 +39,16 @@ def build(db_path, original, pins, seed, limit):
         db.execute("SET TimeZone='UTC'")
         db.execute("SET memory_limit='512MB'")
         rows = p5.dictionaries(db, ROWS_SQL)
+        links = db.execute("""SELECT bug_id, target_bug_id FROM bug_links
+                              WHERE target_bug_id IS NOT NULL
+                              AND relation IN ('duplicate_of', 'blocks', 'depends_on')""").fetchall()
     ids = {split: sorted(r["bug_id"] for r in rows if p5.partition(seed, r["bug_id"]) == split)
            for split in ("dev", "test")}
     assert p5.digest(ids) == scope["population_manifest_sha256"], "Source population changed"
-    eligible = set(ids["dev"]) - used
+    held_out = set(ids["test"])
+    linked_to_held_out = {parent for parent, target in links if target in held_out}
+    linked_to_held_out.update(target for parent, target in links if parent in held_out)
+    eligible = set(ids["dev"]) - used - linked_to_held_out
     items = []
     for row in sorted(rows, key=lambda r: p5.order(seed, r["bug_id"])):
         bug = row["bug_id"]
@@ -71,23 +79,24 @@ def build(db_path, original, pins, seed, limit):
     return items
 
 
-def generate(args):
-    root = args.root.resolve()
-    run = (root / args.run).resolve()
-    pins = p5.read(root / args.sources)
-    base, _ = p5.paths(root, pins)
-    db_path = base / "canonical.duckdb"
-    folder = (root / "outputs/benchmark/phase05").resolve()
-    dest = folder / f"dev-supplement-{args.limit}"
-    assert not dest.is_symlink() and dest != run, "Choose an unused supplement output"
-    candidates = run / "candidates.json"
-    required = [candidates, run / "manifest.json", db_path, base / "manifest.json"]
-    missing = [str(path) for path in required if not path.is_file()]
-    report = {"state": "BLOCKED" if missing else "DRY_RUN", "missing_inputs": missing,
-              "started_at_utc": p5.stamp(), "network_requests": 0, "limit": args.limit, "output": str(dest)}
-    if missing or args.dry_run:
-        return {**report, "finished_at_utc": p5.stamp()}
+def sample_parent(sample, review, pins):
+    seed = p5.read(review / shared_dev.REVIEW_FILES[0])["seed"]
+    rows, sources = shared_dev.development_rows(review, pins, seed)
+    hashes = shared_dev.verify_sample(sample, pins, sources)
+    scope = {**shared_dev.development_scope(pins, sources), "corpus": "broad BugsRepo metadata; frozen Firefox sample"}
+    original = []
+    for row in rows.values():
+        item = {key: row[key] for key in ("qid", "split", "family", "question")}
+        if row["family"] == "F1":
+            bug = re.search(r"recorded for Firefox bug (\d+)\?", row["question"])
+            assert bug, "Unrecognized archived F1 wording"
+            item.update(scope=scope, bug_ids=[bug[1]])
+        original.append(item)
+    return original, {"seed": seed, "parent_review_sha256": p5.digest(original), "sample_sha256": hashes}
 
+
+def canonical_parent(run, base, db_path, pins):
+    candidates = run / "candidates.json"
     manifest = p5.read(run / "manifest.json")
     base_manifest = p5.read(base / "manifest.json")
     opts = manifest["identity"]["options"]
@@ -97,8 +106,40 @@ def generate(args):
     assert db_path.stat().st_size == base_manifest["artifacts"]["canonical.duckdb"]["bytes"], "Canonical DB size changed"
     original_hash = file_hash(candidates)
     assert original_hash == manifest["artifacts"]["candidates.json"], "Original candidates changed"
-    identity = {"parent_candidates_sha256": original_hash, "source_pins_sha256": p5.digest(pins),
-                "code_sha256": file_hash(Path(__file__)), "seed": opts["seed"], "limit": args.limit}
+    return p5.read(candidates), {"seed": opts["seed"], "parent_candidates_sha256": original_hash}
+
+
+def generate(args):
+    root = args.root.resolve()
+    run = (root / args.run).resolve()
+    pins = p5.read(root / args.sources)
+    base, _ = p5.paths(root, pins)
+    folder = (root / "outputs/benchmark/phase05").resolve()
+    if args.sample_bundle:
+        sample = root / args.sample_bundle
+        review = root / args.review_bundle
+        db_path = sample / "sample.duckdb"
+        dest = folder / f"dev-supplement-shared-{args.limit}"
+        required = [sample / name for name in shared_dev.SAMPLE_FILES]
+        required.extend(review / name for name in shared_dev.REVIEW_FILES)
+    else:
+        db_path = base / "canonical.duckdb"
+        dest = folder / f"dev-supplement-{args.limit}"
+        required = [run / "candidates.json", run / "manifest.json", db_path, base / "manifest.json"]
+    assert not dest.is_symlink() and dest != run, "Choose an unused supplement output"
+    missing = [str(path) for path in required if not path.is_file()]
+    report = {"state": "BLOCKED" if missing else "DRY_RUN", "missing_inputs": missing,
+              "started_at_utc": p5.stamp(), "network_requests": 0, "limit": args.limit, "output": str(dest)}
+    if missing or (args.dry_run and not args.sample_bundle):
+        return {**report, "finished_at_utc": p5.stamp()}
+    if args.sample_bundle:
+        original, parent = sample_parent(sample, review, pins)
+    else:
+        original, parent = canonical_parent(run, base, db_path, pins)
+    identity = {**parent, "source_pins_sha256": p5.digest(pins),
+                "code_sha256": file_hash(Path(__file__)), "limit": args.limit}
+    if args.dry_run:
+        return {**report, **identity, "finished_at_utc": p5.stamp()}
 
     checkpoint = dest / "checkpoint.json"
     payload = dest / "candidates.json"
@@ -117,7 +158,7 @@ def generate(args):
     else:
         dest.mkdir(parents=True)
     write_json(checkpoint, {"state": "GENERATING", "identity": identity, "started_at_utc": report["started_at_utc"]})
-    items = build(db_path, p5.read(candidates), pins, opts["seed"], args.limit)
+    items = build(db_path, original, pins, identity["seed"], args.limit)
     write_json(payload, items)
     report.update(state="PRACTICE_ONLY", split="dev", family="F1", questions=len(items),
                   candidates_sha256=file_hash(payload), finished_at_utc=p5.stamp(), **identity)
@@ -131,6 +172,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--run", type=Path, default=DEFAULT_RUN)
+    parser.add_argument("--sample-bundle", type=Path, help="Generate practice questions from the shared DuckDB export")
+    parser.add_argument("--review-bundle", type=Path, default=Path(shared_dev.DEFAULT_REVIEW),
+                        help="Partner review bundle used with --sample-bundle")
     parser.add_argument("--sources", type=Path, default=Path("configs/phase05_sources.json"))
     parser.add_argument("--limit", type=int, default=30)
     parser.add_argument("--resume", action="store_true")
