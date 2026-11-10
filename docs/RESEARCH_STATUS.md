@@ -42,30 +42,6 @@ Later on 2026-11-02 the signoff sheet contained 40 approvals, 21 corrections and
 
 Ahmad's tracked signoff sheet now has decisions for all 64 required rows (40 approvals and 24 corrections). These decisions still need transfer to the original generation queue and the data-machine freeze validation. The sheet identifies 34 development questions and 141 test questions, including the six supplemental challenges within those counts.
 
-Run `python3 review_server.py --check` in the existing review bundle, then have the owner audit and transfer the recorded decisions into the original queue and complete global signoff. Run the full validate-freeze command from the user's terminal with matching local data, inspect its QC, and only then consider Phase 5 VERIFIED/FROZEN. Missing source evidence remains pending.
+Phase 6's model-free code (answer contract, scorer, M3 SQL, BM25) and local M0/M1 generation are implemented and fixture-tested but have not run with a real model or real data. No model is chosen; M2 and the study's M3 intent parser remain unimplemented. No method result exists. See `docs/PHASE06_METHODS.md`. The user authorized provisional acceptance of the remaining 31 answers for development only on 2026-11-02; this uses `--unfrozen-dev-smoke`, changes no official reviews and is not a freeze. The locked test stays closed until the freeze.
 
-Phase 6's model-free code (answer contract, scorer, M3 SQL, BM25) and local M0/M1 generation are implemented and fixture-tested. A local development smoke uses Qwen 2.5 1.5B instruct; the study model choice remains open. The study's M3 model-to-SQL path is implemented and fixture-tested on `feature/m0-m3`; M2 is outside this branch's handoff. See the local smoke results in `docs/PHASE06_METHODS.md`. The user authorized provisional acceptance of the remaining 31 answers for development only on 2026-11-02; this uses `--unfrozen-dev-smoke`, changes no official reviews and is not a freeze. The locked test stays closed until the freeze.
-
-
-## Additional development practice
-
-The independent Phase 5 supplement is implemented and fixture-tested. It proposes up
-to 30 archive-field questions by default from the existing development population and
-checks gold against retained normalized source records. It writes a separate practice
-run and does not change the original candidate release, review queues, or locked test.
-A local shared-sample run generated five F1 practice items and all five
-source-checked answers matched the SQL-only control. See `PHASE05_BENCHMARK.md`
-for the local commands and the separate timing-coverage path.
-
-
-## Local sample handoff
-
-Phase 6 now accepts the existing 3,000-bug export and its 884 field changes for a
-separate development smoke. A local dry run verified both file hashes and the
-quiz's population checksum, and loaded 34 development questions with saved
-corrections applied. Tiny fixture checks exercised SQL scoring and held-out
-filtering. A bounded paired run used five real development questions. Qwen 2.5
-1.5B instruct on CPU scored 0/5 for M0, including a timeout, and 4/5 for M3
-with the model. The deterministic SQL control also scored 4/5. This is a
-development smoke with two provisional rows. Formal freeze validation still
-needs the original pinned generation files. See `PHASE06_METHODS.md` for the local commands.
+Retrieval extension: partial source-only corpus and SQLite lexical index implemented and one-bug smoke-tested; expanded benchmark, dense/hybrid systems and full evaluation remain unimplemented. No full run or study result exists. See `docs/EVAL_EXTENSION_STATUS.md`.

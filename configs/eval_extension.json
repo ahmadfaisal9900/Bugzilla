@@ -1,0 +1,14 @@
+{
+  "version": "retrieval-extension-v1",
+  "canonical_db": "outputs/normalization/phase03b/run-20261022T023542Z-1182018/canonical.duckdb",
+  "history_db": "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/api_enrichment.duckdb",
+  "base_identity": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663",
+  "history_identity": "8bb3150d29a598d8a623c13d5237a9a43bb58c42df761c5b1570762c1cd2c248",
+  "sample_seed": 317,
+  "chunk_words": 180,
+  "overlap_words": 30,
+  "dense_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "rrf_k": 60,
+  "top_k": 5
+}
