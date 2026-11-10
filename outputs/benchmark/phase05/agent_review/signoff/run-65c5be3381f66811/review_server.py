@@ -240,7 +240,7 @@ def main():
         if bad:raise SystemExit(f'ERROR: Approved/corrected reviews missing confirmation: {bad[:5]}')
         print('Review-field consistency: passed')
         if remaining: print('Review not complete; finish required rows before freezing.')
-        else: print('Required decisions complete. Next: Codex validator compatibility and benchmark freeze.')
+        else: print('Required decisions complete. Next: Review validator compatibility and benchmark freeze.')
         return
     server=HTTPServer(('127.0.0.1',args.port),make_handler(folder))
     url=f'http://127.0.0.1:{server.server_port}/'

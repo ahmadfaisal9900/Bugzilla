@@ -33,7 +33,7 @@ def _post(url, payload, timeout):
 
 class OllamaClient:
     def __init__(self, model, endpoint="http://127.0.0.1:11434", timeout=60,
-                 max_requests=5, max_output_tokens=512, seed=317, post=None):
+                 max_requests=5, max_output_tokens=512, seed=317, post=None, *, cpu=False):
         parts = urlsplit(endpoint)
         if (parts.scheme != "http" or parts.hostname not in ("localhost", "127.0.0.1", "::1")
                 or parts.username or parts.password or parts.path not in ("", "/")
@@ -47,14 +47,17 @@ class OllamaClient:
             raise ValueError("Request and output limits must be positive integers")
         self.model, self.endpoint, self.timeout = model, endpoint.rstrip("/"), timeout
         self.max_requests, self.max_output_tokens, self.seed = max_requests, max_output_tokens, seed
+        self.cpu = cpu
         self.calls, self.post = 0, post or _post
 
-    def chat(self, messages):
+    def chat(self, messages, *, response_format="json"):
         if self.calls >= self.max_requests:
             raise RequestLimit("Model request limit reached")
         self.calls += 1  # Failed attempts count too; a failure cannot cause unlimited retries.
-        payload = {"model": self.model, "messages": messages, "stream": False, "format": "json",
+        payload = {"model": self.model, "messages": messages, "stream": False, "format": response_format,
                    "options": {"temperature": 0, "seed": self.seed, "num_predict": self.max_output_tokens}}
+        if self.cpu:
+            payload["options"]["num_gpu"] = 0
         try:
             response = self.post(self.endpoint + "/api/chat", payload, self.timeout)
             if not isinstance(response, dict) or response.get("done") is not True:

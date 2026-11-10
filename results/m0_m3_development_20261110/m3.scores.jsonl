@@ -1,0 +1,34 @@
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_4486ec2813041522a208", "reason": "normalized_string", "verdict": "CORRECT"}
+{"exact": true, "family": "F2", "gold_type": "calendar_duration", "method": "M3", "qid": "q_09b006748d0b8d182253", "reason": "duration_tolerance", "verdict": "CORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_6815339a29fca2b0a6a7", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_2eca34f4e9431df809b7", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_639f25ec01824d49c28e", "reason": "false_abstention", "verdict": "INCORRECT"}
+{"family": "F6", "gold_type": "unanswerable", "method": "M3", "qid": "q_27791f312c9c478bfaed", "reason": "correct_abstention", "verdict": "CORRECT"}
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_ecc7daafbbc3bc92ca64", "reason": "normalized_string", "verdict": "CORRECT"}
+{"family": "F2", "gold_type": "unknown", "method": "M3", "qid": "q_51d0dfe177d6f2885f66", "reason": "correct_abstention", "verdict": "CORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_75254f1c7965693227cc", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_44ad225a6d43e12c108c", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_a5c70180da726d9445de", "reason": "false_abstention", "verdict": "INCORRECT"}
+{"family": "F6", "gold_type": "unanswerable", "method": "M3", "qid": "q_8635c48a2ee113d4c738", "reason": "correct_abstention", "verdict": "CORRECT"}
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_0cf05d22d7593912855a", "reason": "normalized_string", "verdict": "CORRECT"}
+{"family": "F2", "gold_type": "integer", "method": "M3", "qid": "q_9b4f4c54225ff920a46a", "reason": "NO_INTENT", "verdict": "INCORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_25ca7696bb093bcc4eb6", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_5fc01675039dff53011c", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_df73d0a04940f296b92e", "reason": "false_abstention", "verdict": "INCORRECT"}
+{"family": "F6", "gold_type": "unanswerable", "method": "M3", "qid": "q_878bcc2579afe2d4b68f", "reason": "correct_abstention", "verdict": "CORRECT"}
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_3cce2a85bc1ec8aa483e", "reason": "normalized_string", "verdict": "CORRECT"}
+{"exact": true, "family": "F2", "gold_type": "calendar_duration", "method": "M3", "qid": "q_f821d5a7d2148d961471", "reason": "duration_tolerance", "verdict": "CORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_686021bf3ab450fd2ec2", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_c839d38a0b56104c4de0", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_0f02c856b8576c53962d", "reason": "false_abstention", "verdict": "INCORRECT"}
+{"family": "F6", "gold_type": "unanswerable", "method": "M3", "qid": "q_9940488831c9bb81264a", "reason": "correct_abstention", "verdict": "CORRECT"}
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_adb067b9b97eebe455d1", "reason": "normalized_string", "verdict": "CORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_953d6724ed6e3e4748b9", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_ea991d340566fc903e31", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_103fc1febfb8153ed3d2", "reason": "false_abstention", "verdict": "INCORRECT"}
+{"family": "F6", "gold_type": "unanswerable", "method": "M3", "qid": "q_e39e28aa7f034f2ef4f4", "reason": "correct_abstention", "verdict": "CORRECT"}
+{"family": "F1", "gold_type": "string", "method": "M3", "qid": "q_b770c26229f85c947dbc", "reason": "normalized_string", "verdict": "CORRECT"}
+{"family": "F3", "gold_type": "integer", "method": "M3", "qid": "q_cac169e33cd8b5d5b59c", "reason": "exact_integer", "verdict": "CORRECT"}
+{"f1": 1.0, "family": "F4", "gold_type": "id_set", "method": "M3", "precision": 1.0, "qid": "q_fd926740120468f215ef", "reason": "complete_id_set", "recall": 1.0, "verdict": "CORRECT"}
+{"family": "F5", "gold_type": "supported_explanation", "method": "M3", "qid": "q_7e52cb5dac94d7614825", "reason": "false_abstention", "verdict": "INCORRECT"}
+{"family": "F6", "gold_type": "unanswerable", "method": "M3", "qid": "q_faccb3ba563ab7ca68c7", "reason": "correct_abstention", "verdict": "CORRECT"}

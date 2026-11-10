@@ -1,7 +1,7 @@
-"""Phase 6: the one answer shape every method returns.
+"""Define the answer format used by every method.
 
-A method that failed to produce an answer reports a non-OK status. That status is never an
-abstention, so a broken parser or malformed model reply cannot earn credit on F6 or UNKNOWN gold.
+Keep failed responses separate from abstentions so failures cannot earn credit
+on questions whose correct answer is unknown.
 """
 import json
 import math
@@ -11,6 +11,24 @@ NO_INTENT = "NO_INTENT"
 PARSE_ERROR = "PARSE_ERROR"
 MODEL_KEYS = {"answer", "abstained", "value", "evidence"}
 EVIDENCE_KEYS = {"bug_id", "record_id", "url"}
+ANSWER_SCHEMA = {
+    "type": "object",
+    "required": sorted(MODEL_KEYS),
+    "additionalProperties": False,
+    "properties": {
+        "answer": {"type": "string"},
+        "abstained": {"type": "boolean"},
+        "value": {"anyOf": [{"type": "string"}, {"type": "number"}, {"type": "null"},
+                            {"type": "array", "items": {"type": ["string", "integer"]}}]},
+        "evidence": {"type": "array", "items": {
+            "type": "object",
+            "required": sorted(EVIDENCE_KEYS),
+            "additionalProperties": False,
+            "properties": {"bug_id": {"type": ["string", "integer", "null"]},
+                           "record_id": {"type": ["string", "null"]}, "url": {"type": ["string", "null"]}},
+        }},
+    },
+}
 
 
 def make_answer(qid, method, text, abstained=False, value=None, evidence=(), status=OK, trace=None, raw=None):

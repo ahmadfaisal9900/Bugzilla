@@ -36,14 +36,19 @@
     "second_reviewer",
     "second_decision"
   ],
-  "immutable_rows_sha256": "657c5157e2e03889b9227be9c10afb06f3e6d2ead94ecfae25075100e8695d73",
+  "immutable_rows_sha256": "85c854385393e72668040651a9ca9f0944ccb0160455d850a16fce7817aa9652",
+  "label_amendment": {
+    "description": "Display labels updated. Question text, gold, evidence and human decisions preserved.",
+    "original_bundle_sha256": "e9bc6712d40fa60fd2e663af5df51b54f711652eed2e910833300b776f9171e0",
+    "original_review_files_saved": true
+  },
   "mutable_checksum_note": "packaged_file_sha256.signoff_queue.csv is a historical packaging hash; subsequent genuine reviews change it. Compare immutable columns to the backup with review_server.py --check.",
   "packaged_at_utc": "2026-10-24T00:09:16.448426+00:00",
   "packaged_file_sha256": {
-    "review_server.py": "c7f4b4cc9fa201b35134635f1ce3d64a1745efee689cb2add874723eeb5b2e12",
-    "signoff.html": "1283f53a57b97e9323c09d20d0633251b946cf06adfd56a9a7ae5b3ec2bc8b6f",
-    "signoff_queue.before_review.csv": "5045f71ecad4c4687d8a3349d1324a9de352c783c19792c3527e1c19a5c35c14",
-    "signoff_queue.csv": "396d526304bcbbaf152086090667acf96b06a2fb8d95fa651b03fecc0068ddd3"
+    "review_server.py": "855212434287adb34135d21bf6809d823fedc6beb90edc1dccec67d6d65f9ad7",
+    "signoff.html": "7eb2c1708efc49d1e790d9b79025e1d35f07539a9a0c19ef8aafad5350c48242",
+    "signoff_queue.before_review.csv": "9019b46eda2600f116b6c8d0fb635e26e50862ea2edbd4ddc2a835c076924405",
+    "signoff_queue.csv": "4ec498c432600dbae5203be106d2df21d4309e7b8ab90df3aa05f3b7ce458c38"
   },
   "packaged_required_decisions": {
     "APPROVE": 6,
@@ -57,7 +62,7 @@
     "supplemental_challenges": 6
   },
   "required_rows": 64,
-  "review_guidance": "Do not use current live status as archive snapshot proof or Codex advice as a human source check. Skip if evidence is insufficient.",
+  "review_guidance": "Do not use current live status as archive snapshot proof or automated advice as a human source check. Skip if evidence is insufficient.",
   "run_id": "run-65c5be3381f66811",
   "schema_version": 1,
   "seed": 317,

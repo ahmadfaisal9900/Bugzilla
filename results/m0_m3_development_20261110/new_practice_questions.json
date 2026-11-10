@@ -1,0 +1,382 @@
+[
+  {
+    "answerability": "ANSWERABLE",
+    "as_of": null,
+    "bug_ids": [
+      "1867907"
+    ],
+    "evidence": [
+      {
+        "bug_id": "1867907",
+        "content_hash": "8b79f989016746f3d46756d2e221a77ffe717da4ffbff0f65699a6203f9700f3",
+        "event_time_utc": "2023-12-02T02:03:40.000000Z",
+        "field_hash": "199c8269a041d43324eefd69649472f533baf38aba84872dc5538b0df66061e2",
+        "fields": {
+          "component": "PDF Viewer"
+        },
+        "id": "42a886f34025c269f727064b9c7447f36d0e530aa76b96a6b85e0fab7c2f83b0",
+        "ingested_at_utc": "2026-10-22T02:35:42.410317Z",
+        "observed_at_utc": "2026-10-22T01:56:55.000000Z",
+        "raw_field_mapping": {
+          "bug_id": "id",
+          "comment_id": null,
+          "comment_text": null,
+          "component": "component",
+          "created_at": "creation_time",
+          "description": null,
+          "last_change_at": "last_change_time",
+          "private_flag": null,
+          "product": "product",
+          "relationships": [
+            "blocks",
+            "depends_on",
+            "dupe_of",
+            "duplicates",
+            "regressed_by",
+            "regressions",
+            "see_also"
+          ],
+          "resolution": "resolution",
+          "status": "status",
+          "summary": "summary"
+        },
+        "source_dataset": "metadata",
+        "source_row_key": "17457b6c451e8462c49c98678cba67debb8f0ea982267ced367ff2d2efef0df3:00000000000000163114",
+        "source_url": "https://bugzilla.mozilla.org/show_bug.cgi?id=1867907"
+      }
+    ],
+    "family": "F1",
+    "gold": {
+      "type": "string",
+      "value": "PDF Viewer"
+    },
+    "human_review_state": "PRACTICE_ONLY; SOURCE_CHECKED_AUTOMATICALLY",
+    "qid": "dev_supp_e3f14e27988cc1de2675",
+    "question": "Using the specified frozen evidence, what component is recorded for Firefox bug 1867907? The source snapshot date is UNKNOWN.",
+    "scope": {
+      "api_pilot_id": "cohort-8bb3150d29a598d8",
+      "corpus": "broad BugsRepo metadata; frozen Firefox sample",
+      "partition": "dev",
+      "population_manifest_sha256": "6acc0612bb8b2a03943c521aeb3ac87cfa8ce2826cad6b257bffea8aa1dd37e3",
+      "product": "Firefox",
+      "sample_seed": 317,
+      "snapshot_as_of_utc": null,
+      "snapshot_id": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663"
+    },
+    "seed": 317,
+    "source_coverage": {
+      "evidence_records": 1,
+      "population": "broad BugsRepo metadata; frozen Firefox sample",
+      "snapshot_as_of": "UNKNOWN"
+    },
+    "split": "dev",
+    "sql": null,
+    "template_id": "phase05-v1.1:dev_supplement_component",
+    "validator": "canonical field equals retained normalized source field",
+    "version": "phase05-v1.1"
+  },
+  {
+    "answerability": "ANSWERABLE",
+    "as_of": null,
+    "bug_ids": [
+      "1782726"
+    ],
+    "evidence": [
+      {
+        "bug_id": "1782726",
+        "content_hash": "a491bd7d27264c71c0b1fb45ccaa0c59716fb0bd5a3cc917166c5887546a2c2e",
+        "event_time_utc": "2022-08-02T14:10:14.000000Z",
+        "field_hash": "6c5f69ac3f769b328359a8da993f712f5d63d72b8d39cec93c5b1c134edcf18f",
+        "fields": {
+          "snapshot_status": "NEW"
+        },
+        "id": "5f6780c39269d238a8801baa0e29db2ebfeb7a536b850a78994235518ebcaabe",
+        "ingested_at_utc": "2026-10-22T02:35:42.410317Z",
+        "observed_at_utc": "2026-10-22T01:56:55.000000Z",
+        "raw_field_mapping": {
+          "bug_id": "id",
+          "comment_id": null,
+          "comment_text": null,
+          "component": "component",
+          "created_at": "creation_time",
+          "description": null,
+          "last_change_at": "last_change_time",
+          "private_flag": null,
+          "product": "product",
+          "relationships": [
+            "blocks",
+            "depends_on",
+            "dupe_of",
+            "duplicates",
+            "regressed_by",
+            "regressions",
+            "see_also"
+          ],
+          "resolution": "resolution",
+          "status": "status",
+          "summary": "summary"
+        },
+        "source_dataset": "metadata",
+        "source_row_key": "17457b6c451e8462c49c98678cba67debb8f0ea982267ced367ff2d2efef0df3:00000000000000058370",
+        "source_url": "https://bugzilla.mozilla.org/show_bug.cgi?id=1782726"
+      }
+    ],
+    "family": "F1",
+    "gold": {
+      "type": "string",
+      "value": "NEW"
+    },
+    "human_review_state": "PRACTICE_ONLY; SOURCE_CHECKED_AUTOMATICALLY",
+    "qid": "dev_supp_ab764c2016c8608a98be",
+    "question": "Using the specified frozen evidence, what status is recorded for Firefox bug 1782726? The source snapshot date is UNKNOWN.",
+    "scope": {
+      "api_pilot_id": "cohort-8bb3150d29a598d8",
+      "corpus": "broad BugsRepo metadata; frozen Firefox sample",
+      "partition": "dev",
+      "population_manifest_sha256": "6acc0612bb8b2a03943c521aeb3ac87cfa8ce2826cad6b257bffea8aa1dd37e3",
+      "product": "Firefox",
+      "sample_seed": 317,
+      "snapshot_as_of_utc": null,
+      "snapshot_id": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663"
+    },
+    "seed": 317,
+    "source_coverage": {
+      "evidence_records": 1,
+      "population": "broad BugsRepo metadata; frozen Firefox sample",
+      "snapshot_as_of": "UNKNOWN"
+    },
+    "split": "dev",
+    "sql": null,
+    "template_id": "phase05-v1.1:dev_supplement_snapshot_status",
+    "validator": "canonical field equals retained normalized source field",
+    "version": "phase05-v1.1"
+  },
+  {
+    "answerability": "ANSWERABLE",
+    "as_of": null,
+    "bug_ids": [
+      "1723220"
+    ],
+    "evidence": [
+      {
+        "bug_id": "1723220",
+        "content_hash": "29ab17552201fc2619bc33cac8737b235680d1c97662dea40f2c73ecb489426c",
+        "event_time_utc": "2021-07-30T21:06:05.000000Z",
+        "field_hash": "5203d47d4bb4cf22ccf331d64460172bec85de5f25ffe70e60275b4907e44e9d",
+        "fields": {
+          "component": "about:logins"
+        },
+        "id": "015757df47659b5e44f4a70054905ee4fcaec56a5a9b50ab7d3947341633fa34",
+        "ingested_at_utc": "2026-10-22T02:35:42.410317Z",
+        "observed_at_utc": "2026-10-22T01:56:55.000000Z",
+        "raw_field_mapping": {
+          "bug_id": "id",
+          "comment_id": null,
+          "comment_text": null,
+          "component": "component",
+          "created_at": "creation_time",
+          "description": null,
+          "last_change_at": "last_change_time",
+          "private_flag": null,
+          "product": "product",
+          "relationships": [
+            "blocks",
+            "depends_on",
+            "dupe_of",
+            "duplicates",
+            "regressed_by",
+            "regressions",
+            "see_also"
+          ],
+          "resolution": "resolution",
+          "status": "status",
+          "summary": "summary"
+        },
+        "source_dataset": "metadata",
+        "source_row_key": "17457b6c451e8462c49c98678cba67debb8f0ea982267ced367ff2d2efef0df3:00000000000000049276",
+        "source_url": "https://bugzilla.mozilla.org/show_bug.cgi?id=1723220"
+      }
+    ],
+    "family": "F1",
+    "gold": {
+      "type": "string",
+      "value": "about:logins"
+    },
+    "human_review_state": "PRACTICE_ONLY; SOURCE_CHECKED_AUTOMATICALLY",
+    "qid": "dev_supp_83fc79b1ce21d0bc9b47",
+    "question": "Using the specified frozen evidence, what component is recorded for Firefox bug 1723220? The source snapshot date is UNKNOWN.",
+    "scope": {
+      "api_pilot_id": "cohort-8bb3150d29a598d8",
+      "corpus": "broad BugsRepo metadata; frozen Firefox sample",
+      "partition": "dev",
+      "population_manifest_sha256": "6acc0612bb8b2a03943c521aeb3ac87cfa8ce2826cad6b257bffea8aa1dd37e3",
+      "product": "Firefox",
+      "sample_seed": 317,
+      "snapshot_as_of_utc": null,
+      "snapshot_id": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663"
+    },
+    "seed": 317,
+    "source_coverage": {
+      "evidence_records": 1,
+      "population": "broad BugsRepo metadata; frozen Firefox sample",
+      "snapshot_as_of": "UNKNOWN"
+    },
+    "split": "dev",
+    "sql": null,
+    "template_id": "phase05-v1.1:dev_supplement_component",
+    "validator": "canonical field equals retained normalized source field",
+    "version": "phase05-v1.1"
+  },
+  {
+    "answerability": "ANSWERABLE",
+    "as_of": null,
+    "bug_ids": [
+      "1927903"
+    ],
+    "evidence": [
+      {
+        "bug_id": "1927903",
+        "content_hash": "907191a89c3c68c3cd4624c68e4a4df1beca7ae3067b2a2f984aed74cedd9800",
+        "event_time_utc": "2024-10-29T19:55:16.000000Z",
+        "field_hash": "82bb56fa5615b9bf9442f32b0124bbc73682954b302098c6e90862fa2cd73c22",
+        "fields": {
+          "snapshot_status": "ASSIGNED"
+        },
+        "id": "130e9e13e2136d491dc2e0f6113957573c0f71ffdb9b7c92409649fe8cbb73d8",
+        "ingested_at_utc": "2026-10-22T02:35:42.410317Z",
+        "observed_at_utc": "2026-10-22T01:56:55.000000Z",
+        "raw_field_mapping": {
+          "bug_id": "id",
+          "comment_id": null,
+          "comment_text": null,
+          "component": "component",
+          "created_at": "creation_time",
+          "description": null,
+          "last_change_at": "last_change_time",
+          "private_flag": null,
+          "product": "product",
+          "relationships": [
+            "blocks",
+            "depends_on",
+            "dupe_of",
+            "duplicates",
+            "regressed_by",
+            "regressions",
+            "see_also"
+          ],
+          "resolution": "resolution",
+          "status": "status",
+          "summary": "summary"
+        },
+        "source_dataset": "metadata",
+        "source_row_key": "17457b6c451e8462c49c98678cba67debb8f0ea982267ced367ff2d2efef0df3:00000000000000128445",
+        "source_url": "https://bugzilla.mozilla.org/show_bug.cgi?id=1927903"
+      }
+    ],
+    "family": "F1",
+    "gold": {
+      "type": "string",
+      "value": "ASSIGNED"
+    },
+    "human_review_state": "PRACTICE_ONLY; SOURCE_CHECKED_AUTOMATICALLY",
+    "qid": "dev_supp_af7df0de7c5aca05624d",
+    "question": "Using the specified frozen evidence, what status is recorded for Firefox bug 1927903? The source snapshot date is UNKNOWN.",
+    "scope": {
+      "api_pilot_id": "cohort-8bb3150d29a598d8",
+      "corpus": "broad BugsRepo metadata; frozen Firefox sample",
+      "partition": "dev",
+      "population_manifest_sha256": "6acc0612bb8b2a03943c521aeb3ac87cfa8ce2826cad6b257bffea8aa1dd37e3",
+      "product": "Firefox",
+      "sample_seed": 317,
+      "snapshot_as_of_utc": null,
+      "snapshot_id": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663"
+    },
+    "seed": 317,
+    "source_coverage": {
+      "evidence_records": 1,
+      "population": "broad BugsRepo metadata; frozen Firefox sample",
+      "snapshot_as_of": "UNKNOWN"
+    },
+    "split": "dev",
+    "sql": null,
+    "template_id": "phase05-v1.1:dev_supplement_snapshot_status",
+    "validator": "canonical field equals retained normalized source field",
+    "version": "phase05-v1.1"
+  },
+  {
+    "answerability": "ANSWERABLE",
+    "as_of": null,
+    "bug_ids": [
+      "1708925"
+    ],
+    "evidence": [
+      {
+        "bug_id": "1708925",
+        "content_hash": "47f36911cc18f02899eba21bf4bb649d2b45febec4a9374efffeabf6ef99ada9",
+        "event_time_utc": "2021-05-01T19:44:48.000000Z",
+        "field_hash": "b021622998783585eeeaf03d8a67adf3f8c61ba11f7b0469ee51ec88b28ce58e",
+        "fields": {
+          "snapshot_status": "RESOLVED"
+        },
+        "id": "40ab30f288ad810f6173015e1bfd9b6353b367f14b42ca3a690a3292fc700cd7",
+        "ingested_at_utc": "2026-10-22T02:35:42.410317Z",
+        "observed_at_utc": "2026-10-22T01:56:55.000000Z",
+        "raw_field_mapping": {
+          "bug_id": "id",
+          "comment_id": null,
+          "comment_text": null,
+          "component": "component",
+          "created_at": "creation_time",
+          "description": null,
+          "last_change_at": "last_change_time",
+          "private_flag": null,
+          "product": "product",
+          "relationships": [
+            "blocks",
+            "depends_on",
+            "dupe_of",
+            "duplicates",
+            "regressed_by",
+            "regressions",
+            "see_also"
+          ],
+          "resolution": "resolution",
+          "status": "status",
+          "summary": "summary"
+        },
+        "source_dataset": "metadata",
+        "source_row_key": "17457b6c451e8462c49c98678cba67debb8f0ea982267ced367ff2d2efef0df3:00000000000000085293",
+        "source_url": "https://bugzilla.mozilla.org/show_bug.cgi?id=1708925"
+      }
+    ],
+    "family": "F1",
+    "gold": {
+      "type": "string",
+      "value": "RESOLVED"
+    },
+    "human_review_state": "PRACTICE_ONLY; SOURCE_CHECKED_AUTOMATICALLY",
+    "qid": "dev_supp_6165e15a5f03bbab5157",
+    "question": "Using the specified frozen evidence, what status is recorded for Firefox bug 1708925? The source snapshot date is UNKNOWN.",
+    "scope": {
+      "api_pilot_id": "cohort-8bb3150d29a598d8",
+      "corpus": "broad BugsRepo metadata; frozen Firefox sample",
+      "partition": "dev",
+      "population_manifest_sha256": "6acc0612bb8b2a03943c521aeb3ac87cfa8ce2826cad6b257bffea8aa1dd37e3",
+      "product": "Firefox",
+      "sample_seed": 317,
+      "snapshot_as_of_utc": null,
+      "snapshot_id": "0454ce48d6ed7a52973aea5474bee18304e33b65970c2c8c69dccdd0a630b663"
+    },
+    "seed": 317,
+    "source_coverage": {
+      "evidence_records": 1,
+      "population": "broad BugsRepo metadata; frozen Firefox sample",
+      "snapshot_as_of": "UNKNOWN"
+    },
+    "split": "dev",
+    "sql": null,
+    "template_id": "phase05-v1.1:dev_supplement_snapshot_status",
+    "validator": "canonical field equals retained normalized source field",
+    "version": "phase05-v1.1"
+  }
+]

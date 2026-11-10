@@ -68,7 +68,7 @@ Only `*.questions.jsonl` is an inference input: its keys are qid, question, and 
 
 ## Assisted review preparation
 
-The generated queue and its existing pre-review backup are byte-identical (SHA-256 `6d2030a6fa0d4abba1a4a6ab09a68465a6f12beb31e9056056ca67b807cb430c`). Candidate SHA-256 is `3e3d0d8002c5fce2ef075fb8ded5611318954d2ffc808efb9994f9bdf39dfa38`; challenge SHA-256 is `f668c668b96a1b16ec909fe37f4518d71e1c527cd7a7965f5b16e4a6a365f6b6`. The read-only prep runner checks the current CSV header/QIDs and source artifacts, then produces per-QID deterministic validation reports and sanitized F5 evidence packets under ignored `outputs/benchmark/phase05/agent_review_prep/`. It never changes queue decisions or creates human signoff. Its full source checks must be run by the user in a terminal. The interactive logged-in Codex agent may then recommend dispositions batch by batch; those recommendations are not independent human annotations.
+The generated queue and its existing pre-review backup are byte-identical (SHA-256 `6d2030a6fa0d4abba1a4a6ab09a68465a6f12beb31e9056056ca67b807cb430c`). Candidate SHA-256 is `3e3d0d8002c5fce2ef075fb8ded5611318954d2ffc808efb9994f9bdf39dfa38`; challenge SHA-256 is `f668c668b96a1b16ec909fe37f4518d71e1c527cd7a7965f5b16e4a6a365f6b6`. The read-only prep runner checks the current CSV header/QIDs and source artifacts, then produces per-QID deterministic validation reports and sanitized F5 evidence packets under ignored `outputs/benchmark/phase05/agent_review_prep/`. It never changes queue decisions or creates human signoff. Its full source checks must be run by the user in a terminal. The review assistant may then recommend dispositions batch by batch; those recommendations are not independent human annotations.
 
 See [PHASE05_ASSISTED_REVIEW_PROTOCOL.md](PHASE05_ASSISTED_REVIEW_PROTOCOL.md) for exact validator fields/allowed decisions, signoff schema, F5 rubric, privacy rules, commands, and Prompt 5B. Do not freeze until the human has checked required sources and signed the validator's required fields.
 
@@ -83,3 +83,84 @@ Latest bounded check: **5 tests passed in 8.4 seconds**. The 20-parent synthetic
 The first user generation attempt stopped at input verification: DuckDB's default timestamp string ends in `+00`, which Python 3.9 rejects. This introduced 50 false creation-time discrepancies; the actual saved Phase 4 differences were unchanged. All SQL timestamp projections now emit standard ISO UTC (`...Z`) explicitly. Creation-time comparisons and every input integrity gate remain enforced. Version v1.1 selects a new output identity and preserves the earlier failed directory; no dataset/API rerun or manual deletion is needed. Missing/incomplete generation now produces an actionable review-step message instead of an unexplained missing `LATEST_RUN` error. Chain generation and prepare-review with `&&` as above.
 
 Validation in the user's `iqfm` Python 3.9.25 environment: 6 Phase 5 generation fixture tests passed in 11.1 seconds, including a cached current-metadata response that exercises filing-time comparisons. The bounded real input verification also passed (50 histories, 884 changes, 13 first-FIXED metrics / 9 eligible before further filtering). The user later generated 169 candidates and 6 challenges. Assisted-review prep adds 10 fixture tests; no full candidate packet scan or F5 judgment was run by the agent. Human review and freeze remain pending.
+
+
+## Separate development practice set
+
+Use the original candidate run and pinned Phase 3B database. The supplement selects
+additional F1 component, status, and resolution lookups from eligible development
+bugs. It excludes bugs already used for original F1 development questions and
+checks each value against its retained source record. It writes to
+`outputs/benchmark/phase05/dev-supplement-30/`, with its own candidates, checkpoint
+and summary. Existing questions, human decisions, and final-release files stay in
+the original run. The added questions are practice only and should be scored
+separately from the reviewed benchmark.
+
+```bash
+bash scripts/run_phase05_dev_supplement.sh --limit 30 --dry-run
+bash scripts/run_phase05_dev_supplement.sh --limit 30
+```
+
+Use `--resume` with the same arguments to recover an interrupted run or verify a
+completed output. The summary reports how many eligible questions were generated.
+To smoke-test M0 or M3 on the supplement, set `MODEL` to the installed local Ollama
+model name. For M3, change the method to `m3-llm`.
+
+```bash
+bash scripts/run_phase06_baselines.sh m0 --model "$MODEL" --run outputs/benchmark/phase05/dev-supplement-30 --unfrozen-dev-smoke --limit 5 --max-requests 5
+```
+
+The tiny fixture verifies split isolation, unchanged parent checksums, SQL scoring
+compatibility, and checkpoint recovery. No practice questions have been generated
+against the real archive in this checkout.
+
+### Use the shared DuckDB export
+
+The practice generator can also use the verified shared sample and the tracked
+review bundle. It reads the original development wording to exclude existing F1
+bugs, and verifies the eligible bug population against the saved partition
+checksum. In either source mode, it excludes candidates with a recorded direct
+duplicate, blocks or depends-on link to a held-out population bug, in either
+direction. This check covers recorded links. The source snapshot date remains
+UNKNOWN, and the original signoffs do not carry over to new practice items.
+
+```bash
+SAMPLE='C:/Courses/ENSF 621/BUGZILLA/Bugzilla/data/firefox-sample-seed317-20261102'
+bash scripts/run_phase05_dev_supplement.sh --sample-bundle "$SAMPLE" --limit 30 --dry-run
+bash scripts/run_phase05_dev_supplement.sh --sample-bundle "$SAMPLE" --limit 30
+PRACTICE='outputs/benchmark/phase05/dev-supplement-shared-30'
+bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --run "$PRACTICE" --unfrozen-dev-smoke --limit 5
+```
+
+The M3 command checks the supplement checkpoint and sample hashes before
+scoring. Use `m3-llm --model "$MODEL" --cpu --max-requests 5` in place of `m3`
+for the model-driven check. For M0, use `m0 --model "$MODEL" --cpu --max-requests 5`
+and omit `--sample-bundle "$SAMPLE"`. Keep these scores separate from the
+original quiz. A bounded local run on 2026-11-06 generated five F1 practice
+items. The SQL-only check agreed with all five source-checked answers, and
+the original signoff sheet checksum was unchanged.
+
+## Additional timing coverage
+
+The shared pilot contains 14 development history IDs, four of which are already
+used by F2 development questions. The other ten are a coverage ceiling before
+checking evidence and event eligibility. This handoff lacks the original
+checkpoint needed to independently validate those histories for new F2 gold.
+A larger timing expansion needs a separately planned Phase 4 overlay. On the data machine,
+Ahmad can generate an offline plan with 150 candidates and use the printed
+`candidate_manifest` path for a bounded preview.
+
+```bash
+PYTHONPATH=src python -m bugzilla_qa.data.phase04 plan --root . --baseline-run run-20261022T023542Z-1182018 --study-size 150
+MANIFEST="$(cat outputs/phase04/candidates/LATEST_RUN)"
+MANIFEST="outputs/phase04/candidates/$MANIFEST/candidate_manifest.json"
+bash scripts/phases/run_phase04_enrich.sh --manifest "$MANIFEST" --study --limit 100 --max-requests 200 --no-comments --dry-run
+```
+
+Verify that the preview's checkpoint is outside the pinned pilot cohort
+`cohort-8bb3150d29a598d8`. Ahmad can run the same enrichment command without
+`--dry-run` and rerun it with `--resume` to continue. Assess newly parsed history,
+source consistency, and eligible lifecycle events before counting additional
+timing items. A future F2 practice supplement must use only development IDs and
+a separately verified overlay. This practice generator supports F1, and the
+reviewed release continues to use its original pilot pin.

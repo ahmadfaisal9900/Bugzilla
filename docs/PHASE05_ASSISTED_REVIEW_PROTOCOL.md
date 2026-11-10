@@ -10,8 +10,8 @@ The assisted-preparation tool reads these files without changing them. It does n
 
 - **Deterministic validation** checks exact canonical/source fields, saved Phase 4 API history and UTC arithmetic, F3 SQL results against an independent Python ID set over exactly the saved 592/2,408 partitions, complete F4 target sets, and F6 answerability within the specified archive/API evidence. Each item receives `PASS`, `FAIL`, or `UNKNOWN`, with source paths, identifiers, and hashes. A missing history response is `UNKNOWN`; only a verified, parsed response with a valid empty history supports zero observed transitions. The empty Phase 3B `field_changes` table does not invalidate the separate Phase 4 history overlay.
 - **F5 packet heuristics** flag possible short fragments, log/code, malformed URLs, trivial “because” uses, multiple readings, or missing/contradictory rationale. These are prompts for attention only; they do not reject candidates or substitute for reading the complete relevant comment and its context.
-- **Interactive Codex recommendations** may suggest `APPROVE`, `CORRECT`, or `REJECT`, with a short rationale and evidence references. They are model-generated advice from the logged-in interactive agent, not an independent annotator or source verification. They are not written into `review_queue.csv`.
-- **Human signoff** remains authoritative. A person checks Bugzilla source pages, candidate comment rationale, privacy, corrections/rejections, challenge wording, and the global signoff. No item becomes `SIGNED_SOURCE_REVIEW` from a deterministic pass or a Codex recommendation.
+- **Interactive Automated recommendations** may suggest `APPROVE`, `CORRECT`, or `REJECT`, with a short rationale and evidence references. They are model-generated advice from the logged-in interactive agent, not an independent annotator or source verification. They are not written into `review_queue.csv`.
+- **Human signoff** remains authoritative. A person checks Bugzilla source pages, candidate comment rationale, privacy, corrections/rejections, challenge wording, and the global signoff. No item becomes `SIGNED_SOURCE_REVIEW` from a deterministic pass or a automated recommendation.
 
 ## Exact review queue schema
 
@@ -71,10 +71,10 @@ Expected files are `manifest.json`, `checkpoint.json`, `summary.json`, `validati
 
 With the current code and inputs, the dry-run resolves the full `--batch 10` packet directory to `outputs/benchmark/phase05/agent_review_prep/run-65c5be3381f66811-f162504b3b0f/packets/`; the first review batch is `.../packets/batch-0001/`.
 
-## Prompt 5B — interactive Codex recommendation, one batch at a time
+## Prompt 5B — interactive automated recommendation, one batch at a time
 
-After the full packet-preparation run succeeds, give the logged-in interactive Codex agent one batch directory at a time (start with `batch-0001`) and use this prompt:
+After the full packet-preparation run succeeds, give the logged-in review assistant one batch directory at a time (start with `batch-0001`) and use this prompt:
 
-> Read `docs/PHASE05_ASSISTED_REVIEW_PROTOCOL.md`. Review only the F5 packet JSON files in `outputs/benchmark/phase05/agent_review_prep/run-65c5be3381f66811-f162504b3b0f/packets/batch-0001/`. For each F5 QID, give a **Codex recommendation only**: APPROVE, CORRECT, REJECT, or NEEDS HUMAN SOURCE CHECK; summarize the exact rationale stated in the supplied comment, cite the comment ID/hash, note ambiguity/negation/context and any heuristic flags, and say whether the suggested claim is supported. Do not edit `review_queue.csv` or `review_signoff.json`, do not browse/fetch external content, do not call an API, do not claim independent human annotation, and do not freeze the benchmark. Keep names/emails redacted. Stop after this batch and wait for the human reviewer.
+> Read `docs/PHASE05_ASSISTED_REVIEW_PROTOCOL.md`. Review only the F5 packet JSON files in `outputs/benchmark/phase05/agent_review_prep/run-65c5be3381f66811-f162504b3b0f/packets/batch-0001/`. For each F5 QID, give a **automated recommendation only**: APPROVE, CORRECT, REJECT, or NEEDS HUMAN SOURCE CHECK; summarize the exact rationale stated in the supplied comment, cite the comment ID/hash, note ambiguity/negation/context and any heuristic flags, and say whether the suggested claim is supported. Do not edit `review_queue.csv` or `review_signoff.json`, do not browse/fetch external content, do not call an API, do not claim independent human annotation, and do not freeze the benchmark. Keep names/emails redacted. Stop after this batch and wait for the human reviewer.
 
 The project owner checks the Bugzilla page and packet before transferring any recommendation into the editable queue. Repeat by batch as capacity allows. The agent must stop before judging all F5 rows or freezing unless the owner explicitly asks for another batch.
