@@ -5,4 +5,4 @@ outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff_queu
 # Runner scripts must keep LF or bash fails on the first `set -euo pipefail`.
 *.sh text eol=lf
 
-/results/m0_m3_smoke_20261106/* -text whitespace=cr-at-eol
+/results/m0_m3_development_20261110/* -text whitespace=cr-at-eol

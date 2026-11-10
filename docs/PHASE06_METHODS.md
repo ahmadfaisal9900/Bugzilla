@@ -155,6 +155,25 @@ still pass through the strict answer parser. Run the commands above in your
 terminal to check responses on the real development quiz.
 
 
+### Run all 34 development questions
+
+From PowerShell in the project folder, run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_phase06_verify.ps1
+```
+
+The script creates the Python environment, checks the inputs, runs the tests,
+and runs the SQL control, M0 and M3 on the same 34 questions. It uses CPU mode
+and the installed Qwen model. Results go to
+`outputs/phase06/development-verification/results.txt`, with individual answers,
+scores and logs in the same output folder. Rerun the command to resume an
+interrupted run with the same settings.
+
+The earlier trial used the first five of these 34 questions. The five newly
+generated practice questions are a separate set. The report shows attempted,
+correct and failed counts separately.
+
 ### Results from 6 November 2026
 
 We gave M0 and M3 the same five questions from the original practice set,
