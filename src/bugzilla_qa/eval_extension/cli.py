@@ -22,6 +22,7 @@ def file_hash(path):
 
 def records(config, limit):
     import duckdb
+    from tqdm import tqdm
     base = duckdb.connect(str(ROOT / config['canonical_db']), read_only=True)
     overlay = duckdb.connect(str(ROOT / config['history_db']), read_only=True)
     try:
@@ -32,40 +33,47 @@ def records(config, limit):
             selection += ' LIMIT ?'
             parameters.append(limit)
         ids = [r[0] for r in base.execute(selection, parameters).fetchall()]
-        for start in range(0, len(ids), 200):
+        for start in tqdm(range(0, len(ids), 200),desc='Corpus batches',unit='batch'):
             group = ids[start:start + 200]
             rows = base.execute('''SELECT bug_id,product,component,snapshot_status,snapshot_resolution,
-                opened_at_utc,summary,source_record_id,source_url,content_hash FROM bugs
+                opened_at_utc,summary,source_record_id,source_url,content_hash,observed_at_utc,ingested_at_utc,source_dataset FROM bugs
                 WHERE bug_id IN (SELECT unnest(?)) ORDER BY bug_id''', [group]).fetchall()
-            for bug, product, component, status, resolution, opened, summary, rid, url, sha in rows:
+            for bug, product, component, status, resolution, opened, summary, rid, url, sha, observed, ingested, dataset in rows:
                 text = 'Bug %s. Product %s. Component %s. Status %s. Resolution %s. Opened %s. Summary %s.' % (
                     bug, product, component, status, resolution, opened, summary or '')
                 yield dict(record_id=rid, bug_id=bug, kind='metadata', text=text, url=url,
-                           source_hash=sha, visibility='public')
-            cursor = base.execute('''SELECT bug_id,comment_key,body,source_url,content_hash FROM comments
+                           source_hash=sha, visibility='public', event_time_utc=str(opened) if opened else None,
+                           observed_at_utc=str(observed) if observed else None, ingested_at_utc=str(ingested) if ingested else None,
+                           source_dataset=dataset, snapshot_as_of_utc=None)
+            cursor = base.execute('''SELECT bug_id,comment_key,body,source_url,content_hash,event_time_utc,observed_at_utc,ingested_at_utc,source_dataset FROM comments
                 WHERE bug_id IN (SELECT unnest(?)) AND private_flag=false
                 AND text_availability='AVAILABLE' AND body IS NOT NULL ORDER BY comment_key''', [group])
             while True:
                 batch = cursor.fetchmany(128)
                 if not batch:
                     break
-                for bug, rid, body, url, sha in batch:
+                for bug, rid, body, url, sha, event, observed, ingested, dataset in batch:
                     yield dict(record_id=rid, bug_id=bug, kind='comment', text=body, url=url,
-                               source_hash=sha, visibility='public')
-            links = base.execute('''SELECT bug_id,link_key,relation,target_bug_id,source_url,content_hash
+                               source_hash=sha, visibility='public', event_time_utc=str(event) if event else None,
+                               observed_at_utc=str(observed) if observed else None, ingested_at_utc=str(ingested) if ingested else None,
+                               source_dataset=dataset, snapshot_as_of_utc=None)
+            links = base.execute('''SELECT bug_id,link_key,relation,target_bug_id,source_url,content_hash,observed_at_utc,ingested_at_utc,source_dataset
                 FROM bug_links WHERE bug_id IN (SELECT unnest(?)) ORDER BY link_key''', [group]).fetchall()
-            for bug, rid, relation, target, url, sha in links:
+            for bug, rid, relation, target, url, sha, observed, ingested, dataset in links:
                 yield dict(record_id=rid, bug_id=bug, kind='link',
                            text='Bug %s recorded relation %s to bug %s.' % (bug, relation, target),
-                           url=url, source_hash=sha, visibility='public')
+                           url=url, source_hash=sha, visibility='public', event_time_utc=None,
+                           observed_at_utc=str(observed) if observed else None, ingested_at_utc=str(ingested) if ingested else None,
+                           source_dataset=dataset, snapshot_as_of_utc=None)
             histories = overlay.execute('''SELECT bug_id,source_row_key,event_time_utc,field_name,old_value,
-                new_value,source_url,content_sha256 FROM field_changes WHERE history_state='PARSED'
+                new_value,source_url,content_sha256,observed_at_utc,ingested_at_utc,source_dataset FROM field_changes WHERE history_state='PARSED'
                 AND field_name IN ('status', 'resolution')
                 AND CAST(bug_id AS VARCHAR) IN (SELECT unnest(?)) ORDER BY bug_id,event_time_utc,event_index,change_index''', [group]).fetchall()
-            for bug, rid, when, field, old, new, url, sha in histories:
+            for bug, rid, when, field, old, new, url, sha, observed, ingested, dataset in histories:
                 yield dict(record_id=rid, bug_id=str(bug), kind='history',
                            text='Bug %s event %s: %s changed from %s to %s.' % (bug, when, field, old, new),
-                           url=url, source_hash=sha, visibility='public')
+                           url=url, source_hash=sha, visibility='public', event_time_utc=when,
+                           observed_at_utc=observed, ingested_at_utc=ingested, source_dataset=dataset, snapshot_as_of_utc=None)
             print('source bugs processed %d/%d' % (min(start + 200, len(ids)), len(ids)), file=sys.stderr, flush=True)
     finally:
         base.close()
@@ -130,6 +138,8 @@ def main():
         with temp.open('w', encoding='utf-8') as f:
             for record in records(config, args.limit):
                 for chunk in make_chunks(record, config['chunk_words'], config['overlap_words']):
+                    from bugzilla_qa.eval_extension.contracts import validate
+                    validate('Chunk',chunk)
                     f.write(json.dumps(chunk, ensure_ascii=False, sort_keys=True) + '\n')
                     count += 1
         os.replace(str(temp), str(corpus))

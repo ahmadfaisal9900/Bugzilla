@@ -1,0 +1,5 @@
+# Install in the existing project environment; local models download on first use.
+sentence-transformers>=2.7,<4
+faiss-cpu>=1.8,<2
+tqdm>=4.66,<5
+numpy>=1.25,<2

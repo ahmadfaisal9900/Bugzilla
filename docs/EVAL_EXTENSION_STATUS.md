@@ -1,9 +1,11 @@
 # Retrieval extension status
 
-**PARTIALLY IMPLEMENTED; NOT READY FOR THE REQUESTED END-TO-END RUN.**
+**IMPLEMENTED / AWAITING USER RUN.** No full benchmark, index, model, or retrieval comparison has been run or verified. A tiny source sample and synthetic/mocked fixtures exercise the pipeline; FAISS and Sentence Transformers were absent in the agent environment, so real dense encoding and model loading remain unverified.
 
-- Implemented: bounded source corpus exporter, SQLite FTS5 index, explicit bug-ID filtering, deterministic RRF primitive, known-citation metric primitive, safe-stage CLI and synthetic unit tests.
-- A one-bug export was smoke-tested locally. This is not a corpus or benchmark validation.
-- Outstanding: expanded and natural question banks, human review workflow for those banks, complete source/chunk provenance and corpus audit, dense/FAISS, hybrid system, reranker, hierarchical retrieval, qrels, all-method evaluation, generator adapters and full resumable orchestration.
-- Original Phase 5 freeze was not present at inspection; signed UI records are separate from the original pending queue. Never copy them without preserving and auditing genuine signoffs.
-- Approximate time and resource requirements for the missing components have not been measured. Do not assume local models or a GPU are available.
+The extension generates an independent factual bank; exports a pending natural-wording review sheet and optional F5 packets; builds the sampled source corpus, SQLite FTS5 and local FAISS cosine index; implements BM25, dense, reciprocal-rank fusion, cross-encoder reranking and a bug-first hierarchy; writes qrels, per-question retrieval checkpoints and aggregate proxy metrics; and offers opt-in local Ollama inference and the existing development-only M3 parser. The runner records blocked or partial stages and continues independent work.
+
+The original Phase 5 benchmark has **not** been observed frozen. Its UI signoffs remain separate from its original queue. Test retrieval requires the genuine Phase 5 freeze and a separately sealed automatic bank/config/corpus after dev-only tuning. New natural wording and F5 materials remain `PENDING_HUMAN_REVIEW`; they are not scored automatically as approved gold.
+
+Limitations: F2 is constrained to the verified small API pilot; F3 is not passage retrieval; history is retrospective, and snapshot dates are unknown. F5 packets are candidate selection, not verified rationale. Local content may contain identifying information despite email/handle redaction; do not redistribute it before privacy/license review. The hierarchy is a simple metadata-parent heuristic, not GraphRAG. No M4 implementation was found. No fine-tuning, external LLM service, oracle ranking, or invented temporal test is included.
+
+Human-approved natural and F5 items can be exported, retrieved and passed through the optional generator, with separate human-track test seals. F5 generated answers still require human judgment. An opt-in oracle-evidence diagnostic is kept separate from deployable ranking. There is no full citation/claim adjudication or Gemini adapter. No robustness comparison or full study has been executed.

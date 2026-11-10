@@ -96,6 +96,7 @@ Dry-run prints preconditions only. The full validator recomputes gold and hashes
 - [RUNBOOK](docs/RUNBOOK.md): terminal workflows and local artifacts.
 - [Assisted review protocol](docs/PHASE05_ASSISTED_REVIEW_PROTOCOL.md) and [benchmark protocol](docs/PHASE05_BENCHMARK.md): review fields, rubric and freeze gates.
 - [DATA_DICTIONARY](docs/DATA_DICTIONARY.md) and [TEMPORAL_VALIDITY](docs/TEMPORAL_VALIDITY.md): source fields and valid time claims.
+- [Evaluation extension runbook](docs/EVAL_EXTENSION_RUNBOOK.md): local retrieval pipeline, review gates, commands and current limitations.
 - **[Project Report.pdf](<docs/Project Report.pdf>)**: planned project report; the owner will add this PDF to `docs/` soon. The link will work once it is committed.
 
 Original downloads remain read-only under ignored `Dataset/`, including the upstream authors' clone. The existing repository remote is `https://github.com/ahmadfaisal9900/Bugzilla.git`.
