@@ -16,7 +16,7 @@ from bugzilla_qa.eval_extension import cli
 from bugzilla_qa.eval_extension.bank import build_bank, ordered, make_item
 from bugzilla_qa.eval_extension.dense import DenseSearcher, build_dense, hierarchical, rerank
 from bugzilla_qa.eval_extension.metrics import score_ranked, summarize, subset_summary, paired_cluster_interval
-from bugzilla_qa.eval_extension.retrieval import BUG_ID, lexical_search, rrf
+from bugzilla_qa.eval_extension.retrieval import BUG_ID, lexical_search, hierarchical_search, rrf
 
 ROOT = cli.ROOT
 STAGES = ('preflight','bank','natural','corpus','audit','lexical','dense','retrieval','tune','m3-dev','inference','score')
@@ -62,6 +62,10 @@ def lexical_identity(config, limit):
 def verify_bank(out, sealed=False):
     path = out/'bank_manifest.json'
     manifest=json.loads(path.read_text())
+    if manifest.get('v1_selected_sha256'):
+        prior=ROOT/'outputs/eval_extension/bank-a34d7d0a4b66911d/selected.jsonl'
+        if not prior.exists() or cli.file_hash(prior)!=manifest['v1_selected_sha256']:
+            raise RuntimeError('pinned v1 selection changed or is missing')
     for name,expected in manifest['hashes'].items():
         if Path(name).name != name or cli.file_hash(out/name) != expected:
             raise RuntimeError('bank content hash mismatch: '+name)
@@ -103,32 +107,51 @@ def generate_natural(items, destination, seed):
     # This is a review queue, not approved paraphrase gold.
     chosen = []
     seen = set()
-    for item in sorted((q for q in items if q['family'] in ('F1','F2','F3','F4','F6')), key=lambda x: ordered(seed,x['qid'])):
-        if item['cluster_id'] in seen: continue
-        seen.add(item['cluster_id']); chosen.append(item)
-        if len(chosen) == 100: break
+    grouped={family:sorted((q for q in items if q['family']==family),key=lambda x:ordered(seed,x['qid'])) for family in ('F1','F2','F3','F4','F6')}
+    while len(chosen)<100 and any(grouped.values()):
+        for family in sorted(grouped):
+            if not grouped[family] or len(chosen)>=100: continue
+            item=grouped[family].pop()
+            if item['cluster_id'] in seen: continue
+            seen.add(item['cluster_id']); chosen.append(item)
     rows = []
     for item in chosen:
-        question=item['question']
-        forms=(question.replace('what is its recorded ', 'what does the archive record as its ')
-                       .replace('how many distinct bugs have recorded ', 'what is the number of distinct bugs with recorded ')
-                       .replace('Which target bug IDs are explicitly recorded', 'What target bug IDs are explicitly recorded'),
-               question.replace('Firefox bug ', 'Firefox issue ').replace('how many calendar hours elapsed', 'what was the elapsed calendar time in hours')
-                       .replace('how many distinct bugs', 'what number of distinct bugs'))
+        question=item['question'];bug=item['bug_ids'][0];family=item['family']
+        if family=='F1':
+            field=question.rsplit('recorded ',1)[-1].rstrip('?')
+            forms=(f"What's the recorded {field} for bug {bug}?", f"For bug {bug}, which {field} is listed?")
+        elif family=='F2':
+            forms=(f'How many calendar hours did bug {bug} take to first reach FIXED?',f'For bug {bug}, how long until its first recorded FIXED transition, in hours?')
+        elif family=='F4':
+            relation=re.search(r'relation ([\w-]+) from',question).group(1)
+            forms=(f'Which bugs are recorded as {relation} for bug {bug}?',f'What are the recorded {relation} targets of bug {bug}?')
+        elif family=='F6':
+            forms=(f'How many engineer hours went into bug {bug}?',f'How much engineer work time did bug {bug} take?')
+        else:
+            match=re.search(r'have recorded (component|status|resolution|year) (.+?)\?',question)
+            if not match: continue
+            field,value=match.groups();forms=(f'How many bugs have {field} {value}?',f'What is the bug count for {field} {value}?')
         for variant, text in enumerate(forms,1):
             rows.append({'parent_qid':item['qid'],'cluster_id':item['cluster_id'],'split':item['split'],
                          'variant':variant,'original':item['question'],'proposed_question':text,
-                         'shared_context':'Use the specified broad metadata archive and verified event overlay; snapshot date is unknown.',
+                         'shared_context':('Use only the specified product, component, status, resolution and filing time.' if family=='F6' else
+                            'Use the seed-317 Firefox sample '+item['split']+' partition of '+str(item['scope'].get('denominator'))+' distinct bugs; year means filing year.' if family=='F3' else
+                            'Use the specified broad metadata archive and verified event overlay; snapshot date is unknown.'),
+                         'classification':'CONTEXT_DEPENDENT',
                          'decision':'PENDING','reviewer':'','reviewed_at_utc':'','note':''})
-    with destination.open('w',encoding='utf-8',newline='') as f:
-        cols=['parent_qid','cluster_id','split','variant','original','proposed_question','shared_context','decision','reviewer','reviewed_at_utc','note']
-        writer=csv.DictWriter(f,fieldnames=cols);writer.writeheader();writer.writerows(rows)
     ambiguous=[]
     for item in chosen[:5]:
         ambiguous.append({'parent_qid':item['qid'],'cluster_id':item['cluster_id'],'split':item['split'],
                           'question':'What was the outcome of that bug?',
                           'expected_behavior':'request clarification about the bug and evidence scope',
                           'human_review_state':'PENDING_HUMAN_REVIEW'})
+        rows.append({'parent_qid':item['qid'],'cluster_id':item['cluster_id'],'split':item['split'],
+                     'variant':'ambiguous','original':item['question'],'proposed_question':'What was the outcome of that bug?',
+                     'shared_context':'No bug has been identified in this session.',
+                     'classification':'AMBIGUOUS_NEEDS_CLARIFICATION','decision':'PENDING','reviewer':'','reviewed_at_utc':'','note':''})
+    with destination.open('w',encoding='utf-8',newline='') as f:
+        cols=['parent_qid','cluster_id','split','variant','original','proposed_question','shared_context','classification','decision','reviewer','reviewed_at_utc','note']
+        writer=csv.DictWriter(f,fieldnames=cols);writer.writeheader();writer.writerows(rows)
     save(destination.with_name('ambiguous_candidates.json'),ambiguous)
     return {'state':'PENDING_HUMAN_REVIEW','parents':len(chosen),'variants':len(rows)}
 
@@ -143,6 +166,8 @@ def export_approved_natural(out):
             if decision not in ('PENDING','APPROVE','REJECT'):
                 raise ValueError('natural decisions must be PENDING, APPROVE or REJECT')
             if decision!='APPROVE': continue
+            if row.get('classification') not in ('SEMANTICALLY_EQUIVALENT','CONTEXT_DEPENDENT','AMBIGUOUS_NEEDS_CLARIFICATION'):
+                raise ValueError('invalid classification')
             parent=parents.get(row['parent_qid'])
             if not parent or row['original'] != parent['question'] or row['split'] != parent['split'] or row['cluster_id'] != parent['cluster_id']:
                 raise ValueError('natural parent or split mismatch')
@@ -158,6 +183,9 @@ def export_approved_natural(out):
             item['parent_qid']=parent['qid']
             item['qid']='natural_'+digest([parent['qid'],row['variant'],item['question']])[:20]
             item['human_review_state']='HUMAN_APPROVED_WORDING'
+            if row['classification']=='AMBIGUOUS_NEEDS_CLARIFICATION':
+                item['family']='F6';item['gold']={'type':'unanswerable','value':'request clarification'}
+                item['scope']={'evidence_scope':'No bug identified in this session'};item['evidence']=[]
             approved.append(item)
     dest=out/'natural_approved.jsonl'
     if not approved: raise RuntimeError('no human-approved natural variants to export')
@@ -284,8 +312,8 @@ def run_retrieval(out, corpus, index, selected, config, split, limit, device, re
             start=time.perf_counter(); den=dense.search(query,30); den_time=time.perf_counter()-start
             hybrid=rrf({'lexical':lex,'dense':den},30,config['rrf_k'])
             outputs.update({'dense':(den,den_time),'hybrid':(hybrid,lex_time+den_time)})
-            start=time.perf_counter(); hier=hierarchical(query,hybrid,lex,k=10)
-            outputs['hierarchical']=(hier,lex_time+den_time+time.perf_counter()-start)
+            start=time.perf_counter(); hier=hierarchical_search(index,query,top_k=10)
+            outputs['hierarchical']=(hier,time.perf_counter()-start)
         if reranker is not None:
             start=time.perf_counter(); reranked=rerank(query,hybrid,reranker,10)
             outputs['reranked_hybrid']=(reranked,lex_time+den_time+time.perf_counter()-start)
@@ -314,6 +342,16 @@ def run_retrieval(out, corpus, index, selected, config, split, limit, device, re
              'retrieved_record_ids':[h['record_id'] for h in r['hits'][:5]]}
             for r in rows if r['metrics'].get('state')=='KNOWN_CITATION_PROXY' and not r['metrics']['hit_at_5']]
     write_jsonl(out/('retrieval_'+label+'_known_citation_misses.jsonl'),misses)
+    # Source URLs only; a human judges relevance without seeing known-citation labels.
+    blind=[]; question_by_id={q['qid']:q['question'] for q in wanted}
+    for r in sorted(rows,key=lambda x:digest([317,x['qid'],x['method']]))[:30]:
+        for hit in r['hits'][:2]:
+            blind.append({'qid':r['qid'],'question':question_by_id[r['qid']],'method':r['method'],'rank':hit['rank'],'source_url':hit.get('url',''),
+                          'relevant':'PENDING','reviewer':'','note':''})
+    review_path=out/('retrieval_'+label+'_blind_review.csv')
+    if not review_path.exists():
+        with review_path.open('w',encoding='utf-8',newline='') as f:
+            writer=csv.DictWriter(f,fieldnames=['qid','question','method','rank','source_url','relevant','reviewer','note']);writer.writeheader();writer.writerows(blind)
     csv_path=out/('retrieval_'+label+'_summary.csv')
     if summary['results']:
         with csv_path.open('w',newline='',encoding='utf-8') as f:
@@ -325,7 +363,7 @@ def run_retrieval(out, corpus, index, selected, config, split, limit, device, re
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--stage',choices=('all','seal','track-seal','track-inference','track-score','explanations','explanations-approved','explanations-retrieval','natural-approved','natural-retrieval','oracle')+STAGES,default='all')
+    parser.add_argument('--stage',choices=('all','seal','track-seal','track-inference','track-score','robustness','explanations','explanations-approved','explanations-retrieval','natural-approved','natural-retrieval','oracle')+STAGES,default='all')
     parser.add_argument('--config',type=Path,default=ROOT/'configs/eval_extension.json')
     parser.add_argument('--output-root',type=Path,default=ROOT/'outputs/eval_extension')
     parser.add_argument('--limit',type=int);parser.add_argument('--seed',type=int,default=317)
@@ -466,8 +504,16 @@ def main():
                     if not args.enable_llm or not args.model: raise RuntimeError('track inference requires --enable-llm and --model')
                     summaries[stage]=infer(out,corpus_dir,items,args.split,args.model,args.max_requests,args.resume,suffix)
                 else: summaries[stage]=score_predictions(out,items,args.split,suffix)
+            elif stage=='robustness':
+                from bugzilla_qa.eval_extension.robustness import compare
+                if args.split=='test':
+                    if not frozen_original(): raise RuntimeError('original freeze required')
+                    verify_bank(out,sealed=True)
+                    if not (out/'natural_track_seal.json').exists(): raise RuntimeError('natural test seal required')
+                summaries[stage]=compare(out,args.split,args.seed)
+                save(out/('robustness_'+args.split+'.json'),summaries[stage])
             elif stage=='m3-dev':
-                from bugzilla_qa.methods import m3_sql
+                from bugzilla_qa.eval_extension import m3_adapter
                 if args.split != 'dev':
                     summaries[stage]={'state':'SKIPPED','reason':'existing M3 parser is development-only'}
                     continue
@@ -478,9 +524,9 @@ def main():
                     summaries[stage]={'state':'COMPLETE','questions':len(read_jsonl(dest)),'note':'existing predictions preserved'}
                     continue
                 if dest.exists(): raise RuntimeError('M3 predictions exist; use --resume')
-                store=m3_sql.SqlStore(ROOT/config['canonical_db'], ROOT/config['history_db'],args.seed)
+                store=m3_adapter.Store(ROOT/config['canonical_db'], ROOT/config['history_db'],args.seed)
                 try:
-                    predictions=[m3_sql.answer_question(store,{k:q[k] for k in ('qid','question','scope')}) for q in questions]
+                    predictions=[m3_adapter.answer(store,{k:q[k] for k in ('qid','question','scope')}) for q in questions]
                 finally: store.close()
                 write_jsonl(dest,predictions)
                 summaries[stage]={'state':'COMPLETE','questions':len(predictions),

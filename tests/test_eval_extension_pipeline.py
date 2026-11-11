@@ -14,6 +14,9 @@ from bugzilla_qa.eval_extension.cli import file_hash
 from bugzilla_qa.eval_extension.contracts import validate, jsonl_to_parquet
 from bugzilla_qa.eval_extension.generation import FixedIndex, infer, score_predictions
 from bugzilla_qa.eval_extension.retrieval import build_lexical, make_chunks
+from bugzilla_qa.eval_extension.retrieval import tokenizer_chunks, hierarchical_search
+from bugzilla_qa.eval_extension.m3_adapter import parse
+from bugzilla_qa.eval_extension.bank import quota_select
 
 
 class PipelineTests(unittest.TestCase):
@@ -23,6 +26,43 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(q['split'],partition(317,'123'))
         self.assertNotIn('OPEN',q['question'])
         self.assertEqual(q['cluster_id'],'bug:123')
+
+    def test_v2_m3_visible_wording(self):
+        self.assertEqual(parse('In the broad metadata archive for Firefox bug 123 (snapshot date unknown), what is its recorded status?')['field'],'status')
+        self.assertEqual(parse('Using the verified API history and filing time for Firefox bug 123, how many calendar hours elapsed before its first recorded FIXED transition?')['template'],'first_fixed_hours')
+        self.assertIsNone(parse('What is the secret status of bug 123?'))
+
+    def test_v2_quota_and_f1_fields(self):
+        rows=[]
+        for field in ('component','status','resolution'):
+            for i in range(20):
+                rows.append({'family':'F1','split':'dev','question':'what is its recorded '+field+'?',
+                             'qid':field+str(i)})
+        chosen,shortfalls=quota_select(rows,317,120)
+        fields={q['question'].split('recorded ')[1] for q in chosen}
+        self.assertEqual(fields,{'component?','status?','resolution?'})
+        self.assertLessEqual(len(chosen),18)
+        self.assertGreater(shortfalls['F2:dev'],0)
+
+    def test_tokenizer_offsets_and_privacy(self):
+        class Tokenizer:
+            def __call__(self,text,**kwargs):
+                import re
+                return {'offset_mapping':[(m.start(),m.end()) for m in re.finditer(r'\S+',text)]}
+        record={'record_id':'r','bug_id':'1','visibility':'public','text':'one two three four'}
+        result=list(tokenizer_chunks(record,Tokenizer(),3,1))
+        self.assertEqual([r['text'] for r in result],['one two three','three four'])
+        self.assertEqual((result[1]['source_char_start'],result[1]['source_char_end']),(8,18))
+        with self.assertRaises(ValueError): list(tokenizer_chunks(dict(record,visibility='unknown'),Tokenizer()))
+
+    def test_hierarchical_retrieves_second_stage_beyond_flat_hits(self):
+        docs=[dict(record_id='m',bug_id='1',kind='metadata',text='bug 1 printing failure',url='x',source_hash='a',visibility='public'),
+              dict(record_id='c',bug_id='1',kind='comment',text='printing patch details',url='x',source_hash='b',visibility='public')]
+        with tempfile.TemporaryDirectory() as temp:
+            p=Path(temp)/'fts.sqlite';build_lexical(p,[next(make_chunks(d)) for d in docs],'id')
+            hits=hierarchical_search(p,'bug 1 printing')
+            self.assertEqual({x['record_id'] for x in hits},{'m','c'})
+            self.assertEqual(hits[0]['stage1_bug_ids'],['1'])
 
     def test_family_denominators(self):
         hits=[{'record_id':'a'},{'record_id':'a'},{'record_id':'b'}]
@@ -111,7 +151,7 @@ class PipelineTests(unittest.TestCase):
         messages=[]
         class Client:
             def __init__(self,model,max_requests): self.calls=0
-            def chat(self,request):
+            def chat(self,request,**kwargs):
                 self.calls+=1;messages.extend(request)
                 return {'content':json.dumps({'answer':'Open','value':'OPEN','abstained':False,'evidence':[]})}
         with tempfile.TemporaryDirectory() as temp:

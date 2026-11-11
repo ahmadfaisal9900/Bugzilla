@@ -42,6 +42,11 @@ def build_dense(corpus, directory, model_name, batch_size=32, device='cpu', resu
     revision = getattr(model[0].auto_model.config, '_commit_hash', None)
     if not revision:
         raise RuntimeError('model revision could not be identified; use a pinned cached Hugging Face model')
+    corpus_manifest=Path(corpus).parent/'corpus_manifest.json'
+    if corpus_manifest.exists():
+        source=json.loads(corpus_manifest.read_text())
+        if source.get('tokenizer_revision') != revision:
+            raise RuntimeError('embedding model revision differs from corpus tokenizer; rebuild in a new run')
     shard_dir = directory / 'dense_shards'; shard_dir.mkdir(exist_ok=True)
     identity = {'model':model_name, 'revision':revision, 'corpus_sha256':corpus_hash, 'batch_size':batch_size,
                 'code_sha256':file_hash(Path(__file__))}

@@ -7,7 +7,7 @@ import sys
 import time
 from pathlib import Path
 
-from bugzilla_qa.eval_extension.retrieval import build_lexical, digest, lexical_search, make_chunks
+from bugzilla_qa.eval_extension.retrieval import build_lexical, digest, lexical_search, tokenizer_chunks
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -133,11 +133,25 @@ def main():
             print(json.dumps(m)); return
         if corpus.exists() or meta.exists():
             raise RuntimeError('existing output: use --resume or a separate output root')
+        try:
+            from transformers import AutoTokenizer
+            tokenizer=AutoTokenizer.from_pretrained(config['dense_model'],use_fast=True)
+        except (ImportError,OSError) as exc:
+            raise RuntimeError('tokenizer unavailable; install optional dependencies and allow model download in your terminal') from exc
+        if not tokenizer.is_fast: raise RuntimeError('fast tokenizer with character offsets is required')
+        revision=tokenizer.init_kwargs.get('_commit_hash')
+        if not revision:
+            from huggingface_hub import try_to_load_from_cache
+            cached=try_to_load_from_cache(config['dense_model'],'tokenizer_config.json')
+            if isinstance(cached,str) and 'snapshots' in Path(cached).parts:
+                parts=Path(cached).parts;revision=parts[parts.index('snapshots')+1]
+        if not revision: raise RuntimeError('tokenizer revision is unavailable')
+        tokenizer=AutoTokenizer.from_pretrained(config['dense_model'],revision=revision,use_fast=True)
         temp = out / 'corpus.jsonl.incomplete'
         count = 0
         with temp.open('w', encoding='utf-8') as f:
             for record in records(config, args.limit):
-                for chunk in make_chunks(record, config['chunk_words'], config['overlap_words']):
+                for chunk in tokenizer_chunks(record, tokenizer, config['chunk_words'], config['overlap_words']):
                     from bugzilla_qa.eval_extension.contracts import validate
                     validate('Chunk',chunk)
                     f.write(json.dumps(chunk, ensure_ascii=False, sort_keys=True) + '\n')
@@ -145,7 +159,8 @@ def main():
         os.replace(str(temp), str(corpus))
         m = {'state': 'COMPLETE', 'identity': identity, 'chunks': count, 'sha256': file_hash(corpus),
              'base_identity': config['base_identity'], 'history_identity': config['history_identity'],
-             'sample_seed': args.seed, 'limit': args.limit, 'created_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
+             'sample_seed': args.seed, 'limit': args.limit, 'tokenizer_revision':revision,
+             'chunk_unit':'model tokenizer tokens', 'created_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
         meta.write_text(json.dumps(m, indent=2) + '\n')
         print(json.dumps(m))
     elif args.stage == 'lexical':

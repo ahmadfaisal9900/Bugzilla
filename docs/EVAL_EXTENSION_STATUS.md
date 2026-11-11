@@ -1,6 +1,6 @@
 # Retrieval extension status
 
-**IMPLEMENTED / AWAITING USER RUN.** No full benchmark, index, model, or retrieval comparison has been run or verified. A tiny source sample and synthetic/mocked fixtures exercise the pipeline; FAISS and Sentence Transformers were absent in the agent environment, so real dense encoding and model loading remain unverified.
+**V2 IMPLEMENTED / AWAITING USER RUN.** The user ran v1 development retrieval; its defects and the v2 corrections are documented in `EXTENDED_EVALUATION_RUNBOOK.md`. No full v2 run, final test or LLM inference has been verified. FAISS and Sentence Transformers are installed in the current environment; v2 used a tiny cached-tokenizer source check, not a model or full index run.
 
 The extension generates an independent factual bank; exports a pending natural-wording review sheet and optional F5 packets; builds the sampled source corpus, SQLite FTS5 and local FAISS cosine index; implements BM25, dense, reciprocal-rank fusion, cross-encoder reranking and a bug-first hierarchy; writes qrels, per-question retrieval checkpoints and aggregate proxy metrics; and offers opt-in local Ollama inference and the existing development-only M3 parser. The runner records blocked or partial stages and continues independent work.
 

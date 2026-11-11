@@ -3,6 +3,7 @@ import hashlib
 import json
 import re
 import time
+from collections import defaultdict
 from pathlib import Path
 
 from bugzilla_qa.eval_extension.pipeline import frozen_original, read_jsonl, save, write_jsonl
@@ -79,8 +80,23 @@ def score_predictions(out, items, split, suffix=''):
     if split=='dev' and not suffix and sql_path.exists(): predictions += read_jsonl(sql_path)
     results=[score(gold[p['qid']],p) for p in predictions if p['qid'] in gold]
     write_jsonl(out/('scores_'+label+'.jsonl'),results)
-    result={'state':'COMPLETE','results':summarize(results),
-            'limitations':'F5 requires human review; unsupported methods excluded; no cross-model comparability asserted'}
+    table=summarize(results);methods=defaultdict(list)
+    for cell in table:
+        if cell['accuracy'] is not None: methods[cell['method']].append(cell['accuracy'])
+    coverage={}
+    for method in sorted({p['method'] for p in predictions}):
+        rows=[p for p in predictions if p['method']==method]
+        lat=sorted(p.get('trace',{}).get('latency_seconds') for p in rows if p.get('trace',{}).get('latency_seconds') is not None)
+        coverage[method]={'predictions':len(rows),'no_intent':sum(p['status']=='NO_INTENT' for p in rows),
+            'successful':sum(p['status']=='OK' for p in rows),
+            'input_tokens_recorded':sum((p.get('trace',{}).get('generation',{}).get('prompt_tokens') or 0) for p in rows),
+            'output_tokens_recorded':sum((p.get('trace',{}).get('generation',{}).get('output_tokens') or 0) for p in rows),
+            'latency_p50':lat[int((len(lat)-1)*.5)] if lat else None,
+            'latency_p95':lat[int((len(lat)-1)*.95)] if lat else None,
+            'macro_family_accuracy':sum(methods[method])/len(methods[method]) if methods[method] else None,
+            'macro_families':len(methods[method]),'citation_support':'PENDING_HUMAN_JUDGMENT'}
+    result={'state':'COMPLETE','results':table,'coverage':coverage,
+            'limitations':'F5 and citation support require human review; macro covers scored families only; no cross-model comparability asserted'}
     save(out/('scores_'+label+'_summary.json'),result)
     return result
 

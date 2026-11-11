@@ -50,3 +50,6 @@ Added `src/bugzilla_qa/benchmark/assisted_review.py` and `scripts/run_phase05_ag
 # Evaluation extension — implementation, awaiting terminal run
 
 Added independent source-backed factual-bank generation, pending natural/F5 review exports, source-only corpus, SQLite FTS5, local FAISS embedding shards, RRF and optional cross-encoder and parent-first retrieval, known-citation qrels/metrics, and opt-in local Ollama scoring. Synthetic/mocked tests and a three-bug smoke passed for the available stages. Dense model loading and the full workflow remain unverified because FAISS/Sentence Transformers were absent; no download or full evaluation was performed. The original Phase 5 freeze remains a test gate. See `docs/EVAL_EXTENSION_RUNBOOK.md`.
+# Extended evaluation repair — awaiting terminal run
+
+Audited the saved v1 aggregates, preserved its outputs and implemented a separate v2 selection, source-scoped M3 parser, tokenizer-aware chunks and bug-first hierarchical search. The original signoff has not passed freeze validation. Fixture tests and a bounded source/tokenizer check only; no full v2 job or LLM request was run. See `EXTENDED_EVALUATION_RUNBOOK.md`.

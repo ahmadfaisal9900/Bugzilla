@@ -8,15 +8,41 @@ from bugzilla_qa.data.normalize import digest
 from bugzilla_qa.eval_extension.cli import ROOT, file_hash, verify_source_manifests
 from bugzilla_qa.eval_extension.contracts import validate
 
-VERSION = 'expanded-bank-v1'
+VERSION = 'expanded-bank-v2'
 
 
 def partition(seed, bug):
-    return 'dev' if int(digest([seed, str(bug)])[:12], 16) % 5 == 0 else 'test'
+    return 'dev' if int(digest([seed, 'expanded-v2', str(bug)])[:12], 16) % 10 < 3 else 'test'
 
 
 def ordered(seed, value):
     return digest([seed, value])
+
+
+def quota_select(items, seed, target):
+    """Predeclared family/split caps; F1 fields balanced, shortfalls reported."""
+    ratios={'F1':.50,'F2':.08,'F3':.14,'F4':.18,'F6':.10}
+    groups=defaultdict(list)
+    for q in items:
+        field=q['question'].rsplit('recorded ',1)[-1].rstrip('?') if q['family']=='F1' else 'all'
+        groups[q['family'],q['split'],field].append(q)
+    for values in groups.values(): values.sort(key=lambda q: ordered(seed,q['qid']),reverse=True)
+    selected=[]; shortfalls={}
+    for family,ratio in ratios.items():
+        total=int(target*ratio)
+        for split in ('dev','test'):
+            quota=int(total*.30) if split=='dev' else total-int(total*.30)
+            keys=sorted(k for k in groups if k[0]==family and k[1]==split)
+            n=0
+            while keys and n<quota:
+                following=[]
+                for key in keys:
+                    if n>=quota: break
+                    selected.append(groups[key].pop()); n+=1
+                    if groups[key]: following.append(key)
+                keys=following
+            shortfalls[family+':'+split]=max(0,quota-n)
+    return selected, shortfalls
 
 
 def make_item(family, text, gold, bug, evidence, seed, extra=None):
@@ -66,7 +92,7 @@ def build_bank(config, limit=None, target=3000, evaluated=750):
         for bug in tqdm(sorted(bugs), desc='Generate source-backed candidates', unit='bug'):
             row = bugs[bug]
             ev = [{'id': row['record_id'], 'bug_id': bug, 'source_url': row['url'], 'content_hash': row['source_hash']}]
-            for field in ('product','component','status','resolution'):
+            for field in ('component','status','resolution'):
                 value = row[field]
                 if value is None or str(value).upper() in ('UNKNOWN', ''):
                     continue
@@ -106,7 +132,7 @@ def build_bank(config, limit=None, target=3000, evaluated=750):
                        'content_hash':row['source_hash']}]
                 item = make_item('F3', text, {'type':'integer','value':result}, first, ev, seed,
                                  {'denominator':len(universe),'filter':{field:value},'population_hash':digest(universe)})
-                item['cluster_id'] = 'aggregate:%s:%s:%s' % (sp, field, value)
+                item['cluster_id'] = 'aggregate-population:' + sp
                 item['validator'] = 'SQL COUNT(DISTINCT bug_id) equals independent Python set'
                 buckets['F3', sp, field].append(item)
         if bugs:
@@ -162,39 +188,32 @@ def build_bank(config, limit=None, target=3000, evaluated=750):
             item = make_item('F2',text,{'type':'calendar_duration','seconds':seconds,'hours':seconds/3600,'days':seconds/86400,'first_fixed_at_utc':first_dt.isoformat(),'tolerance_seconds':1},bug,ev,seed)
             item['validator'] = 'verified event hash and independent UTC subtraction agree with pilot metric'
             buckets['F2',str(bugs[bug]['status'])].append(item)
-        for items in buckets.values():
-            items.sort(key=lambda x: ordered(seed, x['qid']))
-        # Round-robin across observed strata: no artificial equal family quota.
-        all_items = []
-        keys = sorted(buckets, key=lambda x: ordered(seed, x))
-        while keys and len(all_items) < target:
-            remaining = []
-            for key in keys:
-                if len(all_items) >= target: break
-                all_items.append(buckets[key].pop())
-                if buckets[key]: remaining.append(key)
-            keys = remaining
+        eligible=[item for values in buckets.values() for item in values]
+        # Earlier selected test questions may have been inspected. Exclude their parent bugs
+        # from the v2 held-out single-bug tracks; population aggregates remain shared-data tasks.
+        prior=ROOT/'outputs/eval_extension/bank-a34d7d0a4b66911d/selected.jsonl'
+        if not prior.exists() or file_hash(prior)!='272c8c1de9de3eb638ede6a4f73912d66d03e652821da15ce24b1ad32a8c7c9c':
+            raise RuntimeError('pinned v1 selection is missing or changed; cannot establish v2 test exclusions')
+        with prior.open(encoding='utf-8') as f:
+            prior_test_ids={b for line in f for q in [json.loads(line)] if q['split']=='test' and q['family']!='F3' for b in q['bug_ids']}
+        excluded=sum(q['split']=='test' and q['family']!='F3' and q['bug_ids'][0] in prior_test_ids for q in eligible)
+        eligible=[q for q in eligible if not(q['split']=='test' and q['family']!='F3' and q['bug_ids'][0] in prior_test_ids)]
+        all_items, candidate_shortfalls = quota_select(eligible, seed, target)
         if len({q['qid'] for q in all_items}) != len(all_items):
             raise ValueError('duplicate question IDs')
         for item in all_items:
             validate('Question',item); validate('Gold',item)
-        grouped = defaultdict(list)
-        for item in all_items:
-            grouped[item['family'], item['split']].append(item)
-        for values in grouped.values():
-            values.sort(key=lambda q: ordered(seed + 1, q['qid']))
-        selected = []
-        active = sorted(grouped)
-        while active and len(selected) < min(evaluated, len(all_items)):
-            following = []
-            for key in active:
-                if len(selected) >= evaluated: break
-                selected.append(grouped[key].pop())
-                if grouped[key]: following.append(key)
-            active = following
+        selected, selected_shortfalls = quota_select(all_items, seed + 1, evaluated)
         return all_items, selected, {'eligible_sample_bugs':len(bugs), 'candidate_count':len(all_items),
                'evaluated_selected':len(selected), 'families':dict(Counter(q['family'] for q in all_items)),
                'selected_families':dict(Counter(q['family'] for q in selected)),
+               'eligible_families':dict(Counter(q['family'] for q in eligible)),
+               'candidate_shortfalls':candidate_shortfalls, 'selected_shortfalls':selected_shortfalls,
+               'split_rule':'sha256(seed, expanded-v2, bug_id) modulo 10; dev < 3',
+               'v1_test_parent_ids_excluded':len(prior_test_ids), 'v2_test_candidates_excluded':excluded,
+               'v1_selected_sha256':file_hash(prior),
+               'aggregate_caveat':'F3 partition aggregates share underlying source population with v1; not independent external data',
+               'product_questions':'excluded as constant within Firefox-only sample',
                'splits':dict(Counter(q['split'] for q in all_items)), 'target':target,
                'f2_source': 'selective verified API history only', 'f5': 'separate human-reviewed benchmark only',
                'snapshot_as_of_utc':None,'state':'DRAFT_NOT_FROZEN'}
