@@ -5,6 +5,7 @@
   },
   "temperature": 0,
   "max_output_tokens": 512,
+  "timeout_ms": 60000,
   "thinking_budget": null,
   "daily_fraction": 0.9,
   "max_retries": 5,

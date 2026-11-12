@@ -1,11 +1,12 @@
 import json
+import datetime
 import tempfile
 import types
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from bugzilla_qa.llm.provider import GeminiProvider, MockProvider, read_config, ROOT
+from bugzilla_qa.llm.provider import GeminiProvider, MockProvider, read_config, resolved_config, ROOT
 
 SCHEMA = {'type': 'object', 'properties': {'description': {'type': 'string'}}, 'required': ['description'], 'additionalProperties': False}
 
@@ -19,6 +20,28 @@ class ProviderTests(unittest.TestCase):
             p = GeminiProvider(self.config, root=d)
             self.assertEqual(p.generate_json('hello', SCHEMA)['state'], 'DRY_RUN')
             self.assertEqual(list(Path(d).iterdir()), [])
+
+    def test_env_model_selection_and_single_page_listing(self):
+        class Models:
+            calls=0
+            def list(self,config):
+                self.calls+=1
+                return types.SimpleNamespace(page=[
+                    types.SimpleNamespace(name='models/public-generator',supported_actions=['generateContent']),
+                    types.SimpleNamespace(name='models/embedding',supported_actions=['embedContent'])],
+                    config={'page_token':'next'})
+        with tempfile.TemporaryDirectory() as d,patch.dict('os.environ',{},clear=True):
+            Path(d,'.env').write_text('GEMINI_MODEL=public-generator\nLLM_API_KEY=not_logged\n')
+            resolved=resolved_config(self.config,d)
+            self.assertEqual(resolved['models']['aux']['id'],'public-generator')
+            self.assertEqual(resolved['models']['aux']['rpm'],15)
+            models=Models()
+            provider=GeminiProvider(self.config,root=d,enable_llm=True,max_requests=1,
+                                    client=types.SimpleNamespace(models=models))
+            result=provider.list_models()
+            self.assertEqual(result['value'],{'models':['models/public-generator'],'more_pages':True})
+            self.assertEqual(models.calls,1)
+            self.assertNotIn('not_logged',(Path(d)/self.config['ledger']).read_text())
 
     def test_mock_validation(self):
         p = MockProvider({'description': 'A display problem'})
@@ -66,7 +89,7 @@ class ProviderTests(unittest.TestCase):
     def test_env_secret_stays_out_of_outputs(self):
         secret = 'fixture_private_token_75c3'
         class Client:
-            def __init__(self, api_key):
+            def __init__(self, api_key, **kwargs):
                 self.assert_key = api_key
                 self.models = self
             def generate_content(self, **kwargs):
@@ -98,6 +121,24 @@ class ProviderTests(unittest.TestCase):
             ledger = (Path(d) / self.config['ledger']).read_text()
             self.assertIn('"http_status": 404', ledger)
             self.assertNotIn('private provider response', ledger)
+
+    def test_daily_cap_uses_pacific_date_and_stops_before_call(self):
+        actual = datetime.datetime
+        class Clock(actual):
+            @classmethod
+            def now(cls,tz=None):
+                # Nov 11 in Pacific, despite being Nov 12 UTC.
+                return actual(2026,11,12,1,0,tzinfo=datetime.timezone.utc)
+        with tempfile.TemporaryDirectory() as d:
+            config=json.loads(json.dumps(self.config));config['models']['aux']['rpd']=2
+            ledger=Path(d)/config['ledger'];ledger.parent.mkdir(parents=True)
+            ledger.write_text(json.dumps({'ts':'2026-11-11T12:00:00+00:00','model':config['models']['aux']['id'],
+                'status':'REQUEST_STARTED'})+'\n')
+            provider=GeminiProvider(config,root=d,enable_llm=True,client=object())
+            with patch('bugzilla_qa.llm.provider.dt.datetime',Clock):
+                with self.assertRaisesRegex(RuntimeError,'Pacific daily'):
+                    provider.generate_json('hello',SCHEMA)
+            self.assertEqual(provider.calls,0)
 
 
 if __name__ == '__main__': unittest.main()

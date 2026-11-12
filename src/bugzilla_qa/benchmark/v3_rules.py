@@ -3,6 +3,8 @@ import hashlib
 import math
 import re
 
+FAMILIES = ('KI','MH','F6H','F1','F2','F3','F4','F5','F6')
+
 
 def cluster_split(seed, bug_id):
     value = hashlib.sha256(('%s:v3:%s' % (seed, bug_id)).encode()).digest()
