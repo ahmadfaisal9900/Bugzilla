@@ -1,0 +1,14 @@
+{
+  "models": {
+    "generator": {"id": "gemini-2.0-flash", "rpm": 15, "rpd": 1500},
+    "aux": {"id": "gemini-2.0-flash-lite", "rpm": 30, "rpd": 1500}
+  },
+  "temperature": 0,
+  "max_output_tokens": 512,
+  "thinking_budget": null,
+  "daily_fraction": 0.9,
+  "max_retries": 5,
+  "ledger": "outputs/llm/ledger.jsonl",
+  "cache": "outputs/llm/cache.sqlite",
+  "env_file": ".env"
+}

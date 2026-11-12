@@ -1,0 +1,20 @@
+{
+  "version": "v3",
+  "seed": 317,
+  "canonical_db": "outputs/normalization/phase03b/run-20261022T023542Z-1182018/canonical.duckdb",
+  "history_db": "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/api_enrichment.duckdb",
+  "phase05_dir": "outputs/benchmark/phase05/run-65c5be3381f66811/frozen-d8ef826fbeb90d13",
+  "natural_approved": "outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved.jsonl",
+  "expanded_selected": "outputs/eval_extension/bank-dacb7ca0ceb7e0ef/selected.jsonl",
+  "corpus": "outputs/eval_extension/39a751ca190bbbc3/corpus.jsonl",
+  "output_root": "outputs/benchmark/v3",
+  "ki_target": 220,
+  "multi_hop_target": 80,
+  "hard_abstention_target": 40,
+  "f1_cap": 150,
+  "similarity_threshold": 0.92,
+  "max_alternates": 3,
+  "comment_character_limit": 1500,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+}
