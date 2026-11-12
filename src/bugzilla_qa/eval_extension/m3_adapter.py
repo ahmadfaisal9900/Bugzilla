@@ -8,7 +8,8 @@ from bugzilla_qa.methods import m3_sql
 
 def parse(question):
     q=' '.join(question.split())
-    if not re.search(r'(?i)archive|metadata|verified API history|recorded product',q):
+    scoped_sample = re.search(r'(?i)\bseed\s+317\s+Firefox\s+sample\s+(?:dev|test)\s+partition\s*\(\d+\s+distinct\s+non-conflicted\s+bugs\)', q)
+    if not re.search(r'(?i)archive|metadata|verified API history|recorded product',q) and not scoped_sample:
         return None
     bug=re.search(r'(?i)\b(?:bug|issue)\s*#?\s*(\d+)\b',q)
     if bug and re.search(r'(?i)engineer work hours',q):

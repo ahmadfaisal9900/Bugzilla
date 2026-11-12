@@ -31,6 +31,53 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(parse('In the broad metadata archive for Firefox bug 123 (snapshot date unknown), what is its recorded status?')['field'],'status')
         self.assertEqual(parse('Using the verified API history and filing time for Firefox bug 123, how many calendar hours elapsed before its first recorded FIXED transition?')['template'],'first_fixed_hours')
         self.assertIsNone(parse('What is the secret status of bug 123?'))
+        q = 'Within the seed 317 Firefox sample dev partition (882 distinct non-conflicted bugs), how many distinct bugs have recorded component New Tab Page? Filing year is not a status-change date; snapshot date is unknown.'
+        self.assertEqual(parse(q), {'template': 'count_in_partition', 'partition': 'dev', 'field': 'component', 'value': 'New Tab Page'})
+        self.assertEqual(parse(q.replace('component New Tab Page', 'year 2024'))['field'], 'creation_year')
+        self.assertIsNone(parse(q.replace('seed 317 Firefox sample', 'other sample')))
+
+    def test_v2_m3_aggregate_uses_partition_and_distinct_bugs(self):
+        import duckdb
+        from bugzilla_qa.data.normalize import digest
+        from bugzilla_qa.eval_extension.m3_adapter import Store, answer
+        store = Store.__new__(Store)
+        store.base = duckdb.connect(':memory:')
+        try:
+            store.base.execute('CREATE TABLE bugs (bug_id VARCHAR, component VARCHAR, snapshot_status VARCHAR, snapshot_resolution VARCHAR, opened_at_utc TIMESTAMP)')
+            store.base.execute("INSERT INTO bugs VALUES ('1','New Tab Page','NEW','',NULL), ('2','New Tab Page','NEW','',NULL), ('3','Other','NEW','',NULL)")
+            store.partitions = {'dev': ['1', '3'], 'test': ['2']}
+            question = {'qid': 'fixture', 'question': 'Within the seed 317 Firefox sample dev partition (2 distinct non-conflicted bugs), how many distinct bugs have recorded component New Tab Page? snapshot date is unknown.',
+                        'scope': {'partition': 'dev', 'population_hash': digest(['1', '3']), 'denominator': 2}}
+            result = answer(store, question)
+            self.assertEqual(result['status'], 'OK')
+            self.assertEqual(result['value'], 1)
+            question['scope']['denominator'] = 3
+            self.assertTrue(answer(store, question)['abstained'])
+        finally:
+            store.base.close()
+
+    def test_m3_repair_resume_keeps_existing_predictions(self):
+        from bugzilla_qa.eval_extension import m3_repair
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            selected = root / 'selected.jsonl'
+            selected.write_text(json.dumps({'qid': 'q1', 'split': 'dev', 'question': 'x', 'scope': {}, 'family': 'F1'}) + '\n')
+            (root / 'bank_manifest.json').write_text(json.dumps({'hashes': {'selected.jsonl': file_hash(selected)}}))
+            config = root / 'config.json'
+            config.write_text(json.dumps({'canonical_db': 'x', 'history_db': 'y', 'sample_seed': 317}))
+            argv = ['m3_repair', '--bank', str(root), '--config', str(config), '--resume']
+            class FakeStore:
+                def __init__(self, *args): pass
+                def close(self): pass
+            with patch('sys.argv', argv), patch.object(m3_repair.cli, 'verify_source_manifests'), \
+                 patch.object(m3_repair.m3_adapter, 'Store', FakeStore), \
+                 patch.object(m3_repair.m3_adapter, 'answer', return_value={'qid': 'q1', 'status': 'OK'}), \
+                 patch.object(m3_repair, 'score', return_value={}), patch.object(m3_repair, 'summarize', return_value=[]):
+                m3_repair.main()
+                m3_repair.main()
+            paths = list((root / 'm3_repair').glob('*/predictions.jsonl'))
+            self.assertEqual(len(paths), 1)
+            self.assertEqual(len(paths[0].read_text().splitlines()), 1)
 
     def test_v2_quota_and_f1_fields(self):
         rows=[]
