@@ -18,4 +18,39 @@ V1 development retrieval has known-citation proxy outputs only; no end-to-end mo
 
 V2 user-run results: 693 selected factual items, six F2 in total; 110 approved natural rewrites, including 51 development rewrites with completed retrieval. The 59 test rewrites remain unevaluated. V2 M3 saved development scores predate a parser fix and include 31 F3 `NO_INTENT` outputs; do not use them as results for the repaired parser. A separate user-run M3 repair output is required. No end-to-end model comparison is established.
 
-Task 1 v3 is implemented and fixture-tested, awaiting generation and human spot checks; no v3 experiment result or freeze is registered. Targets: about 220 KI forms, 80 MH and 40 F6H, plus eligible program-verified v2 records with F1 capped at 150. Actual counts and shortfalls come from the user-run summary. Original freeze d8ef826fbeb90d13 has 169 primary questions and six challenges. The Gemini ping returned 404; no replacement model is assumed. See BENCHMARK_V3.md.
+Task 1 v3 was initially handed off for generation and spot checks; the subsequent verified freeze is registered below. No v3 retrieval experiment result is registered. Targets: about 220 KI forms, 80 MH and 40 F6H, plus eligible program-verified v2 records with F1 capped at 150. Actual counts and shortfalls come from the user-run summary. Original freeze d8ef826fbeb90d13 has 169 primary questions and six challenges. The Gemini ping returned 404; no replacement model is assumed. See BENCHMARK_V3.md.
+
+## Verified v3 handoff — 2026-11-12
+
+v3 is **FROZEN_HUMAN_SPOTCHECKED**, freeze ID `e2207774a0f2cbad`, at
+`outputs/benchmark/v3/run-289a50d1152f547a/frozen-e2207774a0f2cbad/`.
+All 15 manifest-listed artifact SHA-256 values matched a read-only check.
+
+| Family | Dev n | Test n |
+| --- | ---: | ---: |
+| F1 | 64 | 86 |
+| F2 | 0 | 0 |
+| F3 | 89 | 0 |
+| F4 | 29 | 54 |
+| F5 | 0 | 0 |
+| F6 | 22 | 34 |
+| F6H | 11 | 26 |
+| KI | 42 | 123 |
+| MH | 8 | 47 |
+| **Total** | **265** | **370** |
+
+Accepted coverage gaps: F2/F5 are absent from v3; F3 is absent from v3 test.
+Do not generate replacement items. F2/F5 retrieval evaluation uses the original
+Phase 5 and natural development tracks where present. F3/F6/F6H passage metrics
+are N/A, distinct from a family that is not in a dataset.
+`qrels_v3_dev.jsonl` has 265 rows (143 applicable, 122 N/A);
+`qrels_v3_test.jsonl` has 370 rows (310 applicable, 60 N/A).
+No v3 retrieval or answer evaluation is claimed. Earlier statements that v3
+generation/review are pending describe the prior implementation handoff.
+
+Task 2 / Phase 9 retrieval: preregistration `docs/RETRIEVER_SELECTION.md` was
+written before Task 2 results. R1–R7b × C0/C1/C2, development tracks only by
+default; n>=10 passage-qrel cells from v3/natural determine selection. Full
+10,000-resample cluster bootstrap, known-citation metrics and caches are
+implemented. No real retrieval score, selected S2, or answering result is claimed.
+State: AWAITING_TERMINAL_RUN. Owner commands: `docs/RETRIEVAL_V3.md`.

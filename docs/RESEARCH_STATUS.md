@@ -2,6 +2,8 @@
 
 ## Current phase
 
+Phase 8 v3 is frozen; Task 2 / Phase 9 retrieval harness is implemented, fixture-tested, AWAITING_TERMINAL_RUN.
+
 **Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 FROZEN.** The user-run generation `run-65c5be3381f66811` contains 169 benchmark QIDs and 6 supplemental challenges at seed 317, with 592 development / 2,408 test population IDs. The verified freeze `d8ef826fbeb90d13` has 34 dev and 135 test benchmark questions plus six supplemental challenges. All seven frozen manifest artifact hashes matched a read-only check. No final method evaluation is claimed. See `docs/PHASE05_BENCHMARK.md` and `docs/AGENT_NOTES.md`.
 
 The partner review bundle is explicitly tracked under `outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/`; setup and browser review instructions are in `README.md`. At packaging on 2026-10-23 it has six recorded approvals and 58 remaining of 64 required reviews. These are signoff-sheet records, not yet transferred to the original generation queue or verified by the freeze validator. The original pre-review backup is preserved. Only the review interface, queues and small provenance manifest are shared; raw/full comment packets, databases and other outputs remain ignored.
@@ -50,6 +52,37 @@ The user-run v1 development retrieval completed, but its F1-heavy selection, 564
 
 On 2026-11-11, 64 genuine source-review decisions (40 approvals, 24 corrections) were transferred from the signed sheet into the original generation queue after row-level checks; a pre-transfer backup and audit record are retained locally. The owner subsequently signed and ran the freeze validator. Expanded test has separate seal requirements.
 
-Task 1 of 3: the shared Gemini provider and full versioned v3 generation, independent SQL/evidence validation, review export and freeze workflow are implemented and tested with 20-bug fixtures. The owner-run ping established HTTP 404; select an accessible free-project model using the budgeted model-list command before real description generation. Actual v3 coverage, successful Gemini calls, human spot checks and v3 freeze await the user run. Original frozen artifacts are unchanged. See `docs/BENCHMARK_V3.md`.
 
-Groq switch (2026-11-12): requested after user-run Gemini 404/503 failures. Shared provider, ping and v3 now default to Groq using ignored `GROQ_API_KEY`; strict-schema responses, isolated cache/ledger, bounded retries and existing review/freeze gates are fixture-tested. Live Groq ping and full v3 generation await the user terminal run; no Groq success is claimed.
+## Verified v3 handoff — 2026-11-12
+
+v3 is **FROZEN_HUMAN_SPOTCHECKED**, freeze ID `e2207774a0f2cbad`, at
+`outputs/benchmark/v3/run-289a50d1152f547a/frozen-e2207774a0f2cbad/`.
+All 15 manifest-listed artifact SHA-256 values matched a read-only check.
+
+| Family | Dev n | Test n |
+| --- | ---: | ---: |
+| F1 | 64 | 86 |
+| F2 | 0 | 0 |
+| F3 | 89 | 0 |
+| F4 | 29 | 54 |
+| F5 | 0 | 0 |
+| F6 | 22 | 34 |
+| F6H | 11 | 26 |
+| KI | 42 | 123 |
+| MH | 8 | 47 |
+| **Total** | **265** | **370** |
+
+Accepted coverage gaps: F2/F5 are absent from v3; F3 is absent from v3 test.
+Do not generate replacement items. F2/F5 retrieval evaluation uses the original
+Phase 5 and natural development tracks where present. F3/F6/F6H passage metrics
+are N/A, distinct from a family that is not in a dataset.
+`qrels_v3_dev.jsonl` has 265 rows (143 applicable, 122 N/A);
+`qrels_v3_test.jsonl` has 370 rows (310 applicable, 60 N/A).
+No v3 retrieval or answer evaluation is claimed. Earlier statements that v3
+generation/review are pending describe the prior implementation handoff.
+
+Task 2 now wraps existing retrieval behind R1–R7b, with versioned C0/C1/C2,
+source-record qrels, resumable top-50 caches, locked-test gates, cluster
+bootstrap/Holm and preregistered development selection (eligible cells n>=10).
+No full build/evaluation or live R7 was run by the agent. Follow
+`docs/RETRIEVAL_V3.md`; S2 remains unselected until owner-run dev results pass.

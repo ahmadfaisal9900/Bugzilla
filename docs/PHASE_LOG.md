@@ -61,3 +61,43 @@ Final Task 1 offline acceptance: 32 tests passed in under five seconds; shell sy
 Audited the saved v1 aggregates, preserved its outputs and implemented a separate v2 selection, source-scoped M3 parser, tokenizer-aware chunks and bug-first hierarchical search. The original signoff has not passed freeze validation. Fixture tests and a bounded source/tokenizer check only; no full v2 job or LLM request was run. See `EXTENDED_EVALUATION_RUNBOOK.md`.
 
 2026-11-12 — Added Groq transport and provider factory; default openai/gpt-oss-20b, GROQ_API_KEY, strict JSON schema, provider-isolated reservations/cache, numeric Retry-After and safe resume. Gemini failures remain archived; original benchmark unchanged. Offline tests only; user-run Groq availability/generation pending. See BENCHMARK_V3.md.
+
+## Verified v3 handoff — 2026-11-12
+
+v3 is **FROZEN_HUMAN_SPOTCHECKED**, freeze ID `e2207774a0f2cbad`, at
+`outputs/benchmark/v3/run-289a50d1152f547a/frozen-e2207774a0f2cbad/`.
+All 15 manifest-listed artifact SHA-256 values matched a read-only check.
+
+| Family | Dev n | Test n |
+| --- | ---: | ---: |
+| F1 | 64 | 86 |
+| F2 | 0 | 0 |
+| F3 | 89 | 0 |
+| F4 | 29 | 54 |
+| F5 | 0 | 0 |
+| F6 | 22 | 34 |
+| F6H | 11 | 26 |
+| KI | 42 | 123 |
+| MH | 8 | 47 |
+| **Total** | **265** | **370** |
+
+Accepted coverage gaps: F2/F5 are absent from v3; F3 is absent from v3 test.
+Do not generate replacement items. F2/F5 retrieval evaluation uses the original
+Phase 5 and natural development tracks where present. F3/F6/F6H passage metrics
+are N/A, distinct from a family that is not in a dataset.
+`qrels_v3_dev.jsonl` has 265 rows (143 applicable, 122 N/A);
+`qrels_v3_test.jsonl` has 370 rows (310 applicable, 60 N/A).
+No v3 retrieval or answer evaluation is claimed. Earlier statements that v3
+generation/review are pending describe the prior implementation handoff.
+
+2026-11-12 — Task 2 / Phase 9 implementation: corrected v3 handoff docs before
+code and preregistered selection before results. Wrapped existing lexical/dense/
+RRF/hierarchy/reranker code, added graph expansion and shared-provider R7,
+versioned token-budgeted corpus variants, evaluator caches, cluster bootstrap/
+Holm and selection. Full runs await the owner terminal. No frozen/source file
+was modified; no live request or full index/evaluation was executed. See
+RETRIEVAL_V3.md for exact commands and acceptance scope.
+
+Task 2 validation: 38 offline fixture/mock tests passed in about four seconds;
+all 22 original/v3 frozen artifact hashes still match. Shell syntax and CLI
+help checks passed. This verifies implementation only, not real retrieval scores.

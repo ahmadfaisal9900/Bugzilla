@@ -100,3 +100,14 @@ Dry-run prints preconditions only. The full validator recomputes gold and hashes
 - **[Project Report.pdf](<docs/Project Report.pdf>)**: planned project report; the owner will add this PDF to `docs/` soon. The link will work once it is committed.
 
 Original downloads remain read-only under ignored `Dataset/`, including the upstream authors' clone. The existing repository remote is `https://github.com/ahmadfaisal9900/Bugzilla.git`.
+
+## Versioned v3 retrieval experiments (Task 2)
+
+v3 freeze `e2207774a0f2cbad` is complete. Accepted coverage gaps: no v3 F2,
+no v3 F5, and no test F3. F3/F6/F6H passage retrieval metrics are N/A; absent
+families are labeled separately. The current C0 corpus has 14,443 v2 chunks.
+The new corpus/retrieval harness is fixture-tested and awaiting owner terminal
+runs. Follow [RETRIEVAL_V3.md](docs/RETRIEVAL_V3.md) for installation and ordered
+commands: build C0/C1/C2 → offline dev evaluation → opt-in capped R7 → selection.
+The preregistered rule is in [RETRIEVER_SELECTION.md](docs/RETRIEVER_SELECTION.md).
+Full runs remain local and ignored; frozen question/gold files stay unchanged.

@@ -16,4 +16,46 @@ The frozen quality report has zero supported historical as-of questions; the ori
 
 The Gemini provider is opt-in and fixture-tested. It uses a local locked ledger, a model-specific token bucket, Pacific-date daily cap, SQLite response cache, bounded retry and JSON Schema validation. Its ledger enforces quotas only for cooperating processes sharing that ledger; other machines or applications in the same Google project also consume project quota. Crashes between a successful remote call and cache commit can cause a repeated billable request. No successful live API call has verified SDK/model support. Never put API keys in config or command-line arguments.
 
-The owner-run ping established HTTP 404. Model listing and environment overrides are explicit, budgeted commands; no accessible replacement or successful live ping is claimed. The complete Task 1 generator, independent SQL/evidence recheck, review export and freeze integration are implemented with 20-bug fixtures. Real generation and real human spot checks remain pending. See `BENCHMARK_V3.md` for commands and provenance limits.
+The owner-run ping established HTTP 404. Model listing and environment overrides are explicit, budgeted commands; no accessible replacement or successful live ping is claimed. The complete Task 1 generator, independent SQL/evidence recheck, review export and freeze integration are implemented with 20-bug fixtures. The owner subsequently completed generation and spot checks; verified freeze details follow. See `BENCHMARK_V3.md` for commands and provenance limits.
+
+## Verified v3 handoff — 2026-11-12
+
+v3 is **FROZEN_HUMAN_SPOTCHECKED**, freeze ID `e2207774a0f2cbad`, at
+`outputs/benchmark/v3/run-289a50d1152f547a/frozen-e2207774a0f2cbad/`.
+All 15 manifest-listed artifact SHA-256 values matched a read-only check.
+
+| Family | Dev n | Test n |
+| --- | ---: | ---: |
+| F1 | 64 | 86 |
+| F2 | 0 | 0 |
+| F3 | 89 | 0 |
+| F4 | 29 | 54 |
+| F5 | 0 | 0 |
+| F6 | 22 | 34 |
+| F6H | 11 | 26 |
+| KI | 42 | 123 |
+| MH | 8 | 47 |
+| **Total** | **265** | **370** |
+
+Accepted coverage gaps: F2/F5 are absent from v3; F3 is absent from v3 test.
+Do not generate replacement items. F2/F5 retrieval evaluation uses the original
+Phase 5 and natural development tracks where present. F3/F6/F6H passage metrics
+are N/A, distinct from a family that is not in a dataset.
+`qrels_v3_dev.jsonl` has 265 rows (143 applicable, 122 N/A);
+`qrels_v3_test.jsonl` has 370 rows (310 applicable, 60 N/A).
+No v3 retrieval or answer evaluation is claimed. Earlier statements that v3
+generation/review are pending describe the prior implementation handoff.
+
+## Task 2 inventory and implementation — 2026-11-12
+
+See `RETRIEVAL_V3.md` for the expected → found inventory. C0 is the later
+14,443-chunk v2 corpus at `outputs/eval_extension/39a751ca190bbbc3/`; dense bytes
+are in `bank-dacb7ca0ceb7e0ef/`, not the corpus directory. Provider is
+`src/bugzilla_qa/llm/provider.py`, currently Groq, reused with generator role.
+Natural dev has no F5 (22 F1, 4 F2, 2 F3, 23 F4); Phase 5 dev supplies F5.
+Task 2 wraps existing algorithms and adds tokenizer-safe variants, graph/query
+transforms, evaluator/cache, clustered metrics and preregistered selection.
+It makes no change to frozen gold/splits or source data. Only fixture jobs ran;
+real index builds/evaluation and live R7 are AWAITING_TERMINAL_RUN. Existing
+owner edits to `.env.example`, EXTENDED_EVALUATION_RUNBOOK and review_natural_v2
+are preserved and excluded from the task commit.

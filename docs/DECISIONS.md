@@ -61,3 +61,13 @@ Phase 3B full output is validated. Base F2 history remains absent; selective Pha
 Task 1 update: the owner subsequently completed original freeze d8ef826fbeb90d13. D-046: v3 stays separate, with root splits, explicit original/natural exclusions, source-supported KI/MH/F6H and independently rechecked v2 imports. The KI target is 220 forms from up to 110 description calls. Human spot checks assess wording; deterministic gold checks do not establish semantic equivalence. Copied v2 aggregates retain their original population and are labeled shared-population tasks. No as-of date, event, absent canonical field or human verdict is invented.
 
 D-047 (2026-11-12): use Groq by explicit user request after Gemini access/capacity failures. Default openai/gpt-oss-20b with strict JSON Schema (Groq structured-output docs), GROQ_API_KEY read from ignored .env, and 3 configured RPM / 1,000 RPD as conservative local limits. New provider/model/config creates a new versioned v3 run; failed Gemini drafts, original freeze and human review gates are preserved. Groq token/account limits still apply. No live request is made by the coding agent.
+
+D-048 (2026-11-12): Task 2 uses current v2 C0 (14,443 chunks) and immutable v3
+freeze e2207774a0f2cbad. Preserve accepted missing F2/F5/test-F3 coverage. Reuse
+existing implementations/provider (Groq generator role); tokenizer-safe C1/C2
+preserve source record IDs. R4 alone restricts explicit bug references; R1/R2
+use global retrieval for a distinct hierarchy comparison. R6 reserves at most
+three top-10 slots for explicit graph-neighbour metadata. Select S2 using only
+n>=10 v3/natural dev passage-qrel cells, per preregistered RETRIEVER_SELECTION.
+Frozen data, empty base history and private/unknown comment bodies are excluded
+from writes/ingestion as already required. Real scores await terminal runs.

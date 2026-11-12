@@ -23,7 +23,7 @@ def read_docs(corpus):
         return [json.loads(line) for line in f]
 
 
-def build_dense(corpus, directory, model_name, batch_size=32, device='cpu', resume=False):
+def build_dense(corpus, directory, model_name, batch_size=32, device='cpu', resume=False, revision=None):
     faiss, np, SentenceTransformer, tqdm = _deps()
     directory = Path(directory); directory.mkdir(parents=True, exist_ok=True)
     docs = read_docs(corpus)
@@ -33,15 +33,19 @@ def build_dense(corpus, directory, model_name, batch_size=32, device='cpu', resu
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text())
         if (not resume or manifest['corpus_sha256'] != corpus_hash or manifest['model'] != model_name
+                or (revision is not None and manifest['revision'] != revision)
                 or manifest.get('code_sha256') != file_hash(Path(__file__))):
             raise RuntimeError('existing dense index has different identity or --resume was not given')
         if not index_path.exists() or file_hash(index_path) != manifest['index_sha256']:
             raise RuntimeError('dense index hash mismatch')
         return manifest
-    model = SentenceTransformer(model_name, device=device)
+    requested_revision = revision
+    model = SentenceTransformer(model_name, device=device, **({'revision': revision} if revision else {}))
     revision = getattr(model[0].auto_model.config, '_commit_hash', None)
     if not revision:
         raise RuntimeError('model revision could not be identified; use a pinned cached Hugging Face model')
+    if requested_revision and revision != requested_revision:
+        raise RuntimeError('loaded embedding revision differs from requested revision')
     corpus_manifest=Path(corpus).parent/'corpus_manifest.json'
     if corpus_manifest.exists():
         source=json.loads(corpus_manifest.read_text())
@@ -90,7 +94,7 @@ def build_dense(corpus, directory, model_name, batch_size=32, device='cpu', resu
 
 
 class DenseSearcher:
-    def __init__(self, corpus, directory, model_name, device='cpu'):
+    def __init__(self, corpus, directory, model_name, device='cpu', model=None):
         faiss, np, SentenceTransformer, _ = _deps()
         self.np = np; self.docs = read_docs(corpus); directory = Path(directory)
         manifest = json.loads((directory / 'dense_manifest.json').read_text())
@@ -99,16 +103,29 @@ class DenseSearcher:
         if file_hash(directory / 'dense.faiss') != manifest['index_sha256']:
             raise RuntimeError('dense index hash mismatch')
         self.index = faiss.read_index(str(directory / 'dense.faiss'))
-        self.model = SentenceTransformer(model_name, device=device, revision=manifest['revision'])
+        self.model = model if model is not None else SentenceTransformer(model_name, device=device, revision=manifest['revision'])
+        self._last_query_vector = None
         if self.index.ntotal != len(self.docs):
             raise RuntimeError('dense mapping length mismatch')
 
-    def search(self, query, k=5, filter_bug=True):
+    def search(self, query, k=5, filter_bug=True, allowed_bug_ids=None):
         match = BUG_ID.search(query) if filter_bug else None
-        allowed = [i for i, d in enumerate(self.docs) if not match or d['bug_id'] == match.group(1)]
+        allowed = [i for i, d in enumerate(self.docs)
+                   if (not match or d['bug_id'] == match.group(1))
+                   and (allowed_bug_ids is None or str(d['bug_id']) in allowed_bug_ids)]
         if not allowed:
             return []
-        vec = self.np.asarray(self.model.encode([query], normalize_embeddings=True, convert_to_numpy=True), dtype='float32')
+        if self._last_query_vector is None or self._last_query_vector[0] != query:
+            self._last_query_vector = (query, self.np.asarray(self.model.encode(
+                [query], normalize_embeddings=True, convert_to_numpy=True), dtype='float32'))
+        vec = self._last_query_vector[1]
+        if allowed_bug_ids is not None:
+            # R4 ranks only its selected parents; avoid a full-corpus FAISS sort.
+            vectors = self.np.asarray([self.index.reconstruct(i) for i in allowed], dtype='float32')
+            values = vectors @ vec[0]
+            selected = sorted(zip(allowed, values), key=lambda x: (-float(x[1]), self.docs[x[0]]['chunk_id']))
+            return [dict(self.docs[i], rank=rank, score=float(score))
+                    for rank, (i, score) in enumerate(selected[:k], 1)]
         # Search all on explicit-ID queries so filtering cannot lose a valid matching bug.
         n = len(self.docs) if match else min(len(self.docs), k)
         scores, indices = self.index.search(vec, n)

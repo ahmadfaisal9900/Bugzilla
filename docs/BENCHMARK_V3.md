@@ -1,8 +1,6 @@
 # Task 1 — shared LLM provider and v3 dataset
 
-Status: implemented and tested on a synthetic 20-bug DuckDB fixture. Real v3
-generation and human spot checks have not run. No successful Groq request is
-verified. The final offline suite passed 35 tests, including 20-bug fixtures,
+Status: implemented and tested on a synthetic 20-bug DuckDB fixture. The user subsequently completed generation, review and freeze; see the verified handoff below. The final offline suite passed 35 tests, including 20-bug fixtures,
 provider mocks, interrupted resume, immutable review fields and freeze recovery.
 Original freeze d8ef826fbeb90d13 stays unchanged: 169 primary questions
 (34 development, 135 test) and six supplemental challenges.
@@ -28,7 +26,7 @@ python scripts/llm_ping.py --enable-llm --max-requests 1
 
 Expect the dry run to show `provider: groq`, model `openai/gpt-oss-20b`, and zero
 calls. Continue only after the live ping reports SUCCESS with token counts.
-No successful live Groq request has been verified by the coding agent.
+The subsequent complete v3 generation and freeze are verified from saved artifacts; no live calls are made by the coding agent.
 
 The default is deliberately conservative: 3 configured RPM (2 request starts per
 rolling minute), 1,000 configured RPD with the existing 90% Pacific-day ceiling,
@@ -177,3 +175,31 @@ artifacts sealed until later method configurations are fixed.
 - Only explicitly public, available canonical comments enter prompts. Known
   identities/emails and configured secrets are sanitized. The ledger contains
   hashes, not raw prompts or keys. All data, reports, caches and logs stay ignored.
+
+## Verified v3 handoff — 2026-11-12
+
+v3 is **FROZEN_HUMAN_SPOTCHECKED**, freeze ID `e2207774a0f2cbad`, at
+`outputs/benchmark/v3/run-289a50d1152f547a/frozen-e2207774a0f2cbad/`.
+All 15 manifest-listed artifact SHA-256 values matched a read-only check.
+
+| Family | Dev n | Test n |
+| --- | ---: | ---: |
+| F1 | 64 | 86 |
+| F2 | 0 | 0 |
+| F3 | 89 | 0 |
+| F4 | 29 | 54 |
+| F5 | 0 | 0 |
+| F6 | 22 | 34 |
+| F6H | 11 | 26 |
+| KI | 42 | 123 |
+| MH | 8 | 47 |
+| **Total** | **265** | **370** |
+
+Accepted coverage gaps: F2/F5 are absent from v3; F3 is absent from v3 test.
+Do not generate replacement items. F2/F5 retrieval evaluation uses the original
+Phase 5 and natural development tracks where present. F3/F6/F6H passage metrics
+are N/A, distinct from a family that is not in a dataset.
+`qrels_v3_dev.jsonl` has 265 rows (143 applicable, 122 N/A);
+`qrels_v3_test.jsonl` has 370 rows (310 applicable, 60 N/A).
+No v3 retrieval or answer evaluation is claimed. Earlier statements that v3
+generation/review are pending describe the prior implementation handoff.

@@ -135,3 +135,23 @@ bash scripts/run_phase05_validate_freeze.sh --seed 317 --resume
 Freeze reads/hashes the 1.89-GB canonical DB once per validation, recomputes deterministic gold, and writes checksummed question/gold artifacts. No source CSV, API job or model call runs. Keep gold/SQL/templates/review text out of inference/retrieval logs; only question exports enter later methods. Do not tune on test/challenge questions. Report actual candidate/review/frozen counts before beginning a later phase.
 
 Phase 5 v1.1 fixes Python 3.9 timestamp compatibility. The user-run generation now exists; the assisted prep tool operates only on that pinned run. No source import, API collection, or deletion is required.
+
+## Task 2 / Phase 9 — retrieval variants
+
+Follow [RETRIEVAL_V3.md](RETRIEVAL_V3.md) for setup, outputs, runtime estimates
+and the complete commands. From Project, run in order:
+
+```bash
+bash scripts/run_phase09_retrieval_v3.sh build --dry-run
+bash scripts/run_phase09_retrieval_v3.sh build --resume
+bash scripts/run_phase09_retrieval_v3.sh eval --dry-run
+bash scripts/run_phase09_retrieval_v3.sh eval --resume
+bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
+bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --enable-llm --max-requests 750 --resume
+bash scripts/run_phase09_retrieval_v3.sh select --latest --dry-run
+bash scripts/run_phase09_retrieval_v3.sh select --latest
+```
+
+Only continue to selection after both dev runs report COMPLETE. PARTIAL / exit 2
+means resume the same R7 command after quota is available; no request budget
+is bypassed. Status is AWAITING_TERMINAL_RUN. No test access is needed here.
