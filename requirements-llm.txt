@@ -1,3 +1,4 @@
-google-genai>=1.0,<2
+groq>=0.30,<1
+# Gemini is optional; install google-genai separately only for legacy runs.
 jsonschema>=4.0,<5
 PyYAML>=6,<7

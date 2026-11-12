@@ -1,15 +1,25 @@
 {
   "models": {
-    "generator": {"id": "gemini-2.0-flash", "rpm": 15, "rpd": 1500},
-    "aux": {"id": "gemini-2.0-flash-lite", "rpm": 30, "rpd": 1500}
+    "generator": {
+      "id": "openai/gpt-oss-20b",
+      "rpm": 3,
+      "rpd": 1000
+    },
+    "aux": {
+      "id": "openai/gpt-oss-20b",
+      "rpm": 3,
+      "rpd": 1000
+    }
   },
   "temperature": 0,
-  "max_output_tokens": 512,
+  "max_output_tokens": 2048,
   "timeout_ms": 60000,
   "thinking_budget": null,
   "daily_fraction": 0.9,
   "max_retries": 5,
-  "ledger": "outputs/llm/ledger.jsonl",
-  "cache": "outputs/llm/cache.sqlite",
-  "env_file": ".env"
+  "ledger": "outputs/llm/groq/ledger.jsonl",
+  "cache": "outputs/llm/groq/cache.sqlite",
+  "env_file": ".env",
+  "provider": "groq",
+  "reasoning_effort": "low"
 }

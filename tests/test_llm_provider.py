@@ -14,6 +14,9 @@ SCHEMA = {'type': 'object', 'properties': {'description': {'type': 'string'}}, '
 class ProviderTests(unittest.TestCase):
     def setUp(self):
         self.config = read_config(ROOT / 'configs/llm.yaml')
+        self.config['provider']='gemini'
+        self.config['models']={'generator':{'id':'gemini-2.0-flash','rpm':15,'rpd':1500},
+                               'aux':{'id':'gemini-2.0-flash-lite','rpm':30,'rpd':1500}}
 
     def test_dry_run_is_zero_calls_and_writes(self):
         with tempfile.TemporaryDirectory() as d:

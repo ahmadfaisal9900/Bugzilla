@@ -1,4 +1,4 @@
-"""Opt-in Gemini JSON provider with durable budget, cache, and audit ledger.
+"""Opt-in Gemini/Groq JSON providers with durable budget, cache, and audit ledger.
 
 The shared file lock serializes cooperating local processes. A provider response
 can be charged before a crash and before caching; exact-once billing is impossible.
@@ -21,6 +21,7 @@ from jsonschema import validate
 
 ROOT = Path(__file__).resolve().parents[3]
 PACIFIC = ZoneInfo('America/Los_Angeles')
+SECRET_KEYS = ('LLM_API_KEY', 'GROQ_API_KEY', 'LANGSMITH_API_KEY', 'LANGSMITH_KEY')
 
 
 def digest(obj):
@@ -55,10 +56,13 @@ def env_values(path):
 def resolved_config(config, root=ROOT):
     result = json.loads(json.dumps(config))
     values = env_values(Path(root) / config['env_file'])
+    backend = result.get('provider', 'gemini')
+    if backend not in ('gemini', 'groq'): raise ValueError('Unknown LLM provider')
+    prefix = 'GROQ' if backend == 'groq' else 'GEMINI'
     for role, item in result['models'].items():
-        key = 'GEMINI_AUX_MODEL' if role == 'aux' else 'GEMINI_MODEL'
-        name = os.environ.get(key) or values.get(key) or os.environ.get('GEMINI_MODEL') or values.get('GEMINI_MODEL') or item['id']
-        if any(name == (os.environ.get(k) or values.get(k)) for k in ('LLM_API_KEY','LANGSMITH_API_KEY','LANGSMITH_KEY')):
+        key = prefix + ('_AUX_MODEL' if role == 'aux' else '_MODEL')
+        name = os.environ.get(key) or values.get(key) or os.environ.get(prefix+'_MODEL') or values.get(prefix+'_MODEL') or item['id']
+        if any(name == (os.environ.get(k) or values.get(k)) for k in SECRET_KEYS):
             raise ValueError('A credential cannot be used as a model identifier')
         if not re.fullmatch(r'[A-Za-z0-9._/-]+', name): raise ValueError('Invalid model identifier')
         item['id'] = name.removeprefix('models/')
@@ -97,10 +101,11 @@ def _safe_error_detail(exc, secrets):
 
 
 class GeminiProvider:
+    backend = 'gemini'
     def __init__(self, config, role='aux', *, enable_llm=False, max_requests=1, root=ROOT, client=None, sleep=time.sleep, resolve_env=True):
         if role not in config['models'] or type(max_requests) is not int or max_requests < 1:
             raise ValueError('A configured model and positive request budget are required')
-        self.config = resolved_config(config, root) if resolve_env else json.loads(json.dumps(config))
+        self.config = resolved_config(dict(config, provider=self.backend), root) if resolve_env else json.loads(json.dumps(config))
         self.model = self.config['models'][role]
         for key in ('rpm','rpd'):
             if type(self.model[key]) is not int or self.model[key] < 1: raise ValueError('Quotas must be positive integers')
@@ -115,6 +120,7 @@ class GeminiProvider:
         self.cache = self.root / config['cache']
 
     def _log(self, **values):
+        values.setdefault('provider', self.backend)
         values.setdefault('ts', dt.datetime.now(dt.timezone.utc).isoformat())
         with self.ledger.open('a', encoding='utf-8') as handle:
             handle.write(json.dumps(values, sort_keys=True) + '\n')
@@ -123,10 +129,14 @@ class GeminiProvider:
 
     def generate_json(self, prompt, schema, *, system_prompt='', prompt_version='v1', purpose='unspecified', _list_models=False):
         values = env_values(self.root / self.config['env_file'])
-        secrets = [os.environ.get(k) or values.get(k) for k in ('LLM_API_KEY', 'LANGSMITH_API_KEY', 'LANGSMITH_KEY')]
+        secrets = [os.environ.get(k) or values.get(k) for k in SECRET_KEYS]
         if any(s and s in prompt + system_prompt for s in secrets):
             raise RuntimeError('Prompt contains a credential; refused')
-        key = digest([self.model['id'], prompt_version, system_prompt, prompt, schema])
+        if self.enabled and self.client is None:
+            key_name = 'GROQ_API_KEY' if self.backend == 'groq' else 'LLM_API_KEY'
+            if not (os.environ.get(key_name) or values.get(key_name)):
+                raise RuntimeError(key_name + ' is missing')
+        key = digest(([self.backend] if self.backend != 'gemini' else []) + [self.model['id'], prompt_version, system_prompt, prompt, schema])
         if not self.enabled:
             return {'state': 'DRY_RUN', 'prompt_hash': key, 'model': self.model['id']}
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
@@ -153,7 +163,7 @@ class GeminiProvider:
                             for line in f:
                                 try: event = json.loads(line)
                                 except json.JSONDecodeError: raise RuntimeError('Malformed ledger; preserve and repair before resuming')
-                                if event.get('model') == self.model['id'] and event.get('status') == 'REQUEST_STARTED':
+                                if event.get('provider','gemini') == self.backend and event.get('model') == self.model['id'] and event.get('status') == 'REQUEST_STARTED':
                                     events.append(dt.datetime.fromisoformat(event['ts'].replace('Z', '+00:00')))
                     now = dt.datetime.now(dt.timezone.utc)
                     daily = sum(t.astimezone(PACIFIC).date() == now.astimezone(PACIFIC).date() for t in events)
@@ -179,58 +189,104 @@ class GeminiProvider:
                               status='REQUEST_STARTED', input_tokens=None, output_tokens=None, latency_ms=0, error_class=None)
                     self.calls += 1; start = time.monotonic()
                     try:
-                        if self.client is None:
-                            from google import genai
-                            self.client = genai.Client(api_key=_secret(self.root / self.config['env_file']), vertexai=False,
-                                http_options={'timeout': self.config.get('timeout_ms', 60000),
-                                              'retry_options': {'attempts': 1}})
-                        options = {'system_instruction': system_prompt, 'temperature': self.config['temperature'],
-                                   'max_output_tokens': self.config['max_output_tokens'],
-                                   'response_mime_type': 'application/json', 'response_json_schema': schema}
-                        if self.config.get('thinking_budget') is not None:
-                            options['thinking_config'] = {'thinking_budget': self.config['thinking_budget']}
-                        if _list_models:
-                            response = self.client.models.list(config={'page_size': 100})
-                            value = {'models': sorted(m.name for m in response.page
-                                      if re.fullmatch(r'[A-Za-z0-9._/-]+', m.name or '')
-                                      and 'generateContent' in (getattr(m, 'supported_actions', None) or [])),
-                                     'more_pages': bool(getattr(response, 'config', {}).get('page_token'))}
-                            usage = None
-                        else:
-                            response = self.client.models.generate_content(model=self.model['id'], contents=prompt, config=options)
-                            if any(s and s in response.text for s in secrets):
-                                raise RuntimeError('Response contains a credential; refused')
-                            value = json.loads(response.text)
-                            usage = getattr(response, 'usage_metadata', None)
+                        value, input_tokens, output_tokens = self._request(prompt, system_prompt, schema, _list_models, secrets)
                         validate(value, schema)
                         if any(s and s in json.dumps(value) for s in secrets):
                             raise RuntimeError('Response contains a credential; refused')
-                        meta = {'model': self.model['id'], 'input_tokens': getattr(usage, 'prompt_token_count', None),
-                                'output_tokens': getattr(usage, 'candidates_token_count', None),
+                        meta = {'model': self.model['id'], 'input_tokens': input_tokens,
+                                'output_tokens': output_tokens,
                                 'latency_ms': round((time.monotonic()-start)*1000)}
                         db.execute('INSERT INTO responses VALUES (?,?,?)', (key, json.dumps(value), json.dumps(meta))); db.commit()
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
                                   status='SUCCESS', input_tokens=meta['input_tokens'], output_tokens=meta['output_tokens'], latency_ms=meta['latency_ms'], error_class=None)
                         return {'state': 'SUCCESS', 'value': value, 'prompt_hash': key, **meta}
                     except Exception as exc:
-                        code = getattr(exc, 'code', None) or getattr(exc, 'status_code', None)
+                        code = getattr(exc, 'status_code', None) or getattr(exc, 'code', None)
                         code = code if type(code) is int and 100 <= code <= 599 else None
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
                                   status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code)
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries'] or self.calls >= self.max_requests:
                             hint = {400: 'check model and structured-output settings', 401: 'check credentials', 403: 'check key permissions', 404: 'check model availability', 429: 'quota or rate limit reached'}.get(code, 'check provider availability')
                             detail = _safe_error_detail(exc, secrets)
-                            detail = '; Google message: ' + detail if detail else ''
-                            raise RuntimeError('Gemini request for model %s failed: %s%s; %s%s' %
-                                (self.model['id'], type(exc).__name__, ' HTTP %s' % code if code else '', hint, detail)) from None
-                        self.sleep(min(60, 2 ** attempt) + random.random())
+                            detail = '; Provider message: ' + detail if detail else ''
+                            raise RuntimeError('%s request for model %s failed: %s%s; %s%s' %
+                                (self.backend.title(), self.model['id'], type(exc).__name__, ' HTTP %s' % code if code else '', hint, detail)) from None
+                        delay = min(60, 2 ** attempt) + random.random()
+                        headers = getattr(getattr(exc, 'response', None), 'headers', {})
+                        try: delay = max(delay, float(headers.get('retry-after', 0)))
+                        except (TypeError, ValueError): pass
+                        if delay > 300:
+                            raise RuntimeError('Provider requests a long Retry-After; resume later') from None
+                        self.sleep(delay)
 
+
+    def _request(self, prompt, system_prompt, schema, _list_models, secrets):
+        if self.client is None:
+            from google import genai
+            self.client = genai.Client(api_key=_secret(self.root / self.config['env_file']), vertexai=False,
+                http_options={'timeout': self.config.get('timeout_ms', 60000),
+                              'retry_options': {'attempts': 1}})
+        options = {'system_instruction': system_prompt, 'temperature': self.config['temperature'],
+                   'max_output_tokens': self.config['max_output_tokens'],
+                   'response_mime_type': 'application/json', 'response_json_schema': schema}
+        if self.config.get('thinking_budget') is not None:
+            options['thinking_config'] = {'thinking_budget': self.config['thinking_budget']}
+        if _list_models:
+            response = self.client.models.list(config={'page_size': 100})
+            value = {'models': sorted(m.name for m in response.page
+                      if re.fullmatch(r'[A-Za-z0-9._/-]+', m.name or '')
+                      and 'generateContent' in (getattr(m, 'supported_actions', None) or [])),
+                     'more_pages': bool(getattr(response, 'config', {}).get('page_token'))}
+            usage = None
+        else:
+            response = self.client.models.generate_content(model=self.model['id'], contents=prompt, config=options)
+            if any(s and s in response.text for s in secrets):
+                raise RuntimeError('Response contains a credential; refused')
+            value = json.loads(response.text)
+            usage = getattr(response, 'usage_metadata', None)
+        return value, getattr(usage, 'prompt_token_count', None), getattr(usage, 'candidates_token_count', None)
 
     def list_models(self):
         schema = {'type': 'object', 'properties': {'models': {'type': 'array', 'items': {'type': 'string'}},
                   'more_pages': {'type': 'boolean'}}, 'required': ['models', 'more_pages'], 'additionalProperties': False}
         return self.generate_json('List model identifiers only.', schema, purpose='list-models',
                                   prompt_version='model-list-' + dt.datetime.now(dt.timezone.utc).isoformat(), _list_models=True)
+
+
+class GroqProvider(GeminiProvider):
+    backend = 'groq'
+
+    def _request(self, prompt, system_prompt, schema, _list_models, secrets):
+        if self.client is None:
+            from groq import Groq
+            values = env_values(self.root / self.config['env_file'])
+            key = os.environ.get('GROQ_API_KEY') or values.get('GROQ_API_KEY')
+            if not key: raise RuntimeError('GROQ_API_KEY is missing')
+            self.client = Groq(api_key=key, max_retries=0,
+                               timeout=self.config.get('timeout_ms',60000)/1000)
+        if _list_models:
+            response = self.client.models.list()
+            return {'models':sorted(m.id for m in response.data), 'more_pages':False}, None, None
+        response = self.client.chat.completions.create(
+            model=self.model['id'], temperature=self.config['temperature'],
+            max_completion_tokens=self.config['max_output_tokens'],
+            reasoning_effort=self.config.get('reasoning_effort','low'),
+            messages=[{'role':'system','content':system_prompt}, {'role':'user','content':prompt}],
+            response_format={'type':'json_schema','json_schema':{
+                'name':'study_response','strict':True,'schema':schema}})
+        if not response.choices or response.choices[0].finish_reason != 'stop':
+            raise RuntimeError('Incomplete Groq JSON response; check output token budget')
+        content=response.choices[0].message.content
+        if not content or any(secret and secret in content for secret in secrets):
+            raise RuntimeError('Empty or unsafe response; refused')
+        usage=response.usage
+        return json.loads(content), getattr(usage,'prompt_tokens',None), getattr(usage,'completion_tokens',None)
+
+
+def create_provider(config, role='aux', **kwargs):
+    backend=config.get('provider','gemini')
+    if backend not in ('gemini','groq'): raise ValueError('Unknown LLM provider')
+    return (GroqProvider if backend=='groq' else GeminiProvider)(config,role,**kwargs)
 
 
 class MockProvider:

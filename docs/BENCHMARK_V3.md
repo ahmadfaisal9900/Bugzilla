@@ -1,54 +1,53 @@
-# Task 1 — shared Gemini provider and v3 dataset
+# Task 1 — shared LLM provider and v3 dataset
 
 Status: implemented and tested on a synthetic 20-bug DuckDB fixture. Real v3
-generation and human spot checks have not run. No successful Gemini request is
-verified. The final offline suite passed 32 tests, including 20-bug fixtures,
+generation and human spot checks have not run. No successful Groq request is
+verified. The final offline suite passed 35 tests, including 20-bug fixtures,
 provider mocks, interrupted resume, immutable review fields and freeze recovery.
 Original freeze d8ef826fbeb90d13 stays unchanged: 169 primary questions
 (34 development, 135 test) and six supplemental challenges.
 
-## Setup and the 404
+## Setup with Groq (current default)
+
+The user requested Groq after Gemini models returned 404 and the recommended
+replacement returned 503. `configs/llm.yaml` now selects `provider: groq` and
+`openai/gpt-oss-20b` for both roles. Groq documents strict JSON Schema support for
+this model: https://console.groq.com/docs/structured-outputs .
+
+Keep `GROQ_API_KEY` in ignored `.env`, one assignment per line. The provider reads
+it directly; do not source `.env` or put the key in a command. Old `GEMINI_*` model
+variables and `LLM_API_KEY` are ignored for Groq selection/authentication.
+Optional `GROQ_MODEL` / `GROQ_AUX_MODEL` override the configured model.
 
 ~~~bash
-cd "/home/ict317/master's/ENSF 621/Project"
 conda activate iqfm
 python -m pip install -r requirements-v3.txt
-python scripts/llm_ping.py --list-models --dry-run
-python scripts/llm_ping.py --list-models --enable-llm --max-requests 1
+python scripts/llm_ping.py --dry-run
+python scripts/llm_ping.py --enable-llm --max-requests 1
 ~~~
 
-The final command requests exactly one page of available generation model IDs,
-without generating content or fetching subsequent pages. A listed model is not
-proof of free-tier eligibility or remaining quota. Choose a model supported by
-your free project. The configured Gemini 2.0 model and two listed Gemini 2.5
-Flash models returned HTTP 404 during user-run generation pings, despite appearing
-in the list response. The ping now reports the attempted model and a sanitized
-Google error message so the next failure can identify whether Google rejects the
-model name, method, API version or project. Stop after a failed ping; do not spend
-more requests guessing. Python 3.9 warnings are separate from the HTTP error.
+Expect the dry run to show `provider: groq`, model `openai/gpt-oss-20b`, and zero
+calls. Continue only after the live ping reports SUCCESS with token counts.
+No successful live Groq request has been verified by the coding agent.
 
-Keep each .env assignment on its own line; a line beginning with # is a comment.
-Leave the existing key in .env. GEMINI_MODEL sets the generator and is the aux
-fallback; GEMINI_AUX_MODEL sets aux separately. Environment variables override
-.env, which overrides configs/llm.yaml. When both roles use one model, the lower
-configured quota applies. The provider forces the Gemini Developer API, disables
-SDK automatic retries, and does not enable LangSmith tracing.
+The default is deliberately conservative: 3 configured RPM (2 request starts per
+rolling minute), 1,000 configured RPD with the existing 90% Pacific-day ceiling,
+2,048 completion tokens and low reasoning effort. At that pacing, 110 successful
+description calls can take roughly 55 minutes plus source preparation. Groq also
+applies token quotas and account-specific limits; a request ledger cannot enforce
+limits consumed by other applications. Published limits are at
+https://console.groq.com/docs/rate-limits . Use your account's Free Plan for the
+zero-cost course project; the code does not configure account billing.
 
-Choose names from the model-list output in your terminal:
+SDK automatic retries are disabled. The shared provider caps retries/requests,
+honors numeric Retry-After, and stops for a delay longer than five minutes so you
+can resume later. Cache and ledger are isolated under `outputs/llm/groq/` and are
+ignored. Structured output is validated locally before caching. Credentials are
+redacted from surfaced error messages and never written to manifests or ledgers.
 
-~~~bash
-read -r -p "Available free-project generator model ID: " GEMINI_MODEL
-export GEMINI_MODEL
-read -r -p "Available free-project aux model ID: " GEMINI_AUX_MODEL
-export GEMINI_AUX_MODEL
-python scripts/llm_ping.py --role aux --dry-run
-python scripts/llm_ping.py --role aux --enable-llm --max-requests 1
-~~~
-
-You can instead save those model names on separate lines in .env. No model is
-automatically substituted after a failure. Configure quotas for the selected
-model/project. Defaults are generator 15 RPM / 1,500 RPD and aux 30 RPM / 1,500
-RPD, with a 90% daily ceiling on the America/Los_Angeles date.
+The backend/model/config change intentionally creates a new v3 run identity;
+failed Gemini drafts remain preserved. Resume uses the same Groq settings and
+code revision. Original Phase 5 frozen files remain protected.
 
 ## User-terminal generation
 
@@ -66,7 +65,7 @@ Eligibility/filtering can lower actual counts. Retries count against the
 repeat the same command to continue.
 
 Optional preparation performs source checks and summary embeddings without
-Gemini calls:
+LLM calls:
 
 ~~~bash
 bash scripts/run_phase08_v3_generate.sh --prepare --seed 317 --resume

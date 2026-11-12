@@ -134,7 +134,7 @@ class GenerationTests(unittest.TestCase):
                 return actual_embeddings(source,out,Encoder())
             base=['v3','--config',str(root/'config.json'),'--resume']
             with patch.object(v3,'ROOT',root), patch.object(v3.subprocess,'check_output',return_value='fixture-code\n'), \
-                 patch.object(v3,'GeminiProvider',side_effect=provider),patch.object(v3,'embeddings',side_effect=embed), \
+                 patch.object(v3,'create_provider',side_effect=provider),patch.object(v3,'embeddings',side_effect=embed), \
                  contextlib.redirect_stdout(io.StringIO()) as output:
                 with patch('sys.argv',base+['--dry-run']):
                     v3.main()

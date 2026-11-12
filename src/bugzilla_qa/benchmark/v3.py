@@ -13,7 +13,7 @@ from pathlib import Path
 
 from bugzilla_qa.data.normalize import bug_id
 from bugzilla_qa.eval_extension.bank import ordered
-from bugzilla_qa.llm.provider import GeminiProvider, ROOT, read_config, resolved_config, env_values
+from bugzilla_qa.llm.provider import create_provider, ROOT, read_config, resolved_config, env_values
 from .v3_rules import FAMILIES, cluster_split, valid_description
 from .v3_source import Source, configured_exclusions, file_hash, null, read_jsonl, redact, verify_original, verify_exports, write_json, write_jsonl
 from .v3_verify import verify_candidate
@@ -395,7 +395,7 @@ def generate(config, llm_config, root, out, *, provider, resume=False, limit=Non
     out.mkdir(parents=True, exist_ok=True)
     source = Source(config, root)
     secrets = [os.environ.get(k) or env_values(Path(root) / llm_config['env_file']).get(k)
-               for k in ('LLM_API_KEY', 'LANGSMITH_API_KEY', 'LANGSMITH_KEY')]
+               for k in ('LLM_API_KEY', 'GROQ_API_KEY', 'LANGSMITH_API_KEY', 'LANGSMITH_KEY')]
     try:
         excluded, exclusion_counts = configured_exclusions(config, root)
         allowed = set(source.bugs) - excluded - source.conflicts
@@ -508,7 +508,7 @@ def main():
     parser.add_argument('--config', type=Path, default=ROOT / 'configs/benchmark_v3.yaml')
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument('--enable-llm', action='store_true')
-    modes.add_argument('--prepare', action='store_true', help='No Gemini calls; full source checks and summary embeddings may download pinned model weights if absent')
+    modes.add_argument('--prepare', action='store_true', help='No LLM calls; full source checks and summary embeddings may download pinned model weights if absent')
     modes.add_argument('--dry-run', action='store_true')
     parser.add_argument('--max-requests', type=int, default=5)
     parser.add_argument('--limit', type=int)
@@ -525,7 +525,7 @@ def main():
     out = ROOT / config['output_root'] / ('run-' + run_id)
     if not args.enable_llm and not args.prepare:
         print(json.dumps({'state': 'DRY_RUN', 'output': str(out.relative_to(ROOT)), 'planned_call_upper_bound': min(config['ki_parent_target'], args.limit or config['ki_parent_target']),
-            'max_requests_this_invocation': args.max_requests, 'network_calls': 0, 'model': llm['models']['aux']['id'],
+            'max_requests_this_invocation': args.max_requests, 'network_calls': 0, 'provider': llm.get('provider','gemini'), 'model': llm['models']['aux']['id'],
             'example_prompts_synthetic': [make_prompt('Browser closes while printing', 'Opening the print dialog causes an unexpected exit.'),
                                         make_prompt('Tabs fail to restore', 'After restarting, the previous tab session is missing.')],
             'system_prompt': SYSTEM, 'note': 'Dry-run examples are synthetic; exact source eligibility is determined during preparation.'}, indent=2))
@@ -561,7 +561,7 @@ def main():
         if not (out / 'inputs_verified.json').exists():
             write_json(out / 'inputs_verified.json', verify_large_inputs(config, ROOT))
         write_json(out / 'config_snapshot.json', {'dataset': config, 'llm': llm, 'git_commit': identity['git_commit']})
-        provider = GeminiProvider(llm, 'aux', enable_llm=args.enable_llm, max_requests=args.max_requests, resolve_env=False)
+        provider = create_provider(llm, 'aux', enable_llm=args.enable_llm, max_requests=args.max_requests, resolve_env=False)
         summary = generate(config, llm, ROOT, out, provider=provider, resume=True, limit=args.limit, prepare=args.prepare)
         current_identity=input_identity(config,llm,ROOT)
         current_identity['limit']=args.limit
