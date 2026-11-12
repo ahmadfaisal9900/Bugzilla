@@ -82,5 +82,22 @@ class ProviderTests(unittest.TestCase):
                 if file.is_file():
                     self.assertNotIn(secret.encode(), file.read_bytes())
 
+    def test_http_status_is_reported_without_provider_message(self):
+        class ClientError(Exception):
+            code = 404
+        class Models:
+            def generate_content(self, **kwargs):
+                raise ClientError('private provider response')
+        with tempfile.TemporaryDirectory() as d:
+            p = GeminiProvider(self.config, root=d, enable_llm=True,
+                               client=types.SimpleNamespace(models=Models()))
+            with self.assertRaises(RuntimeError) as error:
+                p.generate_json('prompt', SCHEMA)
+            self.assertIn('HTTP 404', str(error.exception))
+            self.assertNotIn('private provider response', str(error.exception))
+            ledger = (Path(d) / self.config['ledger']).read_text()
+            self.assertIn('"http_status": 404', ledger)
+            self.assertNotIn('private provider response', ledger)
+
 
 if __name__ == '__main__': unittest.main()

@@ -128,10 +128,12 @@ class GeminiProvider:
                         return {'state': 'SUCCESS', 'value': value, **meta}
                     except Exception as exc:
                         code = getattr(exc, 'code', None) or getattr(exc, 'status_code', None)
+                        code = code if type(code) is int and 100 <= code <= 599 else None
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
-                                  status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__)
+                                  status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code)
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries']:
-                            raise RuntimeError('Gemini request failed: ' + type(exc).__name__) from None
+                            hint = {400: 'check model and structured-output settings', 401: 'check credentials', 403: 'check key permissions', 404: 'check model availability', 429: 'quota or rate limit reached'}.get(code, 'check provider availability')
+                            raise RuntimeError('Gemini request failed: %s%s; %s' % (type(exc).__name__, ' HTTP %s' % code if code else '', hint)) from None
                         self.sleep(min(60, 2 ** attempt) + random.random())
 
 

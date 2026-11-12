@@ -50,4 +50,4 @@ The user-run v1 development retrieval completed, but its F1-heavy selection, 564
 
 On 2026-11-11, 64 genuine source-review decisions (40 approvals, 24 corrections) were transferred from the signed sheet into the original generation queue after row-level checks; a pre-transfer backup and audit record are retained locally. The owner subsequently signed and ran the freeze validator. Expanded test has separate seal requirements.
 
-Task 1 of 3: an opt-in shared Gemini provider and preliminary v3 validation rules have been implemented with mocks and small fixtures. The v3 dataset generation, independent gold verification, review export, and freeze workflow are not yet implemented. No model request has been made. See `docs/AGENT_NOTES.md`.
+Task 1 of 3: an opt-in shared Gemini provider, preliminary v3 rules and a guarded v3 freeze step have been fixture-tested. The v3 dataset generation, independent gold verification and review export are not yet implemented. One owner-run Gemini ping returned a `ClientError`; its old log did not capture the HTTP status, and no successful request is verified. See `docs/AGENT_NOTES.md`.
