@@ -20,8 +20,12 @@ python scripts/llm_ping.py --list-models --enable-llm --max-requests 1
 The final command requests exactly one page of available generation model IDs,
 without generating content or fetching subsequent pages. A listed model is not
 proof of free-tier eligibility or remaining quota. Choose a model supported by
-your free project. The configured Gemini 2.0 model requests returned HTTP 404. Python
-3.9 warnings are separate from that HTTP error.
+your free project. The configured Gemini 2.0 model and two listed Gemini 2.5
+Flash models returned HTTP 404 during user-run generation pings, despite appearing
+in the list response. The ping now reports the attempted model and a sanitized
+Google error message so the next failure can identify whether Google rejects the
+model name, method, API version or project. Stop after a failed ping; do not spend
+more requests guessing. Python 3.9 warnings are separate from the HTTP error.
 
 Keep each .env assignment on its own line; a line beginning with # is a comment.
 Leave the existing key in .env. GEMINI_MODEL sets the generator and is the aux

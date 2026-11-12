@@ -105,18 +105,23 @@ class ProviderTests(unittest.TestCase):
                 if file.is_file():
                     self.assertNotIn(secret.encode(), file.read_bytes())
 
-    def test_http_status_is_reported_without_provider_message(self):
+    def test_http_status_reports_sanitized_provider_message(self):
         class ClientError(Exception):
             code = 404
+            message = 'requested model was not found; key=fixture_secret_diagnostic'
         class Models:
             def generate_content(self, **kwargs):
                 raise ClientError('private provider response')
         with tempfile.TemporaryDirectory() as d:
+            Path(d, '.env').write_text('LLM_API_KEY=fixture_secret_diagnostic\n')
             p = GeminiProvider(self.config, root=d, enable_llm=True,
                                client=types.SimpleNamespace(models=Models()))
             with self.assertRaises(RuntimeError) as error:
                 p.generate_json('prompt', SCHEMA)
             self.assertIn('HTTP 404', str(error.exception))
+            self.assertIn('model gemini-2.0-flash', str(error.exception))
+            self.assertIn('requested model was not found', str(error.exception))
+            self.assertNotIn('fixture_secret_diagnostic', str(error.exception))
             self.assertNotIn('private provider response', str(error.exception))
             ledger = (Path(d) / self.config['ledger']).read_text()
             self.assertIn('"http_status": 404', ledger)

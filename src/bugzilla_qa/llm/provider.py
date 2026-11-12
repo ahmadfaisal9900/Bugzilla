@@ -78,6 +78,24 @@ def _secret(path):
     raise RuntimeError('LLM_API_KEY is missing')
 
 
+def _safe_error_detail(exc, secrets):
+    """Expose the server's APIError message without printing credentials/URLs."""
+    detail = getattr(exc, 'message', None)
+    if not isinstance(detail, str):
+        payload = getattr(exc, 'response_json', None)
+        detail = payload.get('error', {}).get('message') if isinstance(payload, dict) else None
+    if not isinstance(detail, str):
+        return None
+    for secret in secrets:
+        if secret:
+            detail = detail.replace(secret, '[redacted]')
+    detail = re.sub(r'(?i)([?&](?:key|api[_-]?key)=)[^&\s]+', r'\1[redacted]', detail)
+    detail = re.sub(r'(?i)(authorization\s*:\s*bearer\s+)[^\s,;]+', r'\1[redacted]', detail)
+    detail = re.sub(r'AIza[0-9A-Za-z_-]{20,}', '[redacted-key]', detail)
+    detail = ' '.join(detail.split())[:500]
+    return detail or None
+
+
 class GeminiProvider:
     def __init__(self, config, role='aux', *, enable_llm=False, max_requests=1, root=ROOT, client=None, sleep=time.sleep, resolve_env=True):
         if role not in config['models'] or type(max_requests) is not int or max_requests < 1:
@@ -201,7 +219,10 @@ class GeminiProvider:
                                   status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code)
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries'] or self.calls >= self.max_requests:
                             hint = {400: 'check model and structured-output settings', 401: 'check credentials', 403: 'check key permissions', 404: 'check model availability', 429: 'quota or rate limit reached'}.get(code, 'check provider availability')
-                            raise RuntimeError('Gemini request failed: %s%s; %s' % (type(exc).__name__, ' HTTP %s' % code if code else '', hint)) from None
+                            detail = _safe_error_detail(exc, secrets)
+                            detail = '; Google message: ' + detail if detail else ''
+                            raise RuntimeError('Gemini request for model %s failed: %s%s; %s%s' %
+                                (self.model['id'], type(exc).__name__, ' HTTP %s' % code if code else '', hint, detail)) from None
                         self.sleep(min(60, 2 ** attempt) + random.random())
 
 
