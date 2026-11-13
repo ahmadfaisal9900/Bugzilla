@@ -116,3 +116,16 @@ three questions per arm written through the real runner to fixture JSONL ledgers
 shell syntax and whitespace checks passed. No live API/trace/upload or real
 answer run occurred. Frozen/source paths have no tracked diff. Owner pilot is
 still required; implementation is FIXTURE_TESTED / AWAITING_OWNER_PILOT.
+
+2026-11-13 — Owner Phase 10 pilot stopped after one successful S0 row and a
+Groq HTTP 400 rejected implicit browser.run call (two actual requests). No browser
+call was executed. Corrected provider classification so no-tool tool_use_failed
+responses use the existing single JSON repair, rather than stopping as transport
+errors. Plain Groq JSON explicitly disables tools; shared prompt and repair turn
+forbid implicit browser/search. Native allowlisted S7 functions remain enabled
+only on its native tool turns. Old partial outputs are preserved; changed prompt/
+code produces a new prediction identity. Offline mocks check counted repair,
+request-cap enforcement and non-execution of the rejected payload. No live retry.
+Validation: 21 answering fixture tests and 11 shared-provider tests passed; no
+live API call or source/frozen artifact change. Retry behavior is implemented
+and mock-verified, not yet verified against a new owner-run provider response.

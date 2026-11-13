@@ -94,3 +94,9 @@ Phase 10 / Task 3: **FIXTURE_TESTED; AWAITING_OWNER_PILOT**. Nineteen new
 LangGraph/tool/trace/upload/mock tests and 11 existing provider tests passed.
 No answer scoring/evaluation or live request was run. Predictions and traces
 must be inspected after the bounded owner pilot before proceeding to bulk dev.
+
+Owner Phase 10 pilot is PARTIAL: one S0 success, then Groq rejected a model's
+implicit browser tool call. No external tool ran. A bounded repair-classification
+fix and explicit no-tool JSON policy are fixture-tested; retry remains owner-run
+with the same pilot command, in a new versioned output. No full pilot success or
+answer-quality result is claimed.

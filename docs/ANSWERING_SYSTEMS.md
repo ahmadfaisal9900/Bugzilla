@@ -73,6 +73,9 @@ the same final answer schema. Tool results are serialized as public JSON evidenc
 on subsequent stateless turns. Native argument schemas are independently checked
 locally. Rejected calls and every executed result are recorded. Transport/quota
 failures stop the batch; JSON/answer-contract failures receive at most one repair.
+Groq HTTP 400 tool_use_failed in a no-tool JSON request is an invalid model
+output, not a transport retry: it uses that same single repair, with no browser
+or hidden tool executed. Plain JSON requests explicitly set tool_choice=none.
 Actual HTTP attempts, including retries and transforms, consume --max-requests.
 
 ## Source, scope and privacy gates

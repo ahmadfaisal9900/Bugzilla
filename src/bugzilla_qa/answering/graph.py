@@ -123,7 +123,7 @@ class AnswerGraph:
         payload={'question':s['question']}
         if s['route']!='S0':
             payload.update(declared_scope=s.get('scope',{}),evidence=s['context'],citation_map=s['context_map'])
-        if s.get('status')=='repair':payload['repair']='Return valid answer JSON with only supplied evidence IDs; fix the reported contract error.'
+        if s.get('status')=='repair':payload['repair']='Return answer JSON directly. No tools or browser are available on this repair turn. Use only supplied evidence IDs; abstain if evidence is unavailable.'
         try:
             if s['route']=='S7' and s['tool_step']<min(4,self.config['tool_steps']) and s.get('status')!='repair':
                 payload['instruction']='Use an allowlisted function, or submit_answer when enough evidence is available. Do not invent missing facts.'

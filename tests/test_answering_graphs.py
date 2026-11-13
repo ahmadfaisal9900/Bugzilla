@@ -124,6 +124,35 @@ class AnsweringTest(unittest.TestCase):
         self.assertEqual(p.calls,2);self.assertEqual(state['repair_count'],1);self.assertEqual(state['status'],'ok')
         with self.assertRaises(ValueError):check_answer(dict(ANSWER,citations=['unseen']),['m101'])
 
+    def test_closed_book_rejected_browser_call_gets_one_counted_repair(self):
+        class RejectedTool(Exception):
+            status_code=400
+            body={'error':{'code':'tool_use_failed','failed_generation':'browser.run MUST_NOT_EXECUTE'}}
+        cfg={'provider':'groq','models':{'generator':{'id':'mock','rpm':1000,'rpd':1000}},
+             'max_retries':0,'daily_fraction':.9,'env_file':'.env','ledger':'repair.jsonl',
+             'cache':'repair.sqlite','temperature':0,'max_output_tokens':100}
+        p=GroqProvider(cfg,'generator',enable_llm=True,max_requests=2,root=self.root,client=object())
+        with patch.object(p,'_request',side_effect=[RejectedTool(),(ANSWER,10,10)]) as request,\
+             patch.object(self.tools,'execute',side_effect=AssertionError('No tools in S0')):
+            state=self.graph(p).invoke(self.questions[0],'S0','fixture')
+        self.assertEqual(state['status'],'ok');self.assertEqual(state['repair_count'],1)
+        self.assertEqual(state['call_count'],2);self.assertEqual(request.call_count,2)
+        self.assertIn('No tools or browser',request.call_args_list[1][0][0])
+        self.assertNotIn('MUST_NOT_EXECUTE',(self.root/'repair.jsonl').read_text())
+
+    def test_rejected_tool_recovery_respects_http_cap(self):
+        class RejectedTool(Exception):
+            status_code=400
+            body={'code':'tool_use_failed'}
+        cfg={'provider':'groq','models':{'generator':{'id':'mock','rpm':1000,'rpd':1000}},
+             'max_retries':0,'daily_fraction':.9,'env_file':'.env','ledger':'cap.jsonl',
+             'cache':'cap.sqlite','temperature':0,'max_output_tokens':100}
+        p=GroqProvider(cfg,'generator',enable_llm=True,max_requests=1,root=self.root,client=object())
+        with patch.object(p,'_request',side_effect=RejectedTool()) as request:
+            state=self.graph(p).invoke(self.questions[0],'S0','fixture')
+        self.assertEqual(p.calls,1);self.assertEqual(request.call_count,1)
+        self.assertEqual(state['status'],'error');self.assertEqual(state['repair_count'],1)
+
     def test_pack_privacy_unicode_and_budget(self):
         chunks=[dict(self.backend.docs[0],text='界'*3000)]
         context,mapping=pack(chunks,3000)

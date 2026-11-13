@@ -33,6 +33,7 @@ class GroqTests(unittest.TestCase):
             self.assertEqual(result['input_tokens'],12)
             self.assertEqual(result['output_tokens'],5)
             self.assertTrue(calls[0]['response_format']['json_schema']['strict'])
+            self.assertEqual(calls[0]['tool_choice'],'none')
             self.assertEqual(calls[0]['response_format']['json_schema']['schema'],SCHEMA)
             q=create_provider(config,root=tmp,enable_llm=True,max_requests=1)
             self.assertEqual(q.generate_json('hello',SCHEMA)['state'],'CACHE_HIT')

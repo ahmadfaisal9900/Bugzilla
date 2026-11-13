@@ -28,6 +28,19 @@ class InvalidJSONResponse(RuntimeError):
     """Allows the answering graph's single repair without retrying transport errors."""
 
 
+def rejected_unavailable_tool(exc, schema):
+    """Recognize a model-output violation; never execute failed_generation."""
+    if 'x-native-tools' in schema or getattr(exc, 'status_code', None) != 400:
+        return False
+    body = getattr(exc, 'body', None)
+    if isinstance(body, dict):
+        error = body.get('error', body)
+        if isinstance(error, dict) and error.get('code') == 'tool_use_failed':
+            return True
+    message = getattr(exc, 'message', '')
+    return isinstance(message, str) and 'Tool choice is none, but model called a tool' in message
+
+
 def digest(obj):
     return hashlib.sha256(json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
 
@@ -217,6 +230,8 @@ class GeminiProvider:
                         code = code if type(code) is int and 100 <= code <= 599 else None
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
                                   status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code)
+                        if rejected_unavailable_tool(exc, schema):
+                            raise InvalidJSONResponse('Model attempted an unavailable tool; return answer JSON without tool calls') from None
                         if isinstance(exc, (json.JSONDecodeError, ValidationError)):
                             raise InvalidJSONResponse('Provider output did not match the requested JSON schema') from None
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries'] or self.calls >= self.max_requests:
@@ -311,6 +326,7 @@ class GroqProvider(GeminiProvider):
             model=self.model['id'], temperature=self.config['temperature'],
             max_completion_tokens=self.config['max_output_tokens'],
             reasoning_effort=self.config.get('reasoning_effort','low'),
+            tool_choice='none',
             messages=[{'role':'system','content':system_prompt}, {'role':'user','content':prompt}],
             response_format={'type':'json_schema','json_schema':{
                 'name':'study_response','strict':True,'schema':schema}})
