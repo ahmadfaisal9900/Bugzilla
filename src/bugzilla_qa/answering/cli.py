@@ -22,6 +22,7 @@ def main(argv=None):
     group.add_argument('--system',choices=list(SYSTEMS))
     group.add_argument('--systems',nargs='+',choices=list(SYSTEMS))
     p.add_argument('--family',nargs='+');p.add_argument('--limit',type=int)
+    p.add_argument('--qid',nargs='+',help='Fixed question IDs; resume never advances beyond them. Use for a minimal live smoke.')
     p.add_argument('--limit-per-family',type=int)
     p.add_argument('--confirm-locked-test',action='store_true')
     p.add_argument('--enable-llm',action='store_true')
@@ -49,7 +50,7 @@ def main(argv=None):
         else:
             kwargs=dict(dataset=a.dataset,split=a.split,confirm=a.confirm_locked_test,
                 systems=[a.system] if a.system else a.systems,resume=a.resume,limit=a.limit,
-                per_family=a.limit_per_family,family=a.family,tag=a.run_tag)
+                per_family=a.limit_per_family,family=a.family,tag=a.run_tag,qids=a.qid)
             if a.command=='plan':result=plan(config,ROOT,**kwargs)
             else:result=run(config,ROOT,**kwargs,enable_llm=a.enable_llm,max_requests=a.max_requests,
                 trace_enabled=a.trace,trace_sample=a.trace_sample,dry_run=a.dry_run)

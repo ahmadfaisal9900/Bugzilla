@@ -108,3 +108,10 @@ source label C1 was treated as an unknown chunk ID. Its raw FIXED claim for bug
 is now implemented with raw-output audit preservation. S2–S8, Phase 5 and natural
 pilots remain unrun. Do not launch daily batches before the fixed pilot completes
 and its saved results are reviewed. No answer accuracy/complete success claimed.
+
+Owner requests minimal live wiring check to conserve API calls. Use --qid
+v3_03f2ea205396f26d0fef9e5f with --run-tag smoke-one and --max-requests 12 across
+S0–S8, per ANSWERING_SYSTEMS.md. Resume stays on this fixed question; cached
+successful calls are reused. Larger three-per-family/dataset pilot is no longer
+a prerequisite for initial wiring validation. Live smoke and answer-quality
+verification remain pending; larger daily batches are not yet approved.

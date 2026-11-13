@@ -142,3 +142,16 @@ remains closed until complete owner pilots are inspected; no live call made.
 Validation: 22 answering fixtures plus 11 existing provider tests passed (33
 checks); shell syntax and staged whitespace checks pass. No source/frozen file
 was changed, and no live retry or answer scoring/evaluation was executed.
+
+2026-11-13 — Reduced initial live verification at owner's request: implemented
+explicit --qid filtering for plan/run, fixed across resume and shared across S0–S8.
+Unknown IDs fail before provider creation. A selected single-question completion
+is labeled COMPLETE_SELECTED_BATCH and records selection scope; it never claims
+full-corpus completion. Example QID is an already run dev field lookup; no test
+gold was accessed. Shared-provider/retrieval caches are reused, and max-requests
+is an invocation-wide cap including tools/repairs. Larger pilot is optional for
+initial wiring; one question cannot establish branch coverage or answer quality.
+Validation: 23 offline answering tests passed in under five seconds, including
+all nine systems on one fixed fixture QID within 12 calls, then resume with no
+additional calls or appended questions. CLI help, shell syntax and whitespace
+checks passed. No live API request, frozen edit or source mutation.

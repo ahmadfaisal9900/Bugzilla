@@ -209,3 +209,35 @@ three dataset pilots after they complete before beginning daily batches.
 An aggregate-only local check is saved under ignored outputs/predictions/
 pilot_checks/check-3a5b78ed4594a8c6/summary.json. All observed status/coverage
 counts refer to original ledgers; an error fallback is not a model abstention.
+
+## Minimal live wiring smoke (supersedes the larger pilot for initial wiring)
+
+The owner requested a smaller check to conserve free API quota. Use exactly one
+fixed development QID across S0–S8, not three questions per family/dataset:
+
+```bash
+bash scripts/run_phase10_answering.sh plan --dataset v3 \
+  --qid v3_03f2ea205396f26d0fef9e5f --run-tag smoke-one --resume
+bash scripts/run_phase10_answering.sh run --dataset v3 \
+  --qid v3_03f2ea205396f26d0fef9e5f --run-tag smoke-one \
+  --enable-llm --max-requests 12 --trace --resume
+```
+
+This is an archive-resolution lookup for bug 1767855, chosen from already run
+dev questions without consulting test gold. Existing provider/retrieval caches
+are reused. The 12-attempt cap is shared across all systems in this invocation,
+including retries/tools/repairs, not allocated separately to each system. A
+PARTIAL result can be resumed with the same fixed QID; successful systems are
+skipped and no new question is selected. By contrast, --limit 1 intentionally
+advances to the next pending question on resume, so it is unsuitable here.
+Summary selection lists the fixed QID; COMPLETE_SELECTED_BATCH means only this
+smoke selection completed. Do not interpret this as dataset completion or proof
+of all lifecycle, aggregate, explanation, router or correction branches. Fixtures
+cover branches offline; review the nine real answers/tool traces before choosing
+any larger dev budget. The previous all-dataset pilot need not be finished merely
+to perform this initial wiring check. Its partial outputs remain preserved.
+
+At inspection, the shared ledger held 878 REQUEST_STARTED records: 700 R7
+transforms, 110 KI generation, 66 answer, one answer repair and one ping. These
+are total recorded attempts, not a claim about current Pacific-day quota or 878
+answer-pilot calls. No new request was made during this change.

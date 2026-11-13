@@ -91,16 +91,25 @@ def pending(rows,directory,system,resume,limit=None,per_family=None,family=None)
     return selected,len(done)
 
 
+def fixed_questions(rows,qids):
+    if qids is None:return rows
+    requested=set(qids);known={q['qid'] for q in rows}
+    if not requested or requested-known:raise ValueError('Requested qid is absent from the selected dataset/split')
+    return [q for q in rows if q['qid'] in requested]
+
+
 def cached_generation_key(llm,prompt,system_prompt,schema,version):
     backend=llm.get('provider','gemini')
     return digest(([backend] if backend!='gemini' else [])+[llm['models']['generator']['id'],version,system_prompt,prompt,schema])
 
 
-def plan(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume=False,limit=None,per_family=None,family=None,tag='',**unused):
+def plan(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume=False,limit=None,per_family=None,family=None,tag='',qids=None,**unused):
     rows,pins,llm,identity,ch,directory=prepare(config,root,dataset,split,confirm,tag)
+    rows=fixed_questions(rows,qids)
     systems=systems or config['systems']; model=llm['models']['generator'];safe_daily=int(model['rpd']*llm['daily_fraction'])
     result=dict(state='DRY_RUN',actual_api_calls=0,output=str(directory.relative_to(root)),model=model['id'],
                 provider=llm.get('provider'),trace=False,split=split,dataset=dataset,systems={},
+                selection={'qids':sorted(set(qids)) if qids is not None else None,'question_count':len(rows)},
                 note='Expected/upper counts include missing transforms, repair and tool turns; HTTP retries consume the same max-requests budget. S7/ambiguous routing cannot be predicted exactly.')
     provider=create_provider(llm,'generator',enable_llm=False,max_requests=1,root=root,resolve_env=False)
     backend=Backend(config,root,provider)
@@ -171,11 +180,12 @@ def plan(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resum
 
 
 def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume=False,limit=None,per_family=None,family=None,
-        tag='',enable_llm=False,max_requests=1,trace_enabled=False,trace_sample=None,dry_run=False):
+        tag='',qids=None,enable_llm=False,max_requests=1,trace_enabled=False,trace_sample=None,dry_run=False):
     if dry_run or not enable_llm:
         return plan(config,root,dataset=dataset,split=split,confirm=confirm,systems=systems,resume=resume,
-                    limit=limit,per_family=per_family,family=family,tag=tag)
+                    limit=limit,per_family=per_family,family=family,tag=tag,qids=qids)
     rows,pins,llm,identity,ch,directory=prepare(config,root,dataset,split,confirm,tag)
+    rows=fixed_questions(rows,qids)
     systems=systems or config['systems']
     # S0 always precedes contextual arms; calls remain stateless provider requests.
     systems=sorted(systems,key=lambda x:list(SYSTEMS).index(x))
@@ -185,6 +195,7 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
     rate=config['trace_sample'] if trace_sample is None else trace_sample
     if not 0<=rate<=1:raise ValueError('trace-sample must be in [0,1]')
     result=dict(state='PARTIAL',output=str(directory.relative_to(root)),systems={},actual_api_calls=0,blocker=None)
+    result['selection']={'qids':sorted(set(qids)) if qids is not None else None,'question_count':len(rows)}
     oracle=oracle_references(config,root,dataset,split,confirm) if 'ORACLE' in systems else {}
     with locked(directory):
         if (directory/'identity.json').exists() and read_config(directory/'identity.json')!=identity:
@@ -254,7 +265,8 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
                 done={r['qid'] for r in read_jsonl(path) if r['status']=='ok'} if path.exists() else set()
                 result['remaining_by_system'][system]=sum(q['qid'] not in done for q in rows
                     if not family or q['family'] in family)
-            if not result['blocker'] and not any(result['remaining_by_system'].values()):result['state']='COMPLETE'
+            if not result['blocker'] and not any(result['remaining_by_system'].values()):
+                result['state']='COMPLETE_SELECTED_BATCH' if qids is not None else 'COMPLETE'
             write_json(directory/'summary.json',result)
             files=[p for p in directory.iterdir() if p.is_file() and p.name not in ('manifest.json','.lock')]
             write_json(directory/'manifest.json',dict(state=result['state'],created_at_utc=now(),git_commit=git_commit(),

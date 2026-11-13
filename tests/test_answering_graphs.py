@@ -251,6 +251,25 @@ class AnsweringTest(unittest.TestCase):
         rows,_=runner.pending(qs,out,'S0',True,limit=2)
         self.assertEqual([q['qid'] for q in rows],['q1','q2'])
 
+    def test_one_fixed_question_all_systems_budget_and_resume(self):
+        p=MockProvider(respond);out=self.root/'one-question'
+        prep=(self.questions,{}, {'models':{'generator':{'id':'mock'}},'provider':'groq'},
+              {'freeze_id':'fixture'},'fixture-config',out)
+        with patch.object(runner,'prepare',return_value=prep),patch.object(runner,'create_provider',return_value=p),\
+             patch.object(runner,'Backend',return_value=self.backend):
+            result=runner.run(self.config,self.root,systems=list(SYSTEMS)[:9],qids=['q0'],
+                              enable_llm=True,max_requests=12,resume=True)
+            self.assertEqual(result['state'],'COMPLETE_SELECTED_BATCH')
+            self.assertEqual(result['selection']['question_count'],1)
+            self.assertLessEqual(p.calls,12);before=p.calls
+            again=runner.run(self.config,self.root,systems=list(SYSTEMS)[:9],qids=['q0'],
+                              enable_llm=True,max_requests=12,resume=True)
+            self.assertEqual(p.calls,before)
+        for path in out.glob('S*.jsonl'):
+            rows=[json.loads(line) for line in path.open()]
+            self.assertEqual([r['qid'] for r in rows],['q0'])
+        with self.assertRaises(ValueError):runner.fixed_questions(self.questions,['not-a-dev-qid'])
+
     def test_plan_zero_calls_and_known_response_cache_hits(self):
         import sqlite3
         llm={'provider':'groq','models':{'generator':{'id':'mock','rpm':3,'rpd':1000}},
