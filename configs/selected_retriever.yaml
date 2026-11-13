@@ -1,0 +1,232 @@
+{
+  "candidates": [
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.6986607142857142,
+      "p95_latency_ms": 50.51243912894279,
+      "questions_n": 180,
+      "retriever": "R1"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.7072916666666667,
+      "p95_latency_ms": 51.412633049767464,
+      "questions_n": 180,
+      "retriever": "R1"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.8596079192546583,
+      "p95_latency_ms": 63.04427551804108,
+      "questions_n": 180,
+      "retriever": "R1"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.20644320696794458,
+      "p95_latency_ms": 20.450738375075158,
+      "questions_n": 180,
+      "retriever": "R2"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.208824159348897,
+      "p95_latency_ms": 20.831048605032255,
+      "questions_n": 180,
+      "retriever": "R2"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.15993744199328908,
+      "p95_latency_ms": 19.671753526199605,
+      "questions_n": 180,
+      "retriever": "R2"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.6675595238095238,
+      "p95_latency_ms": 63.2814931916073,
+      "questions_n": 180,
+      "retriever": "R3"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.6800595238095238,
+      "p95_latency_ms": 63.554301671683774,
+      "questions_n": 180,
+      "retriever": "R3"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.7692052512704687,
+      "p95_latency_ms": 76.14745702594517,
+      "questions_n": 180,
+      "retriever": "R3"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.9306412337662338,
+      "p95_latency_ms": 299.7223262209445,
+      "questions_n": 180,
+      "retriever": "R4"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.9306412337662338,
+      "p95_latency_ms": 306.6987893427722,
+      "questions_n": 180,
+      "retriever": "R4"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.9476190476190476,
+      "p95_latency_ms": 443.3329244493507,
+      "questions_n": 180,
+      "retriever": "R4"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.7902191558441558,
+      "p95_latency_ms": 509.5011556870304,
+      "questions_n": 180,
+      "retriever": "R5"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.7902191558441558,
+      "p95_latency_ms": 559.1161119285971,
+      "questions_n": 180,
+      "retriever": "R5"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.8886164060826729,
+      "p95_latency_ms": 656.8466310156509,
+      "questions_n": 180,
+      "retriever": "R5"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.7902191558441558,
+      "p95_latency_ms": 509.8506547976283,
+      "questions_n": 180,
+      "retriever": "R6"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.7902191558441558,
+      "p95_latency_ms": 558.0698432982898,
+      "questions_n": 180,
+      "retriever": "R6"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.8886164060826729,
+      "p95_latency_ms": 654.1824110317973,
+      "questions_n": 180,
+      "retriever": "R6"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.854500164690382,
+      "p95_latency_ms": 58835.45944694197,
+      "questions_n": 180,
+      "retriever": "R7a"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.845409255599473,
+      "p95_latency_ms": 1192.5176158694546,
+      "questions_n": 180,
+      "retriever": "R7a"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C0",
+      "macro_recall_at_10": 0.9714285714285713,
+      "p95_latency_ms": 3246.484289388172,
+      "questions_n": 180,
+      "retriever": "R7b"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C1",
+      "macro_recall_at_10": 0.9738095238095237,
+      "p95_latency_ms": 1813.0293356773439,
+      "questions_n": 180,
+      "retriever": "R7b"
+    },
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.9738095238095237,
+      "p95_latency_ms": 2151.0378947466606,
+      "questions_n": 180,
+      "retriever": "R7b"
+    }
+  ],
+  "compatibility": "914db5e9b10aa2199fddf12efc0f7ee21ac55fe49402ab4e4f38eda9ab2f87e3",
+  "created_at_utc": "2026-11-13T05:10:54.821805+00:00",
+  "eligible_cells": {
+    "natural:F1": 22,
+    "natural:F4": 23,
+    "v3:F1": 64,
+    "v3:F4": 29,
+    "v3:KI": 42
+  },
+  "excluded_r7": [
+    {
+      "cells_n": 5,
+      "corpus": "C2",
+      "macro_recall_at_10": 0.8998385547485996,
+      "p95_latency_ms": 1282.943463140632,
+      "questions_n": 180,
+      "reason": "R7 did not beat same-corpus R5 by more than 0.02",
+      "retriever": "R7a"
+    }
+  ],
+  "git_commit": "9b27c237043f8c4e591eb5533cf59ea46ef7aa4b",
+  "index_build": "outputs/indexes/retrieval_v3/build-aa0d0cdb13268fb4",
+  "output": "/home/ict317/master's/ENSF 621/Project/configs/selected_retriever.yaml",
+  "selected": {
+    "cells_n": 5,
+    "corpus": "C1",
+    "macro_recall_at_10": 0.9738095238095237,
+    "p95_latency_ms": 1813.0293356773439,
+    "questions_n": 180,
+    "retriever": "R7b"
+  },
+  "selection_protocol_sha256": "608165a33469a3db5bb179b0501befc88ddaa1647a2531db570dd93ee3c893da",
+  "sources": [
+    {
+      "path": "outputs/retrieval/v3/run-6dc5f2f12b0673ea/summary.json",
+      "sha256": "eeb6601cae550d2a79f4351e99e6ccab733d6921c9d9e121bcc52d85af063907"
+    },
+    {
+      "path": "outputs/retrieval/v3/run-9c6eb525c415311a/summary.json",
+      "sha256": "555a2a6721b2db1f64f99b6e1e1941d99c0b5d0e544ab6582daae00d0f050755"
+    }
+  ],
+  "state": "SELECTED_DEV_ONLY",
+  "test_used": false
+}
