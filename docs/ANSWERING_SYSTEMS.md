@@ -281,3 +281,41 @@ failed answer. New ledgers distinguish retrieval_cache_hit and llm_cache_hit
 keys had no response-cache entries. Resume skips only status=ok. Zero token
 values with usage_missing=true do not prove zero provider quota consumption.
 The model, answer prompt, context budget and output cap remain unchanged.
+
+## Opt-in compact prompts for future low-token runs
+
+`--compact-prompts` selects answer-v2-compact. Default v1 requests stay byte-for-byte
+compatible with their existing provider response-cache keys. The compact profile
+uses a shorter common prompt and removes duplicated long citation IDs from model
+context headers plus the separately repeated citation_map. Models cite Cn labels;
+canonical chunk IDs and normalization records stay local and in audit/trace state.
+Only scope fingerprint keys ending _hash/_sha256 are omitted from the model view;
+corpus, partition, seed, denominator, filters and date qualifiers remain. Source
+text, original chunk selection, original truncation, response schema, model,
+output cap and evidence budgets are unchanged. Public source text containing a
+hash is preserved. JSON transport whitespace is compacted; scope/context originals
+are never rewritten. S7 still receives its actual tool evidence IDs.
+
+Offline reconstruction of the existing one-question S0–S4 smoke reduced total
+system+user UTF-8 bytes from 1,467 to 1,059 (S0), 5,495 to 3,507 (S1), 5,209 to
+3,101 (S2/S3), and 5,328 to 3,368 (S4): 28–41%. These are bytes, not measured
+billed tokens, and exclude unchanged schema/tool declarations. No claim of equal
+live answers or exact token savings is made. Ignored aggregate measurement:
+outputs/predictions/prompt_audits/audit-b8f157b894f057e7/summary.json.
+
+Use the offline plan first; it shows the new profile's cache misses:
+
+```bash
+bash scripts/run_phase10_answering.sh plan --dataset v3 \
+  --qid v3_03f2ea205396f26d0fef9e5f --run-tag compact-smoke \
+  --compact-prompts --resume
+```
+
+Only after quota is available, replacing plan with run and adding
+`--enable-llm --max-requests 12 --trace` executes the fixed compact smoke. This
+creates a separate prediction/prompt-cache version. Do not throw away existing
+v1 cached successes or restart larger runs merely to adopt the new format. The
+current smoke can keep using v1 caches. Keep all compared arms on one declared
+prompt version; never silently mix v1 and v2 results. Shorter prompt wording
+still needs live smoke review before bulk use. No inference/scoring run was
+launched to measure this optimization.

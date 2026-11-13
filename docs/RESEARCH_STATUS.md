@@ -125,3 +125,10 @@ implemented; future responses can expose exact token quota/retry metadata withou
 additional diagnostic calls. Request limits alone do not reserve server tokens.
 Do not launch bulk batches or assume a reset time; inspect the active model's
 quota and use only the fixed smoke after its budget is available.
+
+Token-efficiency profile: --compact-prompts is opt-in, fixture-tested, and uses a
+separate shared answer-v2-compact prompt/version. Measured saved-smoke prompt byte
+reduction is 28–41% without removing evidence text. Actual token savings and live
+answer equivalence remain unverified. Default v1 and its response-cache keys stay
+compatible; do not restart cached work while token-limited. New profile needs a
+single-question smoke after the active model's quota is available.

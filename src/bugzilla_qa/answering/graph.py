@@ -6,7 +6,8 @@ from langgraph.graph import StateGraph, START, END
 from langsmith import traceable
 from jsonschema import ValidationError
 from bugzilla_qa.llm.provider import InvalidJSONResponse
-from .contracts import AnswerState, ANSWER_SCHEMA, clean, pack, abstention, check_answer, normalize_citations
+from .contracts import (AnswerState, ANSWER_SCHEMA, clean, pack, abstention,
+                        check_answer, normalize_citations, answer_payload,encode_payload)
 from .tools import TOOLS
 
 SYSTEMS={f'S{i}':name for i,name in enumerate([
@@ -121,15 +122,14 @@ class AnswerGraph:
 
     def generate(self,s):
         # A single prompt file, generation model and output schema for all arms.
-        payload={'question':s['question']}
-        if s['route']!='S0':
-            payload.update(declared_scope=s.get('scope',{}),evidence=s['context'],citation_map=s['context_map'])
+        compact=self.config.get('compact_prompts',False)
+        payload=answer_payload(s,compact)
         if s.get('status')=='repair':payload['repair']='Return answer JSON directly. No tools or browser are available on this repair turn. Use only supplied evidence IDs; abstain if evidence is unavailable.'
         try:
             if s['route']=='S7' and s['tool_step']<min(4,self.config['tool_steps']) and s.get('status')!='repair':
                 payload['instruction']='Use an allowlisted function, or submit_answer when enough evidence is available. Do not invent missing facts.'
-                value=self._call(s,json.dumps(payload),tools=TOOLS,purpose='structured-tools')
-            else:value=self._call(s,json.dumps(payload),ANSWER_SCHEMA,purpose='answer-repair' if s.get('status')=='repair' else 'answer')
+                value=self._call(s,encode_payload(payload,compact),tools=TOOLS,purpose='structured-tools')
+            else:value=self._call(s,encode_payload(payload,compact),ANSWER_SCHEMA,purpose='answer-repair' if s.get('status')=='repair' else 'answer')
             return dict(raw_output=value,usage=s['usage'],call_count=s['call_count'],cache_hit=s['cache_hit'],status='generated')
         except (RuntimeError,ValueError,KeyError,ValidationError) as exc:
             # Preserve no unsanitized provider messages; the provider ledger has error class/status.

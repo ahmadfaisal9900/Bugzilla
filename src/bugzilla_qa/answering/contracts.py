@@ -1,5 +1,6 @@
 """Common answer contract, conservative context packing and safe serialization."""
 import re
+import json
 from typing import TypedDict
 from jsonschema import validate
 from bugzilla_qa.eval_extension.retrieval import safe_text
@@ -125,3 +126,23 @@ def normalize_citations(answer, mapping):
         citations.append(resolved)
     result['citations']=citations
     return result,changes
+
+
+def answer_payload(state, compact=False):
+    """Keep selected evidence/truncation identical; compact only transport scaffolding."""
+    result={'question':state['question']}
+    if state['route']=='S0':return result
+    context=state.get('context','');mapping=state.get('context_map',{})
+    scope=state.get('scope',{})
+    if compact:
+        for label,chunk in mapping.items():
+            context=context.replace('[%s] chunk_id=%s\n'%(label,chunk),'[%s]\n'%label,1)
+        # These fingerprints stay in the immutable local scope/source manifests.
+        scope={k:v for k,v in scope.items() if not k.endswith(('_sha256','_hash'))}
+        result.update(declared_scope=scope,evidence=context)
+    else:result.update(declared_scope=scope,evidence=context,citation_map=mapping)
+    return result
+
+
+def encode_payload(payload,compact=False):
+    return json.dumps(payload,separators=(',',':'),ensure_ascii=False) if compact else json.dumps(payload)

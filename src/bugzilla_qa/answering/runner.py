@@ -14,7 +14,7 @@ from bugzilla_qa.llm.provider import create_provider, resolved_config, env_value
 from bugzilla_qa.retrieval_v3.common import (ROOT,read_config,read_jsonl,write_json,
     file_hash,digest,git_commit,now,append,checkpoint,locked)
 from .backend import Backend
-from .contracts import clean, ANSWER_SCHEMA,pack
+from .contracts import clean, ANSWER_SCHEMA,pack,answer_payload,encode_payload
 from .graph import AnswerGraph, SYSTEMS,rule_route
 from .sources import questions,oracle_references
 from .tools import Tools
@@ -179,11 +179,12 @@ def plan(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resum
                 elif route=='ORACLE':ready=False
                 hit=False
                 if ready and cache:
-                    payload={'question':q['question']}
+                    context='';mapping={}
                     if route!='S0':
                         context,mapping=pack(retrieved,config['dossier_tokens'] if route=='S5' else config['context_tokens'])
-                        payload.update(declared_scope=q.get('scope',{}),evidence=context,citation_map=mapping)
-                    key=cached_generation_key(llm,json.dumps(payload),prompt_text,ANSWER_SCHEMA,config['prompt_version'])
+                    compact=config.get('compact_prompts',False)
+                    payload=answer_payload(dict(q,route=route,context=context,context_map=mapping),compact)
+                    key=cached_generation_key(llm,encode_payload(payload,compact),prompt_text,ANSWER_SCHEMA,config['prompt_version'])
                     hit=bool(cache.execute('SELECT 1 FROM responses WHERE key=?',[key]).fetchone())
                 cache_hits+=int(hit);expected+=int(not hit);upper+=2*int(not hit)
             expected+=transform_upper;upper+=transform_upper

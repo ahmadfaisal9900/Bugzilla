@@ -173,3 +173,18 @@ Mocks verify TPD/TPM parsing, numeric/HTTP-date Retry-After, preserved diagnosti
 zero-request resume during a known cooldown, and cached-success access while
 blocked. Offline quota and public-payload-size inspection made zero API calls;
 shell/whitespace checks passed. No live provider recovery is claimed.
+
+2026-11-13 — Token-efficiency follow-up: owner reports 194.9k total (162.9k
+input, 32k output). Added opt-in compact prompt representation; existing v1
+model-cache keys remain compatible. Exact source text/chunks/truncation and full
+local provenance are retained, while model-visible long citation IDs/repeated
+maps and scope fingerprints are removed. Local label normalization preserves
+canonical citation outputs. Short common v2 prompt retains scope, time, privacy,
+abstention and tool rules; schema/model/output/evidence limits are unchanged.
+Offline reconstruction of five saved one-question contexts measured 28–41%
+system+user byte reduction, not billed token savings or answer equivalence.
+No live requests were made; opt-in profile awaits a post-quota smoke.
+Validation: 25 answering fixtures and 13 provider tests pass (38 total). Tests
+check unchanged evidence/scope, local-only citation maps, canonicalized labels,
+legacy cache-key planning and compact graph completion. Shell and whitespace
+checks pass. Source data, frozen inputs and prior predictions are untouched.

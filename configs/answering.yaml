@@ -22,5 +22,7 @@
   "trace_projects": {"dev": "ensf621-dev", "test": "ensf621-test"},
   "trace_sample": 1.0,
   "systems": ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"],
-  "seed": 317
+  "seed": 317,
+  "compact_prompt": "prompts/answer_v2_compact.txt",
+  "compact_prompt_version": "answer-v2-compact"
 }

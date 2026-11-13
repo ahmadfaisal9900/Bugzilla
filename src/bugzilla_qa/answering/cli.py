@@ -23,6 +23,7 @@ def main(argv=None):
     group.add_argument('--systems',nargs='+',choices=list(SYSTEMS))
     p.add_argument('--family',nargs='+');p.add_argument('--limit',type=int)
     p.add_argument('--qid',nargs='+',help='Fixed question IDs; resume never advances beyond them. Use for a minimal live smoke.')
+    p.add_argument('--compact-prompts',action='store_true',help='Opt-in v2 prompt format: local-only citation hashes, same selected evidence and output cap. New prediction/cache version.')
     p.add_argument('--limit-per-family',type=int)
     p.add_argument('--confirm-locked-test',action='store_true')
     p.add_argument('--enable-llm',action='store_true')
@@ -39,6 +40,8 @@ def main(argv=None):
     if a.trace_sample is not None and not 0<=a.trace_sample<=1:p.error('trace-sample must be in [0,1]')
     raw_config=read_config(ROOT/a.config)
     config=raw_config if a.command=='quota' else with_calibration(raw_config,ROOT)
+    if a.compact_prompts:
+        config=dict(config,compact_prompts=True,prompt=config['compact_prompt'],prompt_version=config['compact_prompt_version'])
     try:
         if a.command=='quota':result=quota_report(config,ROOT)
         elif a.command=='suggest-tau':

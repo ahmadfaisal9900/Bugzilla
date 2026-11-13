@@ -12,6 +12,7 @@ import duckdb
 from langsmith import Client,trace,tracing_context
 from bugzilla_qa.llm.provider import MockProvider,GroqProvider,GeminiProvider,tool_turn_schema
 from bugzilla_qa.answering.contracts import ANSWER_SCHEMA,check_answer,clean,pack,public_chunk
+from bugzilla_qa.answering.contracts import answer_payload,encode_payload
 from bugzilla_qa.answering.graph import AnswerGraph,SYSTEMS,rule_route
 from bugzilla_qa.answering.tools import Tools,TOOLS
 from bugzilla_qa.answering import runner
@@ -136,6 +137,34 @@ class AnsweringTest(unittest.TestCase):
             p=MockProvider(dict(ANSWER,citations=[label]))
             state=self.graph(p).invoke(self.questions[0],system,'fixture')
             self.assertEqual(state['status'],'error');self.assertEqual(p.calls,2)
+
+    def test_compact_payload_keeps_evidence_and_scope_without_duplicate_hashes(self):
+        source=dict(self.backend.docs[0],chunk_id='a'*64,text='Public fact; literal content hash '+'b'*64)
+        context,mapping=pack([source],3000)
+        state=dict(self.questions[0],route='S1',context=context,context_map=mapping,
+                   scope={'corpus':'cohort','partition':'dev','sample_seed':317,'denominator':882,
+                          'snapshot_as_of_utc':None,'population_hash':'c'*64})
+        baseline=answer_payload(state);compact=answer_payload(state,True)
+        self.assertNotIn('citation_map',compact)
+        self.assertNotIn('a'*64,encode_payload(compact,True))
+        self.assertIn('b'*64,compact['evidence']) # Source text is not stripped or rewritten.
+        self.assertNotIn('population_hash',compact['declared_scope'])
+        for key in ('corpus','partition','sample_seed','denominator','snapshot_as_of_utc'):
+            self.assertEqual(compact['declared_scope'][key],state['scope'][key])
+        self.assertEqual(state['context'],context);self.assertEqual(state['context_map'],mapping)
+        self.assertLess(len(encode_payload(compact,True)),len(encode_payload(baseline)))
+
+    def test_compact_graph_resolves_labels_without_exposing_mapping(self):
+        def answer(prompt):
+            payload=json.loads(prompt)
+            self.assertNotIn('citation_map',payload)
+            self.assertIn('[C1]\n',payload['evidence'])
+            return dict(ANSWER,citations=['C1'])
+        p=MockProvider(answer);g=self.graph(p)
+        g.config=dict(self.config,compact_prompts=True)
+        state=g.invoke(self.questions[0],'S1','compact-fixture')
+        self.assertEqual(state['status'],'ok');self.assertEqual(p.calls,1)
+        self.assertEqual(state['answer']['citations'],['m101'])
 
     def test_closed_book_rejected_browser_call_gets_one_counted_repair(self):
         class RejectedTool(Exception):
