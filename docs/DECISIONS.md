@@ -85,3 +85,11 @@ predeclared larger budget. Gold is isolated from inference except diagnostic
 ORACLE; optional LangSmith reference upload is dev-only and never runs evaluators.
 Pilot sets stay fixed on resume; daily limits advance. No live answering result
 or production readiness is claimed. See ANSWERING_SYSTEMS.md.
+
+D-050 (2026-11-13): Citation labels already explicitly mapped in packed context
+may be resolved deterministically from Cn or [Cn] to the exact chunk ID before
+contract validation. Preserve raw model output and a citation_normalization
+record. Keep the supplied-evidence whitelist; never infer a source from bug ID,
+claim wording or unknown labels. This is formatting normalization, not factual
+answer correction or scoring. Preserve previous partial runs; retry fixed pilots
+in the new code-identified version before daily batches.

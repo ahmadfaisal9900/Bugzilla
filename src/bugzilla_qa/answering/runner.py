@@ -206,6 +206,7 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
                         route=s['route'],route_rule=s['route_rule'],answer=s['answer'],raw_output=s['raw_output'],
                         retrieved_chunk_ids=[d['chunk_id'] for d in s['retrieved']],context_chunk_ids=s['context_ids'],
                         context_map=s['context_map'],context_token_counter=config['token_counter'],
+                        citation_normalization=s.get('citation_normalization',[]),
                         errors=s['errors'],call_count=s['call_count'],cache_hit=s['cache_hit'],
                         tokens={'input':sum(u.get('input_tokens') or 0 for u in charged),
                                 'output':sum(u.get('output_tokens') or 0 for u in charged),

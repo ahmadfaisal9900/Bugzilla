@@ -124,6 +124,19 @@ class AnsweringTest(unittest.TestCase):
         self.assertEqual(p.calls,2);self.assertEqual(state['repair_count'],1);self.assertEqual(state['status'],'ok')
         with self.assertRaises(ValueError):check_answer(dict(ANSWER,citations=['unseen']),['m101'])
 
+    def test_exact_context_label_resolution_preserves_raw_output(self):
+        for label in ('C1','[C1]'):
+            p=MockProvider(dict(ANSWER,citations=[label]))
+            state=self.graph(p).invoke(self.questions[0],'S1','fixture')
+            self.assertEqual(state['status'],'ok');self.assertEqual(p.calls,1)
+            self.assertEqual(state['answer']['citations'],['m101'])
+            self.assertEqual(state['raw_output']['citations'],[label])
+            self.assertEqual(state['citation_normalization'],[{'label':label,'chunk_id':'m101'}])
+        for system,label in [('S1','C99'),('S0','C1')]:
+            p=MockProvider(dict(ANSWER,citations=[label]))
+            state=self.graph(p).invoke(self.questions[0],system,'fixture')
+            self.assertEqual(state['status'],'error');self.assertEqual(p.calls,2)
+
     def test_closed_book_rejected_browser_call_gets_one_counted_repair(self):
         class RejectedTool(Exception):
             status_code=400

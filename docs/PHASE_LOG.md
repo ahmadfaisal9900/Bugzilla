@@ -129,3 +129,16 @@ request-cap enforcement and non-execution of the rejected payload. No live retry
 Validation: 21 answering fixture tests and 11 shared-provider tests passed; no
 live API call or source/frozen artifact change. Retry behavior is implemented
 and mock-verified, not yet verified against a new owner-run provider response.
+
+2026-11-13 — Inspected saved Phase 10 pilot summaries and every available latest
+prediction contract (21 S0, two unique S1). Confirmed PARTIAL status rather than
+completion; later arms/datasets have no pilot output. Verified S1's raw FIXED
+answer against its exact mapped public metadata chunk for bug 1861451. Added
+strict provided-label citation normalization, preserving raw outputs and logging
+mapping changes; no inferred/fuzzy citations or rewritten answers. Unknown labels
+and closed-book fabricated citations still fail. Aggregate-only ignored check:
+outputs/predictions/pilot_checks/check-3a5b78ed4594a8c6/summary.json. Daily gate
+remains closed until complete owner pilots are inspected; no live call made.
+Validation: 22 answering fixtures plus 11 existing provider tests passed (33
+checks); shell syntax and staged whitespace checks pass. No source/frozen file
+was changed, and no live retry or answer scoring/evaluation was executed.

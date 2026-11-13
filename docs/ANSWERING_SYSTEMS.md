@@ -187,3 +187,25 @@ frozen-file sentinels, native function transport/cache/ledger and mocked seriali
 trace redaction. They do not establish answer quality or live provider/schema
 compatibility. Owner must inspect the pilot's sanitized summary/trace samples
 before daily runs. Answer scoring, test runs and production app are later tasks.
+
+## Owner pilot inspection — 2026-11-13
+
+Run `v3/dev/run-d0ac31d57bcca87e` is PARTIAL. S0 completed its fixed 21-item
+pilot and abstained on all 21. S1 reached two unique questions: one valid
+aggregate abstention and one contract failure (repeated cached attempt). No
+S2–S8, Phase 5 or natural pilot ledger exists yet. Daily batches remain blocked.
+The failed S1 raw answer states FIXED for bug 1861451, citing label C1. Direct
+inspection of the mapped explicitly public metadata confirms that resolution
+and matching bookmark-test summary. This is a citation representation defect,
+not evidence of a wrong claim in this inspected case. It is not an accuracy
+estimate or full pilot acceptance.
+The validator now resolves only exact provided labels Cn / [Cn] to their mapped
+chunk IDs and then applies the original citation whitelist. Unknown labels stay
+invalid. Raw outputs remain unchanged and citation_normalization records every
+mapping in new prediction ledgers. Gold and old predictions are not rewritten.
+Retry the same fixed pilot command; code hashes produce a new output version,
+while unchanged provider prompts can reuse cached model responses. Inspect all
+three dataset pilots after they complete before beginning daily batches.
+An aggregate-only local check is saved under ignored outputs/predictions/
+pilot_checks/check-3a5b78ed4594a8c6/summary.json. All observed status/coverage
+counts refer to original ledgers; an error fallback is not a model abstention.

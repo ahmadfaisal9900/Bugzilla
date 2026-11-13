@@ -100,3 +100,11 @@ implicit browser tool call. No external tool ran. A bounded repair-classificatio
 fix and explicit no-tool JSON policy are fixture-tested; retry remains owner-run
 with the same pilot command, in a new versioned output. No full pilot success or
 answer-quality result is claimed.
+
+2026-11-13 pilot inspection: latest v3 pilot is still PARTIAL. S0 completed 21
+items (all abstained); S1 reached two unique items and stopped because a valid
+source label C1 was treated as an unknown chunk ID. Its raw FIXED claim for bug
+1861451 matches the mapped public metadata. Exact provided-label normalization
+is now implemented with raw-output audit preservation. S2–S8, Phase 5 and natural
+pilots remain unrun. Do not launch daily batches before the fixed pilot completes
+and its saved results are reviewed. No answer accuracy/complete success claimed.

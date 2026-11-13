@@ -6,7 +6,7 @@ from langgraph.graph import StateGraph, START, END
 from langsmith import traceable
 from jsonschema import ValidationError
 from bugzilla_qa.llm.provider import InvalidJSONResponse
-from .contracts import AnswerState, ANSWER_SCHEMA, clean, pack, abstention, check_answer
+from .contracts import AnswerState, ANSWER_SCHEMA, clean, pack, abstention, check_answer, normalize_citations
 from .tools import TOOLS
 
 SYSTEMS={f'S{i}':name for i,name in enumerate([
@@ -50,7 +50,7 @@ class AnswerGraph:
         # Reinitialize all transient fields for each question.
         return dict(retrieved=[],context='',context_ids=[],context_map={},errors=[],usage=[],
                     raw_output=None,tool_log=[],tool_step=0,repair_count=0,call_count=0,
-                    started_at=time.perf_counter(),status='pending',cache_hit=False)
+                    started_at=time.perf_counter(),status='pending',cache_hit=False,citation_normalization=[])
 
     def _call(self,s,prompt,schema=None,tools=None,purpose='answer'):
         before=self.provider.calls
@@ -145,7 +145,7 @@ class AnswerGraph:
             try:
                 args=json.loads(call['arguments_json'])
                 if call['name']=='submit_answer':
-                    raw=check_answer(args,s['context_ids']);break
+                    raw=args;break # Common validator checks final answer/citations.
                 if step>=min(4,self.config['tool_steps']):raise ValueError('Tool step cap exceeded')
                 step+=1
                 result=self.tools.execute(call['name'],args,s)
@@ -164,8 +164,9 @@ class AnswerGraph:
         if any(e.startswith('provider_failure:') for e in s['errors']):
             return dict(answer=abstention('The provider request could not complete.'),status='error')
         try:
-            answer=check_answer(s.get('raw_output'),s['context_ids'])
-            return dict(answer=answer,status='ok')
+            candidate,changes=normalize_citations(s.get('raw_output'),s['context_map'])
+            answer=check_answer(candidate,s['context_ids'])
+            return dict(answer=answer,status='ok',citation_normalization=changes)
         except Exception as exc:
             errors=s['errors']+['answer_contract:'+type(exc).__name__]
             if s['repair_count']<1:

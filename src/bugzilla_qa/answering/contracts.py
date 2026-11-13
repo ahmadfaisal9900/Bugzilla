@@ -47,6 +47,7 @@ class AnswerState(TypedDict, total=False):
     config_hash: str
     oracle_refs: list
     cache_hit: bool
+    citation_normalization: list
 
 
 def clean(value, root=ROOT):
@@ -108,3 +109,18 @@ def check_answer(answer, ids):
     sentences=re.split(r'(?<=[.!?])\s+(?=[A-Z])', answer['rationale'].strip())
     if len(sentences)>2: raise ValueError('Rationale exceeds two sentences')
     return answer
+
+
+def normalize_citations(answer, mapping):
+    """Resolve only explicit context labels; never guess a source or alter claims."""
+    if not isinstance(answer,dict) or not isinstance(answer.get('citations'),list):
+        return answer,[]
+    result=dict(answer);citations=[];changes=[]
+    for citation in answer['citations']:
+        key=citation
+        if isinstance(key,str) and re.fullmatch(r'\[C[1-9]\d*\]',key):key=key[1:-1]
+        resolved=mapping.get(key,citation) if isinstance(key,str) else citation
+        if resolved!=citation:changes.append({'label':citation,'chunk_id':resolved})
+        citations.append(resolved)
+    result['citations']=citations
+    return result,changes
