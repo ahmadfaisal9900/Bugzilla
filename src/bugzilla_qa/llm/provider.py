@@ -14,6 +14,7 @@ import re
 import shlex
 import sqlite3
 import time
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -26,6 +27,60 @@ SECRET_KEYS = ('LLM_API_KEY', 'GROQ_API_KEY', 'LANGSMITH_API_KEY', 'LANGSMITH_KE
 
 class InvalidJSONResponse(RuntimeError):
     """Allows the answering graph's single repair without retrying transport errors."""
+
+
+class ProviderRateLimitError(RuntimeError):
+    def __init__(self, details):
+        self.details=details
+        fields=['Provider rate limit', 'model='+details['model'], 'quota='+details.get('quota','UNKNOWN')]
+        for key in ('retry_after_seconds','resume_after_utc','limit','used','requested'):
+            if key in details:fields.append(key+'='+str(details[key]))
+        super().__init__('; '.join(fields))
+
+
+def rate_limit_details(exc, model, secrets=()):
+    """Retain only quota metadata, never raw responses, failed text or auth headers."""
+    now=dt.datetime.now(dt.timezone.utc)
+    headers=getattr(getattr(exc,'response',None),'headers',{}) or {}
+    allowed=['retry-after']+['x-ratelimit-'+k for k in (
+        'limit-requests','remaining-requests','reset-requests',
+        'limit-tokens','remaining-tokens','reset-tokens')]
+    safe={}
+    for key in allowed:
+        value=str(headers.get(key,''))[:160]
+        for secret in secrets:
+            if secret:value=value.replace(secret,'[redacted]')
+        if value:safe[key]=value
+    result={'model':model,'http_status':429,'observed_at_utc':now.isoformat(),'quota':'UNKNOWN','headers':safe}
+    raw=getattr(exc,'body',{})
+    if isinstance(raw,dict):raw=raw.get('error',raw)
+    message=raw.get('message','') if isinstance(raw,dict) else ''
+    if not message:message=getattr(exc,'message','')
+    if not isinstance(message,str):message=''
+    for quota,phrase in [('TPD','tokens per day'),('TPM','tokens per minute'),
+                         ('RPD','requests per day'),('RPM','requests per minute')]:
+        if phrase in message.lower() or re.search(r'\b'+quota+r'\b',message):
+            result['quota']=quota;break
+    for key in ('limit','used','requested'):
+        match=re.search(r'\b'+key+r'\s*[:=]?\s*([\d,]+(?:\.\d+)?)',message,re.I)
+        if match:result[key]=float(match.group(1).replace(',',''))
+    seconds=None
+    retry=safe.get('retry-after')
+    if retry:
+        try:seconds=float(retry)
+        except ValueError:
+            try:
+                when=parsedate_to_datetime(retry)
+                if when.tzinfo is not None:seconds=(when-now).total_seconds()
+            except (ValueError,TypeError,OverflowError):pass
+    if seconds is None:
+        match=re.search(r'try again in\s+((?:[\d.]+[hms]\s*)+)',message,re.I)
+        if match:seconds=sum(float(n)*{'h':3600,'m':60,'s':1}[u.lower()]
+            for n,u in re.findall(r'([\d.]+)([hms])',match.group(1),re.I))
+    if seconds is not None and math.isfinite(seconds) and seconds>=0:
+        result['retry_after_seconds']=round(seconds,3)
+        result['resume_after_utc']=(now+dt.timedelta(seconds=seconds)).isoformat()
+    return result
 
 
 def rejected_unavailable_tool(exc, schema):
@@ -135,6 +190,25 @@ class GeminiProvider:
         self.client, self.sleep, self.calls = client, sleep, 0
         self.ledger = self.root / config['ledger']
         self.cache = self.root / config['cache']
+        self.last_rate_limit = None
+
+    def _cooldown(self, details=None, clear=False):
+        path=self.ledger.parent/'rate_limit_cooldowns.json'
+        values=json.loads(path.read_text()) if path.exists() else {}
+        key=digest([self.backend,self.model['id']])
+        if clear:
+            if key not in values:return
+            values.pop(key)
+        elif details is not None:
+            if 'resume_after_utc' not in details:return
+            values[key]=details
+        else:
+            entry=values.get(key)
+            if entry and dt.datetime.fromisoformat(entry['resume_after_utc'])>dt.datetime.now(dt.timezone.utc):
+                self.last_rate_limit=entry
+                raise ProviderRateLimitError(entry)
+            return
+        temp=path.with_suffix('.json.tmp');temp.write_text(json.dumps(values,sort_keys=True));temp.replace(path)
 
     def _log(self, **values):
         values.setdefault('provider', self.backend)
@@ -179,6 +253,7 @@ class GeminiProvider:
                     self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=True,
                               status='CACHE_HIT', input_tokens=meta.get('input_tokens'), output_tokens=meta.get('output_tokens'), latency_ms=0, error_class=None)
                     return {'state': 'CACHE_HIT', 'value': value, 'prompt_hash': key, **meta}
+                self._cooldown() # Successful cached responses remain usable during a cooldown.
                 for attempt in range(self.config['max_retries'] + 1):
                     if self.calls >= self.max_requests:
                         raise RuntimeError('Invocation request budget exhausted')
@@ -222,19 +297,25 @@ class GeminiProvider:
                                 'output_tokens': output_tokens,
                                 'latency_ms': round((time.monotonic()-start)*1000)}
                         db.execute('INSERT INTO responses VALUES (?,?,?)', (key, json.dumps(value), json.dumps(meta))); db.commit()
+                        self._cooldown(clear=True);self.last_rate_limit=None
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
                                   status='SUCCESS', input_tokens=meta['input_tokens'], output_tokens=meta['output_tokens'], latency_ms=meta['latency_ms'], error_class=None)
                         return {'state': 'SUCCESS', 'value': value, 'prompt_hash': key, **meta}
                     except Exception as exc:
                         code = getattr(exc, 'status_code', None) or getattr(exc, 'code', None)
                         code = code if type(code) is int and 100 <= code <= 599 else None
+                        rate=rate_limit_details(exc,self.model['id'],secrets) if code==429 else None
+                        if rate:
+                            self.last_rate_limit=rate;self._cooldown(rate)
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
-                                  status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code)
+                                  status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code,
+                                  **({'rate_limit':rate} if rate else {}))
                         if rejected_unavailable_tool(exc, schema):
                             raise InvalidJSONResponse('Model attempted an unavailable tool; return answer JSON without tool calls') from None
                         if isinstance(exc, (json.JSONDecodeError, ValidationError)):
                             raise InvalidJSONResponse('Provider output did not match the requested JSON schema') from None
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries'] or self.calls >= self.max_requests:
+                            if rate:raise ProviderRateLimitError(rate) from None
                             hint = {400: 'check model and structured-output settings', 401: 'check credentials', 403: 'check key permissions', 404: 'check model availability', 429: 'quota or rate limit reached'}.get(code, 'check provider availability')
                             detail = _safe_error_detail(exc, secrets)
                             detail = '; Provider message: ' + detail if detail else ''
@@ -244,8 +325,10 @@ class GeminiProvider:
                         headers = getattr(getattr(exc, 'response', None), 'headers', {})
                         try: delay = max(delay, float(headers.get('retry-after', 0)))
                         except (TypeError, ValueError): pass
+                        if rate:delay=max(delay,rate.get('retry_after_seconds',0))
                         if delay > 300:
-                            raise RuntimeError('Provider requests a long Retry-After; resume later') from None
+                            if rate:raise ProviderRateLimitError(rate) from None
+                            raise RuntimeError('Provider requests Retry-After of %.1f seconds; resume later'%delay) from None
                         self.sleep(delay)
 
 

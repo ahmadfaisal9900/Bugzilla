@@ -241,3 +241,43 @@ At inspection, the shared ledger held 878 REQUEST_STARTED records: 700 R7
 transforms, 110 KI generation, 66 answer, one answer repair and one ping. These
 are total recorded attempts, not a claim about current Pacific-day quota or 878
 answer-pilot calls. No new request was made during this change.
+
+## Token-quota diagnosis and zero-call inspection
+
+```bash
+bash scripts/run_phase10_answering.sh quota
+```
+
+This reads configuration, successful-usage/request ledger aggregates and any
+known server cooldown; it makes zero API calls and does not load indexes/models.
+The observed active model is openai/gpt-oss-20b. The owner-provided dashboard row
+names openai/gpt-oss-120b; limits/counters must be checked for the active model.
+No automatic model change is made. Configured local guards are 3 RPM / 1,000
+RPD (900 safe), not a server token/day allocation. A request-count cap does not
+guarantee enough tokens: if the relevant counter is 194k/200k, only roughly 6k
+remain, and a request may require input plus output allowance. Do not repeatedly
+resume to discover a reset or assume Groq uses the local Pacific-day boundary.
+
+The old S4 429 omitted Retry-After/reset headers, so its exact quota dimension
+and waiting period cannot be recovered offline. Its packed context was 2,854
+UTF-8 bytes (ten short public chunks), user payload 3,988 bytes, system prompt
+1,340 bytes, answer schema 525 bytes and output cap 2,048 tokens. Bytes are not
+exact generator tokens; these measurements do not prove which server quota hit.
+No unlimited ten-chunk prompt was sent. The local successful-response token sum
+was 331,731 for the local Pacific guard date 2026-11-12; it cannot be treated as
+the dashboard's 194k counter because accounting windows/model/account scope can
+differ. Cache hits are excluded from that sum; failed usage is unknown.
+
+New 429 ledger entries preserve only allowlisted quota headers and parsed
+TPD/TPM/RPD/RPM, limit/used/requested numbers and Retry-After/resume UTC when
+present. No raw server body, authorization, failed generation or secret is saved.
+Known cooldowns are persisted by provider/model and block fresh HTTP requests
+across resume; successful cached responses remain available. Headers control
+waits; no exact reset time is invented. Old errors stay unchanged and UNKNOWN.
+
+Legacy cache_hit is a combined retrieval/model signal, not evidence of a cached
+failed answer. New ledgers distinguish retrieval_cache_hit and llm_cache_hit
+(the latter may include successful cached transforms). Actual failed 429 prompt
+keys had no response-cache entries. Resume skips only status=ok. Zero token
+values with usage_missing=true do not prove zero provider quota consumption.
+The model, answer prompt, context budget and output cap remain unchanged.

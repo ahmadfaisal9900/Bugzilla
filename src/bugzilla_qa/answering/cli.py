@@ -7,14 +7,14 @@ for key in ('LANGSMITH_TRACING','LANGCHAIN_TRACING','LANGCHAIN_TRACING_V2'):
     os.environ[key]='false'
 from bugzilla_qa.retrieval_v3.common import ROOT,read_config
 from .graph import SYSTEMS
-from .runner import plan,run
+from .runner import plan,run,quota_report
 from .calibration import suggest,with_calibration
 from .contracts import clean
 
 
 def main(argv=None):
     p=argparse.ArgumentParser(description='Phase 10: prediction ledgers only; no scoring. Network off unless explicitly enabled.')
-    p.add_argument('command',choices=['plan','run','suggest-tau','upload-dev'])
+    p.add_argument('command',choices=['plan','run','suggest-tau','upload-dev','quota'])
     p.add_argument('--config',default='configs/answering.yaml')
     p.add_argument('--dataset',choices=['v3','phase05','natural'],default='v3')
     p.add_argument('--split',choices=['dev','test'],default='dev')
@@ -37,9 +37,11 @@ def main(argv=None):
     if a.max_requests<1 or a.limit is not None and a.limit<1 or a.limit_per_family is not None and a.limit_per_family<1:
         p.error('limits must be positive')
     if a.trace_sample is not None and not 0<=a.trace_sample<=1:p.error('trace-sample must be in [0,1]')
-    config=with_calibration(read_config(ROOT/a.config),ROOT)
+    raw_config=read_config(ROOT/a.config)
+    config=raw_config if a.command=='quota' else with_calibration(raw_config,ROOT)
     try:
-        if a.command=='suggest-tau':
+        if a.command=='quota':result=quota_report(config,ROOT)
+        elif a.command=='suggest-tau':
             if a.split!='dev':p.error('tau calibration is dev-only')
             result=suggest(config,ROOT,write=a.write and not a.dry_run,quantile=a.quantile)
         elif a.command=='upload-dev':

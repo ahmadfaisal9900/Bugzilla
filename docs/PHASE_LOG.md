@@ -155,3 +155,21 @@ Validation: 23 offline answering tests passed in under five seconds, including
 all nine systems on one fixed fixture QID within 12 calls, then resume with no
 additional calls or appended questions. CLI help, shell syntax and whitespace
 checks passed. No live API request, frozen edit or source mutation.
+
+2026-11-13 — Diagnosed repeated S4 429 without live requests. Effective model and
+saved identities remain Groq openai/gpt-oss-20b; supplied dashboard row is 120b.
+Read-only cache lookup confirms all three failed 429 prompt keys have no cached
+successful response. cache_hit=true originated from cached retrieval, not a
+cached failure. Reconstructed only the selected public S4 context: 2,854 bytes;
+no huge unrestricted ten-chunk payload. Dashboard 194k/200k suggests a token
+ceiling if it applies to this model, but old code discarded the exact dimension/
+Retry-After, so no exact provider reset can be verified from saved artifacts.
+Added allowlisted quota metadata, persisted server cooldowns that permit cache
+hits, explicit retrieval/model cache flags and a zero-call quota CLI. Existing
+model, prompts, frozen files, outputs and source data are unchanged. Local token
+sums are reported separately from authoritative provider accounting.
+Validation: 13 provider tests and 23 answering fixtures passed (36 total).
+Mocks verify TPD/TPM parsing, numeric/HTTP-date Retry-After, preserved diagnostics,
+zero-request resume during a known cooldown, and cached-success access while
+blocked. Offline quota and public-payload-size inspection made zero API calls;
+shell/whitespace checks passed. No live provider recovery is claimed.

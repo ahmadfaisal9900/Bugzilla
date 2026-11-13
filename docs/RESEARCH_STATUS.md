@@ -115,3 +115,13 @@ S0–S8, per ANSWERING_SYSTEMS.md. Resume stays on this fixed question; cached
 successful calls are reused. Larger three-per-family/dataset pilot is no longer
 a prerequisite for initial wiring validation. Live smoke and answer-quality
 verification remain pending; larger daily batches are not yet approved.
+
+2026-11-13 quota diagnosis: active model is Groq openai/gpt-oss-20b, whereas the
+supplied limits row names 120b. Repeated 429s are provider quota blocks; the exact
+old token/request dimension and wait were discarded and remain unverified. Failed
+429 prompts are not response-cached; combined cache_hit included retrieval.
+Offline quota diagnostics and per-model server cooldown persistence are now
+implemented; future responses can expose exact token quota/retry metadata without
+additional diagnostic calls. Request limits alone do not reserve server tokens.
+Do not launch bulk batches or assume a reset time; inspect the active model's
+quota and use only the fixed smoke after its budget is available.

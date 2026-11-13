@@ -50,7 +50,7 @@ class AnswerGraph:
         # Reinitialize all transient fields for each question.
         return dict(retrieved=[],context='',context_ids=[],context_map={},errors=[],usage=[],
                     raw_output=None,tool_log=[],tool_step=0,repair_count=0,call_count=0,
-                    started_at=time.perf_counter(),status='pending',cache_hit=False,citation_normalization=[])
+                    started_at=time.perf_counter(),status='pending',cache_hit=False,citation_normalization=[],retrieval_cache_hit=False)
 
     def _call(self,s,prompt,schema=None,tools=None,purpose='answer'):
         before=self.provider.calls
@@ -100,6 +100,7 @@ class AnswerGraph:
             method={'S1':'R1','S2':self.backend.selected,'S3':self.config['query_transform'],'S6':'R6'}[route]
             chunks,cache=self.backend.retrieve(s,method)
         return dict(retrieved=chunks,raw_output=raw,route=route,cache_hit=s['cache_hit'] or cache,
+                    retrieval_cache_hit=cache,
                     tool_log=s['tool_log'],call_count=s['call_count']+self.provider.calls-before)
 
     @traceable(name='pack_context',process_inputs=clean,process_outputs=clean)

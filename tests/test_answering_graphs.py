@@ -203,6 +203,7 @@ class AnsweringTest(unittest.TestCase):
             for row in rows:
                 validate(row['answer'],ANSWER_SCHEMA)
                 self.assertEqual(row['config_hash'],'fixture-config');self.assertEqual(row['status'],'ok')
+                self.assertIn('retrieval_cache_hit',row);self.assertIn('llm_cache_hit',row)
 
     def test_question_loader_strips_natural_gold_and_pins_scope(self):
         from bugzilla_qa.answering.sources import questions

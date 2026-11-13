@@ -48,6 +48,7 @@ class AnswerState(TypedDict, total=False):
     oracle_refs: list
     cache_hit: bool
     citation_normalization: list
+    retrieval_cache_hit: bool
 
 
 def clean(value, root=ROOT):

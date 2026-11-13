@@ -103,6 +103,38 @@ def cached_generation_key(llm,prompt,system_prompt,schema,version):
     return digest(([backend] if backend!='gemini' else [])+[llm['models']['generator']['id'],version,system_prompt,prompt,schema])
 
 
+def quota_report(config,root):
+    """Offline diagnostics; local calendar/token sums are not server quota counters."""
+    llm=resolved_config(read_config(root/config['llm_config']),root)
+    model=llm['models']['generator'];backend=llm.get('provider','gemini')
+    day=dt.datetime.now(dt.timezone.utc).astimezone(PACIFIC).date()
+    result={'state':'OFFLINE_DIAGNOSTIC','actual_api_calls':0,'provider':backend,'model':model['id'],
+        'local_guard_timezone':str(PACIFIC),'local_guard_date':str(day),'configured_rpm':model['rpm'],
+        'configured_rpd':model['rpd'],'local_safe_rpd':int(model['rpd']*llm['daily_fraction']),
+        'token_limit_guard_configured':False,'local_guard_day_requests':0,
+        'local_guard_day_reported_success_tokens':0,'last_rate_limit':None,
+        'note':'Local successful-response tokens exclude cache hits and unknown failed-request usage. Local Pacific guard day may differ from provider accounting; dashboard/model and response headers are authoritative.'}
+    ledger=root/llm['ledger']
+    if ledger.exists():
+        for row in read_jsonl(ledger):
+            if row.get('provider','gemini')!=backend or row.get('model')!=model['id']:continue
+            event=dt.datetime.fromisoformat(row['ts'].replace('Z','+00:00'))
+            if event.astimezone(PACIFIC).date()==day:
+                if row['status']=='REQUEST_STARTED':result['local_guard_day_requests']+=1
+                if row['status']=='SUCCESS':result['local_guard_day_reported_success_tokens']+=(row.get('input_tokens') or 0)+(row.get('output_tokens') or 0)
+            if row.get('http_status')==429:
+                result['last_rate_limit']=row.get('rate_limit',{'observed_at_utc':row['ts'],'http_status':429,
+                    'quota':'UNKNOWN','note':'Older client discarded retry duration and quota headers; cannot recover them offline.'})
+    path=ledger.parent/'rate_limit_cooldowns.json'
+    result['known_cooldown_active']=False
+    if path.exists():
+        saved=read_config(path).get(digest([backend,model['id']]))
+        if saved:
+            result['last_rate_limit']=saved
+            result['known_cooldown_active']=dt.datetime.fromisoformat(saved['resume_after_utc'])>dt.datetime.now(dt.timezone.utc)
+    return result
+
+
 def plan(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume=False,limit=None,per_family=None,family=None,tag='',qids=None,**unused):
     rows,pins,llm,identity,ch,directory=prepare(config,root,dataset,split,confirm,tag)
     rows=fixed_questions(rows,qids)
@@ -219,6 +251,8 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
                         context_map=s['context_map'],context_token_counter=config['token_counter'],
                         citation_normalization=s.get('citation_normalization',[]),
                         errors=s['errors'],call_count=s['call_count'],cache_hit=s['cache_hit'],
+                        retrieval_cache_hit=s.get('retrieval_cache_hit',False),
+                        llm_cache_hit=any(u.get('state')=='CACHE_HIT' for u in usage),
                         tokens={'input':sum(u.get('input_tokens') or 0 for u in charged),
                                 'output':sum(u.get('output_tokens') or 0 for u in charged),
                                 'cached_input':sum(u.get('input_tokens') or 0 for u in usage if u.get('state')=='CACHE_HIT'),
@@ -249,12 +283,15 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
                                 root_run.add_metadata(clean(dict(route=state['route'],route_rule=state['route_rule'],cache_hit=state['cache_hit'])))
                                 root_run.end(outputs=clean({'answer':state['answer'],'errors':state['errors']}))
                     if state['status']!='ok':
-                        result['blocker']={'qid':q['qid'],'errors':state['errors'],'next':'Inspect redacted ledger and resume'};break
+                        result['blocker']={'qid':q['qid'],'errors':state['errors'],'next':'Inspect redacted ledger and resume'}
+                        if getattr(provider,'last_rate_limit',None):result['blocker']['rate_limit']=provider.last_rate_limit
+                        break
                 result['systems'][system]=dict(already_ok=done,written=len(current),ok=sum(r['status']=='ok' for r in current),requested=len(subset))
                 if result['blocker']:break
             result['state']='COMPLETE_SELECTED_BATCH' if not result['blocker'] else 'PARTIAL'
         except (RuntimeError,ValueError) as exc:
             result.update(state='PARTIAL',blocker=clean(str(exc),root))
+            if getattr(provider,'last_rate_limit',None):result['rate_limit']=provider.last_rate_limit
         finally:
             tools.close()
             if client:client.flush()
