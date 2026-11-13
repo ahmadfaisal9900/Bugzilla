@@ -101,3 +101,18 @@ RETRIEVAL_V3.md for exact commands and acceptance scope.
 Task 2 validation: 38 offline fixture/mock tests passed in about four seconds;
 all 22 original/v3 frozen artifact hashes still match. Shell syntax and CLI
 help checks passed. This verifies implementation only, not real retrieval scores.
+
+2026-11-13 — Task 3 / Phase 10 implementation: inventoried actual Groq provider,
+R7b/C1 selection, completed owner-run retrieval manifests and immutable freezes.
+Added shared LangGraph S0–S8/ORACLE, native tool transport on existing provider,
+read-only scope-aware tools, public-context packing, opt-in sampled LangSmith,
+resumable versioned prediction ledgers, offline tau suggestion and opt-in dev
+reference upload. No scoring, live requests or full agent-side run. Existing
+retrieval/source/frozen artifacts and old M3 implementation are unchanged.
+
+Task 3 validation: 19 new offline tests passed in about four seconds, including
+three questions per arm written through the real runner to fixture JSONL ledgers;
+11 existing shared-provider tests also passed. CLI help, module compilation,
+shell syntax and whitespace checks passed. No live API/trace/upload or real
+answer run occurred. Frozen/source paths have no tracked diff. Owner pilot is
+still required; implementation is FIXTURE_TESTED / AWAITING_OWNER_PILOT.

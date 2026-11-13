@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 8 v3 is frozen; Task 2 / Phase 9 retrieval harness is implemented, fixture-tested, AWAITING_TERMINAL_RUN.
+Phase 8 v3 is frozen. Saved Phase 9 build/dev runs are COMPLETE and select R7b/C1. Task 3 / Phase 10 answering graphs are implemented; fixture validation and owner-terminal pilot are tracked in docs/ANSWERING_SYSTEMS.md. No answer comparison is claimed.
 
 **Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 FROZEN.** The user-run generation `run-65c5be3381f66811` contains 169 benchmark QIDs and 6 supplemental challenges at seed 317, with 592 development / 2,408 test population IDs. The verified freeze `d8ef826fbeb90d13` has 34 dev and 135 test benchmark questions plus six supplemental challenges. All seven frozen manifest artifact hashes matched a read-only check. No final method evaluation is claimed. See `docs/PHASE05_BENCHMARK.md` and `docs/AGENT_NOTES.md`.
 
@@ -84,5 +84,13 @@ generation/review are pending describe the prior implementation handoff.
 Task 2 now wraps existing retrieval behind R1–R7b, with versioned C0/C1/C2,
 source-record qrels, resumable top-50 caches, locked-test gates, cluster
 bootstrap/Holm and preregistered development selection (eligible cells n>=10).
-No full build/evaluation or live R7 was run by the agent. Follow
-`docs/RETRIEVAL_V3.md`; S2 remains unselected until owner-run dev results pass.
+No full build/evaluation or live R7 was run by the agent. The later owner-run
+manifests now report COMPLETE (6,300 offline and 4,200 R7 result rows for 350 dev
+questions). The existing selection records R7b/C1; Task 3 reuses it and verifies
+its source summary hashes at runtime. This is a retrieval handoff, not an answer
+quality result. Phase 10 graphs await the owner pilot in `docs/ANSWERING_SYSTEMS.md`.
+
+Phase 10 / Task 3: **FIXTURE_TESTED; AWAITING_OWNER_PILOT**. Nineteen new
+LangGraph/tool/trace/upload/mock tests and 11 existing provider tests passed.
+No answer scoring/evaluation or live request was run. Predictions and traces
+must be inspected after the bounded owner pilot before proceeding to bulk dev.

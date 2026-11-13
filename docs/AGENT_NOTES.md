@@ -59,3 +59,18 @@ It makes no change to frozen gold/splits or source data. Only fixture jobs ran;
 real index builds/evaluation and live R7 are AWAITING_TERMINAL_RUN. Existing
 owner edits to `.env.example`, EXTENDED_EVALUATION_RUNBOOK and review_natural_v2
 are preserved and excluded from the task commit.
+
+## Task 3 inventory and assumptions — 2026-11-13
+
+See ANSWERING_SYSTEMS.md for expected → found. Both owner-run retrieval manifests
+now say COMPLETE; existing selected_retriever.yaml selects R7b/C1. Current C0 is
+14,443 chunks, C1 14,195, C2 14,666, not the older 12,828-chunk corpus. Provider is
+Groq openai/gpt-oss-20b, not the Gemini placeholders. Native function calling is
+added to that shared budget/cache/ledger interface, without rewriting it.
+S2/S3 currently share R7b retrieval; this is explicitly reported. S4 checks R5
+cross-encoder scores and retries with deterministic local multi-query, allowing
+zero-call low-evidence abstention. Conservative byte token budgets are explicit.
+Phase 5 lacks family in question files: extract only metadata; never typed gold
+for inference. Natural/v3 imported aggregates use expanded-v2 partitions, distinct
+from Phase 5. Old M3 remains unchanged and deprecated for this comparison.
+No frozen/source edits, answer scoring, live API call or full experiment by agent.

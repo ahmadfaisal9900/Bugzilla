@@ -54,3 +54,16 @@ default; n>=10 passage-qrel cells from v3/natural determine selection. Full
 10,000-resample cluster bootstrap, known-citation metrics and caches are
 implemented. No real retrieval score, selected S2, or answering result is claimed.
 State: AWAITING_TERMINAL_RUN. Owner commands: `docs/RETRIEVAL_V3.md`.
+
+### Task 3 / Phase 10 prediction-only arms
+
+State: IMPLEMENTED; offline fixture validation; AWAITING_OWNER_PILOT.
+Systems S0–S8 plus separately labeled ORACLE; common generator/prompt/schema,
+C1 selected corpus. S2 and default S3 both use R7b and are not independent
+retrieval treatments. S4 dev tau suggestion is frozen into prediction identity.
+Dev-only default; test flag/receipt required. Never score or tune test here.
+Fixed three-per-family pilot, then advancing daily batches; all output versions
+carry source/config/code hashes and successful qid resume keys. Missing v3 F2/F5
+and test F3 remain accepted coverage gaps; no replacement generation.
+Protocol/commands/artifacts: ANSWERING_SYSTEMS.md. Live compatibility and answer
+quality remain unverified until owner results; no scoring/evaluator is implemented.

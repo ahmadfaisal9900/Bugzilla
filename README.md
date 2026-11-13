@@ -111,3 +111,14 @@ runs. Follow [RETRIEVAL_V3.md](docs/RETRIEVAL_V3.md) for installation and ordere
 commands: build C0/C1/C2 → offline dev evaluation → opt-in capped R7 → selection.
 The preregistered rule is in [RETRIEVER_SELECTION.md](docs/RETRIEVER_SELECTION.md).
 Full runs remain local and ignored; frozen question/gold files stay unchanged.
+
+### Answering systems (Task 3 / Phase 10)
+
+The prediction-only LangGraph runner is `scripts/run_phase10_answering.sh`.
+Install `requirements-answering.txt`, then follow the ordered offline plan,
+three-per-family traced pilot and resumable daily commands in
+[ANSWERING_SYSTEMS.md](docs/ANSWERING_SYSTEMS.md). It reuses the selected R7b/C1
+retrieval and existing Groq provider. API calls require `--enable-llm` and an
+explicit request cap; tracing requires `--trace`. No answer scorer or evaluator
+is included in this task. Predictions remain local and ignored; opted-in tracing
+sends sanitized public evidence to the configured LangSmith project.

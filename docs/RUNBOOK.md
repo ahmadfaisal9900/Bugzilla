@@ -155,3 +155,16 @@ bash scripts/run_phase09_retrieval_v3.sh select --latest
 Only continue to selection after both dev runs report COMPLETE. PARTIAL / exit 2
 means resume the same R7 command after quota is available; no request budget
 is bypassed. Status is AWAITING_TERMINAL_RUN. No test access is needed here.
+
+## Phase 10 / Task 3 — answering predictions
+
+Owner-run Phase 9 manifests now record COMPLETE and selected_retriever.yaml
+selects R7b/C1. Reuse those caches/indexes. Follow ANSWERING_SYSTEMS.md in order:
+install requirements-answering.txt; suggest-tau --dry-run then --write;
+plan; fixed --limit-per-family 3 --run-tag pilot --trace pilot; advancing
+--limit 25 daily dev batches with --enable-llm/--max-requests/--resume.
+The runner is scripts/run_phase10_answering.sh; default is zero-call plan.
+Public context and verified separate Phase 4 history only. All predictions are
+ignored/versioned; PARTIAL means resume after resolving its blocker. No answer
+scoring, Phase 5/v3 regeneration or locked-test tuning. Old M3 is deprecated,
+not modified. Optional upload-dev sends dev reference outputs only when enabled.

@@ -1,0 +1,4 @@
+-r requirements-v3.txt
+# Python 3.9-compatible versions, exercised in the existing iqfm environment.
+langgraph==0.6.11
+langsmith==0.4.37

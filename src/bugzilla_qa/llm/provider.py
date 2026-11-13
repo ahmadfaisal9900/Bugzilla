@@ -17,11 +17,15 @@ import time
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from jsonschema import validate
+from jsonschema import validate, ValidationError
 
 ROOT = Path(__file__).resolve().parents[3]
 PACIFIC = ZoneInfo('America/Los_Angeles')
 SECRET_KEYS = ('LLM_API_KEY', 'GROQ_API_KEY', 'LANGSMITH_API_KEY', 'LANGSMITH_KEY')
+
+
+class InvalidJSONResponse(RuntimeError):
+    """Allows the answering graph's single repair without retrying transport errors."""
 
 
 def digest(obj):
@@ -127,6 +131,14 @@ class GeminiProvider:
             handle.flush()
             os.fsync(handle.fileno())
 
+    def generate_tools(self, prompt, tools, **kwargs):
+        """Native function calls through the same quotas, cache and ledger.
+
+        Transport metadata is part of the cache key, never a response-schema
+        extension sent to the provider. The caller validates tool arguments.
+        """
+        return self.generate_json(prompt, tool_turn_schema(tools), **kwargs)
+
     def generate_json(self, prompt, schema, *, system_prompt='', prompt_version='v1', purpose='unspecified', _list_models=False):
         values = env_values(self.root / self.config['env_file'])
         secrets = [os.environ.get(k) or values.get(k) for k in SECRET_KEYS]
@@ -205,6 +217,8 @@ class GeminiProvider:
                         code = code if type(code) is int and 100 <= code <= 599 else None
                         self._log(model=self.model['id'], purpose=purpose, prompt_hash=key, cache_hit=False,
                                   status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code)
+                        if isinstance(exc, (json.JSONDecodeError, ValidationError)):
+                            raise InvalidJSONResponse('Provider output did not match the requested JSON schema') from None
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries'] or self.calls >= self.max_requests:
                             hint = {400: 'check model and structured-output settings', 401: 'check credentials', 403: 'check key permissions', 404: 'check model availability', 429: 'quota or rate limit reached'}.get(code, 'check provider availability')
                             detail = _safe_error_detail(exc, secrets)
@@ -226,6 +240,17 @@ class GeminiProvider:
             self.client = genai.Client(api_key=_secret(self.root / self.config['env_file']), vertexai=False,
                 http_options={'timeout': self.config.get('timeout_ms', 60000),
                               'retry_options': {'attempts': 1}})
+        if 'x-native-tools' in schema:
+            response = self.client.models.generate_content(model=self.model['id'], contents=prompt,
+                config={'system_instruction': system_prompt, 'temperature': self.config['temperature'],
+                        'max_output_tokens': self.config['max_output_tokens'],
+                        'tools': [{'function_declarations': schema['x-native-tools']}],
+                        'tool_config': {'function_calling_config': {'mode': 'ANY'}}})
+            calls = [{'name': c.name, 'arguments_json': json.dumps(dict(c.args or {}))}
+                     for c in (response.function_calls or [])]
+            if not calls: raise ValueError('Expected native function call')
+            usage = getattr(response, 'usage_metadata', None)
+            return {'calls': calls}, getattr(usage, 'prompt_token_count', None), getattr(usage, 'candidates_token_count', None)
         options = {'system_instruction': system_prompt, 'temperature': self.config['temperature'],
                    'max_output_tokens': self.config['max_output_tokens'],
                    'response_mime_type': 'application/json', 'response_json_schema': schema}
@@ -267,6 +292,21 @@ class GroqProvider(GeminiProvider):
         if _list_models:
             response = self.client.models.list()
             return {'models':sorted(m.id for m in response.data), 'more_pages':False}, None, None
+        if 'x-native-tools' in schema:
+            response = self.client.chat.completions.create(
+                model=self.model['id'], temperature=self.config['temperature'],
+                max_completion_tokens=self.config['max_output_tokens'],
+                reasoning_effort=self.config.get('reasoning_effort','low'),
+                messages=[{'role':'system','content':system_prompt}, {'role':'user','content':prompt}],
+                tools=[{'type':'function','function':t} for t in schema['x-native-tools']],
+                tool_choice='required', parallel_tool_calls=False)
+            if response.choices[0].finish_reason not in ('tool_calls','stop'):
+                raise RuntimeError('Incomplete native tool response')
+            calls=[{'name':c.function.name,'arguments_json':c.function.arguments}
+                   for c in (response.choices[0].message.tool_calls or [])]
+            if not calls: raise ValueError('Expected native function call')
+            usage=response.usage
+            return {'calls':calls},getattr(usage,'prompt_tokens',None),getattr(usage,'completion_tokens',None)
         response = self.client.chat.completions.create(
             model=self.model['id'], temperature=self.config['temperature'],
             max_completion_tokens=self.config['max_output_tokens'],
@@ -300,3 +340,14 @@ class MockProvider:
         return {'state': 'MOCK', 'value': value, 'model': 'mock',
                 'prompt_hash': digest(['mock',kwargs.get('prompt_version'),kwargs.get('system_prompt'),prompt,schema]),
                 'input_tokens': None, 'output_tokens': None, 'latency_ms': 0}
+
+    def generate_tools(self, prompt, tools, **kwargs):
+        return self.generate_json(prompt, tool_turn_schema(tools), **kwargs)
+
+
+def tool_turn_schema(tools):
+    return {'type':'object','properties':{'calls':{'type':'array','minItems':1,
+        'items':{'type':'object','properties':{'name':{'type':'string'},
+            'arguments_json':{'type':'string'}},'required':['name','arguments_json'],
+            'additionalProperties':False}}},'required':['calls'],'additionalProperties':False,
+        'x-native-tools':tools}

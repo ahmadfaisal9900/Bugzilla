@@ -71,3 +71,17 @@ three top-10 slots for explicit graph-neighbour metadata. Select S2 using only
 n>=10 v3/natural dev passage-qrel cells, per preregistered RETRIEVER_SELECTION.
 Frozen data, empty base history and private/unknown comment bodies are excluded
 from writes/ingestion as already required. Real scores await terminal runs.
+
+D-049 (2026-11-13): Task 3 uses the observed selected R7b/C1 and the existing Groq
+generator provider for all answering arms. A shared LangGraph and answer prompt
+produce predictions only; no answer evaluation is added. Native tool transport
+reuses provider quotas/cache/ledger. S7 uses allowlisted parameterized read-only
+queries and separate verified Phase 4 evidence, never base field_changes. Original
+M3 stays unchanged/deprecated. S2/S3 retrieval equivalence is disclosed. S4 uses
+R5 cross-score scale and one deterministic local multi-query retry so low-evidence
+abstention needs no model call. Tau is a recorded dev-only quantile suggestion.
+Context budgets use conservative UTF-8 byte bounds; full dossiers have the
+predeclared larger budget. Gold is isolated from inference except diagnostic
+ORACLE; optional LangSmith reference upload is dev-only and never runs evaluators.
+Pilot sets stay fixed on resume; daily limits advance. No live answering result
+or production readiness is claimed. See ANSWERING_SYSTEMS.md.
