@@ -6,3 +6,9 @@ outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811/signoff_queu
 *.sh text eol=lf
 
 /results/m0_m3_development_20261110/* -text whitespace=cr-at-eol
+
+# Frozen evaluation releases must retain their exact bytes on every platform.
+outputs/benchmark/phase05/run-65c5be3381f66811/frozen-d8ef826fbeb90d13/** -text whitespace=cr-at-eol
+outputs/benchmark/v3/run-289a50d1152f547a/frozen-e2207774a0f2cbad/** -text whitespace=cr-at-eol
+outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved.jsonl -text whitespace=cr-at-eol
+outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved_manifest.json -text whitespace=cr-at-eol

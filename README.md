@@ -47,7 +47,7 @@ GROQ_API_KEY=replace_with_your_groq_key
 LANGSMITH_KEY=replace_only_if_enabling_traces_or_uploads
 ```
 
-Obtain the **data bundle**: DuckDB/Parquet, verified history, frozen datasets, public corpora, indexes, model weights and retrieval caches. Ignored artifacts are not restored by `git pull`; preserve configured relative paths. LangSmith credentials are optional without tracing/upload. Never commit credentials.
+The three final evaluation datasets are **committed** and arrive with the clone (section 5). Obtain the separate runtime bundle for DuckDB/Parquet, verified history, public corpora, indexes, model weights and retrieval caches. Those large artifacts remain ignored; preserve configured relative paths. LangSmith credentials are optional without tracing/upload. Never commit credentials.
 
 Canonical data is under `outputs/normalization/phase03b/`, history under `outputs/phase04/enrichment/`, and indexes under `outputs/indexes/retrieval_v3/`. Answering loads model weights offline; provision the pinned models before predictions. The first fixture command in section 10 verifies setup without data or API access.
 
@@ -67,7 +67,7 @@ requirements-answering.txt   Complete dependency stack
 pyproject.toml               Package installation and Python requirement
 ```
 
-Small explicitly allowed review artifacts are tracked; databases, raw text, caches, credentials and large logs are not.
+The final evaluation datasets and small review artifacts are tracked. Databases, raw source exports, caches, credentials, predictions and large logs remain ignored.
 
 ## 5. Data and datasets
 
@@ -91,6 +91,10 @@ The cohort contains **3,000 Firefox-product bugs**, seed 317. Canonical tables h
 
 ### Final evaluation datasets
 
+**These are the committed final benchmark releases used across S0–S8 and the ORACLE diagnostic.** All 26 release files (about 2.7 MB) retain their original bytes, question IDs, splits and manifests. After cloning or pulling, no benchmark regeneration, approval transfer or freeze command is needed.
+
+Only the exact frozen release files and approved natural export are allowed through `.gitignore`. The original releases live under `outputs/benchmark/phase05/` and `outputs/benchmark/v3/`; the approved natural export lives under `outputs/eval_extension/`. The config keys below resolve their exact directories.
+
 | Dataset | Location / layout | Role |
 | --- | --- | --- |
 | Phase 5 | `phase05_dir` in `configs/retrieval_v3.yaml`, under `outputs/benchmark/phase05/`; separate dev/test/challenge questions and gold JSONL, quality report and manifest | Human-signed benchmark: 169 questions; 6 supplemental paraphrases are not independent records |
@@ -112,6 +116,8 @@ The cohort contains **3,000 Firefox-product bugs**, seed 317. Canonical tables h
 
 **v3 gaps:** no F2, no F5, no test F3. Use Phase 5 dev for F5 and the applicable Phase 5/natural dev questions for F2. Phase 5 F5 includes 27 supported explanations and 3 insufficient-evidence cases, all from a FIXED-selected comment population.
 
+The committed files include dev/test questions, typed gold, v3 qrels and all manifest-listed validation/review artifacts; Phase 5 also includes the six supplemental challenges. Natural gold remains inline for compatibility with its existing loader. These are question/answer/evidence-reference releases, not a copy of the source bug corpus.
+
 Never edit frozen files. Keep test gold out of inference, retrieval text and normal traces. Test execution requires `--confirm-locked-test` and finalized method/scorer settings. Challenges and natural variants are not independent observations.
 
 ```bash
@@ -124,6 +130,8 @@ for key in ('phase05_dir', 'v3_dir', 'natural_questions'):
     print(key, c[key])
 PYCONFIG
 ```
+
+The clone provides everything needed to inspect benchmark questions, answers, labels and scope. Running retrieval/answer generation still requires the runtime bundle described in setup. Prediction ledgers remain local and must be transferred separately to score existing runs. The S0–S8 answer scorer and F5 response judge are still the partner's implementation task; committing these datasets does not complete those components.
 
 ## 6. Retrieval
 
@@ -402,7 +410,7 @@ Use the roadmap's predefined numerical tolerances where appropriate; do not choo
 
 ### E. Next steps, in order
 
-1. Receive the exact ignored data/freeze/index/cache/prediction bundle; check its manifests and environment offline.
+1. Pull the committed benchmark releases; receive the matching ignored runtime/index/cache/prediction bundle and check its manifests and environment offline.
 2. Inventory compatible dev prediction versions and failures; finish resumable dev batches within quota. Do not merge versions merely to fill cells.
 3. Implement deterministic family scorers and tiny fixture tests; fix scope, normalization, units and failure accounting before test access.
 4. Prepare blinded F5/grounding review and a human-audited subset; predeclare any optional judge protocol and budget.

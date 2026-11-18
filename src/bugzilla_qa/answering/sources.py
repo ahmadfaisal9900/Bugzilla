@@ -9,7 +9,8 @@ def questions(config, root, dataset, split, confirm=False):
     rc=read_config(root/config['retrieval_config']); pins={}
     if dataset in ('v3','phase05'):
         directory=root/rc[dataset+'_dir']; manifest=read_config(directory/'manifest.json')
-        if manifest.get('freeze_id')!=rc[dataset+'_freeze_id']:
+        freeze=manifest.get('freeze_id',manifest.get('id'))
+        if freeze!=rc[dataset+'_freeze_id']:
             raise RuntimeError('Wrong frozen dataset identity')
         if manifest.get('status',manifest.get('state')) not in ('FROZEN_HUMAN_SIGNED','FROZEN_HUMAN_SPOTCHECKED'):
             raise RuntimeError('Dataset is not frozen')
@@ -21,7 +22,7 @@ def questions(config, root, dataset, split, confirm=False):
             gp=checked_file(directory,manifest,split+'.gold.jsonl')
             families={g['qid']:g['family'] for g in read_jsonl(gp)}
             pins[str(gp.relative_to(root))]=file_hash(gp)
-        freeze=manifest['freeze_id']; pins[str((directory/'manifest.json').relative_to(root))]=file_hash(directory/'manifest.json')
+        pins[str((directory/'manifest.json').relative_to(root))]=file_hash(directory/'manifest.json')
     elif dataset=='natural':
         manifest=read_config(root/rc['natural_manifest']); path=root/rc['natural_questions']
         if file_hash(path)!=manifest['sha256']: raise RuntimeError('Natural dataset hash mismatch')

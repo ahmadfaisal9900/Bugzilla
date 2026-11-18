@@ -1,0 +1,102 @@
+{
+  "F6H_absent_selection": {
+    "interior_gap": 14
+  },
+  "KI_parent_status_resolution": {
+    "RESOLVED/FIXED": 63,
+    "VERIFIED/FIXED": 24
+  },
+  "KI_population_limit": "Requires a public indexed first comment; inherits the source comment selection bias.",
+  "KI_summary_overlong_excluded": 0,
+  "blocker": null,
+  "clusters_by_family": {
+    "F1": 143,
+    "F2": 0,
+    "F3": 2,
+    "F4": 79,
+    "F5": 0,
+    "F6": 56,
+    "F6H": 40,
+    "KI": 87,
+    "MH": 36
+  },
+  "copied_v2_input_by_family": {
+    "F1": 375,
+    "F2": 6,
+    "F3": 102,
+    "F4": 135,
+    "F6": 75
+  },
+  "copied_v2_retained_by_family": {
+    "F1": 150,
+    "F3": 89,
+    "F4": 83,
+    "F6": 56
+  },
+  "counts": {
+    "dev:F1": 64,
+    "dev:F2": 0,
+    "dev:F3": 89,
+    "dev:F4": 29,
+    "dev:F5": 0,
+    "dev:F6": 22,
+    "dev:F6H": 13,
+    "dev:KI": 50,
+    "dev:MH": 8,
+    "test:F1": 86,
+    "test:F2": 0,
+    "test:F3": 0,
+    "test:F4": 54,
+    "test:F5": 0,
+    "test:F6": 34,
+    "test:F6H": 27,
+    "test:KI": 123,
+    "test:MH": 47
+  },
+  "f5": "Original human-reviewed frozen benchmark remains separate.",
+  "human_spotchecks": "PENDING",
+  "ki_descriptions_accepted": 87,
+  "ki_parent_shortfall": 23,
+  "ki_parent_target": 110,
+  "ki_parents_retained": 87,
+  "ki_parents_selected": 110,
+  "ki_question_target": 220,
+  "limited": false,
+  "program_verified_not_human_reviewed": true,
+  "rejections": {
+    "KI_no_unambiguous_populated_field": 1,
+    "KI_prescreen_excluded_or_cross_split_alternate": 8,
+    "KI_prescreen_too_many_alternates": 2,
+    "MH_target_excluded_or_cross_split": 96,
+    "v2_excluded_parent": 203,
+    "v2_excluded_relation_target": 1
+  },
+  "requests_this_invocation": 110,
+  "shortfalls": {
+    "F6H": 0,
+    "KI": 47,
+    "MH": 25
+  },
+  "snapshot_as_of_utc": null,
+  "state": "DRAFT_READY_FOR_SPOTCHECK",
+  "v2_population_caveat": "Copied F3 questions retain their original v2 population; aggregate populations are not independent bug holdouts.",
+  "validation": {
+    "candidate_count": 646,
+    "generation_complete": true,
+    "independent_gold_checked": true,
+    "limited": false,
+    "mismatches_excluded": 0,
+    "retained": 646,
+    "review_immutable_sha256": "1fd91391f952cfd24d80daf886d5b2ef84e4a0bb60e8d6d31d78610561a91814",
+    "semantic_KI_validation": "Numeric/source identity verified; wording semantics require human spot check.",
+    "sha256": {
+      "dev.gold.jsonl": "3175b5cf934ba287f869ac3d1958f66203ddcedd64599ca18173c4511b16d48b",
+      "dev.questions.jsonl": "3bf7f4972a79a9f66abc621db36606f5dc62ea364116ef39aa0cd02f8906995a",
+      "qrels_v3_dev.jsonl": "f9d1f853569f979735fc83ae3da4e44093473a5e28d3f2cd73f29b015b5db8b0",
+      "qrels_v3_test.jsonl": "564887409040dc22c55628ba2ec850618dda7dd136861bfd420e6ed1834eb189",
+      "test.gold.jsonl": "4b70141402e71246cc6f19f54f347d0a72bcd458c7c16a41b94a2eb503bac122",
+      "test.questions.jsonl": "0db4864ae5b80b889371de53413924c731c6d47df234255bc5aaac627538f4d5"
+    },
+    "state": "PASS"
+  }
+}

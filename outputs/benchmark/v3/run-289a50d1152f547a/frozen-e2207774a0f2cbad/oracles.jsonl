@@ -1,0 +1,635 @@
+{"kind": "blocking_count", "participants": ["1769546", "1770164"], "qid": "v3_13b1d27d94419f10879fac40", "root": "1769546", "targets": ["1770164"]}
+{"kind": "depends_fixed", "participants": ["1789223", "1888461"], "qid": "v3_bd90e2a0eaaf4bebb2bed801", "root": "1789223", "targets": ["1888461"]}
+{"kind": "duplicate_component", "participants": ["1800276", "1794819"], "qid": "v3_ed9c84c8f88bda2adc76edeb", "root": "1800276", "targets": ["1794819"]}
+{"kind": "blocking_count", "participants": ["1859829", "1868587"], "qid": "v3_551d66fb5c7132e2998cdb99", "root": "1859829", "targets": ["1868587"]}
+{"kind": "depends_fixed", "participants": ["1771951", "1776883"], "qid": "v3_d611c18bc36b31969ea0a740", "root": "1771951", "targets": ["1776883"]}
+{"kind": "duplicate_component", "participants": ["1761899", "1776012"], "qid": "v3_1af3c1ee6cda6a9047ba04d3", "root": "1761899", "targets": ["1776012"]}
+{"kind": "blocking_count", "participants": ["1776058", "1770865"], "qid": "v3_3fbdc2864a673bc9499c1c8d", "root": "1776058", "targets": ["1770865"]}
+{"kind": "depends_fixed", "participants": ["1880324", "1859829"], "qid": "v3_2bf8bc3f2d347a31abfbe194", "root": "1880324", "targets": ["1859829"]}
+{"kind": "duplicate_component", "participants": ["1745657", "1705529"], "qid": "v3_b9a17ec1b10cdbb2254ad180", "root": "1745657", "targets": ["1705529"]}
+{"kind": "blocking_count", "participants": ["1886195", "1883876"], "qid": "v3_3deb9041d63027f7e7101d2d", "root": "1886195", "targets": ["1883876"]}
+{"kind": "depends_fixed", "participants": ["1874162", "1874184"], "qid": "v3_0b91748d0094c32d222d04bd", "root": "1874162", "targets": ["1874184"]}
+{"kind": "duplicate_component", "participants": ["1770571", "1775948"], "qid": "v3_c2537dd58ded9eb98978da04", "root": "1770571", "targets": ["1775948"]}
+{"kind": "blocking_count", "participants": ["1775948", "1770571"], "qid": "v3_049ddd338beb1808e7e54359", "root": "1775948", "targets": ["1770571"]}
+{"kind": "depends_fixed", "participants": ["1859829", "1868587"], "qid": "v3_30fe9b6fb583a11432be3367", "root": "1859829", "targets": ["1868587"]}
+{"kind": "duplicate_component", "participants": ["1748931", "1798570"], "qid": "v3_da04fe3215a8e59942bded2f", "root": "1748931", "targets": ["1798570"]}
+{"kind": "blocking_count", "participants": ["1766636", "1789227"], "qid": "v3_a01ad97daedcd18cac61b4fc", "root": "1766636", "targets": ["1789227"]}
+{"kind": "depends_fixed", "participants": ["1776012", "1761899"], "qid": "v3_8fcc6d473d389641d30fecf4", "root": "1776012", "targets": ["1761899"]}
+{"kind": "duplicate_component", "participants": ["1700588", "1693197"], "qid": "v3_f17b095e61f621597e25b9fb", "root": "1700588", "targets": ["1693197"]}
+{"kind": "blocking_count", "participants": ["1847321", "1851659"], "qid": "v3_28b37bc7c85438c26cfd1bda", "root": "1847321", "targets": ["1851659"]}
+{"kind": "depends_fixed", "participants": ["1891999", "1891998"], "qid": "v3_6b337cda604a11718154c308", "root": "1891999", "targets": ["1891998"]}
+{"kind": "duplicate_component", "participants": ["1773196", "1775948"], "qid": "v3_a1250bea609eea26226665b5", "root": "1773196", "targets": ["1775948"]}
+{"kind": "blocking_count", "participants": ["1721355", "1724230"], "qid": "v3_f2ce9a5a36f9240a42e768a4", "root": "1721355", "targets": ["1724230"]}
+{"kind": "depends_fixed", "participants": ["1766636", "1789227"], "qid": "v3_1de8bc3b453d0c7c0823e13b", "root": "1766636", "targets": ["1789227"]}
+{"kind": "duplicate_component", "participants": ["1841064", "1841045"], "qid": "v3_cdb7c03634a5f8f3c7e86d06", "root": "1841064", "targets": ["1841045"]}
+{"kind": "blocking_count", "participants": ["1776605", "1776607"], "qid": "v3_46c13b7fcd772aa8ecf1cfbc", "root": "1776605", "targets": ["1776607"]}
+{"kind": "depends_fixed", "participants": ["1817853", "1690529", "1750940"], "qid": "v3_e2720740a3de4ccb7bd402b8", "root": "1817853", "targets": ["1690529", "1750940"]}
+{"kind": "duplicate_component", "participants": ["1929740", "1929255"], "qid": "v3_433c486a0d3ab99ce444e0ff", "root": "1929740", "targets": ["1929255"]}
+{"kind": "blocking_count", "participants": ["1880324", "1859829"], "qid": "v3_f11cd5ab4ebcecc6fdb97c6d", "root": "1880324", "targets": ["1859829"]}
+{"kind": "depends_fixed", "participants": ["1721355", "1724230"], "qid": "v3_b41cda471c0d6b864fb6cc77", "root": "1721355", "targets": ["1724230"]}
+{"kind": "duplicate_component", "participants": ["1768625", "1775749"], "qid": "v3_10cf8ca252de9fe6485826d8", "root": "1768625", "targets": ["1775749"]}
+{"kind": "blocking_count", "participants": ["1874162", "1874184"], "qid": "v3_051f88995fc706e2e61a0018", "root": "1874162", "targets": ["1874184"]}
+{"kind": "depends_fixed", "participants": ["1776058", "1770865"], "qid": "v3_198021edc2a9c315381c70b9", "root": "1776058", "targets": ["1770865"]}
+{"kind": "duplicate_component", "participants": ["1798645", "1706909"], "qid": "v3_52f4a73bd3bcb6b23a510357", "root": "1798645", "targets": ["1706909"]}
+{"kind": "blocking_count", "participants": ["1776012", "1761899"], "qid": "v3_8bc926e6c9c1fb621ec24d80", "root": "1776012", "targets": ["1761899"]}
+{"kind": "depends_fixed", "participants": ["1875478", "1888461"], "qid": "v3_d34f50b37db23d698b77d507", "root": "1875478", "targets": ["1888461"]}
+{"kind": "duplicate_component", "participants": ["1690758", "1691079"], "qid": "v3_26c424b1ada870938ff36b23", "root": "1690758", "targets": ["1691079"]}
+{"kind": "blocking_count", "participants": ["1771951", "1776883"], "qid": "v3_eea2bf2c636e3ba691cbe015", "root": "1771951", "targets": ["1776883"]}
+{"kind": "depends_fixed", "participants": ["1737712", "1746946"], "qid": "v3_3757e7e43f8cd08f013c500c", "root": "1737712", "targets": ["1746946"]}
+{"kind": "duplicate_component", "participants": ["1724297", "1724230"], "qid": "v3_4a40c55e766672024d258b7d", "root": "1724297", "targets": ["1724230"]}
+{"kind": "blocking_count", "participants": ["1737712", "1746946"], "qid": "v3_017a541299b56a0852e0a661", "root": "1737712", "targets": ["1746946"]}
+{"kind": "depends_fixed", "participants": ["1870745", "1888461"], "qid": "v3_9d03d7295be2b7466e21b1b2", "root": "1870745", "targets": ["1888461"]}
+{"kind": "duplicate_component", "participants": ["1851546", "1822730"], "qid": "v3_4e4a217f4ff6d46bb405575a", "root": "1851546", "targets": ["1822730"]}
+{"kind": "blocking_count", "participants": ["1891999", "1891998"], "qid": "v3_a4b9e7b580795d3bd278d077", "root": "1891999", "targets": ["1891998"]}
+{"kind": "depends_fixed", "participants": ["1886195", "1883876"], "qid": "v3_63c40c1241777ad9c1ffb209", "root": "1886195", "targets": ["1883876"]}
+{"kind": "duplicate_component", "participants": ["1821180", "1812324"], "qid": "v3_c66098c8ef178503438cd7d0", "root": "1821180", "targets": ["1812324"]}
+{"kind": "blocking_count", "participants": ["1875478", "1888461"], "qid": "v3_d187e1648e785c8422231692", "root": "1875478", "targets": ["1888461"]}
+{"kind": "depends_fixed", "participants": ["1847321", "1851659"], "qid": "v3_2754408a20b2df9a0c53aeb4", "root": "1847321", "targets": ["1851659"]}
+{"kind": "duplicate_component", "participants": ["1893109", "1893147"], "qid": "v3_eeed988c778629309be7436e", "root": "1893109", "targets": ["1893147"]}
+{"kind": "blocking_count", "participants": ["1817853", "1690529", "1750940"], "qid": "v3_1d138c33a18a16840978c47f", "root": "1817853", "targets": ["1690529", "1750940"]}
+{"kind": "depends_fixed", "participants": ["1775948", "1770571"], "qid": "v3_879e813423b255dc3cdb2c55", "root": "1775948", "targets": ["1770571"]}
+{"kind": "duplicate_component", "participants": ["1892658", "1888548"], "qid": "v3_90c4e3a514f18853fde7d158", "root": "1892658", "targets": ["1888548"]}
+{"kind": "blocking_count", "participants": ["1789223", "1888461"], "qid": "v3_26b1c4df72d3262037da1aa6", "root": "1789223", "targets": ["1888461"]}
+{"kind": "depends_fixed", "participants": ["1769546", "1770164"], "qid": "v3_3691a70c89c351876dfe3efe", "root": "1769546", "targets": ["1770164"]}
+{"kind": "blocking_count", "participants": ["1870745", "1888461"], "qid": "v3_dff8ff0aeec3ffbdf751dd84", "root": "1870745", "targets": ["1888461"]}
+{"kind": "depends_fixed", "participants": ["1776605", "1776607"], "qid": "v3_2085196b166044eb468a68a4", "root": "1776605", "targets": ["1776607"]}
+{"kind": "absent", "qid": "v3_5e1dc882df9d50fa48fd00c2", "root": "1756838", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_b2bc89e6f3d9680ca77268c1", "root": "1794818"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_1ac6e2e47971c3858b0d7f33", "root": "1736354"}
+{"kind": "absent", "qid": "v3_44d082e41cec0c881840b4e5", "root": "1907157", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_95174ed43f1de3060de2772f", "root": "1775779"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_7a0d2cc3a9fe66ba600409c5", "root": "1854227"}
+{"kind": "absent", "qid": "v3_fe7fc03119433e0b251dd792", "root": "1909512", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_1e4a5d1ae0b80b234ccdf51f", "root": "1879314"}
+{"kind": "absent", "qid": "v3_26c0241d1c2fc56e11cc0612", "root": "1760415", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_b07fb28815334091832a0875", "root": "1733326"}
+{"kind": "absent", "qid": "v3_c6fd38e2bb827ead5273e5db", "root": "1907364", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_0ccf01bbd6311acb2f919017", "root": "1739105"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_76c9dc08b0fada21f06697e3", "root": "1715450"}
+{"kind": "absent", "qid": "v3_d6498d26eddc22e41bb90f90", "root": "1758537", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_b681526011791b1bcf24caec", "root": "1835541"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_b887ce2589ebb9cb544ccdfd", "root": "1930399"}
+{"kind": "absent", "qid": "v3_61fc32280a9c6eddfb4d22a0", "root": "1739462", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_31f56deff03ef78e27046c62", "root": "1929141"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_2c77e957ad5cc1585e0b0e33", "root": "1786037"}
+{"kind": "absent", "qid": "v3_0773e952d5b084370a95cfde", "root": "1911054", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_e14d80600b65d4198386fca0", "root": "1850649"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_2d49cd6d00ec18e0c92b1b7a", "root": "1722776"}
+{"kind": "absent", "qid": "v3_3fa0b26e438364e6748e758b", "root": "1916145", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_9066fa78ea2123a378886003", "root": "1708323"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_136eca8ea14b0cc14f932df9", "root": "1886667"}
+{"kind": "absent", "qid": "v3_1ad904c2da865346f1cbdade", "root": "1741924", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_599e6987a89f8fe96e723e6a", "root": "1797726"}
+{"kind": "absent", "qid": "v3_4254e53825a9f68de4328018", "root": "1909463", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_678731f1211b744d61f516a8", "root": "1880324"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_bd18af5d52fe6e06292e5c4e", "root": "1871602"}
+{"kind": "absent", "qid": "v3_ccba752ffc804a02a0835396", "root": "1920539", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_30e5c1d621c3ee147e932d51", "root": "1786969"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_172495b00964ab2e88dcaedd", "root": "1798570"}
+{"kind": "absent", "qid": "v3_553e4bce382f3aa2f9a89485", "root": "1922561", "selection": "interior_gap"}
+{"kind": "no_history", "qid": "v3_894929c5879358ee5df05d1a", "root": "1868017"}
+{"field": "resolution", "kind": "null_field", "qid": "v3_314d70ebefe361d415259a7b", "root": "1888539"}
+{"kind": "absent", "qid": "v3_352dc78faeb433163f3bad8f", "root": "1922371", "selection": "interior_gap"}
+{"field": "component", "kind": "field", "participants": ["1830333"], "qid": "v3_a47aa38010252889d052a893", "root": "1830333"}
+{"field": "resolution", "kind": "field", "participants": ["1709308"], "qid": "v3_fc1078040e4cd628216b01ae", "root": "1709308"}
+{"field": "status", "kind": "field", "participants": ["1888958"], "qid": "v3_c5f2bd8c7b7ff70e42db2850", "root": "1888958"}
+{"field": "component", "kind": "field", "participants": ["1701836"], "qid": "v3_2989ed87852dc741b21f5298", "root": "1701836"}
+{"field": "resolution", "kind": "field", "participants": ["1695339"], "qid": "v3_d628e1cc1cf46a90ed07bd83", "root": "1695339"}
+{"field": "status", "kind": "field", "participants": ["1898740"], "qid": "v3_b8498d9ac37fe88b40ecca03", "root": "1898740"}
+{"field": "component", "kind": "field", "participants": ["1855790"], "qid": "v3_7f383389ddc867e5ae42db88", "root": "1855790"}
+{"field": "resolution", "kind": "field", "participants": ["1750963"], "qid": "v3_742250e9afbfa24ec2ad81b5", "root": "1750963"}
+{"field": "status", "kind": "field", "participants": ["1740604"], "qid": "v3_e0017a87533c245263b5ea06", "root": "1740604"}
+{"field": "component", "kind": "field", "participants": ["1859900"], "qid": "v3_99eb8de2721713ae811eec69", "root": "1859900"}
+{"field": "resolution", "kind": "field", "participants": ["1767855"], "qid": "v3_03f2ea205396f26d0fef9e5f", "root": "1767855"}
+{"field": "status", "kind": "field", "participants": ["1776014"], "qid": "v3_625b733758efb0384736eb1a", "root": "1776014"}
+{"field": "component", "kind": "field", "participants": ["1828249"], "qid": "v3_3e9d9993a85722ed90e02d31", "root": "1828249"}
+{"field": "resolution", "kind": "field", "participants": ["1771951"], "qid": "v3_b95cf97fa783ff76632152ab", "root": "1771951"}
+{"field": "status", "kind": "field", "participants": ["1765294"], "qid": "v3_25551cba6b8bad20c3c75767", "root": "1765294"}
+{"field": "component", "kind": "field", "participants": ["1696293"], "qid": "v3_52b488f3b3d86fc0f8631d49", "root": "1696293"}
+{"field": "resolution", "kind": "field", "participants": ["1711070"], "qid": "v3_6c67c862989b05a6c83ffb32", "root": "1711070"}
+{"field": "status", "kind": "field", "participants": ["1895563"], "qid": "v3_351c054a879b32c68d2800dd", "root": "1895563"}
+{"field": "component", "kind": "field", "participants": ["1796169"], "qid": "v3_39a4f2c903889002a4d16eca", "root": "1796169"}
+{"field": "resolution", "kind": "field", "participants": ["1718336"], "qid": "v3_2a8d15e60f7cfe6d89011f3e", "root": "1718336"}
+{"field": "status", "kind": "field", "participants": ["1805684"], "qid": "v3_4a7d7b7be82007613484001e", "root": "1805684"}
+{"field": "component", "kind": "field", "participants": ["1807892"], "qid": "v3_0987a8274df842b56f0305d2", "root": "1807892"}
+{"field": "resolution", "kind": "field", "participants": ["1770390"], "qid": "v3_d117fec754e8988a194c4dbf", "root": "1770390"}
+{"field": "status", "kind": "field", "participants": ["1750055"], "qid": "v3_f5b16030478c164975f3512a", "root": "1750055"}
+{"field": "component", "kind": "field", "participants": ["1692437"], "qid": "v3_8240300537f84afd318b67f3", "root": "1692437"}
+{"field": "resolution", "kind": "field", "participants": ["1884224"], "qid": "v3_a5c93955826f47eef74e2a80", "root": "1884224"}
+{"field": "status", "kind": "field", "participants": ["1783887"], "qid": "v3_15b4d0b09d0717c3103cf17e", "root": "1783887"}
+{"field": "component", "kind": "field", "participants": ["1767589"], "qid": "v3_2c7a11651788e52ed8bcdc8a", "root": "1767589"}
+{"field": "resolution", "kind": "field", "participants": ["1721229"], "qid": "v3_a0061b45f50e113d51edcb21", "root": "1721229"}
+{"field": "status", "kind": "field", "participants": ["1776417"], "qid": "v3_321b097b42d084d2dc9d297a", "root": "1776417"}
+{"field": "component", "kind": "field", "participants": ["1737712"], "qid": "v3_acff8c6a54ca641790abc954", "root": "1737712"}
+{"field": "resolution", "kind": "field", "participants": ["1813365"], "qid": "v3_b3b26bbc747e3da4bd9cab34", "root": "1813365"}
+{"field": "status", "kind": "field", "participants": ["1773000"], "qid": "v3_9b45243bf54e5fb185597453", "root": "1773000"}
+{"field": "component", "kind": "field", "participants": ["1899265"], "qid": "v3_e31bb7bd0f8bab159cab12aa", "root": "1899265"}
+{"field": "resolution", "kind": "field", "participants": ["1798111"], "qid": "v3_735ecc60c222ee949aba75c4", "root": "1798111"}
+{"field": "status", "kind": "field", "participants": ["1809099"], "qid": "v3_1c44effa45e16f9708bd9598", "root": "1809099"}
+{"field": "component", "kind": "field", "participants": ["1700892"], "qid": "v3_e08f74b981624445875abdc0", "root": "1700892"}
+{"field": "resolution", "kind": "field", "participants": ["1816139"], "qid": "v3_0a060aafe9f894e9c98fbfbe", "root": "1816139"}
+{"field": "status", "kind": "field", "participants": ["1719715"], "qid": "v3_89507ddf59c08c82aa898d32", "root": "1719715"}
+{"field": "component", "kind": "field", "participants": ["1740604"], "qid": "v3_0084847cd00c0af233dd9072", "root": "1740604"}
+{"field": "resolution", "kind": "field", "participants": ["1771059"], "qid": "v3_01ce28ff35b6752ff7b6fe44", "root": "1771059"}
+{"field": "status", "kind": "field", "participants": ["1894105"], "qid": "v3_f968cc2f17cb38f711032ce2", "root": "1894105"}
+{"field": "component", "kind": "field", "participants": ["1700334"], "qid": "v3_2584653d6ecbbd5e41a05ab6", "root": "1700334"}
+{"field": "resolution", "kind": "field", "participants": ["1860898"], "qid": "v3_33243304a60f11b861c6402e", "root": "1860898"}
+{"field": "status", "kind": "field", "participants": ["1749866"], "qid": "v3_52b6e67cdb9dc08a25c9a190", "root": "1749866"}
+{"field": "component", "kind": "field", "participants": ["1700351"], "qid": "v3_b19da0e5d6ba6d54c292ec3c", "root": "1700351"}
+{"field": "resolution", "kind": "field", "participants": ["1798041"], "qid": "v3_696f851a072b7afe6e77d939", "root": "1798041"}
+{"field": "status", "kind": "field", "participants": ["1884680"], "qid": "v3_b2f655f773c3925734c076ff", "root": "1884680"}
+{"field": "component", "kind": "field", "participants": ["1701443"], "qid": "v3_3386aba8436d58968a4a1129", "root": "1701443"}
+{"field": "resolution", "kind": "field", "participants": ["1769208"], "qid": "v3_a52699d0265a67c1d6d67edb", "root": "1769208"}
+{"field": "status", "kind": "field", "participants": ["1803544"], "qid": "v3_f7b0653ac8d5f0726af8554e", "root": "1803544"}
+{"field": "component", "kind": "field", "participants": ["1777736"], "qid": "v3_be1cf11b715f29895e2ccc96", "root": "1777736"}
+{"field": "resolution", "kind": "field", "participants": ["1780649"], "qid": "v3_3d28c55137bcd792851b9f18", "root": "1780649"}
+{"field": "status", "kind": "field", "participants": ["1767833"], "qid": "v3_ab54fea1ccd5fedbd7083965", "root": "1767833"}
+{"field": "component", "kind": "field", "participants": ["1814888"], "qid": "v3_dcbb907034e6b303909997b2", "root": "1814888"}
+{"field": "resolution", "kind": "field", "participants": ["1806334"], "qid": "v3_c6254fa0b2c7efcfc9ef57f7", "root": "1806334"}
+{"field": "status", "kind": "field", "participants": ["1925008"], "qid": "v3_3ea18c68441ec8ee3ee2f233", "root": "1925008"}
+{"field": "component", "kind": "field", "participants": ["1845736"], "qid": "v3_d41c9123521664fdefb98d08", "root": "1845736"}
+{"field": "resolution", "kind": "field", "participants": ["1740203"], "qid": "v3_f4458dca275bfd7c4d50067c", "root": "1740203"}
+{"field": "status", "kind": "field", "participants": ["1783643"], "qid": "v3_297d846e1f016df87f55c0b9", "root": "1783643"}
+{"field": "component", "kind": "field", "participants": ["1900131"], "qid": "v3_b75226db444ea518e69b8f85", "root": "1900131"}
+{"field": "resolution", "kind": "field", "participants": ["1728956"], "qid": "v3_0cdaad70d90fe580976c5595", "root": "1728956"}
+{"field": "status", "kind": "field", "participants": ["1794818"], "qid": "v3_c28c1b4bb9482b2322a3e20d", "root": "1794818"}
+{"field": "component", "kind": "field", "participants": ["1747454"], "qid": "v3_5a30d66355d65c9d31ff609f", "root": "1747454"}
+{"field": "resolution", "kind": "field", "participants": ["1691734"], "qid": "v3_a326ed756f3141f77ec71cf3", "root": "1691734"}
+{"field": "status", "kind": "field", "participants": ["1822875"], "qid": "v3_0d2732873d94f21ebfae010b", "root": "1822875"}
+{"field": "component", "kind": "field", "participants": ["1824160"], "qid": "v3_7b602a3932eaafd34121334b", "root": "1824160"}
+{"field": "resolution", "kind": "field", "participants": ["1719844"], "qid": "v3_4e4eea2aab411266dbbaf234", "root": "1719844"}
+{"field": "status", "kind": "field", "participants": ["1883736"], "qid": "v3_85229f22503cafd45293307f", "root": "1883736"}
+{"field": "component", "kind": "field", "participants": ["1853896"], "qid": "v3_ba9b061cf35b1931ee3992be", "root": "1853896"}
+{"field": "resolution", "kind": "field", "participants": ["1737441"], "qid": "v3_9aaa4ef58b98d98be1ee7003", "root": "1737441"}
+{"field": "status", "kind": "field", "participants": ["1868076"], "qid": "v3_aa941450807b42fa34a15613", "root": "1868076"}
+{"field": "component", "kind": "field", "participants": ["1723913"], "qid": "v3_2c214f25a4aca5a783e893b9", "root": "1723913"}
+{"field": "resolution", "kind": "field", "participants": ["1879588"], "qid": "v3_fcfd9973ba2a9ab4c2916642", "root": "1879588"}
+{"field": "status", "kind": "field", "participants": ["1731191"], "qid": "v3_fa7fbb595de5320aed2bc391", "root": "1731191"}
+{"field": "component", "kind": "field", "participants": ["1762262"], "qid": "v3_a93f3411bf5da5e067a6e19f", "root": "1762262"}
+{"field": "resolution", "kind": "field", "participants": ["1889941"], "qid": "v3_e332268941fd61fd133f86aa", "root": "1889941"}
+{"field": "status", "kind": "field", "participants": ["1700963"], "qid": "v3_de4a2a4b2048ddcf22985982", "root": "1700963"}
+{"field": "component", "kind": "field", "participants": ["1768901"], "qid": "v3_60cabec09cb4a186e7c27cba", "root": "1768901"}
+{"field": "resolution", "kind": "field", "participants": ["1707439"], "qid": "v3_969312fdcbf9cdf0a6a9c421", "root": "1707439"}
+{"field": "status", "kind": "field", "participants": ["1782721"], "qid": "v3_13c32a44b9b7f16f4a3b2866", "root": "1782721"}
+{"field": "component", "kind": "field", "participants": ["1845551"], "qid": "v3_b64acc986e4ce78e31202e9c", "root": "1845551"}
+{"field": "resolution", "kind": "field", "participants": ["1765533"], "qid": "v3_58d2eb0709a50e8caf7ab196", "root": "1765533"}
+{"field": "status", "kind": "field", "participants": ["1876934"], "qid": "v3_0eae6b540cb4a57ff43df417", "root": "1876934"}
+{"field": "component", "kind": "field", "participants": ["1879239"], "qid": "v3_12ce169070ccaeb6b3244fa9", "root": "1879239"}
+{"field": "resolution", "kind": "field", "participants": ["1899598"], "qid": "v3_700f1a9cb7d0e7cd82e294de", "root": "1899598"}
+{"field": "status", "kind": "field", "participants": ["1924321"], "qid": "v3_36c710bc4f88d0bfc6a1af5b", "root": "1924321"}
+{"field": "component", "kind": "field", "participants": ["1706721"], "qid": "v3_edf455906b5c606cd3c07566", "root": "1706721"}
+{"field": "resolution", "kind": "field", "participants": ["1778167"], "qid": "v3_45b57421479a7b03262b98ff", "root": "1778167"}
+{"field": "status", "kind": "field", "participants": ["1855604"], "qid": "v3_c7c14f1c88588638188530a8", "root": "1855604"}
+{"field": "component", "kind": "field", "participants": ["1829394"], "qid": "v3_c088873d47f803190202220d", "root": "1829394"}
+{"field": "resolution", "kind": "field", "participants": ["1888642"], "qid": "v3_6231024161ceec9a2c26f90d", "root": "1888642"}
+{"field": "status", "kind": "field", "participants": ["1858090"], "qid": "v3_76b08a23a4ccee64707c294d", "root": "1858090"}
+{"field": "component", "kind": "field", "participants": ["1862222"], "qid": "v3_ff7cb82f8be04668615a8ddb", "root": "1862222"}
+{"field": "resolution", "kind": "field", "participants": ["1740569"], "qid": "v3_475eff1d5fb7a36a8cb549c5", "root": "1740569"}
+{"field": "status", "kind": "field", "participants": ["1699156"], "qid": "v3_646f091178401b26dfbcb9f7", "root": "1699156"}
+{"field": "component", "kind": "field", "participants": ["1890547"], "qid": "v3_ee8062ea0ca7396e3690a1b8", "root": "1890547"}
+{"field": "resolution", "kind": "field", "participants": ["1855221"], "qid": "v3_6fad4bb6862f95d735cf4841", "root": "1855221"}
+{"field": "status", "kind": "field", "participants": ["1749136"], "qid": "v3_871cee6f2f0690bfcded2814", "root": "1749136"}
+{"field": "component", "kind": "field", "participants": ["1778660"], "qid": "v3_2983c6c29aab97f57c815c37", "root": "1778660"}
+{"field": "resolution", "kind": "field", "participants": ["1750123"], "qid": "v3_c19818af0bbc18295ee3377e", "root": "1750123"}
+{"field": "status", "kind": "field", "participants": ["1845314"], "qid": "v3_d20db75cbfb4f45155d3c87d", "root": "1845314"}
+{"field": "component", "kind": "field", "participants": ["1728016"], "qid": "v3_d2ac1393d67741df1eaf2286", "root": "1728016"}
+{"field": "resolution", "kind": "field", "participants": ["1871419"], "qid": "v3_f8a19fe812e3e953d3594228", "root": "1871419"}
+{"field": "status", "kind": "field", "participants": ["1741204"], "qid": "v3_88232c67c9f18a6fea86091c", "root": "1741204"}
+{"field": "component", "kind": "field", "participants": ["1694553"], "qid": "v3_0638fd3d1ca7538ba17e48e6", "root": "1694553"}
+{"field": "resolution", "kind": "field", "participants": ["1818498"], "qid": "v3_2505a0cbb3eb7f050e5f2340", "root": "1818498"}
+{"field": "status", "kind": "field", "participants": ["1762330"], "qid": "v3_9109dd391dfae6c49d484d76", "root": "1762330"}
+{"field": "component", "kind": "field", "participants": ["1700934"], "qid": "v3_28da657d4da3364d908661da", "root": "1700934"}
+{"field": "resolution", "kind": "field", "participants": ["1888421"], "qid": "v3_4da4c3845452d1bc8f2c5875", "root": "1888421"}
+{"field": "status", "kind": "field", "participants": ["1714028"], "qid": "v3_8ce4dc622fcd5ab1cc2d7c9d", "root": "1714028"}
+{"field": "component", "kind": "field", "participants": ["1891628"], "qid": "v3_ca3604ad81dd7f5ee9b728bc", "root": "1891628"}
+{"field": "resolution", "kind": "field", "participants": ["1690535"], "qid": "v3_b15a09928547d05045f446e3", "root": "1690535"}
+{"field": "status", "kind": "field", "participants": ["1811076"], "qid": "v3_6bf4cdde4c9755c7a0c97c64", "root": "1811076"}
+{"field": "component", "kind": "field", "participants": ["1871602"], "qid": "v3_4fba261f386bdbe4398aea1d", "root": "1871602"}
+{"field": "resolution", "kind": "field", "participants": ["1798780"], "qid": "v3_9cc040d28db40ac89fbe8678", "root": "1798780"}
+{"field": "status", "kind": "field", "participants": ["1720531"], "qid": "v3_facf96f1e132273748eaf728", "root": "1720531"}
+{"field": "component", "kind": "field", "participants": ["1811076"], "qid": "v3_befe05d758b0fa68c5f3e8bd", "root": "1811076"}
+{"field": "resolution", "kind": "field", "participants": ["1898246"], "qid": "v3_dd6fa65e20647dff1edab795", "root": "1898246"}
+{"field": "status", "kind": "field", "participants": ["1875879"], "qid": "v3_7fe524be0312531e76ecf407", "root": "1875879"}
+{"field": "component", "kind": "field", "participants": ["1702138"], "qid": "v3_11ae65f38bc4ce24f656c1e3", "root": "1702138"}
+{"field": "resolution", "kind": "field", "participants": ["1749866"], "qid": "v3_e8df7d90726c71aaae32d5c9", "root": "1749866"}
+{"field": "status", "kind": "field", "participants": ["1888642"], "qid": "v3_7458216106b0977979e2e256", "root": "1888642"}
+{"field": "component", "kind": "field", "participants": ["1875879"], "qid": "v3_243761209c1a9d5b00a24280", "root": "1875879"}
+{"field": "resolution", "kind": "field", "participants": ["1798254"], "qid": "v3_e1b2ee55fc73222578a4c421", "root": "1798254"}
+{"field": "status", "kind": "field", "participants": ["1713716"], "qid": "v3_234539fdcb61aac2b2082e0e", "root": "1713716"}
+{"field": "component", "kind": "field", "participants": ["1718313"], "qid": "v3_17a6ecb8cba1a0ba952899f8", "root": "1718313"}
+{"field": "resolution", "kind": "field", "participants": ["1868452"], "qid": "v3_b2e5489e4a36189490015d56", "root": "1868452"}
+{"field": "status", "kind": "field", "participants": ["1928797"], "qid": "v3_dcd927f003992707b9b54be6", "root": "1928797"}
+{"field": "component", "kind": "field", "participants": ["1776010"], "qid": "v3_260e67b704e51a55690d407d", "root": "1776010"}
+{"field": "resolution", "kind": "field", "participants": ["1743286"], "qid": "v3_2008f745b2bce5aa9097e935", "root": "1743286"}
+{"field": "status", "kind": "field", "participants": ["1890378"], "qid": "v3_97ff1a66d8118dba6c51d962", "root": "1890378"}
+{"field": "component", "kind": "field", "participants": ["1736804"], "qid": "v3_0653baf5b6c1b9705b622611", "root": "1736804"}
+{"field": "resolution", "kind": "field", "participants": ["1875879"], "qid": "v3_566807c1165b330f6a360ce2", "root": "1875879"}
+{"field": "status", "kind": "field", "participants": ["1862066"], "qid": "v3_60d5e76d6b3541d1f6b0a3d9", "root": "1862066"}
+{"field": "component", "kind": "field", "participants": ["1805390"], "qid": "v3_3d8eaff94d82f78e92c48a95", "root": "1805390"}
+{"field": "resolution", "kind": "field", "participants": ["1690972"], "qid": "v3_58e76b972c7c05ca5b3da889", "root": "1690972"}
+{"field": "status", "kind": "field", "participants": ["1882155"], "qid": "v3_1a9e8a219c3ef59007762c30", "root": "1882155"}
+{"field": "component", "kind": "field", "participants": ["1897076"], "qid": "v3_b7f7884832b9722aefb450d5", "root": "1897076"}
+{"field": "resolution", "kind": "field", "participants": ["1741658"], "qid": "v3_c5b9edbf7367c5dc07be491a", "root": "1741658"}
+{"field": "status", "kind": "field", "participants": ["1775712"], "qid": "v3_3bf9e30558672c57bc1ff859", "root": "1775712"}
+{"field": "component", "kind": "field", "participants": ["1767855"], "qid": "v3_467e193b448374cb4948ae1f", "root": "1767855"}
+{"field": "resolution", "kind": "field", "participants": ["1789854"], "qid": "v3_e9034bc2f567cd72bad621c7", "root": "1789854"}
+{"field": "status", "kind": "field", "participants": ["1881583"], "qid": "v3_0d0b2cd1056efdfaf3380c33", "root": "1881583"}
+{"field": "component", "kind": "field", "participants": ["1875152"], "qid": "v3_747d358a12a58621c37b7bee", "root": "1875152"}
+{"field": "resolution", "kind": "field", "participants": ["1710918"], "qid": "v3_f67b8cb091fca4109dd16148", "root": "1710918"}
+{"field": "status", "kind": "field", "participants": ["1704314"], "qid": "v3_66bc924ea03234e0ee99e034", "root": "1704314"}
+{"field": "component", "kind": "field", "participants": ["1712326"], "qid": "v3_cef0d6aedbb4082b6e1e31f4", "root": "1712326"}
+{"field": "resolution", "kind": "field", "participants": ["1704200"], "qid": "v3_0e028998f497de601074ee28", "root": "1704200"}
+{"field": "status", "kind": "field", "participants": ["1863280"], "qid": "v3_d2ebb4b556381bccebb6c34f", "root": "1863280"}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1704417"], "qid": "v3_28ad802fcd3c701f25131425", "root": "1704417", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Foxfooding"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1872645"], "qid": "v3_06d7f7ecf650b3655633c03d", "root": "1872645", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"year": "2024"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1892430"], "qid": "v3_b19a8f4f427d4a3e9216c456", "root": "1892430", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Sidebar"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1691424"], "qid": "v3_d059f1ffae471630adb6add9", "root": "1691424", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"resolution": "WORKSFORME"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1699920"], "qid": "v3_c405fd55813cd6dfaf9f9b72", "root": "1699920", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Screenshots"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690590"], "qid": "v3_30bbeccb58dba5afd4ea7b57", "root": "1690590", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"resolution": "MOVED"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690915"], "qid": "v3_a3d7dd71ac8eadd46a7a66d4", "root": "1690915", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Sync"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690099"], "qid": "v3_16911b9ae12cae02c201d505", "root": "1690099", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"resolution": "FIXED"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1691090"], "qid": "v3_1acdb71503eeef5ca39e9eca", "root": "1691090", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"resolution": "INACTIVE"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690590"], "qid": "v3_bb5fff7e16d6b379f9ddade7", "root": "1690590", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Menus"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1691217"], "qid": "v3_315be90cc9884d93d950e584", "root": "1691217", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Settings UI"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1699198"], "qid": "v3_b38906de25369860ceeffe50", "root": "1699198", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Tabbed Browser"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1703342"], "qid": "v3_11a4108303269d07a061509b", "root": "1703342", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Page Info Window"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1705145"], "qid": "v3_1faba5b2f63558a7cea269a6", "root": "1705145", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Pocket"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1748371"], "qid": "v3_530d23a8a3911679dc9a13ed", "root": "1748371", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"year": "2022"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1721701"], "qid": "v3_c1331f84511131ec74c4e53e", "root": "1721701", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Pioneer"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1696262"], "qid": "v3_75d55672cd10d0b374bc3833", "root": "1696262", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Nimbus Desktop Client"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1694166"], "qid": "v3_ccde1afd4fc822e1f98e37ec", "root": "1694166", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "File Handling"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1712838"], "qid": "v3_26a15401b93bec7b13574368", "root": "1712838", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Firefox Monitor"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690758"], "qid": "v3_349a7be783a29922f2e565f3", "root": "1690758", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"resolution": "DUPLICATE"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1768695"], "qid": "v3_41844257229be5a5c0a265cb", "root": "1768695", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Firefox View"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690348"], "qid": "v3_3fec60ba22b8d220001831fd", "root": "1690348", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"resolution": "INCOMPLETE"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1690348"], "qid": "v3_00cbe05dd7ee8c4dd143525e", "root": "1690348", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"status": "RESOLVED"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "kind": "v2_f3", "participants": ["1726899"], "qid": "v3_97eee04249e6f9b14c461eb5", "root": "1726899", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 882, "filter": {"component": "Extension Compatibility"}, "partition": "dev", "population_hash": "84314d61130d7b81075744484ead1858c9e4521e7ec8f1805d92ef3940ee4d75", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690283"], "qid": "v3_772df0e95dd548cb8c15c393", "root": "1690283", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Installer"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1691340"], "qid": "v3_0d103a0ceaa827fb8841485f", "root": "1691340", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Session Restore"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689428"], "qid": "v3_739bcca19e98557883edb2a1", "root": "1689428", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "DUPLICATE"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690283"], "qid": "v3_38e78314bf3aebda8e4fdaac", "root": "1690283", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "WORKSFORME"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1694717"], "qid": "v3_e4b9498eb654a7a57fe8f225", "root": "1694717", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Disability Access"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1714692"], "qid": "v3_befb46a131ffe25b52fdcb82", "root": "1714692", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Remote Settings Client"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689853"], "qid": "v3_14e295de4f762692483be1ce", "root": "1689853", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Untriaged"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1872629"], "qid": "v3_1464037f83f0107e7bb4bbe1", "root": "1872629", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"year": "2024"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1703796"], "qid": "v3_760bf66e5fdc596c20c4eef9", "root": "1703796", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Settings UI"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689198"], "qid": "v3_43455272b1a1bf44530d089c", "root": "1689198", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "New Tab Page"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1702717"], "qid": "v3_b5d9f7af0f02d40e5dfa17bc", "root": "1702717", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Launcher Process"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1692141"], "qid": "v3_585ba18f98929bcd75c104a8", "root": "1692141", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Migration"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693701"], "qid": "v3_f0f6f6f8844506e3e480ec86", "root": "1693701", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Theme"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693393"], "qid": "v3_f225e93c666f3371cdb09e7d", "root": "1693393", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Top Sites"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689198"], "qid": "v3_79adc0c3f7987e57340592f8", "root": "1689198", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"year": "2021"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1696550"], "qid": "v3_74525c90b3995d3b3aab5f9d", "root": "1696550", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Firefox Monitor"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689198"], "qid": "v3_f71c6cb9baf34d97a10f6a79", "root": "1689198", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "INVALID"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1700334"], "qid": "v3_c718c2140af75a89deb155a3", "root": "1700334", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Site Identity"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693484"], "qid": "v3_99b472353e8514e68415e437", "root": "1693484", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Security"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689437"], "qid": "v3_ee735deaaebe8527622c40e4", "root": "1689437", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "FIXED"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1704602"], "qid": "v3_0c6993f1be4ab3d5cf18426b", "root": "1704602", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Foxfooding"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1700355"], "qid": "v3_4ca951feaf47a56681d84dec", "root": "1700355", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "System Add-ons: Off-train Deployment"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690535"], "qid": "v3_610f9b0d0b77cfe6fee80ad5", "root": "1690535", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Private Browsing"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689437"], "qid": "v3_5751cdd3e5901063ba38f9d2", "root": "1689437", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Bookmarks & History"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693305"], "qid": "v3_fa6faa024fd9ace1622970c6", "root": "1693305", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Pioneer"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1748148"], "qid": "v3_807e12da0a9e8e5ccff422f7", "root": "1748148", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"year": "2022"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693641"], "qid": "v3_604739ed36ba606c26a4841c", "root": "1693641", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "INACTIVE"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690567"], "qid": "v3_fd33884155583724d20713a5", "root": "1690567", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Sync"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1704874"], "qid": "v3_e0292d9ff46e3f55987b27ab", "root": "1704874", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Downloads Panel"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693119"], "qid": "v3_96ed2fcdd56d74b3c8c1504f", "root": "1693119", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"status": "ASSIGNED"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1808230"], "qid": "v3_b4a0eb748ac2d0c4c2f586d7", "root": "1808230", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"year": "2023"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690428"], "qid": "v3_15743dbe0fb29c1baf21750c", "root": "1690428", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"status": "REOPENED"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689437"], "qid": "v3_3e67864a44bf9484ad5f5a8a", "root": "1689437", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"status": "VERIFIED"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1701449"], "qid": "v3_b2e6d1264bfa9e7488fcd0b1", "root": "1701449", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Headless"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690535"], "qid": "v3_eb59bf8e69b2d0c17275bae7", "root": "1690535", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "INCOMPLETE"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690020"], "qid": "v3_32a15a37c79becf4fcfa7085", "root": "1690020", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Extension Compatibility"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1691535"], "qid": "v3_fe055a887f1c0d5729fa5f13", "root": "1691535", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Address Bar"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1700275"], "qid": "v3_158bc7909068c9730a03c097", "root": "1700275", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Firefox Accounts"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1692321"], "qid": "v3_fb10b004cfd525caf52bc304", "root": "1692321", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Keyboard Navigation"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690529"], "qid": "v3_4591c5fe6919bf0168ab5b91", "root": "1690529", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "File Handling"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1811076"], "qid": "v3_0984f09f08d692daea3de80e", "root": "1811076", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Data Loss Prevention"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1761783"], "qid": "v3_86bbebd87c7c016cc620f234", "root": "1761783", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Firefox View"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689460"], "qid": "v3_ffb58b9a90a1c733c445cf63", "root": "1689460", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "about:logins"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690165"], "qid": "v3_09afdcbb126075b6eb1767ab", "root": "1690165", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "General"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1691412"], "qid": "v3_56de0ffd09eab246a3a92b86", "root": "1691412", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Enterprise Policies"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1728956"], "qid": "v3_649b4d1717073c7cbda80493", "root": "1728956", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Normandy Server"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1707188"], "qid": "v3_73ed87f9d45457b377fc8b72", "root": "1707188", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Messaging System"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1738991"], "qid": "v3_a9aeebd418b83432869e0d6f", "root": "1738991", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Distributions"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690165"], "qid": "v3_f9ee96d7d02708910415c0ba", "root": "1690165", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "WONTFIX"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1692627"], "qid": "v3_11e19544866bbd1461752966", "root": "1692627", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Screenshots"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1689198"], "qid": "v3_2b367c70c86dbbfd8a2fdfc9", "root": "1689198", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"status": "RESOLVED"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693799"], "qid": "v3_50923af12c80b394340e50d1", "root": "1693799", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Tabbed Browser"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1697205"], "qid": "v3_803fcc9fc74a68bffefc7447", "root": "1697205", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"resolution": "MOVED"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690087"], "qid": "v3_14e10a05cabaeb2f24dad984", "root": "1690087", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "PDF Viewer"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1840154"], "qid": "v3_e636b30f5fac4a252a472196", "root": "1840154", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Shopping"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693781"], "qid": "v3_aa2a3112ea424093bd753356", "root": "1693781", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Toolbars and Customization"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690131"], "qid": "v3_4d1cffc37e3a8ec62be00689", "root": "1690131", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Menus"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1886632"], "qid": "v3_c44a09a8687f099fe1df6722", "root": "1886632", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Sidebar"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1699156"], "qid": "v3_c64c787aeb195121687c160a", "root": "1699156", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Pocket"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1692437"], "qid": "v3_57e7f8a09b003a07ece2bb3b", "root": "1692437", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Site Permissions"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1693641"], "qid": "v3_bc33122afb66da31ff5abab8", "root": "1693641", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Search"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1690539"], "qid": "v3_c36492dbaa5f030f08f4cc23", "root": "1690539", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"status": "NEW"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1694195"], "qid": "v3_fed0a90b8b411fea136487ed", "root": "1694195", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Tours"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1704317"], "qid": "v3_b38cfa3cc09de2f9d1ae066c", "root": "1704317", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Nimbus Desktop Client"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"cluster": "aggregate:862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "kind": "v2_f3", "participants": ["1697870"], "qid": "v3_3e288a09560f7e8001478e96", "root": "1697870", "scope": {"corpus": "broad BugsRepo metadata; sampled Firefox-product bugs", "denominator": 2118, "filter": {"component": "Page Info Window"}, "partition": "test", "population_hash": "862e95c8f2e2df00fe25b9ec689e296317329a79811f2fef0a65c99c87f6e949", "sample_seed": 317, "snapshot_as_of_utc": null}}
+{"kind": "v2_f4", "participants": ["1844228", "1783248"], "qid": "v3_abe23011fb8dab08d9f93ae0", "relation": "depends_on", "root": "1844228"}
+{"kind": "v2_f4", "participants": ["1699198", "1712840"], "qid": "v3_3091c4b99dd8dd44eaa73ce7", "relation": "duplicate_of", "root": "1699198"}
+{"kind": "v2_f4", "participants": ["1845532", "1845516"], "qid": "v3_e4d9c6fa75bcafa932e013de", "relation": "depends_on", "root": "1845532"}
+{"kind": "v2_f4", "participants": ["1792543", "1795618"], "qid": "v3_0bd280174f569ac9d0e01c38", "relation": "see_also", "root": "1792543"}
+{"kind": "v2_f4", "participants": ["1886345", "1886348"], "qid": "v3_3c593d0354d24b09734d9cae", "relation": "has_duplicate", "root": "1886345"}
+{"kind": "v2_f4", "participants": ["1692084", "1682522", "1695383"], "qid": "v3_175e0881b98d2da42f29c718", "relation": "blocks", "root": "1692084"}
+{"kind": "v2_f4", "participants": ["1841045", "1841064", "1841559"], "qid": "v3_2da70e8491089f6d1dd1df85", "relation": "has_duplicate", "root": "1841045"}
+{"kind": "v2_f4", "participants": ["1870482", "1869689"], "qid": "v3_65371610041742125436bcaf", "relation": "blocks", "root": "1870482"}
+{"kind": "v2_f4", "participants": ["1810306", "1681822"], "qid": "v3_4eaef9ba87954bf0bc3fa500", "relation": "blocks", "root": "1810306"}
+{"kind": "v2_f4", "participants": ["1829394", "1815255"], "qid": "v3_6f2b504a4755faf5ebde9925", "relation": "regressed_by", "root": "1829394"}
+{"kind": "v2_f4", "participants": ["1700892", "1649940", "1700581"], "qid": "v3_e6db158b1a1f668a2f3f9354", "relation": "blocks", "root": "1700892"}
+{"kind": "v2_f4", "participants": ["1853896", "1850993"], "qid": "v3_ca61b257183058645a608f64", "relation": "see_also", "root": "1853896"}
+{"kind": "v2_f4", "participants": ["1895256", "1883124"], "qid": "v3_9ad45691253b96453fcc63f9", "relation": "regressed_by", "root": "1895256"}
+{"kind": "v2_f4", "participants": ["1786388", "1786242"], "qid": "v3_2afddd7c076f8477348f57dc", "relation": "duplicate_of", "root": "1786388"}
+{"kind": "v2_f4", "participants": ["1888684", "1881259"], "qid": "v3_a8c70f75aa481c815b7b34a4", "relation": "depends_on", "root": "1888684"}
+{"kind": "v2_f4", "participants": ["1724230", "1736701"], "qid": "v3_260e518b2a28de4c42342fcf", "relation": "regresses", "root": "1724230"}
+{"kind": "v2_f4", "participants": ["1777736", "1788577"], "qid": "v3_70de2ca0ad1d3b6e81560663", "relation": "has_duplicate", "root": "1777736"}
+{"kind": "v2_f4", "participants": ["1708258", "1812135"], "qid": "v3_8079c806f6960a55d8c26ffb", "relation": "see_also", "root": "1708258"}
+{"kind": "v2_f4", "participants": ["1713266", "1492303"], "qid": "v3_eadb8aa3afd132c3a051a069", "relation": "see_also", "root": "1713266"}
+{"kind": "v2_f4", "participants": ["1822604", "1822347"], "qid": "v3_65b50fb0b433d0879e3d09a4", "relation": "has_duplicate", "root": "1822604"}
+{"kind": "v2_f4", "participants": ["1710092", "1698882"], "qid": "v3_ed8cffa453bb3465c65a84cc", "relation": "blocks", "root": "1710092"}
+{"kind": "v2_f4", "participants": ["1766470", "1746499"], "qid": "v3_03bcda02e15bea99d433cd4a", "relation": "has_duplicate", "root": "1766470"}
+{"kind": "v2_f4", "participants": ["1814943", "1802219"], "qid": "v3_319c7a6a5d53ec7dcaee1212", "relation": "blocks", "root": "1814943"}
+{"kind": "v2_f4", "participants": ["1780554", "1782355"], "qid": "v3_72051d6d6c094e131866ef34", "relation": "see_also", "root": "1780554"}
+{"kind": "v2_f4", "participants": ["1744377", "1744379"], "qid": "v3_60d64eb8f6b530c28ba20db3", "relation": "blocks", "root": "1744377"}
+{"kind": "v2_f4", "participants": ["1816988", "1827771"], "qid": "v3_a55a8f65c3548c264ff4640b", "relation": "blocks", "root": "1816988"}
+{"kind": "v2_f4", "participants": ["1763929", "1759298"], "qid": "v3_7794f9228a4078cac739c732", "relation": "blocks", "root": "1763929"}
+{"kind": "v2_f4", "participants": ["1887319", "1887320"], "qid": "v3_a81b6e204e28b32f16f4bf30", "relation": "duplicate_of", "root": "1887319"}
+{"kind": "v2_f4", "participants": ["1866902", "1692110", "1848402", "1854227"], "qid": "v3_92f6eef3dc400bc4f0082c85", "relation": "see_also", "root": "1866902"}
+{"kind": "v2_f4", "participants": ["1782416", "1772569"], "qid": "v3_acc57dcc77cdb22ac9b999b4", "relation": "blocks", "root": "1782416"}
+{"kind": "v2_f4", "participants": ["1744981", "1738286"], "qid": "v3_547dd6c8c589185c61e0e164", "relation": "depends_on", "root": "1744981"}
+{"kind": "v2_f4", "participants": ["1774826", "1775713"], "qid": "v3_978323ae8be26831701ebd10", "relation": "blocks", "root": "1774826"}
+{"kind": "v2_f4", "participants": ["1750221", "1750863"], "qid": "v3_e68c4f81a9e971aaf68d9fa0", "relation": "regresses", "root": "1750221"}
+{"kind": "v2_f4", "participants": ["1921812", "1907099", "1908417"], "qid": "v3_6c6e64a515ec0cf5a136ea8f", "relation": "blocks", "root": "1921812"}
+{"kind": "v2_f4", "participants": ["1825035", "415225"], "qid": "v3_8f7acd8043484a550118d2d3", "relation": "blocks", "root": "1825035"}
+{"kind": "v2_f4", "participants": ["1738264", "1724960", "1732445"], "qid": "v3_94c44437358616f65315672f", "relation": "blocks", "root": "1738264"}
+{"kind": "v2_f4", "participants": ["1926670", "1598915"], "qid": "v3_0c3090b4bb9cb10a7c7e5f12", "relation": "duplicate_of", "root": "1926670"}
+{"kind": "v2_f4", "participants": ["1869094", "1868847", "1870350"], "qid": "v3_2fa755965f19419960698815", "relation": "see_also", "root": "1869094"}
+{"kind": "v2_f4", "participants": ["1847058", "1485379"], "qid": "v3_21f60e3248d43f8c7ba26fa8", "relation": "duplicate_of", "root": "1847058"}
+{"kind": "v2_f4", "participants": ["1876892", "1235592"], "qid": "v3_14e1b393d40e8e7fb243badc", "relation": "duplicate_of", "root": "1876892"}
+{"kind": "v2_f4", "participants": ["1901071", "1899575"], "qid": "v3_547026e5465ed302e5e5ca63", "relation": "duplicate_of", "root": "1901071"}
+{"kind": "v2_f4", "participants": ["1894227", "1891788"], "qid": "v3_0709cdab0de0a8ff43bcfcdb", "relation": "regressed_by", "root": "1894227"}
+{"kind": "v2_f4", "participants": ["1704200", "1432355"], "qid": "v3_4fda206b835d660cdfe5c6b0", "relation": "see_also", "root": "1704200"}
+{"kind": "v2_f4", "participants": ["1829130", "1823401"], "qid": "v3_37021ad71cb9586c33fa98a7", "relation": "depends_on", "root": "1829130"}
+{"kind": "v2_f4", "participants": ["1775948", "1770571", "1773196"], "qid": "v3_b444d46a4bb0854bcf747d30", "relation": "has_duplicate", "root": "1775948"}
+{"kind": "v2_f4", "participants": ["1720189", "444284"], "qid": "v3_c315632c627ea11d5edabce0", "relation": "duplicate_of", "root": "1720189"}
+{"kind": "v2_f4", "participants": ["1734233", "1697365"], "qid": "v3_5c39b11b1283fbfd3929f6f4", "relation": "duplicate_of", "root": "1734233"}
+{"kind": "v2_f4", "participants": ["1776041", "1751768"], "qid": "v3_a3ddb4fb49d64113ec030b47", "relation": "has_duplicate", "root": "1776041"}
+{"kind": "v2_f4", "participants": ["1798111", "1798429"], "qid": "v3_230bc50a6aca2ba73c1dd3c6", "relation": "regresses", "root": "1798111"}
+{"kind": "v2_f4", "participants": ["1774826", "1775713"], "qid": "v3_ddee5e8c05f88af1878e2da1", "relation": "duplicate_of", "root": "1774826"}
+{"kind": "v2_f4", "participants": ["1853047", "1862481"], "qid": "v3_94dc82eb688db7127e45c8a6", "relation": "depends_on", "root": "1853047"}
+{"kind": "v2_f4", "participants": ["1769961", "1775815"], "qid": "v3_5c557111d7384a2c6de8f6b0", "relation": "blocks", "root": "1769961"}
+{"kind": "v2_f4", "participants": ["1713266", "1646282"], "qid": "v3_80f4dc892d3c60fc08b1bd05", "relation": "has_duplicate", "root": "1713266"}
+{"kind": "v2_f4", "participants": ["1817752", "1746052"], "qid": "v3_0f94357d810c2641525ab6e3", "relation": "regressed_by", "root": "1817752"}
+{"kind": "v2_f4", "participants": ["1745720", "1759593"], "qid": "v3_d11d99c425d58a2d1b94d001", "relation": "regresses", "root": "1745720"}
+{"kind": "v2_f4", "participants": ["1714852", "1699049"], "qid": "v3_e052e385ab01c715d69ad32f", "relation": "blocks", "root": "1714852"}
+{"kind": "v2_f4", "participants": ["1766400", "1653593", "1766428"], "qid": "v3_3bc72de22ee4c3689db38249", "relation": "blocks", "root": "1766400"}
+{"kind": "v2_f4", "participants": ["1815820", "1815255"], "qid": "v3_01d332b241feefaa50a2086c", "relation": "regressed_by", "root": "1815820"}
+{"kind": "v2_f4", "participants": ["1886964", "1862007"], "qid": "v3_97c236840f9aadd36b335a58", "relation": "blocks", "root": "1886964"}
+{"kind": "v2_f4", "participants": ["1798111", "1683296"], "qid": "v3_1d7efe1a175d089419e7af4a", "relation": "has_duplicate", "root": "1798111"}
+{"kind": "v2_f4", "participants": ["1778267", "1733821"], "qid": "v3_196f82da558ecb9bd513eb85", "relation": "regressed_by", "root": "1778267"}
+{"kind": "v2_f4", "participants": ["1848945", "1827393"], "qid": "v3_1446ea7e39911df0203592a4", "relation": "blocks", "root": "1848945"}
+{"kind": "v2_f4", "participants": ["1894105", "1894017"], "qid": "v3_fae81bc57587e3e470304024", "relation": "see_also", "root": "1894105"}
+{"kind": "v2_f4", "participants": ["1880397", "1880321"], "qid": "v3_2cfcc21c1154ac53c1bbb775", "relation": "duplicate_of", "root": "1880397"}
+{"kind": "v2_f4", "participants": ["1927916", "1927442"], "qid": "v3_403e92f4c8738ddae6162908", "relation": "blocks", "root": "1927916"}
+{"kind": "v2_f4", "participants": ["1788778", "1771831"], "qid": "v3_07b10750aa32331d07135046", "relation": "depends_on", "root": "1788778"}
+{"kind": "v2_f4", "participants": ["1828742", "1833522"], "qid": "v3_e8f709ddba58e32c4c4caff0", "relation": "duplicate_of", "root": "1828742"}
+{"kind": "v2_f4", "participants": ["1812100", "1856562"], "qid": "v3_edde6a9db3ddeec637823857", "relation": "see_also", "root": "1812100"}
+{"kind": "v2_f4", "participants": ["1777736", "1777545"], "qid": "v3_d77f24de8bf922fcf7b81408", "relation": "see_also", "root": "1777736"}
+{"kind": "v2_f4", "participants": ["1826658", "388287"], "qid": "v3_d727307912805f3b4de8b0e2", "relation": "see_also", "root": "1826658"}
+{"kind": "v2_f4", "participants": ["1767589", "1763573"], "qid": "v3_d3f393f5da5b25ab23397a80", "relation": "regressed_by", "root": "1767589"}
+{"kind": "v2_f4", "participants": ["1784668", "1740252"], "qid": "v3_2d5bdeed9d57ab27da1ab9d8", "relation": "depends_on", "root": "1784668"}
+{"kind": "v2_f4", "participants": ["1854692", "1846381", "1868476"], "qid": "v3_1309f481ed6510421e06ed1c", "relation": "blocks", "root": "1854692"}
+{"kind": "v2_f4", "participants": ["1832179", "1790189"], "qid": "v3_ee695ae6afe43c3b7e33a92c", "relation": "blocks", "root": "1832179"}
+{"kind": "v2_f4", "participants": ["1870537", "1869663"], "qid": "v3_2ff1856988036955807233c4", "relation": "duplicate_of", "root": "1870537"}
+{"kind": "v2_f4", "participants": ["1705283", "1703941"], "qid": "v3_01f65fe0204734d6e3ca2006", "relation": "regressed_by", "root": "1705283"}
+{"kind": "v2_f4", "participants": ["1863977", "1863980"], "qid": "v3_3d62be7fda8cd31e44cd7712", "relation": "duplicate_of", "root": "1863977"}
+{"kind": "v2_f4", "participants": ["1845551", "1832514"], "qid": "v3_72c9f9d31b7a49e57c1b40b6", "relation": "regressed_by", "root": "1845551"}
+{"kind": "v2_f4", "participants": ["1705907", "1692088"], "qid": "v3_c916dee64379a6b60ddad08e", "relation": "duplicate_of", "root": "1705907"}
+{"kind": "v2_f4", "participants": ["1704195", "1678750"], "qid": "v3_cee6bafa44b442294c93536a", "relation": "blocks", "root": "1704195"}
+{"kind": "v2_f4", "participants": ["1699059", "1697295"], "qid": "v3_be7a997b8de7d8cfe1cd5444", "relation": "regressed_by", "root": "1699059"}
+{"kind": "v2_f4", "participants": ["1815898", "1875512"], "qid": "v3_13f00afff1306227c5e4e394", "relation": "see_also", "root": "1815898"}
+{"kind": "v2_f4", "participants": ["1798796", "1794900"], "qid": "v3_74c7eb30794ad063fdb11868", "relation": "blocks", "root": "1798796"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1798041"], "qid": "v3_c11305bda7d7e3bc874efa48", "root": "1798041"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1883641"], "qid": "v3_b72e73192e9037d14e4b0b6a", "root": "1883641"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1821441"], "qid": "v3_e065da9c816e0fb6bbc52e80", "root": "1821441"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1696645"], "qid": "v3_73ccd43a591e77176f330137", "root": "1696645"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1803673"], "qid": "v3_96c760cadadeb0dbc5677ea0", "root": "1803673"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1893214"], "qid": "v3_103a8cb51e03db3b19113411", "root": "1893214"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1864517"], "qid": "v3_0a4d7a46b766f03a6c928922", "root": "1864517"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1797994"], "qid": "v3_7f033c324ddb57fcf1bd27c7", "root": "1797994"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1731627"], "qid": "v3_3631fe02316a1ddb6b8a2334", "root": "1731627"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1868057"], "qid": "v3_fe1a65bec3df42028de79894", "root": "1868057"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1876302"], "qid": "v3_70823e5a01217ee34baa83df", "root": "1876302"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1857519"], "qid": "v3_d194ed8d6cf0087bb03aec58", "root": "1857519"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1771237"], "qid": "v3_5da91d2edbcb0e96c621ef8b", "root": "1771237"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1781343"], "qid": "v3_55d5fa1ebd7426ee7e0d86be", "root": "1781343"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1789359"], "qid": "v3_034d6269682fd7fda06ec27e", "root": "1789359"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1896755"], "qid": "v3_08df4bf4b9655f70a8ccec18", "root": "1896755"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1729592"], "qid": "v3_f69a70cc12a3b0d3f8a5a3fb", "root": "1729592"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1818498"], "qid": "v3_ce2188be2eae94f15418c96f", "root": "1818498"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1690283"], "qid": "v3_062df38f7df59241edf290c9", "root": "1690283"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1925161"], "qid": "v3_36809316c601ab2bf623f070", "root": "1925161"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1780649"], "qid": "v3_6163fa91c007875ea7fc456e", "root": "1780649"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1854692"], "qid": "v3_7ff6f5baf40a1d7152dd7ab3", "root": "1854692"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1740241"], "qid": "v3_876ab493ff66e744fa43c09e", "root": "1740241"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1700239"], "qid": "v3_9a2cb1539bbfe70eeb37d6ae", "root": "1700239"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1882569"], "qid": "v3_4dcc24b9a529724e7d8abc49", "root": "1882569"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1761516"], "qid": "v3_9eea039edbaabaa749014a98", "root": "1761516"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1893862"], "qid": "v3_0cb3981045f406e27a9449e6", "root": "1893862"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1795931"], "qid": "v3_733ce276fb990c15fd8f982a", "root": "1795931"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1771059"], "qid": "v3_c51c68d19ab62cc3f262e5ea", "root": "1771059"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1865757"], "qid": "v3_93800d2f1340d82bf75e4682", "root": "1865757"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1727171"], "qid": "v3_852f2be06fd50b240d9f20ec", "root": "1727171"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1863773"], "qid": "v3_09613a08038f2282a43e6147", "root": "1863773"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1888548"], "qid": "v3_1eb8d82aa95eda4d60d3f008", "root": "1888548"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1776567"], "qid": "v3_3b648b2c66d25664c1513da4", "root": "1776567"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1770818"], "qid": "v3_8ab0974e55c91141ddb030e1", "root": "1770818"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1928767"], "qid": "v3_ed2977b2cf4d3fc464a6dc09", "root": "1928767"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1816969"], "qid": "v3_42519628d1e37b56ea35977d", "root": "1816969"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1846736"], "qid": "v3_75f71bbbf7757772d468aec4", "root": "1846736"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1750172"], "qid": "v3_60f2009a7e6aebfe679ef6cd", "root": "1750172"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1718010"], "qid": "v3_ff0748bad6ef403e46ff0dd1", "root": "1718010"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1776045"], "qid": "v3_454cc6fb747a21bda5fe0af6", "root": "1776045"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1723871"], "qid": "v3_16cfb3021e8c537c6f334c30", "root": "1723871"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1872517"], "qid": "v3_a751243879b483663a725b15", "root": "1872517"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1870778"], "qid": "v3_71bb2222eaff1243c79789a4", "root": "1870778"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1778897"], "qid": "v3_1ed4fe1a80607e9f3859653e", "root": "1778897"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1748107"], "qid": "v3_1838b0699cb6ed674b7187d9", "root": "1748107"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1766152"], "qid": "v3_fe1b85d24b10ad878249a2ad", "root": "1766152"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1886514"], "qid": "v3_faa25690da3bc35ad5e794d3", "root": "1886514"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1701183"], "qid": "v3_41aa4adfd300f67bb1352f3f", "root": "1701183"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1804891"], "qid": "v3_16abfc1b6cf0d4eb13464d00", "root": "1804891"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1848704"], "qid": "v3_52921810932bdcd4d5a7a894", "root": "1848704"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1875057"], "qid": "v3_7757684e307e5f00bfdc1247", "root": "1875057"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1694512"], "qid": "v3_a144792c8ae76bf49499a4d5", "root": "1694512"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1784926"], "qid": "v3_632bf77e91cae529b20d591c", "root": "1784926"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1784668"], "qid": "v3_ccc43beec8b45f4ae37c146e", "root": "1784668"}
+{"evidence_scope": "product, component, status, resolution and filing time only", "kind": "v2_f6", "participants": ["1787521"], "qid": "v3_6da23f5ad979b4db93f8c0f4", "root": "1787521"}
+{"kind": "identify", "participants": ["1706363"], "qid": "v3_5078c4bae600dcd6613ab3c8", "root": "1706363"}
+{"field": "status", "kind": "field", "participants": ["1706363"], "qid": "v3_95df5c07fefcacf6af5a29a1", "root": "1706363"}
+{"kind": "identify", "participants": ["1879448"], "qid": "v3_95c60a79a2a5baca55c7e4d8", "root": "1879448"}
+{"field": "status", "kind": "field", "participants": ["1879448"], "qid": "v3_e549ef94dabe04a5142078b6", "root": "1879448"}
+{"kind": "identify", "participants": ["1706004"], "qid": "v3_6dd0e74d110040526be9694d", "root": "1706004"}
+{"field": "component", "kind": "field", "participants": ["1706004"], "qid": "v3_d40f223fec0d377ed9b11045", "root": "1706004"}
+{"kind": "identify", "participants": ["1766470"], "qid": "v3_460fb4bca9aecc82aad2332d", "root": "1766470"}
+{"field": "status", "kind": "field", "participants": ["1766470"], "qid": "v3_d8fc4845234a347957a9be89", "root": "1766470"}
+{"kind": "identify", "participants": ["1861451"], "qid": "v3_024301342c9615e171c99c3e", "root": "1861451"}
+{"field": "resolution", "kind": "field", "participants": ["1861451"], "qid": "v3_0104248abe17554a341d3f67", "root": "1861451"}
+{"kind": "identify", "participants": ["1895256"], "qid": "v3_10f5e1d3824f38570c2e1ffa", "root": "1895256"}
+{"field": "resolution", "kind": "field", "participants": ["1895256"], "qid": "v3_e7a8b6e8644c736bdf7fbe78", "root": "1895256"}
+{"kind": "identify", "participants": ["1709390"], "qid": "v3_4236ca0257a99af1bb359b5c", "root": "1709390"}
+{"field": "status", "kind": "field", "participants": ["1709390"], "qid": "v3_e2b33bc52b1ad989c1470d3d", "root": "1709390"}
+{"kind": "identify", "participants": ["1806645"], "qid": "v3_af5c63479be574276ad3ead1", "root": "1806645"}
+{"field": "resolution", "kind": "field", "participants": ["1806645"], "qid": "v3_060c9fda9d6d50a2d8e0b0ea", "root": "1806645"}
+{"kind": "identify", "participants": ["1877302"], "qid": "v3_8e6b14886df3fc053c301bb4", "root": "1877302"}
+{"field": "resolution", "kind": "field", "participants": ["1877302"], "qid": "v3_701fe45aaca2ed7f10b3732e", "root": "1877302"}
+{"kind": "identify", "participants": ["1701723"], "qid": "v3_4bdc5843dd395e13de778da9", "root": "1701723"}
+{"field": "component", "kind": "field", "participants": ["1701723"], "qid": "v3_316d2666f816640781612afd", "root": "1701723"}
+{"kind": "identify", "participants": ["1802738"], "qid": "v3_f4dd32e48377dbfd6f3ed5b1", "root": "1802738"}
+{"field": "component", "kind": "field", "participants": ["1802738"], "qid": "v3_a78d5ded67614ea38cf8dd07", "root": "1802738"}
+{"kind": "identify", "participants": ["1772503"], "qid": "v3_0cd0ddfbd20bba5f832fff60", "root": "1772503"}
+{"field": "resolution", "kind": "field", "participants": ["1772503"], "qid": "v3_ba9e0b858accaa67825d2f57", "root": "1772503"}
+{"kind": "identify", "participants": ["1860856"], "qid": "v3_f9a400d0a9564f7ac7b510fa", "root": "1860856"}
+{"field": "component", "kind": "field", "participants": ["1860856"], "qid": "v3_51cbdc28da97f10fc07c3e9e", "root": "1860856"}
+{"kind": "identify", "participants": ["1888548", "1892658"], "qid": "v3_317853e3e1b86c14ec7e0b18", "root": "1888548"}
+{"field": "status", "kind": "field", "participants": ["1888548", "1892658"], "qid": "v3_4697f78da558280b75d27cc1", "root": "1888548"}
+{"kind": "identify", "participants": ["1834938"], "qid": "v3_6da8a502d8ecd0c4d8860d87", "root": "1834938"}
+{"field": "resolution", "kind": "field", "participants": ["1834938"], "qid": "v3_567ff197bf88c0e61b2dae24", "root": "1834938"}
+{"kind": "identify", "participants": ["1886052"], "qid": "v3_eb239f68c90243c57b15bbc2", "root": "1886052"}
+{"field": "component", "kind": "field", "participants": ["1886052"], "qid": "v3_892da04e570c0fce1717e86a", "root": "1886052"}
+{"kind": "identify", "participants": ["1706909", "1798645"], "qid": "v3_5d652d596a5fb64182c0a724", "root": "1706909"}
+{"kind": "identify", "participants": ["1771476"], "qid": "v3_bd37fa42931e205c2bfd1964", "root": "1771476"}
+{"field": "resolution", "kind": "field", "participants": ["1771476"], "qid": "v3_651504749bc6c135fe849841", "root": "1771476"}
+{"kind": "identify", "participants": ["1853815"], "qid": "v3_bc1e02c69d73e8c643588a77", "root": "1853815"}
+{"field": "resolution", "kind": "field", "participants": ["1853815"], "qid": "v3_14f88ced481fe2942fe346ff", "root": "1853815"}
+{"kind": "identify", "participants": ["1926108"], "qid": "v3_7e9d16af3fc7c44172ddf3e7", "root": "1926108"}
+{"field": "component", "kind": "field", "participants": ["1926108"], "qid": "v3_c9fa5c539b08ac54632f93a9", "root": "1926108"}
+{"kind": "identify", "participants": ["1823766"], "qid": "v3_c5f5d2bf5d1faf3e0a7bdbdb", "root": "1823766"}
+{"field": "component", "kind": "field", "participants": ["1823766"], "qid": "v3_eaabf1e2abbd2c2fee05fbfd", "root": "1823766"}
+{"kind": "identify", "participants": ["1887220"], "qid": "v3_177ae024d8c177e65c717493", "root": "1887220"}
+{"field": "resolution", "kind": "field", "participants": ["1887220"], "qid": "v3_cb67655e6ee921ade97e2072", "root": "1887220"}
+{"kind": "identify", "participants": ["1704602"], "qid": "v3_3c1b3af28f91dd97256e602b", "root": "1704602"}
+{"field": "component", "kind": "field", "participants": ["1704602"], "qid": "v3_ea943835082fe6c4b9002a7a", "root": "1704602"}
+{"kind": "identify", "participants": ["1703127"], "qid": "v3_b5e6634059263cce1d9fe603", "root": "1703127"}
+{"field": "resolution", "kind": "field", "participants": ["1703127"], "qid": "v3_9db8caf410b9d34f43dd8b87", "root": "1703127"}
+{"kind": "identify", "participants": ["1824160"], "qid": "v3_f47643d80df6b839be456147", "root": "1824160"}
+{"field": "component", "kind": "field", "participants": ["1824160"], "qid": "v3_ce6827c0cc67dfe86d83d47d", "root": "1824160"}
+{"kind": "identify", "participants": ["1807000"], "qid": "v3_67ed021f4c7ef19a6e48c858", "root": "1807000"}
+{"field": "component", "kind": "field", "participants": ["1807000"], "qid": "v3_99fc8ab2edb4072f36ed294f", "root": "1807000"}
+{"kind": "identify", "participants": ["1816139"], "qid": "v3_857552944afeb9c3d31ea7c2", "root": "1816139"}
+{"field": "status", "kind": "field", "participants": ["1816139"], "qid": "v3_b98aa24abf3594c6986a595d", "root": "1816139"}
+{"kind": "identify", "participants": ["1927101"], "qid": "v3_62a98d294ddbecad25d83627", "root": "1927101"}
+{"field": "component", "kind": "field", "participants": ["1927101"], "qid": "v3_5393bb5646a76d12ea047a75", "root": "1927101"}
+{"kind": "identify", "participants": ["1855604"], "qid": "v3_6c202266a4e2bf55efdf1023", "root": "1855604"}
+{"field": "status", "kind": "field", "participants": ["1855604"], "qid": "v3_97d75731293cc90e9e6f4bc5", "root": "1855604"}
+{"kind": "identify", "participants": ["1888958"], "qid": "v3_da88c3b614a69c9d54ec096c", "root": "1888958"}
+{"field": "status", "kind": "field", "participants": ["1888958"], "qid": "v3_b0defb77082e18f9c424be7f", "root": "1888958"}
+{"kind": "identify", "participants": ["1702603"], "qid": "v3_a376de6654a3ee0175177998", "root": "1702603"}
+{"field": "status", "kind": "field", "participants": ["1702603"], "qid": "v3_d58921a62453b0f37938a6df", "root": "1702603"}
+{"kind": "identify", "participants": ["1702717"], "qid": "v3_1f2c1ddfb7cd8d1b86bb4f94", "root": "1702717"}
+{"field": "status", "kind": "field", "participants": ["1702717"], "qid": "v3_80f75b255b41fb6dcb39c9a2", "root": "1702717"}
+{"kind": "identify", "participants": ["1806041"], "qid": "v3_da0b4a48822ea9ffe86e2349", "root": "1806041"}
+{"field": "status", "kind": "field", "participants": ["1806041"], "qid": "v3_eb80f2bcf31c17949d2e9e54", "root": "1806041"}
+{"kind": "identify", "participants": ["1704040"], "qid": "v3_48a496280bfc982d011d6076", "root": "1704040"}
+{"field": "resolution", "kind": "field", "participants": ["1704040"], "qid": "v3_39cf769db0f9122cd156a62b", "root": "1704040"}
+{"kind": "identify", "participants": ["1807892"], "qid": "v3_bc2d7699018cb4c863d1f19c", "root": "1807892"}
+{"field": "resolution", "kind": "field", "participants": ["1807892"], "qid": "v3_034cdd7278ac765cd578cba5", "root": "1807892"}
+{"kind": "identify", "participants": ["1894414"], "qid": "v3_8a03ebc368b31727de901bf6", "root": "1894414"}
+{"field": "status", "kind": "field", "participants": ["1894414"], "qid": "v3_090a0c1738fa9d5acf1a3b0b", "root": "1894414"}
+{"kind": "identify", "participants": ["1864179"], "qid": "v3_b716c5d81ec3e1ed871020f8", "root": "1864179"}
+{"field": "status", "kind": "field", "participants": ["1864179"], "qid": "v3_888959a902829c264f4222d9", "root": "1864179"}
+{"kind": "identify", "participants": ["1706836"], "qid": "v3_963bba25884488ad413da442", "root": "1706836"}
+{"field": "status", "kind": "field", "participants": ["1706836"], "qid": "v3_3ec26cf050c7042d63fdbf3d", "root": "1706836"}
+{"kind": "identify", "participants": ["1803446"], "qid": "v3_23e46c6baa915b5d46451ced", "root": "1803446"}
+{"field": "component", "kind": "field", "participants": ["1803446"], "qid": "v3_ddd76440f9c9d1962a9f297b", "root": "1803446"}
+{"kind": "identify", "participants": ["1853926"], "qid": "v3_1487f70a8460be1382d939a3", "root": "1853926"}
+{"field": "status", "kind": "field", "participants": ["1853926"], "qid": "v3_d73b6692b1e9d9e7831c12c2", "root": "1853926"}
+{"kind": "identify", "participants": ["1708553"], "qid": "v3_281e56a72d58a775f9a1e3b6", "root": "1708553"}
+{"field": "status", "kind": "field", "participants": ["1708553"], "qid": "v3_b7e0174bb4e8ec2fbfce1ad8", "root": "1708553"}
+{"kind": "identify", "participants": ["1776607"], "qid": "v3_6e1e391334f18cb93aabe1ee", "root": "1776607"}
+{"field": "status", "kind": "field", "participants": ["1776607"], "qid": "v3_06386134e4e88aa79faa821d", "root": "1776607"}
+{"kind": "identify", "participants": ["1812687"], "qid": "v3_bf8925152d4279c75c59ac12", "root": "1812687"}
+{"field": "component", "kind": "field", "participants": ["1812687"], "qid": "v3_d2895d7b8d69edb516367ace", "root": "1812687"}
+{"kind": "identify", "participants": ["1708652"], "qid": "v3_684c2e89b41804374068a721", "root": "1708652"}
+{"field": "resolution", "kind": "field", "participants": ["1708652"], "qid": "v3_86d1b1e7359de4c68e365db3", "root": "1708652"}
+{"kind": "identify", "participants": ["1772263"], "qid": "v3_2c0c2014665829549590f3ab", "root": "1772263"}
+{"field": "resolution", "kind": "field", "participants": ["1772263"], "qid": "v3_11168d337283aa90f9325bda", "root": "1772263"}
+{"kind": "identify", "participants": ["1839674"], "qid": "v3_9105524617d84554e0ebbb8e", "root": "1839674"}
+{"field": "component", "kind": "field", "participants": ["1839674"], "qid": "v3_cea9fa1409cfbde811ce2805", "root": "1839674"}
+{"kind": "identify", "participants": ["1883661"], "qid": "v3_2d7666e74ed6321e3e22ea94", "root": "1883661"}
+{"field": "resolution", "kind": "field", "participants": ["1883661"], "qid": "v3_ae3fedac95f6c44a401bc983", "root": "1883661"}
+{"kind": "identify", "participants": ["1804898"], "qid": "v3_9e983ead568e6b91d168e076", "root": "1804898"}
+{"field": "resolution", "kind": "field", "participants": ["1804898"], "qid": "v3_018b80cafa117a6453f7dda4", "root": "1804898"}
+{"kind": "identify", "participants": ["1889710"], "qid": "v3_2e07ae54c49789b8b2306380", "root": "1889710"}
+{"field": "resolution", "kind": "field", "participants": ["1889710"], "qid": "v3_30855743adb7e96c9a545526", "root": "1889710"}
+{"kind": "identify", "participants": ["1804797"], "qid": "v3_1b3ff16f909ac2e93a8c7422", "root": "1804797"}
+{"field": "status", "kind": "field", "participants": ["1804797"], "qid": "v3_b4d42aa0b5f18e1e0aa257c3", "root": "1804797"}
+{"kind": "identify", "participants": ["1845087"], "qid": "v3_209d4fac77db8285c9de23c7", "root": "1845087"}
+{"field": "resolution", "kind": "field", "participants": ["1845087"], "qid": "v3_e662c56300921d2544857e7b", "root": "1845087"}
+{"kind": "identify", "participants": ["1819267"], "qid": "v3_79bb45ec3449635fdd8aae57", "root": "1819267"}
+{"field": "resolution", "kind": "field", "participants": ["1819267"], "qid": "v3_011ebf3cf89ca55a816f1149", "root": "1819267"}
+{"kind": "identify", "participants": ["1762502"], "qid": "v3_24c291ff9ec21897dcdd78a8", "root": "1762502"}
+{"field": "component", "kind": "field", "participants": ["1762502"], "qid": "v3_de4aa96d6ab8e6d8ae49bae4", "root": "1762502"}
+{"kind": "identify", "participants": ["1767833"], "qid": "v3_135b94ae9da75e96b018840d", "root": "1767833"}
+{"field": "status", "kind": "field", "participants": ["1767833"], "qid": "v3_bebbcf0c24c76b53f7111f5c", "root": "1767833"}
+{"kind": "identify", "participants": ["1825362"], "qid": "v3_c478623fa5b9e28e82486988", "root": "1825362"}
+{"field": "component", "kind": "field", "participants": ["1825362"], "qid": "v3_f8458f352e51b7f64227ec1e", "root": "1825362"}
+{"kind": "identify", "participants": ["1879587"], "qid": "v3_3ee2a5551995ab4c712a8a12", "root": "1879587"}
+{"field": "status", "kind": "field", "participants": ["1879587"], "qid": "v3_891fb323c13f3cd89c2d67ae", "root": "1879587"}
+{"kind": "identify", "participants": ["1775957", "1891450"], "qid": "v3_2f2760973fa17939850af0d1", "root": "1775957"}
+{"field": "component", "kind": "field", "participants": ["1775957", "1891450"], "qid": "v3_1173462bfca2b8fe6c533040", "root": "1775957"}
+{"kind": "identify", "participants": ["1883140"], "qid": "v3_ab306d259d36d3933a4d1cdd", "root": "1883140"}
+{"field": "component", "kind": "field", "participants": ["1883140"], "qid": "v3_7527f92dcbafce2e2e6ccdca", "root": "1883140"}
+{"kind": "identify", "participants": ["1883736"], "qid": "v3_312103433a497bc2757a89b0", "root": "1883736"}
+{"field": "resolution", "kind": "field", "participants": ["1883736"], "qid": "v3_49646167bc350fc31d4b6e6e", "root": "1883736"}
+{"kind": "identify", "participants": ["1705540"], "qid": "v3_bc7a7364ae90026cd8c78c89", "root": "1705540"}
+{"field": "status", "kind": "field", "participants": ["1705540"], "qid": "v3_8b461841818fc420e7d2740f", "root": "1705540"}
+{"kind": "identify", "participants": ["1829912"], "qid": "v3_45d6263954c3ad6852575508", "root": "1829912"}
+{"field": "resolution", "kind": "field", "participants": ["1829912"], "qid": "v3_00e6c3a68244c772479523e3", "root": "1829912"}
+{"kind": "identify", "participants": ["1881798"], "qid": "v3_ba6e27bcc3e0acf819f3bff6", "root": "1881798"}
+{"field": "status", "kind": "field", "participants": ["1881798"], "qid": "v3_4d8015e7e12ae1afe4814b6c", "root": "1881798"}
+{"kind": "identify", "participants": ["1766400"], "qid": "v3_c05f96ce3972e3dfd3272566", "root": "1766400"}
+{"field": "status", "kind": "field", "participants": ["1766400"], "qid": "v3_ff86c0b960c51e3044c52dd2", "root": "1766400"}
+{"kind": "identify", "participants": ["1838034"], "qid": "v3_ea1dc379055c8784fab28300", "root": "1838034"}
+{"field": "resolution", "kind": "field", "participants": ["1838034"], "qid": "v3_723375c40ddf63cdc87e31f5", "root": "1838034"}
+{"kind": "identify", "participants": ["1702536"], "qid": "v3_89ab1ba0b1becba0d429e10e", "root": "1702536"}
+{"field": "resolution", "kind": "field", "participants": ["1702536"], "qid": "v3_0906f753b428dcec6cf1e84a", "root": "1702536"}
+{"kind": "identify", "participants": ["1770390"], "qid": "v3_1b7c08c14c2ba8a9d012fe0a", "root": "1770390"}
+{"field": "status", "kind": "field", "participants": ["1770390"], "qid": "v3_7b70f90180f1710ab14590c3", "root": "1770390"}
+{"kind": "identify", "participants": ["1859882"], "qid": "v3_166908e0a8b41c7ba717763d", "root": "1859882"}
+{"field": "resolution", "kind": "field", "participants": ["1859882"], "qid": "v3_36004420538cb7dbdcd08998", "root": "1859882"}
+{"kind": "identify", "participants": ["1890802"], "qid": "v3_5e21f28d9d91e28485505914", "root": "1890802"}
+{"field": "component", "kind": "field", "participants": ["1890802"], "qid": "v3_edfc3f948d4174828f600ebe", "root": "1890802"}
+{"kind": "identify", "participants": ["1703177"], "qid": "v3_35b1c4d1c88f4bc12bb67151", "root": "1703177"}
+{"field": "status", "kind": "field", "participants": ["1703177"], "qid": "v3_482cedebbfb07b797056c24f", "root": "1703177"}
+{"kind": "identify", "participants": ["1802107"], "qid": "v3_ee680e3e317867894d4c85f4", "root": "1802107"}
+{"field": "component", "kind": "field", "participants": ["1802107"], "qid": "v3_41e8a15a2f9d74db652646e0", "root": "1802107"}
+{"kind": "identify", "participants": ["1833829"], "qid": "v3_bae1b77c28a3d1956bcec8af", "root": "1833829"}
+{"field": "status", "kind": "field", "participants": ["1833829"], "qid": "v3_dbac9d143b05d92961e771e3", "root": "1833829"}
+{"kind": "identify", "participants": ["1875955"], "qid": "v3_3d30ddc83877b45f08b73c29", "root": "1875955"}
+{"field": "resolution", "kind": "field", "participants": ["1875955"], "qid": "v3_07e438a5229886a47100c0be", "root": "1875955"}
+{"kind": "identify", "participants": ["1775997"], "qid": "v3_b5fe949bd5c677a76443cbc3", "root": "1775997"}
+{"field": "status", "kind": "field", "participants": ["1775997"], "qid": "v3_930e07f2c12a50829ac22436", "root": "1775997"}
+{"kind": "identify", "participants": ["1811922"], "qid": "v3_00b8f96b86a22f64f9e070f9", "root": "1811922"}
+{"field": "resolution", "kind": "field", "participants": ["1811922"], "qid": "v3_4973db48a1a5ca478684a126", "root": "1811922"}
+{"kind": "identify", "participants": ["1767054"], "qid": "v3_356cc8cc7f22d6d4f1934a2d", "root": "1767054"}
+{"field": "component", "kind": "field", "participants": ["1767054"], "qid": "v3_4eb9d0e24fe41de3a6031844", "root": "1767054"}
+{"kind": "identify", "participants": ["1829161"], "qid": "v3_071a335bd8473228b153cb95", "root": "1829161"}
+{"field": "component", "kind": "field", "participants": ["1829161"], "qid": "v3_0a159405167f78648a08279d", "root": "1829161"}
+{"kind": "identify", "participants": ["1889941"], "qid": "v3_07d82fe63750b7f866b3c925", "root": "1889941"}
+{"field": "resolution", "kind": "field", "participants": ["1889941"], "qid": "v3_446b425cb15f27a73df74f22", "root": "1889941"}
+{"kind": "identify", "participants": ["1765533"], "qid": "v3_20e55b835e56a0833b58ce43", "root": "1765533"}
+{"field": "component", "kind": "field", "participants": ["1765533"], "qid": "v3_6e7c9750b120829b31de0e30", "root": "1765533"}
+{"kind": "identify", "participants": ["1872739"], "qid": "v3_1805f8230f749ac18c96ba9f", "root": "1872739"}
+{"field": "resolution", "kind": "field", "participants": ["1872739"], "qid": "v3_9c969dadf9ea9e4b26d4b8cd", "root": "1872739"}
+{"kind": "identify", "participants": ["1766636"], "qid": "v3_34a275ffd8b73942d4129eb4", "root": "1766636"}
+{"field": "resolution", "kind": "field", "participants": ["1766636"], "qid": "v3_ab59194277463d88939285ab", "root": "1766636"}
+{"kind": "identify", "participants": ["1870852"], "qid": "v3_5749c04a052aa203ab8de002", "root": "1870852"}
+{"field": "status", "kind": "field", "participants": ["1870852"], "qid": "v3_8652323894e816f009587677", "root": "1870852"}
+{"kind": "identify", "participants": ["1884784"], "qid": "v3_04d828f7dbba4f213c04d834", "root": "1884784"}
+{"field": "component", "kind": "field", "participants": ["1884784"], "qid": "v3_7d61af671b2a3528c19ef135", "root": "1884784"}
+{"kind": "identify", "participants": ["1893214"], "qid": "v3_b0b4c6f2f6d954484c8e0905", "root": "1893214"}
+{"field": "status", "kind": "field", "participants": ["1893214"], "qid": "v3_79f4963b6be9bce53f2be559", "root": "1893214"}

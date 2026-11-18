@@ -1,0 +1,163 @@
+{
+  "counts": {
+    "dev:F1": 64,
+    "dev:F2": 0,
+    "dev:F3": 89,
+    "dev:F4": 29,
+    "dev:F5": 0,
+    "dev:F6": 22,
+    "dev:F6H": 13,
+    "dev:KI": 50,
+    "dev:MH": 8,
+    "test:F1": 86,
+    "test:F2": 0,
+    "test:F3": 0,
+    "test:F4": 54,
+    "test:F5": 0,
+    "test:F6": 34,
+    "test:F6H": 27,
+    "test:KI": 123,
+    "test:MH": 47
+  },
+  "descriptions_checkpoint": {
+    "bytes": 38779,
+    "sha256": "17f2ccc786478cd32f872af90aa750177fedf9882e352e3c9e5829703a7b2b9b"
+  },
+  "identity": {
+    "code": {
+      "provider.py": "1f76eb87e56b3c8121d2c1a77de2badefa540d854a87c0cbddfb5f98a3b8667d",
+      "v3.py": "41fe8e19d929cdda86c22401e49fc919ed372d3633a180a1d8a388cb8787c2e5",
+      "v3_freeze.py": "2501d5559ea8c581659e5a5a80b0ce241ff74dd39c17ad733af8803b3407bc85",
+      "v3_rules.py": "84a65db89a9992128947da9d6e1f7513b321bab388e3c535f70e525b3085d528",
+      "v3_source.py": "14f295fe7b0690fbd0ebc92053237515d965d5fb0613fa5f098d547e113a57f2",
+      "v3_validate.py": "46d1408a054a84555fb6993a373e6dec0f7b929a50c8f43fbeee6e7cfde520e0",
+      "v3_verify.py": "c0d6f430653774383f9237e85eeeeae87c5492d7795dcefceb2ba87a25aaebe2"
+    },
+    "config": {
+      "absent_candidate_multiplier": 20,
+      "avoid_prior_v2_dev_roots_in_new_test": true,
+      "canonical_db": "outputs/normalization/phase03b/run-20261022T023542Z-1182018/canonical.duckdb",
+      "canonical_manifest": "outputs/normalization/phase03b/run-20261022T023542Z-1182018/manifest.json",
+      "closed_statuses": [
+        "RESOLVED",
+        "VERIFIED",
+        "CLOSED"
+      ],
+      "comment_character_limit": 1500,
+      "corpus": "outputs/eval_extension/39a751ca190bbbc3/corpus.jsonl",
+      "corpus_manifest": "outputs/eval_extension/39a751ca190bbbc3/corpus_manifest.json",
+      "embedding_batch_size": 32,
+      "embedding_device": "cpu",
+      "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "expanded_manifest": "outputs/eval_extension/bank-dacb7ca0ceb7e0ef/bank_manifest.json",
+      "expanded_selected": "outputs/eval_extension/bank-dacb7ca0ceb7e0ef/selected.jsonl",
+      "expected_cohort_size": 3000,
+      "f1_cap": 150,
+      "hard_abstention_target": 40,
+      "history_checkpoint": "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/checkpoint.json",
+      "history_db": "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/api_enrichment.duckdb",
+      "history_summary": "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/summary.json",
+      "ki_parent_target": 110,
+      "ki_target": 220,
+      "llm_config": "configs/llm.yaml",
+      "max_alternates": 3,
+      "multi_hop_target": 80,
+      "natural_approved": "outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved.jsonl",
+      "natural_manifest": "outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved_manifest.json",
+      "open_statuses": [
+        "NEW",
+        "ASSIGNED",
+        "REOPENED",
+        "UNCONFIRMED"
+      ],
+      "output_root": "outputs/benchmark/v3",
+      "phase05_dir": "outputs/benchmark/phase05/run-65c5be3381f66811/frozen-d8ef826fbeb90d13",
+      "phase05_freeze_id": "d8ef826fbeb90d13",
+      "seed": 317,
+      "similarity_threshold": 0.92,
+      "spotcheck_targets": {
+        "F6H": 10,
+        "KI": 30,
+        "MH": 15
+      },
+      "unknown_snapshot_scope": "Downloaded Firefox-product cohort, seed 317; archive snapshot date UNKNOWN. Recorded fields are not live Bugzilla state.",
+      "version": "v3"
+    },
+    "git_commit": "907e8d72801da8abd141744be9ba681897471446",
+    "limit": null,
+    "llm": {
+      "cache": "outputs/llm/groq/cache.sqlite",
+      "daily_fraction": 0.9,
+      "env_file": ".env",
+      "ledger": "outputs/llm/groq/ledger.jsonl",
+      "max_output_tokens": 2048,
+      "max_retries": 5,
+      "models": {
+        "aux": {
+          "id": "openai/gpt-oss-20b",
+          "rpd": 1000,
+          "rpm": 3
+        },
+        "generator": {
+          "id": "openai/gpt-oss-20b",
+          "rpd": 1000,
+          "rpm": 3
+        }
+      },
+      "provider": "groq",
+      "reasoning_effort": "low",
+      "temperature": 0,
+      "thinking_budget": null,
+      "timeout_ms": 60000
+    },
+    "original_freeze": "d8ef826fbeb90d13",
+    "source_pins": {
+      "canonical_manifest": "3c924a3741c75230d3a307b7335814f7075108528eebc43a50e2f827bb5daccf",
+      "corpus_manifest": "4c043eb3151bdfd72af9d39e4836f2525580823d66a8b423157b67dd5b27b591",
+      "expanded_manifest": "2847937cb50e0db9086f1acedf4ff040d96def7ca34d272f17e674be40e3354f",
+      "expanded_selected": "86c3b85d0878aad955455e96b8eff45004801837f894fd61f5dbb417577d0fc7",
+      "history_checkpoint": "a69ed2bedd6f5682441317b468e82a3d3349c312f305537bb473c9b51c7c7801",
+      "history_summary": "831252b846a70cea4594b8d422300ae3a3f22af7941c1862552156ed04d1519c",
+      "input_file_stats": {
+        "canonical_db": {
+          "bytes": 1892691968,
+          "mtime_ns": 1792637060292643244
+        },
+        "corpus": {
+          "bytes": 14108633,
+          "mtime_ns": 1794358192539663439
+        },
+        "history_db": {
+          "bytes": 2109440,
+          "mtime_ns": 1792705881953456270
+        }
+      },
+      "natural_approved": "46d28c98a1e1443ffe30d0899cb12836f37e445953923df640b3d975d6c3b3b1",
+      "natural_manifest": "8f9e8f074739596af3907016beca500d2916e7c127331a8d6a27bbb7e870fb5c",
+      "phase05_manifest": "7cf74fd6dac93cf571c3fa7caf2037f2aa16d00ad21729d5d204f4a0eb7c34c9"
+    }
+  },
+  "sha256": {
+    "config_snapshot.json": "472bea40ab2cdf84f8fe80bc3114ab5ec80ac8b072cbae0e9482895488701b9f",
+    "descriptions.jsonl": "17f2ccc786478cd32f872af90aa750177fedf9882e352e3c9e5829703a7b2b9b",
+    "dev.gold.jsonl": "3175b5cf934ba287f869ac3d1958f66203ddcedd64599ca18173c4511b16d48b",
+    "dev.questions.jsonl": "3bf7f4972a79a9f66abc621db36606f5dc62ea364116ef39aa0cd02f8906995a",
+    "exclusions.json": "c27692188380c691ede05b960bd977f6ee69d805b6cdb4762262d3cb4d232e07",
+    "gold_checks.jsonl": "73fb8ea2d33dd77f952a2c4552ba37935ac7f1427693cc3db4dad707a58c9110",
+    "gold_mismatches.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "inputs_verified.json": "7c825152c1ced99d35a4c379da47a176f4f4fe4d55a591b20669e8da80881444",
+    "ki_plan.json": "65284e6479220610848f499ab9d4a2bd80321f828412d890aaf617181d02867d",
+    "oracles.jsonl": "4de7e4e50abfbe72ed452a266e2da65258268f5cde4d2c726d4fd29b44520e30",
+    "qrels_v3_dev.jsonl": "f9d1f853569f979735fc83ae3da4e44093473a5e28d3f2cd73f29b015b5db8b0",
+    "qrels_v3_test.jsonl": "564887409040dc22c55628ba2ec850618dda7dd136861bfd420e6ed1834eb189",
+    "review/spotcheck_v3.csv": "85d0ffc412d23d7c81ae9e35f32a19144f23cebf01cee67aa4685c3b2a3cf5a7",
+    "summary.json": "8152af37acb94144e4b7c00b052fc9ff46e2111ed1723d7da5e2637ee3f00872",
+    "summary_embeddings.json": "68792b8359dee8746eabefdb31f35bb0d8dbd92f0aca5e9936d2aae10e4b33c5",
+    "summary_embeddings.npy": "b46bca1cdf33a483acb8598eca9c4a16c9949130f0dc9adf0a9a7d02925422c4",
+    "test.gold.jsonl": "4b70141402e71246cc6f19f54f347d0a72bcd458c7c16a41b94a2eb503bac122",
+    "test.questions.jsonl": "0db4864ae5b80b889371de53413924c731c6d47df234255bc5aaac627538f4d5",
+    "validation_report.json": "dee4fc7497185a6c5a6ce628e1de3da43bd7fcdb6e991ecdef9229a8bfc081c5"
+  },
+  "state": "DRAFT_READY_FOR_SPOTCHECK"
+}

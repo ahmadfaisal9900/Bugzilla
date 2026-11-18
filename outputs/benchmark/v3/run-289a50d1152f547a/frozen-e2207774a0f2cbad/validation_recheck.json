@@ -1,0 +1,23 @@
+{
+  "checked": 646,
+  "independent_gold_checked": true,
+  "limit": null,
+  "limitations": "Numeric and source provenance checks do not replace human review of KI wording.",
+  "mismatches": [],
+  "sha256": {
+    "config_snapshot.json": "472bea40ab2cdf84f8fe80bc3114ab5ec80ac8b072cbae0e9482895488701b9f",
+    "dev.gold.jsonl": "3175b5cf934ba287f869ac3d1958f66203ddcedd64599ca18173c4511b16d48b",
+    "dev.questions.jsonl": "3bf7f4972a79a9f66abc621db36606f5dc62ea364116ef39aa0cd02f8906995a",
+    "oracles.jsonl": "4de7e4e50abfbe72ed452a266e2da65258268f5cde4d2c726d4fd29b44520e30",
+    "qrels_v3_dev.jsonl": "f9d1f853569f979735fc83ae3da4e44093473a5e28d3f2cd73f29b015b5db8b0",
+    "qrels_v3_test.jsonl": "564887409040dc22c55628ba2ec850618dda7dd136861bfd420e6ed1834eb189",
+    "test.gold.jsonl": "4b70141402e71246cc6f19f54f347d0a72bcd458c7c16a41b94a2eb503bac122",
+    "test.questions.jsonl": "0db4864ae5b80b889371de53413924c731c6d47df234255bc5aaac627538f4d5"
+  },
+  "state": "PASS",
+  "verification_code_sha256": {
+    "v3_source.py": "14f295fe7b0690fbd0ebc92053237515d965d5fb0613fa5f098d547e113a57f2",
+    "v3_validate.py": "46d1408a054a84555fb6993a373e6dec0f7b929a50c8f43fbeee6e7cfde520e0",
+    "v3_verify.py": "c0d6f430653774383f9237e85eeeeae87c5492d7795dcefceb2ba87a25aaebe2"
+  }
+}

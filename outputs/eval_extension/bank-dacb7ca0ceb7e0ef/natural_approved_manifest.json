@@ -1,0 +1,10 @@
+{
+  "approved": 110,
+  "decisions": {
+    "APPROVE": 110,
+    "REJECT": 95
+  },
+  "review_sheet_sha256": "3a6dc424b6ee29eb0428d79715add38485b0cefe22051888fd730011b4f3c0e4",
+  "sha256": "46d28c98a1e1443ffe30d0899cb12836f37e445953923df640b3d975d6c3b3b1",
+  "state": "EXPORTED_HUMAN_APPROVALS"
+}

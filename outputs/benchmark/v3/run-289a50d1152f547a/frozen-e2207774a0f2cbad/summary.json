@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "dev:F1": 64,
+    "dev:F2": 0,
+    "dev:F3": 89,
+    "dev:F4": 29,
+    "dev:F5": 0,
+    "dev:F6": 22,
+    "dev:F6H": 11,
+    "dev:KI": 42,
+    "dev:MH": 8,
+    "test:F1": 86,
+    "test:F2": 0,
+    "test:F3": 0,
+    "test:F4": 54,
+    "test:F5": 0,
+    "test:F6": 34,
+    "test:F6H": 26,
+    "test:KI": 123,
+    "test:MH": 47
+  },
+  "rejected_or_linked_variants": 11,
+  "retained": 635,
+  "reviewed_items": 55,
+  "scope": "Human spot checks, not exhaustive human verification.",
+  "status": "FROZEN_HUMAN_SPOTCHECKED"
+}

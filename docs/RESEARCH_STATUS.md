@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 8 v3 is frozen. Saved Phase 9 build/dev runs are COMPLETE and select R7b/C1. Task 3 / Phase 10 answering graphs are implemented; fixture validation and owner-terminal pilot are tracked in docs/ANSWERING_SYSTEMS.md. No answer comparison is claimed.
+Phase 8 v3 is frozen. Saved Phase 9 build/dev runs are COMPLETE and select R7b/C1. Task 3 / Phase 10 answering graphs are implemented; fixture validation and owner-terminal pilot are tracked in docs/ANSWERING_SYSTEMS.md. No answer comparison is claimed. Final Phase 5/v3 frozen benchmark files and approved natural rewrites are packaged for Git sharing; runtime databases/indexes/caches and prediction ledgers remain ignored. See README section 5.
 
 **Phase 3B VERIFIED; Phase 4 PILOT VERIFIED; Phase 5 FROZEN.** The user-run generation `run-65c5be3381f66811` contains 169 benchmark QIDs and 6 supplemental challenges at seed 317, with 592 development / 2,408 test population IDs. The verified freeze `d8ef826fbeb90d13` has 34 dev and 135 test benchmark questions plus six supplemental challenges. All seven frozen manifest artifact hashes matched a read-only check. No final method evaluation is claimed. See `docs/PHASE05_BENCHMARK.md` and `docs/AGENT_NOTES.md`.
 
@@ -36,7 +36,7 @@ Later on 2026-11-02 the signoff sheet contained 40 approvals, 21 corrections and
 ## Environment and repository
 
 - Root: `/home/ict317/master's/ENSF 621/Project/`; `origin` remains `https://github.com/ahmadfaisal9900/Bugzilla.git`.
-- Inputs remain read-only in ignored `Dataset/`; generated databases, Parquet and reports remain ignored under `outputs/`, with only the five named partner-review files allowed by `.gitignore`.
+- Inputs remain read-only in ignored `Dataset/`; generated databases, Parquet and reports remain ignored under `outputs/`, with explicit `.gitignore` exceptions for the small partner-review bundle and the 26 final evaluation release artifacts (about 2.7 MB).
 - Free DuckDB 1.4.4; no paid API, PyArrow, crawler, proxy rotation or MongoDB job.
 - Full normalization used a 512 MB DuckDB budget; elapsed time was about 8m41s. Output database is about 1.89 GB. Sampling is Firefox-product only; that is not all Firefox engineering.
 

@@ -1,0 +1,15 @@
+{
+  "created_at_utc": "2026-11-12T01:25:24.712905+00:00",
+  "id": "d8ef826fbeb90d13",
+  "sha256": {
+    "challenge.gold.jsonl": "51364073d67180f047ffb937a1497ba01b6a9c586e1dfcfffc5a32c506c1020e",
+    "challenge.questions.jsonl": "90738b25903e02eb46c5b835f88d1b07c686f9814dc7cf398473eb5655389871",
+    "dev.gold.jsonl": "ecf8b805ebe8145de93dd08cc30063de3cedeb792291004b4f9cd759e3dc60a6",
+    "dev.questions.jsonl": "489558ed65c19e771ff22989715398ae3e67c4ead0766a2065e5301e370d10c2",
+    "quality_report.json": "40b04443da587e73abe61ead7bc20d3dd35d7a0565a02487291f223d83b56f96",
+    "test.gold.jsonl": "c31f00fe451671d4c48a97d56d07f02b963132711d665832816034b39400a0fb",
+    "test.questions.jsonl": "b78ad3eff4c18616b9ee56a5c115b9350c8be158a2bd91d1fb9d4c79a3d654ad"
+  },
+  "state": "FROZEN_HUMAN_SIGNED",
+  "test_checksum_policy": "Never overwrite or tune on test; changes require a new version and documented amendment"
+}

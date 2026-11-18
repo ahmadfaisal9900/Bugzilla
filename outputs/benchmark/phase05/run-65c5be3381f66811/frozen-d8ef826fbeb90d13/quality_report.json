@@ -1,0 +1,127 @@
+{
+  "as_of_question_count": 0,
+  "by_family": {
+    "F1": 30,
+    "F2": 19,
+    "F3": 30,
+    "F4": 30,
+    "F5": 30,
+    "F6": 30
+  },
+  "by_family_and_type": {
+    "F1:string": 30,
+    "F2:calendar_duration": 9,
+    "F2:integer": 4,
+    "F2:unknown": 6,
+    "F3:integer": 30,
+    "F4:id_set": 30,
+    "F5:supported_explanation": 27,
+    "F5:unanswerable": 3,
+    "F6:unanswerable": 30
+  },
+  "by_split": {
+    "dev": 34,
+    "test": 135
+  },
+  "candidates": 169,
+  "challenge_candidates": 6,
+  "eligibility_limits": "F2 needs conflict-free ordered histories (unknown cases capped at six); F4 complete target sets must stay within one partition; F5 needs a public explicit-rationale candidate and human review",
+  "f5_answerability": {
+    "HUMAN_SUPPORTED": 27,
+    "INSUFFICIENT_SPECIFIED_EVIDENCE": 3
+  },
+  "f5_challenge_answerability": {
+    "HUMAN_SUPPORTED": 1
+  },
+  "f5_population": "FIXED_SELECTED_CSV_ONLY; no unresolved explanation generalization",
+  "frozen_id": "d8ef826fbeb90d13",
+  "generation_code_compatibility": "review-only F5 amendment; pinned generation source/dependencies unchanged; candidates independently recomputed",
+  "human_observed_issue_types_reviewed_only": {
+    "UNKNOWN": 58
+  },
+  "issue_type": "UNKNOWN in canonical model; includes possible enhancements; no defect-only claim",
+  "parent_outcomes_by_family_question_denominator": {
+    "F1:ASSIGNED/None": 1,
+    "F1:NEW/None": 1,
+    "F1:REOPENED/None": 3,
+    "F1:RESOLVED/DUPLICATE": 4,
+    "F1:RESOLVED/FIXED": 4,
+    "F1:RESOLVED/INACTIVE": 1,
+    "F1:RESOLVED/INCOMPLETE": 2,
+    "F1:RESOLVED/INVALID": 5,
+    "F1:RESOLVED/MOVED": 1,
+    "F1:RESOLVED/WONTFIX": 2,
+    "F1:RESOLVED/WORKSFORME": 2,
+    "F1:UNCONFIRMED/None": 1,
+    "F1:VERIFIED/FIXED": 3,
+    "F2:REOPENED/None": 1,
+    "F2:RESOLVED/DUPLICATE": 2,
+    "F2:RESOLVED/FIXED": 3,
+    "F2:RESOLVED/INACTIVE": 1,
+    "F2:RESOLVED/INCOMPLETE": 3,
+    "F2:RESOLVED/WORKSFORME": 2,
+    "F2:VERIFIED/FIXED": 4,
+    "F2:VERIFIED/INCOMPLETE": 1,
+    "F2:VERIFIED/INVALID": 1,
+    "F2:VERIFIED/WORKSFORME": 1,
+    "F4:NEW/None": 3,
+    "F4:RESOLVED/DUPLICATE": 8,
+    "F4:RESOLVED/FIXED": 5,
+    "F4:RESOLVED/INVALID": 2,
+    "F4:RESOLVED/WONTFIX": 1,
+    "F4:RESOLVED/WORKSFORME": 4,
+    "F4:UNCONFIRMED/None": 2,
+    "F4:VERIFIED/FIXED": 5,
+    "F5:RESOLVED/FIXED": 12,
+    "F5:VERIFIED/FIXED": 18,
+    "F6:NEW/None": 9,
+    "F6:RESOLVED/DUPLICATE": 1,
+    "F6:RESOLVED/FIXED": 1,
+    "F6:RESOLVED/INCOMPLETE": 3,
+    "F6:RESOLVED/INVALID": 2,
+    "F6:RESOLVED/WONTFIX": 6,
+    "F6:RESOLVED/WORKSFORME": 3,
+    "F6:UNCONFIRMED/None": 1,
+    "F6:VERIFIED/FIXED": 4
+  },
+  "review_policy": "all F5, 20% F1\u2013F4, min(6,F6 count), all challenge; optional second rater",
+  "review_queue_sha256": "5c650e1257ebcf079dc2b6075b2a3d6094c99b771bf2b873584059ff22331ace",
+  "review_signoff_sha256": "0fc84d1e66c1861921d57a540917d1f75a7983ec3cacaa5bd37cd203cf2798a4",
+  "shortfall_by_family": {
+    "F1": 0,
+    "F2": 11,
+    "F3": 0,
+    "F4": 0,
+    "F5": 0,
+    "F6": 0
+  },
+  "source_hashes": {
+    "base_counts": {
+      "bugs": 196633,
+      "comments": 419458,
+      "field_changes": 0,
+      "sample_membership": 3000
+    },
+    "base_database_sha256": "a4ebe5a0eebc837342f8e9bb51c0f0753422da29f2211f0f57cb416b9d8d30f2",
+    "base_hash_recomputed": true,
+    "conflict_free_unambiguous_first_fixed": 9,
+    "field_changes": 884,
+    "histories": 50,
+    "small_file_hashes": {
+      "outputs/normalization/phase03b/run-20261022T023542Z-1182018/manifest.json": "3c924a3741c75230d3a307b7335814f7075108528eebc43a50e2f827bb5daccf",
+      "outputs/normalization/phase03b/run-20261022T023542Z-1182018/qc_report.json": "28130e066c47b07a3d570ce470564ba6bc1ebbd2acd3c3ee3858b2b55160ffdd",
+      "outputs/normalization/phase03b/run-20261022T023542Z-1182018/sample_manifest.json": "28883ec11fc2717e90d84fad69dc250528791daf14f42ea940e91c50689d8c24",
+      "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/checkpoint.json": "a69ed2bedd6f5682441317b468e82a3d3349c312f305537bb473c9b51c7c7801",
+      "outputs/phase04/enrichment/cohort-8bb3150d29a598d8/summary.json": "831252b846a70cea4594b8d422300ae3a3f22af7941c1862552156ed04d1519c"
+    },
+    "snapshot_as_of_utc": null,
+    "source_pins_sha256": "d78d37fbc5c770838c56de5bc716832d6541415f565245925e9a4d66e81c723a",
+    "state": "VERIFIED_PILOT_INPUT",
+    "valid_f2": 13
+  },
+  "source_population": "broad metadata source, Firefox sample; not curated 119585 or CTQRS",
+  "state": "FROZEN_HUMAN_SIGNED",
+  "target_180_guaranteed": false,
+  "target_per_family": 30,
+  "temporal_coverage": "event-duration/reopen only; historical snapshot cutoffs unsupported; roadmap 48-cutoff target not claimed"
+}
