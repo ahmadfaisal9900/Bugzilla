@@ -26,6 +26,7 @@ def records(config, limit):
     base = duckdb.connect(str(ROOT / config['canonical_db']), read_only=True)
     overlay = duckdb.connect(str(ROOT / config['history_db']), read_only=True)
     try:
+        base.execute("SET TimeZone='UTC'")
         base.execute("SET memory_limit='512MB'")
         selection = 'SELECT bug_id FROM sample_membership WHERE seed = ? ORDER BY bug_id'
         parameters = [config['sample_seed']]

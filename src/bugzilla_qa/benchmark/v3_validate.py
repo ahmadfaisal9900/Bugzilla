@@ -1,6 +1,6 @@
 """Read-only independent v3 SQL/evidence recheck; no generator or API requests."""
 import argparse
-import fcntl
+from bugzilla_qa import file_lock as fcntl
 import json
 from pathlib import Path
 

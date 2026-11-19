@@ -146,6 +146,9 @@ class Tools:
         # Only explicit qualified events supply a first FIXED; never current status.
         return {'known':True,'first_fixed_known':metric['state']=='VALID_EVENT_TIME',
                 'fix_metric':metric,'reopened_count':h.get('reopened_count'),
+                'first_fixed_hours':metric['elapsed_calendar_days']*24 if metric.get('elapsed_calendar_days') is not None else None,
+                'status_change_count':sum(c.get('field_name')=='status' for c in h.get('changes',[])),
+                'first_resolution_value':next((c.get('new_value') for c in h.get('changes',[]) if c.get('field_name')=='resolution' and c.get('new_value')),None),
                 'snapshot_as_of':'UNKNOWN','temporal_mode':'verified_event_time_retrospective',
                 'provenance':{k:record.get('history_fetch',{}).get(k) for k in
                     ('url','fetched_at_utc','raw_sha256','source_visibility','status_code')},

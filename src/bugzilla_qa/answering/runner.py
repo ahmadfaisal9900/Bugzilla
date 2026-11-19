@@ -52,17 +52,38 @@ def prepare(config,root,dataset,split,confirm=False,tag=''):
     if llm.get('temperature')!=0:raise RuntimeError('Matched systems require temperature=0')
     selection=read_config(root/config['selection'])
     source=read_config(root/config['source_config'])
-    base=read_config((root/source['canonical_db']).parent/'manifest.json')
-    history=read_config((root/source['history_db']).parent/'summary.json')
-    if base.get('state')!='COMPLETE' or base.get('identity_hash')!=source['base_identity']:
-        raise RuntimeError('Canonical source manifest identity mismatch')
-    if history.get('state')!='COMPLETE' or history.get('candidate_manifest_sha256')!=source['history_identity']:
-        raise RuntimeError('Verified Phase 4 source identity mismatch')
-    if (root/source['canonical_db']).stat().st_size!=base['artifacts']['canonical.duckdb']['bytes']:
-        raise RuntimeError('Canonical source size mismatch; never rehash the GB database here')
+    source_manifests=[]
+    if config.get('runtime_manifest'):
+        path=config['runtime_manifest']; shared=read_config(root/path)
+        if shared.get('state')!='VERIFIED_SHARED_DEV_RUNTIME' or split!='dev':
+            raise RuntimeError('Shared runtime is verified for development only')
+        if set((source['canonical_db'],source['history_db']))-set(shared['source_sha256']):
+            raise RuntimeError('Shared runtime database sources are not pinned')
+        for name,sha in shared['source_sha256'].items():
+            if file_hash(root/name)!=sha:raise RuntimeError('Shared runtime source changed')
+            pins[name]=sha
+        for name,sha in shared['benchmark_sha256'].items():
+            if file_hash(root/name)!=sha:raise RuntimeError('Shared runtime benchmark changed')
+        pins[path]=file_hash(root/path)
+    elif dataset == 'sample':
+        from .sources import sample_inputs
+        _, sample, sample_pins = sample_inputs(config, root)
+        if set((source['canonical_db'], source['history_db'])) - set(sample['source_sha256']):
+            raise RuntimeError('Sample database sources are not pinned')
+        pins.update(sample_pins)
+    else:
+        source_manifests=[str(Path(source['canonical_db']).parent/'manifest.json'),
+                          str(Path(source['history_db']).parent/'summary.json')]
+        base=read_config(root/source_manifests[0])
+        history=read_config(root/source_manifests[1])
+        if base.get('state')!='COMPLETE' or base.get('identity_hash')!=source['base_identity']:
+            raise RuntimeError('Canonical source manifest identity mismatch')
+        if history.get('state')!='COMPLETE' or history.get('candidate_manifest_sha256')!=source['history_identity']:
+            raise RuntimeError('Verified Phase 4 source identity mismatch')
+        if (root/source['canonical_db']).stat().st_size!=base['artifacts']['canonical.duckdb']['bytes']:
+            raise RuntimeError('Canonical source size mismatch; never rehash the GB database here')
     for path in [config['selection'],config['prompt'],config['retrieval_config'],config['source_config'],
-                 config['history_checkpoint'],str(Path(source['canonical_db']).parent/'manifest.json'),
-                 str(Path(source['history_db']).parent/'summary.json')]+[
+                 config['history_checkpoint']]+source_manifests+[
                      str(Path(p)/'manifest.json') for p in config['retrieval_runs'] if (root/p/'manifest.json').exists()]:
         pins[path]=file_hash(root/path)
     code=list(Path(__file__).parent.glob('*.py'))+[ROOT/'src/bugzilla_qa/llm/provider.py']
@@ -79,7 +100,7 @@ def pending(rows,directory,system,resume,limit=None,per_family=None,family=None)
     path=directory/(system+'.jsonl');done=set()
     if path.exists():
         if not resume:raise RuntimeError('Ledger exists; use --resume')
-        done={r['qid'] for r in read_jsonl(path) if r['status']=='ok'}
+        done={r['qid'] for r in read_jsonl(path) if r['status']=='ok' or r.get('terminal_error')}
     selected=[];counts=Counter()
     for q in rows:
         if family and q['family'] not in family:continue
@@ -246,12 +267,14 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
                     usage=provider.events[usage_start:];charged=[u for u in usage if u.get('state')!='CACHE_HIT']
                     row=dict(qid=s['qid'],system_id=system,dataset=dataset,split=split,
                         family=s['family'],freeze_id=s['freeze_id'],status=s['status'],at_utc=now(),config_hash=ch,
+                        terminal_error=s['status']=='error' and not any(e.startswith('provider_failure:') for e in s['errors']),
                         model=llm['models']['generator']['id'],provider=llm.get('provider'),prompt_version=config['prompt_version'],
                         route=s['route'],route_rule=s['route_rule'],answer=s['answer'],raw_output=s['raw_output'],
                         retrieved_chunk_ids=[d['chunk_id'] for d in s['retrieved']],context_chunk_ids=s['context_ids'],
                         context_map=s['context_map'],context_token_counter=config['token_counter'],
                         citation_normalization=s.get('citation_normalization',[]),
                         errors=s['errors'],call_count=s['call_count'],cache_hit=s['cache_hit'],
+                        repair_count=s.get('repair_count',0),tool_steps=s.get('tool_step',0),
                         retrieval_cache_hit=s.get('retrieval_cache_hit',False),
                         llm_cache_hit=any(u.get('state')=='CACHE_HIT' for u in usage),
                         tokens={'input':sum(u.get('input_tokens') or 0 for u in charged),
@@ -283,7 +306,7 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
                             if root_run:
                                 root_run.add_metadata(clean(dict(route=state['route'],route_rule=state['route_rule'],cache_hit=state['cache_hit'])))
                                 root_run.end(outputs=clean({'answer':state['answer'],'errors':state['errors']}))
-                    if state['status']!='ok':
+                    if state['status']!='ok' and any(e.startswith('provider_failure:') for e in state['errors']):
                         result['blocker']={'qid':q['qid'],'errors':state['errors'],'next':'Inspect redacted ledger and resume'}
                         if getattr(provider,'last_rate_limit',None):result['blocker']['rate_limit']=provider.last_rate_limit
                         break
@@ -300,7 +323,7 @@ def run(config,root,*,dataset='v3',split='dev',confirm=False,systems=None,resume
             result['remaining_by_system']={}
             for system in systems:
                 path=directory/(system+'.jsonl')
-                done={r['qid'] for r in read_jsonl(path) if r['status']=='ok'} if path.exists() else set()
+                done={r['qid'] for r in read_jsonl(path) if r['status']=='ok' or r.get('terminal_error')} if path.exists() else set()
                 result['remaining_by_system'][system]=sum(q['qid'] not in done for q in rows
                     if not family or q['family'] in family)
             if not result['blocker'] and not any(result['remaining_by_system'].values()):

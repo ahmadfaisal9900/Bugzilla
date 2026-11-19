@@ -13,8 +13,9 @@
 | Natural rewrites | Approved: 51 dev / 59 test |
 | Retrieval variants and selected retriever | Done, dev-only selection: R7b/C1 |
 | S0–S8 + ORACLE answering systems | Implemented; offline fixture tests pass |
-| Dev answering run | Partial, quota-limited |
-| Answer scoring, F5 judging, locked test | Not started; partner's next work |
+| Dev answering run | 80-question pilot complete: 720 answer slots across S0–S8; full dev roster not completed |
+| Answer scoring | Automatic scoring complete for the pilot; human review pending |
+| F5/grounding review and locked test | Human review and final comparison pending |
 
 ### First 30 minutes for the partner
 
@@ -22,7 +23,7 @@
 2. Create the ignored `.env` with your Groq key; add LangSmith credentials only if needed.
 3. Run the three offline unit-test commands in section 10.
 4. Run `quota` and `plan` from section 11; these make zero API calls.
-5. Open `outputs/predictions/<dataset>/dev/run-*/` and read the prediction-field table in section 12 before implementing scoring.
+5. Open `outputs/evaluation/phase11/START_HERE.html` to inspect the pilot results and review answers. Section 12 explains scoring, review and run commands. The combined `REVIEW.csv` beside the page is the Excel alternative.
 
 ## 3. Setup
 
@@ -131,7 +132,7 @@ for key in ('phase05_dir', 'v3_dir', 'natural_questions'):
 PYCONFIG
 ```
 
-The clone provides everything needed to inspect benchmark questions, answers, labels and scope. Running retrieval/answer generation still requires the runtime bundle described in setup. Prediction ledgers remain local and must be transferred separately to score existing runs. The S0–S8 answer scorer and F5 response judge are still the partner's implementation task; committing these datasets does not complete those components.
+The clone provides everything needed to inspect benchmark questions, answers, labels and scope. Running retrieval/answer generation still requires the runtime bundle described in setup. Prediction ledgers remain local and must be transferred separately to score existing runs. The S0–S8 scorer and resumable runner are implemented; explanation and grounding grades need human review. With the verified shared source export and prepared local index, run `./scripts/run_phase11_evaluation.ps1 --shared-source --enable-llm --max-requests 900`. This uses the 350 official development questions with a reconstructed runtime. See [S evaluation](docs/PHASE11_EVALUATION.md) for checks, reports and resume instructions.
 
 ## 6. Retrieval
 
@@ -240,7 +241,7 @@ LangGraph: `load_question → router → retrieve → pack_context → generate 
 | `scripts/smoke/check_structure.sh` | Structure/import check; no flags | `bash scripts/smoke/check_structure.sh` |
 | Unit tests | Offline answering, provider and retrieval fixtures | Three commands in section 10 |
 
-Older phase scripts under `scripts/` prepare data/benchmarks; that preparation is finished and should not be rerun. Package CLI equivalents are `python -m bugzilla_qa.answering.cli` and `python -m bugzilla_qa.retrieval_v3.cli`. No answer-scoring entry point exists yet.
+Older phase scripts under `scripts/` prepare data/benchmarks; that preparation is finished and should not be rerun. Package CLI equivalents are `python -m bugzilla_qa.answering.cli` and `python -m bugzilla_qa.retrieval_v3.cli`. The S evaluation and review entry point is `scripts/run_phase11_evaluation.ps1`; open `outputs/evaluation/phase11/START_HERE.html` for the saved comparison and review controls.
 
 ## 9. Observability
 
@@ -378,11 +379,29 @@ Every persisted field from `answering/runner.py`:
 
 A provider-failure fallback can have `abstain=true` but `status=error`: **not a successful evidence-based abstention**. Missing usage is not zero cost. Cache-hit latency is not directly comparable to fresh API latency without stratification. Join gold locally by qid only in a separate scorer; never add it to generation logs or normal trace inputs.
 
-### B. What is not built for this comparison
+### B. Answer evaluation
 
-No new S0–S8 answer scorer, F5 LLM judge, semantic grounding checker, abstention evaluation, final paired answer statistics or locked-test answering comparison has been implemented. A separate blinded LLM judge is optional, requires explicit quota safeguards and human auditing, and must never be the sole evidence for F5 correctness.
+The S scorer covers typed answers, abstentions, failures, paired cluster comparisons and blinded human review exports. The fixed 80-question development pilot has 720 resolved answer slots across S0 through S8. Human review remains pending; no final answer-accuracy or locked-test comparison is claimed.
 
-### C. Planned scoring — not implemented
+The evaluation runner automatically generates one review page and one combined review CSV after scoring, including when a quota stop leaves a partial result:
+
+```powershell
+.\scripts\run_phase11_evaluation.ps1 --shared-source --pilot-size 80 --enable-llm
+Start-Process ".\outputs\evaluation\phase11\START_HERE.html"
+```
+
+Repeat the evaluation command to resume saved progress. Available keys are read automatically from `.env`: `GROQ_API_KEY` and optional `GROQ_API_KEY_2`, `_3` and `_4`. One key is enough; missing entries are skipped and duplicate values are used once. Environment variables override matching `.env` entries. There is no need to list keys in the command. The default cap is 900 HTTP attempts per invocation, shared across all keys; `--max-requests` can override it. The shared-source option requires the matching local source databases and prepared runtime/index bundle; it verifies those inputs before inference. The old generated-question sample workflow has been removed.
+
+Open `outputs/evaluation/phase11/START_HERE.html` by double-clicking it or using the command above. It is a self-contained local page: no web server or API key is needed to view the shared file. It shows every method response, its grading status, references and evidence. Method names can be revealed for comparison. The combined `REVIEW.csv` beside it is the Excel alternative. These two generated files are allowed through `.gitignore`; databases, prediction ledgers, caches and logs remain ignored. The page generator lives in `src/bugzilla_qa/evaluation/review.py`.
+
+```powershell
+.\scripts\run_phase11_evaluation.ps1 --review
+.\scripts\run_phase11_evaluation.ps1 --import-review "$env:USERPROFILE\Downloads\REVIEW_completed.csv"
+```
+
+These commands rebuild the view or import review decisions from saved results without model requests. For the full configured question roster, omit `--pilot-size 80`. See [the review instructions](docs/PHASE11_EVALUATION.md#start-here).
+
+### C. Evaluation rules
 
 | Family / measure | Planned evaluation |
 | --- | --- |
@@ -412,8 +431,8 @@ Use the roadmap's predefined numerical tolerances where appropriate; do not choo
 
 1. Pull the committed benchmark releases; receive the matching ignored runtime/index/cache/prediction bundle and check its manifests and environment offline.
 2. Inventory compatible dev prediction versions and failures; finish resumable dev batches within quota. Do not merge versions merely to fill cells.
-3. Implement deterministic family scorers and tiny fixture tests; fix scope, normalization, units and failure accounting before test access.
-4. Prepare blinded F5/grounding review and a human-audited subset; predeclare any optional judge protocol and budget.
+3. The deterministic family scorer and fixture tests are implemented. Review the saved development results and investigate scope, normalization, unit and failure issues before test access.
+4. Complete the pending answer and evidence checks in `START_HERE.html` or `REVIEW.csv`, then import the decisions with `--import-review PATH_TO_CSV`.
 5. Produce dev per-family tables, denominators, latency/cost and error analysis; finalize the genuinely distinct comparison arms.
 6. Freeze method/scorer configuration; obtain explicit locked-test authorization, then run the finalized test predictions once and score separately.
 7. Report paired cluster-aware uncertainty, source limitations and temporal gaps; only then choose an application candidate.

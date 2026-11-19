@@ -1,6 +1,6 @@
 """Small shared IO helpers; configuration contains no credentials."""
 import datetime
-import fcntl
+from bugzilla_qa import file_lock as fcntl
 import json
 import os
 import subprocess
@@ -41,7 +41,7 @@ def receipt(directory, **fields):
                    and p != directory/'manifest.json' and p.name != '.lock'
                    and not p.name.endswith(('.tmp', '-wal', '-shm')))
     result = dict(fields, created_at_utc=now(), git_commit=git_commit(),
-                  sha256={str(p.relative_to(directory)): file_hash(p) for p in files})
+                  sha256={p.relative_to(directory).as_posix(): file_hash(p) for p in files})
     write_json(directory/'manifest.json', result)
     return result
 

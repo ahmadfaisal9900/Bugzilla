@@ -2,7 +2,7 @@
 import argparse
 import collections
 import csv
-import fcntl
+from bugzilla_qa import file_lock as fcntl
 import hashlib
 import json
 import os

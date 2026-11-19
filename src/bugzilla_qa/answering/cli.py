@@ -16,7 +16,7 @@ def main(argv=None):
     p=argparse.ArgumentParser(description='Phase 10: prediction ledgers only; no scoring. Network off unless explicitly enabled.')
     p.add_argument('command',choices=['plan','run','suggest-tau','upload-dev','quota'])
     p.add_argument('--config',default='configs/answering.yaml')
-    p.add_argument('--dataset',choices=['v3','phase05','natural'],default='v3')
+    p.add_argument('--dataset',choices=['v3','phase05','natural','sample'],default='v3')
     p.add_argument('--split',choices=['dev','test'],default='dev')
     group=p.add_mutually_exclusive_group()
     group.add_argument('--system',choices=list(SYSTEMS))

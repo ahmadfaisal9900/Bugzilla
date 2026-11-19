@@ -4,6 +4,7 @@ import os
 import sqlite3
 import time
 from pathlib import Path
+from contextlib import closing
 from .common import (ROOT, append, checkpoint, code_hashes, digest, file_hash, git_commit,
                      locked, now, read_config, read_jsonl, receipt, verify_artifacts, write_json)
 from .datasets import load_datasets, NA_FAMILIES
@@ -30,7 +31,7 @@ def load_cached_hits(directory,corpus,retriever,dataset,qid,k=50):
     """Read-only interface for later answering stages; no benchmark gold is loaded."""
     if not 1<=k<=50: raise ValueError('Cached retrieval supports k=1..50')
     path=Path(directory)/'retrieval_cache.sqlite'
-    with sqlite3.connect('file:'+str(path)+'?mode=ro',uri=True) as db:
+    with closing(sqlite3.connect('file:'+str(path)+'?mode=ro',uri=True)) as db, db:
         row=db.execute('SELECT payload FROM results WHERE corpus=? AND retriever=? AND dataset=? AND qid=?',
                        [corpus,retriever,dataset,qid]).fetchone()
     if row is None: raise KeyError('Retrieval cache entry is absent')

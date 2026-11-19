@@ -4,7 +4,7 @@ import re
 import time
 from langgraph.graph import StateGraph, START, END
 from langsmith import traceable
-from jsonschema import ValidationError
+from jsonschema import ValidationError, validate
 from bugzilla_qa.llm.provider import InvalidJSONResponse
 from .contracts import (AnswerState, ANSWER_SCHEMA, clean, pack, abstention,
                         check_answer, normalize_citations, answer_payload,encode_payload)
@@ -75,15 +75,34 @@ class AnswerGraph:
         if route=='S8':
             route,rule=rule_route(s['question'])
             if route is None:
-                value=self._call(s,s['question'],{'type':'object','properties':{'route':{'type':'string','enum':['S2','S5','S7']}},
-                     'required':['route'],'additionalProperties':False},purpose='router')
-                route=value['route'];rule='llm_ambiguous'
-        return dict(route=route,route_rule=rule,call_count=s['call_count'],usage=s['usage'],cache_hit=s['cache_hit'])
+                schema={'type':'object','properties':{'route':{'type':'string','enum':['S2','S5','S7']}},
+                        'required':['route'],'additionalProperties':False}
+                for attempt in range(2):
+                    prompt=s['question'] if attempt==0 else s['question']+'\nReturn only a JSON object with route S2, S5 or S7. Abstention is an answer decision, not a route.'
+                    try:
+                        value=self._call(s,prompt,schema,purpose='router' if attempt==0 else 'router-repair')
+                        validate(value,schema)
+                        route=value['route'];rule='llm_ambiguous'
+                        break
+                    except (InvalidJSONResponse,ValueError,KeyError,ValidationError) as exc:
+                        s['errors']=s['errors']+['invalid_route:'+type(exc).__name__]
+                        if attempt==0:
+                            s['repair_count']=1
+                        else:
+                            route='routing_error';rule='invalid_route'
+                    except RuntimeError as exc:
+                        s['errors']=s['errors']+['provider_failure:'+type(exc).__name__+':'+clean(str(exc))]
+                        route='routing_error';rule='provider_failure'
+                        break
+        result=dict(route=route,route_rule=rule,call_count=s['call_count'],usage=s['usage'],cache_hit=s['cache_hit'],
+                    errors=s['errors'],repair_count=s['repair_count'])
+        if route=='routing_error':result['raw_output']={}
+        return result
 
     @traceable(name='retrieve',process_inputs=clean,process_outputs=clean)
     def retrieve(self,s):
-        route=s['route'];cache=False;chunks=[];raw=None;before=self.provider.calls
-        if route=='S0' or route=='S7':pass
+        route=s['route'];cache=False;chunks=[];raw=s.get('raw_output');before=self.provider.calls
+        if route in ('S0','S7','routing_error'):pass
         elif route=='S5':chunks=self.backend.dossier(s)
         elif route=='ORACLE':chunks=self.backend.oracle(s.get('oracle_refs',[]))
         elif route=='S4':

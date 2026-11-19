@@ -2,6 +2,7 @@
 import json
 import os
 import sqlite3
+from contextlib import closing
 from langsmith import traceable
 from bugzilla_qa.retrieval_v3.common import read_config, read_jsonl, file_hash, digest
 from bugzilla_qa.retrieval_v3.runner import load_cached_hits, load_engine, load_models
@@ -17,7 +18,8 @@ class Backend:
         self.config,self.root,self.provider=config,root,provider
         self.rc=read_config(root/config['retrieval_config'])
         self.selection=read_config(root/config['selection'])
-        if self.selection.get('state')!='SELECTED_DEV_ONLY' or self.selection.get('test_used'):
+        expected_state = 'RECONSTRUCTED_DEV_RUNTIME' if config.get('runtime_manifest') else 'SOURCE_VERIFIED_DEV_SAMPLE' if config.get('sample_bundle') else 'SELECTED_DEV_ONLY'
+        if self.selection.get('state')!=expected_state or self.selection.get('test_used'):
             raise RuntimeError('Missing valid preregistered development selection')
         for source in self.selection.get('sources',[]):
             if file_hash(root/source['path'])!=source['sha256']:
@@ -25,7 +27,9 @@ class Backend:
         self.selected=self.selection['selected']['retriever']; self.corpus=self.selection['selected']['corpus']
         self.index=root/self.selection['index_build']; self.directory=self.index/self.corpus
         build=read_config(self.index/'manifest.json')
-        if build.get('state')!='COMPLETE' or file_hash(self.directory/'manifest.json')!=build['sha256'][self.corpus+'/manifest.json']:
+        variant_key = self.corpus + '/manifest.json'
+        variant_sha = build['sha256'].get(variant_key, build['sha256'].get(variant_key.replace('/', '\\')))
+        if build.get('state')!='COMPLETE' or file_hash(self.directory/'manifest.json')!=variant_sha:
             raise RuntimeError('Selected index manifest mismatch')
         m=read_config(self.directory/'manifest.json')
         if m['state']!='COMPLETE' or file_hash(self.directory/'corpus.jsonl')!=m['sha256']['corpus.jsonl']:
@@ -33,6 +37,7 @@ class Backend:
         self.docs=[dict(public_chunk(d),chunk_type=d.get('chunk_type',d.get('kind')))
                    for d in read_jsonl(self.directory/'corpus.jsonl')]
         self.by_id={d['chunk_id']:d for d in self.docs}; self.engine=None
+        self.memory_cache={} if config.get('sample_bundle') or config.get('runtime_manifest') else None
         self.cache_manifests={}
         for path in config['retrieval_runs']:
             manifest=root/path/'manifest.json'
@@ -58,6 +63,9 @@ class Backend:
     @traceable(name='retrieve',process_inputs=clean,process_outputs=clean)
     def retrieve(self, question, method, k=None, use_cache=True, cached_only=False):
         k=k or self.config['retrieval_k']
+        key=digest([method,question['question']])
+        if use_cache and self.memory_cache is not None and key in self.memory_cache:
+            return self._hydrate(self.memory_cache[key][:k]),True
         if use_cache:
             for path,m in self.cache_manifests.items():
                 identity=read_config(self.root/path/'identity.json')
@@ -67,7 +75,7 @@ class Backend:
                     continue
                 if identity.get('compatibility')!=self.selection.get('compatibility'): continue
                 cache=self.root/path/'retrieval_cache.sqlite'
-                with sqlite3.connect('file:'+str(cache)+'?mode=ro',uri=True) as db:
+                with closing(sqlite3.connect('file:'+str(cache)+'?mode=ro',uri=True)) as db, db:
                     row=db.execute('SELECT query_sha256 FROM results WHERE corpus=? AND retriever=? AND dataset=? AND qid=?',
                         [self.corpus,method,question['dataset'],question['qid']]).fetchone()
                 if not row or row[0]!=digest(question['question']): continue
@@ -75,8 +83,10 @@ class Backend:
                 if any(h['chunk_id'] not in self.by_id for h in hits): raise RuntimeError('Cached chunk missing from corpus')
                 return self._hydrate(hits),True
         if cached_only:raise KeyError('No compatible cached retrieval')
-        hits=get_retriever(method,self._engine()).retrieve(question['question'],k)
-        return self._hydrate(hits),False
+        retain=use_cache and self.memory_cache is not None
+        hits=get_retriever(method,self._engine()).retrieve(question['question'],max(k,50) if retain else k)
+        if retain:self.memory_cache[key]=hits
+        return self._hydrate(hits[:k]),False
 
     def dossier(self,question):
         import re

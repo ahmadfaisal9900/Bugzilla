@@ -1,0 +1,14 @@
+[
+  {"family":"F1","kind":"string","question":"What resolution is recorded for synthetic bug 101?","expected":"FIXED","cluster_id":"101","answers":{"S0":null,"S1":"FIXED","S2":"FIXED","S7":"FIXED","S8":"FIXED"}},
+  {"family":"F1","kind":"string","question":"What component is recorded for synthetic bug 102?","expected":"Layout","cluster_id":"102","answers":{"S0":"Core","S1":"layout","S2":"Layout","S7":"Layout","S8":"Layout"}},
+  {"family":"F2","kind":"calendar_duration","question":"How many hours until the first FIXED event for synthetic bug 103?","expected":24,"answers":{"S0":null,"S1":25.5,"S2":24.5,"S7":24,"S8":24}},
+  {"family":"F3","kind":"integer","question":"How many synthetic bugs belong to Layout?","expected":3,"answers":{"S0":4,"S1":2,"S2":3,"S7":3,"S8":3}},
+  {"family":"F4","kind":"id_set","question":"Which bugs does synthetic bug 104 depend on?","expected":["101","102"],"answers":{"S0":null,"S1":[101],"S2":[101,102],"S7":[101,102],"S8":[101,102]}},
+  {"family":"F5","kind":"supported_explanation","question":"Why was the synthetic optimization deferred?","expected":"The developer explicitly said the change broke keyboard navigation.","evidence":[{"id":"sample_comment","text":"We deferred the optimization because it breaks keyboard navigation."}],"answers":{"S0":null,"S1":"It increased memory use.","S2":"It broke keyboard navigation.","S7":null,"S8":"It broke keyboard navigation."}},
+  {"family":"F6","kind":"unanswerable","question":"What private discussion occurred about synthetic bug 105?","expected":null,"answers":{"S0":null,"S1":"The developers rejected it.","S2":null,"S7":null,"S8":null}},
+  {"family":"KI","kind":"bug_id","question":"Which synthetic bug concerns keyboard focus?","expected":"101","acceptable_bug_ids":["101","106"],"answers":{"S0":999,"S1":101,"S2":106,"S7":101,"S8":101}},
+  {"family":"KI","kind":"string","question":"What component owns the synthetic keyboard focus bug?","expected":"Layout","acceptable_bug_ids":["101"],"bug_ids":[101],"answers":{"S0":"UI","S1":"Layout","S2":"Layout","S7":"Layout","S8":"Layout"}},
+  {"family":"MH","kind":"structured","question":"List synthetic dependencies and the subset marked FIXED.","expected":{"depends_on":["101","102"],"resolved_fixed":["101"]},"answers":{"S0":null,"S1":"{\"depends_on\":[101],\"resolved_fixed\":[101]}","S2":"{\"depends_on\":[101,102],\"resolved_fixed\":[101]}","S7":"{\"depends_on\":[101,102],\"resolved_fixed\":[101]}","S8":"{\"depends_on\":[101,102],\"resolved_fixed\":[101]}"}},
+  {"family":"MH","kind":"integer","question":"How many synthetic dependencies remain open?","expected":1,"answers":{"S0":null,"S1":2,"S2":1,"S7":1,"S8":1}},
+  {"family":"F6H","kind":"abstain","question":"What severity is recorded when the synthetic severity field is absent?","expected":"ABSTAIN","answers":{"S0":null,"S1":"critical","S2":null,"S7":null,"S8":null}}
+]

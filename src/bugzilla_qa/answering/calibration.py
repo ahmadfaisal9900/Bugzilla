@@ -2,6 +2,7 @@
 import json
 import math
 import sqlite3
+from contextlib import closing
 from bugzilla_qa.retrieval_v3.common import read_config,write_json,file_hash,now
 
 
@@ -15,7 +16,7 @@ def suggest(config,root,write=False,quantile=.1):
         if identity['split']!='dev' or m.get('state')!='COMPLETE':continue
         if identity.get('compatibility')!=selected['compatibility']:continue
         sources[str(manifest.relative_to(root))]=file_hash(manifest)
-        with sqlite3.connect('file:'+str(root/path/'retrieval_cache.sqlite')+'?mode=ro',uri=True) as db:
+        with closing(sqlite3.connect('file:'+str(root/path/'retrieval_cache.sqlite')+'?mode=ro',uri=True)) as db, db:
             for dataset,qid,payload in db.execute('SELECT dataset,qid,payload FROM results WHERE corpus=? AND retriever=?',[corpus,'R5']):
                 hits=json.loads(payload)['hits']
                 if hits:scores[dataset,qid]=float(hits[0]['score'])

@@ -4,10 +4,32 @@ from bugzilla_qa.retrieval_v3.common import read_config, read_jsonl, file_hash
 from bugzilla_qa.retrieval_v3.datasets import checked_file
 
 
+def sample_inputs(config, root):
+    directory = root / config['sample_bundle']
+    path = directory / 'manifest.json'
+    manifest = read_config(path)
+    if manifest.get('state') != 'SOURCE_VERIFIED_DEV_SAMPLE':
+        raise RuntimeError('Sample must be independently source verified')
+    pins = {str(path.relative_to(root)): file_hash(path)}
+    for name, sha in manifest['source_sha256'].items():
+        if file_hash(root / name) != sha:
+            raise RuntimeError('Sample source checksum mismatch')
+        pins[name] = sha
+    return directory, manifest, pins
+
+
 def questions(config, root, dataset, split, confirm=False):
     if split == 'test' and not confirm: raise RuntimeError('Locked test requires --confirm-locked-test')
     rc=read_config(root/config['retrieval_config']); pins={}
-    if dataset in ('v3','phase05'):
+    if dataset == 'sample':
+        if split != 'dev':
+            raise RuntimeError('The source sample is development only')
+        directory, manifest, pins = sample_inputs(config, root)
+        path = checked_file(directory, manifest, 'questions.jsonl')
+        rows = list(read_jsonl(path))
+        families = {}
+        freeze = manifest['sample_id']
+    elif dataset in ('v3','phase05'):
         directory=root/rc[dataset+'_dir']; manifest=read_config(directory/'manifest.json')
         freeze=manifest.get('freeze_id',manifest.get('id'))
         if freeze!=rc[dataset+'_freeze_id']:
@@ -37,7 +59,7 @@ def questions(config, root, dataset, split, confirm=False):
     for q in rows:
         scope=dict(q.get('scope',q.get('provenance',{}).get('original_scope',{})))
         if scope.get('partition') in ('dev','test'):
-            scope['partition_scheme']='phase05' if dataset=='phase05' else 'expanded-v2'
+            scope['partition_scheme']=scope.get('partition_scheme','phase05') if dataset=='sample' else 'phase05' if dataset=='phase05' else 'expanded-v2'
         result.append(dict(qid=q['qid'],question=q['question'],family=q.get('family',families.get(q['qid'],'UNKNOWN')),
                            scope=scope,dataset=dataset,split=split,freeze_id=freeze))
     if len({r['qid'] for r in result})!=len(result): raise RuntimeError('Duplicate question IDs')
@@ -47,6 +69,11 @@ def questions(config, root, dataset, split, confirm=False):
 def oracle_references(config, root, dataset, split, confirm=False):
     if split=='test' and not confirm: raise RuntimeError('Locked ORACLE requires --confirm-locked-test')
     rc=read_config(root/config['retrieval_config'])
+    if dataset == 'sample':
+        if split != 'dev':
+            raise RuntimeError('The source sample is development only')
+        directory, manifest, _ = sample_inputs(config, root)
+        return {q['qid']:q['evidence_record_ids'] for q in read_jsonl(checked_file(directory,manifest,'gold.jsonl'))}
     if dataset=='natural':
         return {q['qid']:[e['id'] for e in q['evidence']] for q in read_jsonl(root/rc['natural_questions']) if q['split']==split}
     directory=root/rc[dataset+'_dir']; m=read_config(directory/'manifest.json')

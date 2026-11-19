@@ -5,6 +5,14 @@
 /outputs/*
 !/outputs/.gitkeep
 
+# Share the evaluation review page and combined sheet only.
+!/outputs/evaluation/
+/outputs/evaluation/*
+!/outputs/evaluation/phase11/
+/outputs/evaluation/phase11/*
+!/outputs/evaluation/phase11/START_HERE.html
+!/outputs/evaluation/phase11/REVIEW.csv
+
 # Small Phase 5 reviewer handoff only; keep all other outputs ignored.
 !/outputs/benchmark/
 /outputs/benchmark/*

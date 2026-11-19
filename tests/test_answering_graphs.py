@@ -6,6 +6,7 @@ import tempfile
 import types
 import unittest
 from pathlib import Path
+from contextlib import closing
 from unittest.mock import patch,MagicMock
 from jsonschema import validate,ValidationError
 import duckdb
@@ -182,6 +183,50 @@ class AnsweringTest(unittest.TestCase):
         self.assertIn('No tools or browser',request.call_args_list[1][0][0])
         self.assertNotIn('MUST_NOT_EXECUTE',(self.root/'repair.jsonl').read_text())
 
+    def test_router_schema_rejection_uses_one_repair_and_then_answers(self):
+        class RejectedJSON(Exception):
+            status_code=400
+            body={'error':{'code':'json_validate_failed','failed_generation':'MUST_NOT_EXECUTE'}}
+        cfg={'provider':'groq','models':{'generator':{'id':'mock','rpm':1000,'rpd':1000}},
+             'max_retries':0,'daily_fraction':.9,'env_file':'.env','ledger':'router.jsonl',
+             'cache':'router.sqlite','temperature':0,'max_output_tokens':100}
+        p=GroqProvider(cfg,'generator',enable_llm=True,max_requests=3,root=self.root,client=object())
+        question=dict(self.questions[0],question='When was bug 101 created?')
+        records=[]
+        with patch.object(p,'_request',side_effect=[RejectedJSON(),({'route':'S2'},1,1),(ANSWER,1,1)]) as request:
+            state=self.graph(p,records).invoke(question,'S8','fixture')
+        self.assertEqual(state['status'],'ok');self.assertEqual(state['route'],'S2')
+        self.assertEqual(state['repair_count'],1);self.assertEqual(state['call_count'],3)
+        self.assertEqual(len(records),1);self.assertEqual(request.call_count,3)
+        self.assertNotIn('MUST_NOT_EXECUTE',(self.root/'router.jsonl').read_text())
+
+    def test_twice_invalid_router_is_persisted_as_failure_without_retrieval(self):
+        p=MockProvider({'route':'abstain'});records=[]
+        question=dict(self.questions[0],question='When was bug 101 created?')
+        with patch.object(self.backend,'retrieve',side_effect=AssertionError('Invalid route must not retrieve')):
+            state=self.graph(p,records).invoke(question,'S8','fixture')
+        self.assertEqual(state['status'],'error');self.assertEqual(state['route'],'routing_error')
+        self.assertEqual(state['call_count'],2);self.assertEqual(state['repair_count'],1)
+        self.assertEqual(len(records),1)
+        self.assertFalse(any(e.startswith('provider_failure:') for e in state['errors']))
+
+    def test_router_transport_failure_is_persisted_and_remains_unresolved(self):
+        def fail(prompt):raise RuntimeError('Provider unavailable')
+        p=MockProvider(fail);records=[]
+        question=dict(self.questions[0],question='When was bug 101 created?')
+        state=self.graph(p,records).invoke(question,'S8','fixture')
+        self.assertEqual(state['status'],'error');self.assertEqual(state['repair_count'],0)
+        self.assertEqual(state['call_count'],1);self.assertEqual(len(records),1)
+        self.assertTrue(any(e.startswith('provider_failure:') for e in state['errors']))
+
+    def test_router_repair_consumes_the_shared_answer_repair_budget(self):
+        replies=iter([{'route':'abstain'},{'route':'S2'},{'not_an_answer':True}])
+        p=MockProvider(lambda prompt:next(replies));records=[]
+        question=dict(self.questions[0],question='When was bug 101 created?')
+        state=self.graph(p,records).invoke(question,'S8','fixture')
+        self.assertEqual(state['status'],'error');self.assertEqual(state['call_count'],3)
+        self.assertEqual(state['repair_count'],1);self.assertEqual(len(records),1)
+
     def test_rejected_tool_recovery_respects_http_cap(self):
         class RejectedTool(Exception):
             status_code=400
@@ -194,6 +239,23 @@ class AnsweringTest(unittest.TestCase):
             state=self.graph(p).invoke(self.questions[0],'S0','fixture')
         self.assertEqual(p.calls,1);self.assertEqual(request.call_count,1)
         self.assertEqual(state['status'],'error');self.assertEqual(state['repair_count'],1)
+
+    def test_native_invalid_arguments_get_one_counted_repair_without_execution(self):
+        class RejectedTool(Exception):
+            status_code=400
+            body={'error':{'code':'tool_use_failed','failed_generation':'invalid_status MUST_NOT_EXECUTE'}}
+        cfg={'provider':'groq','models':{'generator':{'id':'mock','rpm':1000,'rpd':1000}},
+             'max_retries':0,'daily_fraction':.9,'env_file':'.env','ledger':'native.jsonl',
+             'cache':'native.sqlite','temperature':0,'max_output_tokens':100}
+        p=GroqProvider(cfg,'generator',enable_llm=True,max_requests=2,root=self.root,client=object())
+        with patch.object(p,'_request',side_effect=[RejectedTool(),(ANSWER,10,10)]) as request,\
+             patch.object(self.tools,'execute',side_effect=AssertionError('Rejected arguments must never execute')):
+            state=self.graph(p).invoke(self.questions[0],'S7','fixture')
+        self.assertEqual(state['status'],'ok');self.assertEqual(state['repair_count'],1)
+        self.assertEqual(state['call_count'],2)
+        self.assertIn('x-native-tools',request.call_args_list[0][0][2])
+        self.assertNotIn('x-native-tools',request.call_args_list[1][0][2])
+        self.assertNotIn('MUST_NOT_EXECUTE',(self.root/'native.jsonl').read_text())
 
     def test_pack_privacy_unicode_and_budget(self):
         chunks=[dict(self.backend.docs[0],text='界'*3000)]
@@ -310,7 +372,7 @@ class AnsweringTest(unittest.TestCase):
         with patch.object(runner,'prepare',return_value=prep),patch.object(runner,'Backend',return_value=self.backend),patch.object(runner,'create_provider',return_value=p):
             first=runner.plan(self.config,self.root,systems=['S0'])
             self.assertEqual(first['estimated_model_calls'],3);self.assertEqual(p.calls,0)
-            with sqlite3.connect(str(self.root/'responses.sqlite')) as db:
+            with closing(sqlite3.connect(str(self.root/'responses.sqlite'))) as db, db:
                 db.execute('CREATE TABLE responses(key VARCHAR)')
                 key=runner.cached_generation_key(llm,json.dumps({'question':self.questions[0]['question']}),
                     (self.root/'prompt.txt').read_text(),ANSWER_SCHEMA,self.config['prompt_version'])
@@ -381,7 +443,7 @@ class AnsweringTest(unittest.TestCase):
         (self.root/'selection.json').write_text(json.dumps({'selected':{'corpus':'C1'},'compatibility':'fixture'}))
         (folder/'identity.json').write_text(json.dumps({'split':'dev','compatibility':'fixture'}))
         (folder/'manifest.json').write_text(json.dumps({'state':'COMPLETE'}))
-        with sqlite3.connect(str(folder/'retrieval_cache.sqlite')) as db:
+        with closing(sqlite3.connect(str(folder/'retrieval_cache.sqlite'))) as db, db:
             db.execute('CREATE TABLE results(dataset TEXT,qid TEXT,payload TEXT,corpus TEXT,retriever TEXT)')
             for i,score in enumerate((-2,0,3)):
                 db.execute('INSERT INTO results VALUES (?,?,?,?,?)',['v3',str(i),json.dumps({'hits':[{'score':score}]}),'C1','R5'])

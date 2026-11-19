@@ -4,7 +4,7 @@ The shared file lock serializes cooperating local processes. A provider response
 can be charged before a crash and before caching; exact-once billing is impossible.
 """
 import datetime as dt
-import fcntl
+from bugzilla_qa import file_lock as fcntl
 import hashlib
 import json
 import math
@@ -17,6 +17,7 @@ import time
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from contextlib import closing
 
 from jsonschema import validate, ValidationError
 
@@ -85,12 +86,12 @@ def rate_limit_details(exc, model, secrets=()):
 
 def rejected_unavailable_tool(exc, schema):
     """Recognize a model-output violation; never execute failed_generation."""
-    if 'x-native-tools' in schema or getattr(exc, 'status_code', None) != 400:
+    if getattr(exc, 'status_code', None) != 400:
         return False
     body = getattr(exc, 'body', None)
     if isinstance(body, dict):
         error = body.get('error', body)
-        if isinstance(error, dict) and error.get('code') == 'tool_use_failed':
+        if isinstance(error, dict) and error.get('code') in ('tool_use_failed', 'json_validate_failed'):
             return True
     message = getattr(exc, 'message', '')
     return isinstance(message, str) and 'Tool choice is none, but model called a tool' in message
@@ -242,7 +243,7 @@ class GeminiProvider:
         self.cache.parent.mkdir(parents=True, exist_ok=True)
         with (self.ledger.parent / 'provider.lock').open('a+') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
-            with sqlite3.connect(str(self.cache)) as db:
+            with closing(sqlite3.connect(str(self.cache))) as db, db:
                 db.execute('CREATE TABLE IF NOT EXISTS responses (key TEXT PRIMARY KEY, response TEXT NOT NULL, metadata TEXT NOT NULL)')
                 cached = db.execute('SELECT response,metadata FROM responses WHERE key=?', (key,)).fetchone()
                 if cached:
@@ -311,7 +312,7 @@ class GeminiProvider:
                                   status='ERROR', input_tokens=None, output_tokens=None, latency_ms=round((time.monotonic()-start)*1000), error_class=type(exc).__name__, http_status=code,
                                   **({'rate_limit':rate} if rate else {}))
                         if rejected_unavailable_tool(exc, schema):
-                            raise InvalidJSONResponse('Model attempted an unavailable tool; return answer JSON without tool calls') from None
+                            raise InvalidJSONResponse('Provider rejected model output against the requested schema') from None
                         if isinstance(exc, (json.JSONDecodeError, ValidationError)):
                             raise InvalidJSONResponse('Provider output did not match the requested JSON schema') from None
                         if code not in (429, 500, 502, 503, 504) or attempt >= self.config['max_retries'] or self.calls >= self.max_requests:

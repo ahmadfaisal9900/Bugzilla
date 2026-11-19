@@ -188,3 +188,58 @@ Validation: 25 answering fixtures and 13 provider tests pass (38 total). Tests
 check unchanged evidence/scope, local-only citation maps, canonicalized labels,
 legacy cache-key planning and compact graph completion. Shell and whitespace
 checks pass. Source data, frozen inputs and prior predictions are untouched.
+
+2026-11-18: Added the Phase 11 S answer scorer, a thin resumable experiment
+runner and a 12-question synthetic fixture with 60 fixed mock predictions.
+Outputs include per-family grades, coverage/failure accounting, exploratory
+cluster intervals, an always-abstain baseline and blinded human review sheets.
+The scorer reuses Phase 6 factual scoring rules. Duplicate successes, mixed
+versions and unconfirmed test scoring are rejected. No real S-method accuracy
+or grounding result is claimed. Native Windows supports the sample and saved
+prediction scoring; real generation uses the existing Linux/WSL runner.
+Validation: 18 new offline tests and 23 existing Phase 6 tests passed. The sample
+and shell preview completed without API calls. Real preflight reports the
+missing frozen bundle. No data, existing predictions or Git history changed.
+
+2026-11-18 follow-up: Added native Windows generation support and the real
+source-based sample workflow. Checked the delivered ZIP, rebuilt its reference
+answers locally and selected the stricter 165-question development variant.
+All nine families remain represented. Three multi-hop target facts cross
+partitions and are diagnostic; four explanation references need human review.
+Built a separate 14,191-chunk index with zero reported truncations and fixed S4
+calibration before inference. The actual Groq S0-S8 run has started; collection
+and human review are not complete. Raw databases, the original delivery and
+locked-test artifacts remain unchanged. No commit or push was made.
+
+2026-11-18 official development update: Verified the three committed releases
+against the shared source databases: 350 dev questions passed evidence,
+population and lifecycle compatibility checks. All 12,509 public records appear
+in the 14,191-chunk local index, with text matching sanitized source offsets.
+The original index is absent; this is an explicitly reconstructed runtime.
+Fixed timezone handling that falsely reported creation-time disagreements in
+the history adapter. Native model tool-argument rejections now use the existing
+single recorded format repair. Terminal failures are retained and not retried;
+transport/quota failures remain pending. Added repair accounting, a visible
+always-abstain baseline and descriptive-only small-cell comparisons. Official
+S4 dev calibration and the resumable S0-S8 run are in progress; no final answer
+accuracy or human-review result is claimed. Frozen releases remain unchanged.
+
+2026-11-19 review interface: The 80-question pilot finished all 720 answer slots.
+Added one browser page for all responses, explicit grading status, readable
+answers and references, source excerpts, filters and bounded human review
+controls. A combined plain-text CSV supports the same 306 review responses,
+including 81 requiring answer decisions. Import checks content identity and
+decision values, preserves previous reviews and refreshes existing scores.
+The 38 evaluation tests passed, and Chrome checks covered rendering, filters,
+comparison visibility, decision controls and browser draft persistence.
+Building the view leaves prediction files, scores and API ledgers unchanged.
+Human review is still pending. No commit or push was made.
+
+2026-11-19 cleanup: Removed the retired sample question builder, its shell
+wrapper, dedicated tests and guide, along with the unused sample preparation
+branch. Kept official source verification and history reconstruction in the
+renamed shared_source module. Official-data scoring now builds the review page
+and combined CSV automatically. README explains local browser access; exact
+Git exceptions allow only those two report files through the outputs ignore
+rule. Preserved prepared runtime data, raw predictions and existing reviews.
+Only static inspection was performed; no evaluation or tests were rerun.
