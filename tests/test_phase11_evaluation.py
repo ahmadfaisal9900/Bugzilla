@@ -38,6 +38,17 @@ def save_run(path, values):
 
 
 class ScoringTests(unittest.TestCase):
+    def test_larger_pilot_preserves_every_original_selection(self):
+        datasets={
+            'phase05':([item(qid='p'+str(i),family='F'+str(i%6+1)) for i in range(34)],{}),
+            'natural':([item(qid='n'+str(i),family='F'+str(i%4+1)) for i in range(51)],{}),
+            'v3':([item(qid=f+str(i),family=f) for f in ('F1','F3','F4','F6','KI','MH','F6H') for i in range(30)],{})}
+        original=experiment.pilot_selection(datasets)
+        larger=experiment.pilot_selection(datasets,125)
+        self.assertEqual([len(larger[d]) for d in datasets],[34,20,71])
+        self.assertTrue(all(set(original[d])<=set(larger[d]) for d in datasets))
+        self.assertEqual(larger,experiment.pilot_selection({d:(list(reversed(q)),p) for d,(q,p) in datasets.items()},125))
+
     def review_entry(self, required=True):
         row={k:'' for k in review.FIELDS}
         row.update(review_id='review1',dataset='phase05',question_type='Explanations',

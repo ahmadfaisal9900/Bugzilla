@@ -59,6 +59,7 @@ def collect(root, output):
         if not record.get('output'):
             continue
         folder = Path(record['output'])
+        summary = s.read(folder / 'summary.json')
         manifest = s.read(folder / 'manifest.json')
         paths = [Path(p) for p in manifest['input_sha256'] if Path(p).name=='manifest.json' and 'predictions' in Path(p).parts]
         if len(paths)!=1:
@@ -66,7 +67,7 @@ def collect(root, output):
         prediction_run = paths[0].parent
         for path, sha in manifest['input_sha256'].items():
             if path=='pilot_selection':
-                selection = s.read(output / 'pilot80_selection.json')
+                selection = s.read(Path(summary.get('pilot',{}).get('selection',output / 'pilot80_selection.json')))
                 if s.digest(selection)!=sha:
                     raise ValueError('Pilot selection changed')
                 continue

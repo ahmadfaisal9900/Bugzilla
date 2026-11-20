@@ -392,6 +392,8 @@ Start-Process ".\outputs\evaluation\phase11\START_HERE.html"
 
 Repeat the evaluation command to resume saved progress. Available keys are read automatically from `.env`: `GROQ_API_KEY` and optional `GROQ_API_KEY_2`, `_3` and `_4`. One key is enough; missing entries are skipped and duplicate values are used once. Environment variables override matching `.env` entries. There is no need to list keys in the command. The default cap is 900 HTTP attempts per invocation, shared across all keys; `--max-requests` can override it. The shared-source option requires the matching local source databases and prepared runtime/index bundle; it verifies those inputs before inference. The old generated-question sample workflow has been removed.
 
+To extend the pilot to 125 questions, use `--pilot-size 125 --output outputs/evaluation/phase11/pilot125`. This retains the original 80 and adds 45 questions, producing 1,125 answer slots across the nine methods while reusing the 720 existing answers. The new review page is in that output folder. The collections remain separate; this deliberately selected development pilot is not a random estimate of the full 350-question roster.
+
 Open `outputs/evaluation/phase11/START_HERE.html` by double-clicking it or using the command above. It is a self-contained local page: no web server or API key is needed to view the shared file. It shows every method response, its grading status, references and evidence. Method names can be revealed for comparison. The combined `REVIEW.csv` beside it is the Excel alternative. These two generated files are allowed through `.gitignore`; databases, prediction ledgers, caches and logs remain ignored. The page generator lives in `src/bugzilla_qa/evaluation/review.py`.
 
 ```powershell

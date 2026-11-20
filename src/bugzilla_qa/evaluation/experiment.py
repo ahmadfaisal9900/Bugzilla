@@ -113,7 +113,7 @@ def worker(argv=None):
     return cli.main(argv)
 
 
-def pilot_selection(datasets):
+def pilot_selection(datasets, size=80):
     selected = {'phase05': sorted(q['qid'] for q in datasets['phase05'][0]), 'natural': [], 'v3': []}
     if len(selected['phase05']) != 34:
         raise ValueError('The 80-question pilot requires the original 34 development questions')
@@ -133,6 +133,17 @@ def pilot_selection(datasets):
         selected['v3'].extend(choose([q for q in datasets['v3'][0] if q['family']==family], count))
     if sum(map(len, selected.values())) != 80:
         raise ValueError('Pilot selection must contain exactly 80 questions')
+    if size==125:
+        for dataset, target in [('natural',20),('v3',71)]:
+            remaining=[q for q in datasets[dataset][0] if q['qid'] not in selected[dataset]]
+            families=sorted({q['family'] for q in remaining})
+            groups=[choose([q for q in remaining if q['family']==family],sum(q['family']==family for q in remaining)) for family in families]
+            extra=[qid for group in itertools.zip_longest(*groups) for qid in group if qid]
+            selected[dataset].extend(extra[:target-len(selected[dataset])])
+        if sum(map(len,selected.values()))!=125:
+            raise ValueError('Insufficient questions for the 125-question pilot')
+    elif size!=80:
+        raise ValueError('Supported pilot sizes are 80 and 125')
     return selected
 
 
@@ -303,7 +314,7 @@ def main(argv=None):
     credentials = parser.add_mutually_exclusive_group()
     credentials.add_argument('--api-key-env', choices=KEY_NAMES, help='Use one selected .env entry instead of automatic discovery.')
     credentials.add_argument('--api-key-envs', nargs='+', choices=KEY_NAMES, help='Use selected .env entries instead of automatic discovery.')
-    parser.add_argument('--pilot-size', type=int, choices=[80], help='Fixed 80-question official development pilot; reuses saved answers.')
+    parser.add_argument('--pilot-size', type=int, choices=[80,125], help='Fixed official development pilot; reuses saved answers.')
     parser.add_argument('--max-requests', type=int, default=900)
     parser.add_argument('--limit', type=int)
     parser.add_argument('--dry-run', action='store_true')
@@ -333,7 +344,7 @@ def main(argv=None):
         except ValueError as error:
             parser.error(str(error))
     if args.pilot_size and (not args.shared_source or args.limit or args.datasets != ['phase05','natural','v3']):
-        parser.error('--pilot-size 80 requires --shared-source and all three datasets, without --limit')
+        parser.error('--pilot-size requires --shared-source and all three datasets, without --limit')
     if args.shared_source and (args.fixture or args.split!='dev'):
         parser.error('--shared-source is for the official development datasets only')
     if not args.fixture and not args.enable_llm and not args.score_only:
@@ -375,12 +386,12 @@ def main(argv=None):
         for dataset in args.datasets:
             datasets[dataset] = scoring.load_items(ROOT, retrieval, dataset, args.split, args.confirm_locked_test)
         if args.pilot_size:
-            args.selected_qids = pilot_selection(datasets)
-            selection = dict(state='DEVELOPMENT_PILOT', seed=317, questions=80,
-                             selection_rule='All 34 original dev; 10 natural stratified by family; 17 KI, all 8 MH and all 11 F6H, cluster spread; no answer scores used.',
+            args.selected_qids = pilot_selection(datasets,args.pilot_size)
+            selection = dict(state='DEVELOPMENT_PILOT', seed=317, questions=args.pilot_size,
+                             selection_rule='All 34 original dev; 10 natural stratified by family; 17 KI, all 8 MH and all 11 F6H, cluster spread; no answer scores used.' if args.pilot_size==80 else 'Retain the original 80; extend to 20 natural and 71 v3 by family and cluster spread. No answer scores used.',
                              qids=args.selected_qids,
                              source_pins={d:pins for d, (_,pins) in datasets.items()})
-            selection_path = output / 'pilot80_selection.json'
+            selection_path = output / ('pilot'+str(args.pilot_size)+'_selection.json')
             if selection_path.exists() and scoring.read(selection_path) != selection:
                 raise ValueError('Saved pilot selection differs; preserve it and inspect source versions')
             if not args.dry_run:
@@ -403,7 +414,7 @@ def main(argv=None):
             generation, runs = generate(args)
         result = dict(state='DRY_RUN' if args.dry_run else 'COMPLETE', generation=generation, evaluations={})
         if args.pilot_size:
-            result.update(pilot_questions=80, selection=str(selection_path), credential_names=args.api_key_envs)
+            result.update(pilot_questions=args.pilot_size, selection=str(selection_path), credential_names=args.api_key_envs)
         for dataset, directory in runs.items():
             items, pins = datasets[dataset]
             full_items = items
@@ -434,11 +445,11 @@ def main(argv=None):
             summary = scoring.evaluate(items, selected, attempts, destination, args.systems, pins, reviews=args.reviews,
                                        context_config=context_config, documents=documents)
             if args.pilot_size:
-                summary['pilot'] = dict(total_questions=80, collection_questions=len(items), selection=str(selection_path),
+                summary['pilot'] = dict(total_questions=args.pilot_size, collection_questions=len(items), selection=str(selection_path),
                                        limitation='Development subset; overlapping collections reported separately; not a final test.')
                 scoring.write(destination / 'summary.json', summary)
                 with (destination / 'report.md').open('a', encoding='utf-8') as handle:
-                    handle.write('\nFixed 80-question development pilot: this collection contains '+str(len(items))+
+                    handle.write('\nFixed '+str(args.pilot_size)+'-question development pilot: this collection contains '+str(len(items))+
                                  ' selected questions. Collections overlap and are reported separately. Not a final test.\n')
             result['evaluations'][dataset] = dict(state=summary['state'], output=str(destination), questions=len(items))
             if summary['state'] != 'REVIEWED':

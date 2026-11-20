@@ -122,3 +122,9 @@ __pycache__/
 /outputs/eval_extension/bank-dacb7ca0ceb7e0ef/*
 !/outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved.jsonl
 !/outputs/eval_extension/bank-dacb7ca0ceb7e0ef/natural_approved_manifest.json
+
+
+!/outputs/evaluation/phase11/pilot125/
+/outputs/evaluation/phase11/pilot125/*
+!/outputs/evaluation/phase11/pilot125/START_HERE.html
+!/outputs/evaluation/phase11/pilot125/REVIEW.csv
