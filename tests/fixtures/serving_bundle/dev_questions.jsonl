@@ -1,0 +1,10 @@
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F1", "qid": "synthetic-00", "question": "What product is recorded for bug 100000?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F2", "qid": "synthetic-01", "question": "How long until the first FIXED transition for bug 100000?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F3", "qid": "synthetic-02", "question": "How many synthetic cohort bugs exist?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F4", "qid": "synthetic-03", "question": "Which bugs depend on bug 100000?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F5", "qid": "synthetic-04", "question": "What reason is given for bug 100000?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F6", "qid": "synthetic-05", "question": "How many engineer hours were spent on bug 100000?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "KI", "qid": "synthetic-06", "question": "Which synthetic report describes an imaginary keyboard widget?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "MH", "qid": "synthetic-07", "question": "Which component contains the dependency target of bug 100000?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F6H", "qid": "synthetic-08", "question": "What is the missing verified lifecycle for bug 100019?", "scope": {}, "split": "dev"}
+{"evidence_record_ids": ["metadata-100000", "comment-100000"], "family": "F1", "qid": "synthetic-09", "question": "What status is recorded for bug 100001?", "scope": {}, "split": "dev"}

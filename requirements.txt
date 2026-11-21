@@ -3,3 +3,6 @@
 duckdb==1.4.4
 # Required by DuckDB's Python client to fetch TIMESTAMPTZ values.
 pytz==2026.6
+# MLOps Phase 0: use Conda iqfm with Python 3.11; do not create a venv.
+# Exact direct dependency pins are centralized in pyproject.toml.
+-e .[serving,ui,dashboard,dev]

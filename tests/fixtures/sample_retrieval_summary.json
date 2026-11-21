@@ -1,0 +1,105 @@
+{
+  "actual_api_calls": 0,
+  "assumptions": "Synthetic incomplete known-citation labels",
+  "blocker": null,
+  "bootstrap": [],
+  "cells": [
+    {
+      "bug_hit_at_5": {
+        "n": 10,
+        "value": 0.5
+      },
+      "corpus": "C1",
+      "dataset": "v3",
+      "dataset_n": 10,
+      "family": "F1",
+      "hit_at_1": {
+        "n": 10,
+        "value": 0.5
+      },
+      "hit_at_10": {
+        "n": 10,
+        "value": 0.5
+      },
+      "hit_at_5": {
+        "n": 10,
+        "value": 0.5
+      },
+      "latency_p50_ms": 10.0,
+      "latency_p95_ms": 20.0,
+      "mh_full_evidence_at_10": {
+        "n": 0,
+        "value": null
+      },
+      "mrr_at_10": {
+        "n": 10,
+        "value": 0.5
+      },
+      "n": 10,
+      "n_qrels": 10,
+      "ndcg_at_10": {
+        "n": 10,
+        "value": 0.5
+      },
+      "r4_r3_jaccard_top10": {
+        "n": 0,
+        "value": null
+      },
+      "recall_at_10": {
+        "n": 10,
+        "value": 0.5
+      },
+      "recall_at_5": {
+        "n": 10,
+        "value": 0.5
+      },
+      "retriever": "R1",
+      "state": "KNOWN_CITATION_PROXY"
+    }
+  ],
+  "compatibility": "synthetic",
+  "completed_rows": 10,
+  "corpora": [
+    "C1"
+  ],
+  "coverage": {
+    "v3": {
+      "F1": 10
+    }
+  },
+  "datasets": [
+    "v3"
+  ],
+  "expected_rows": 10,
+  "index_build": "synthetic-index",
+  "input_sha256": {},
+  "limit_per_dataset": null,
+  "limited": false,
+  "locked_test_used": false,
+  "max_http_attempts_this_invocation": 0,
+  "methods": [
+    "R1"
+  ],
+  "output": "synthetic",
+  "planned_transform_calls_upper_bound": 0,
+  "questions": 10,
+  "selection_observations": [],
+  "selection_protocol_sha256": "synthetic",
+  "selection_roster": {
+    "v3:F1": [
+      "synthetic-00",
+      "synthetic-01",
+      "synthetic-02",
+      "synthetic-03",
+      "synthetic-04",
+      "synthetic-05",
+      "synthetic-06",
+      "synthetic-07",
+      "synthetic-08",
+      "synthetic-09"
+    ]
+  },
+  "split": "dev",
+  "state": "COMPLETE",
+  "tracing": false
+}

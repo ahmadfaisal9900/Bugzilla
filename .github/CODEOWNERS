@@ -1,0 +1,6 @@
+# Shared Phase 0 contracts require review from both collaborators.
+/src/bugzilla_serving/contracts/ @ahmadfaisal9900 @SpLasty
+/src/bugzilla_serving/engine.py @ahmadfaisal9900 @SpLasty
+/configs/serving.yaml @ahmadfaisal9900 @SpLasty
+/tests/contracts/ @ahmadfaisal9900 @SpLasty
+/tests/fixtures/ @ahmadfaisal9900 @SpLasty

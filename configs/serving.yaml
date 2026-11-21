@@ -1,0 +1,210 @@
+# Phase 0 operational input cap (pending partner review): 4096; the provider architectural limit was unspecified.
+# Consumers in unchanged research code:
+# system_id -> answering.graph.AnswerGraph.invoke; R0 -> serving.engine.Runner.run
+# retriever/corpus/top_k -> answering.backend.Backend.retrieve (selected/retrieval_k)
+# provider/model/temperature -> llm.provider.create_provider and provider._request
+# context_budget_tokens/s5_dossier_budget -> AnswerGraph.pack_context (context_tokens/dossier_tokens)
+# s4_tau/s7_max_tool_steps/query_transform -> AnswerGraph.retrieve/generate/tool
+# rrf_k -> retrieval_v3.registry.Engine.base/graph and Backend.corrective
+# prompt_version -> AnswerGraph._call; serving.engine maps version to known existing prompt
+models:
+  gpt-oss-20b:
+    provider: groq
+    model_id: openai/gpt-oss-20b
+    label: GPT OSS 20B
+    rpm: 30
+    rpd: 1000
+    tpm: 8000
+    tpd: 200000
+    max_context_tokens: 4096
+hyperparameters:
+  system_id:
+    type: choice
+    default: S2
+    label: Answering method
+    help: Choose the evidence and answering method.
+    applies_to: &id001
+    - R0
+    - S0
+    - S1
+    - S2
+    - S3
+    - S4
+    - S5
+    - S6
+    - S7
+    - S8
+    - ORACLE
+    advanced: false
+    choices: *id001
+  retriever:
+    type: choice
+    default: R7b
+    label: Search method
+    help: Fixed arms retain their required search method.
+    applies_to: *id001
+    advanced: true
+    choices:
+    - R1
+    - R2
+    - R3
+    - R4
+    - R5
+    - R6
+    - R7a
+    - R7b
+  corpus:
+    type: choice
+    default: C1
+    label: Archive format
+    help: Original, short chunks, or prefixed short chunks.
+    applies_to: *id001
+    advanced: true
+    choices:
+    - C0
+    - C1
+    - C2
+  provider:
+    type: choice
+    default: groq
+    label: Provider
+    help: Groq for enabled requests; mock for offline development.
+    applies_to: *id001
+    advanced: true
+    choices:
+    - groq
+    - mock
+  model:
+    type: choice
+    default: openai/gpt-oss-20b
+    label: Language model
+    help: All compared methods use the same model.
+    applies_to: *id001
+    advanced: true
+    choices:
+    - openai/gpt-oss-20b
+  top_k:
+    type: integer
+    default: 5
+    label: Sources to retrieve
+    help: Maximum initial search results; tool searches set their own k.
+    applies_to:
+    - R0
+    - S1
+    - S2
+    - S3
+    - S4
+    - S5
+    - S6
+    - S8
+    advanced: true
+    min: 1
+    max: 50
+  temperature:
+    type: number
+    default: 0.0
+    label: Answer variability
+    help: Zero gives the most repeatable requests.
+    applies_to: &id002
+    - S0
+    - S1
+    - S2
+    - S3
+    - S4
+    - S5
+    - S6
+    - S7
+    - S8
+    - ORACLE
+    advanced: true
+    min: 0.0
+    max: 1.0
+  context_budget_tokens:
+    type: integer
+    default: 3000
+    label: Evidence budget
+    help: Conservative UTF-8 byte bound used by the research packer.
+    applies_to: *id002
+    advanced: true
+    min: 128
+    max: 4096
+  prompt_version:
+    type: choice
+    default: answer-v1
+    label: Prompt
+    help: One shared prompt profile across compared methods.
+    applies_to: *id001
+    advanced: true
+    choices:
+    - answer-v1
+    - answer-v2-compact
+  s4_tau:
+    type: number
+    default: -4.5
+    label: Evidence threshold
+    help: Below this reranker score, retry then abstain. Not a probability.
+    applies_to:
+    - S4
+    advanced: true
+    min: -30.0
+    max: 30.0
+  s5_dossier_budget:
+    type: integer
+    default: 4096
+    label: Deep-read budget
+    help: Evidence-byte bound for all public records of selected bugs.
+    applies_to:
+    - S5
+    - S8
+    advanced: true
+    min: 128
+    max: 4096
+  s7_max_tool_steps:
+    type: integer
+    default: 4
+    label: Tool steps
+    help: Maximum read-only tool calls before finishing.
+    applies_to:
+    - S7
+    - S8
+    advanced: true
+    min: 1
+    max: 4
+  rrf_k:
+    type: integer
+    default: 60
+    label: Rank fusion constant
+    help: Controls fusion for hybrid and transformed searches.
+    applies_to:
+    - R0
+    - S2
+    - S3
+    - S4
+    - S5
+    - S6
+    - S7
+    - S8
+    advanced: true
+    min: 1
+    max: 200
+  query_transform:
+    type: choice
+    default: R7b
+    label: Query transformation
+    help: One hypothetical report or three search rewrites.
+    applies_to:
+    - S3
+    advanced: true
+    choices:
+    - R7a
+    - R7b
+default_config:
+  system_id: S2
+  retriever: R7b
+  corpus: C1
+  provider: groq
+  model: openai/gpt-oss-20b
+  top_k: 5
+  temperature: 0.0
+  context_budget_tokens: 3000
+  prompt_version: answer-v1
