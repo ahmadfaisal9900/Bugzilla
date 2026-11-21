@@ -42,7 +42,7 @@ Outputs are ignored under `outputs/eval_extension/bank-<identity>/` and `outputs
 
 ## Human and test gates
 
-Review the existing original Phase 5 bundle, audit/transfer genuine decisions to its original queue, complete its global signoff, and run the existing Phase 5 freeze validator as documented in `docs/RUNBOOK.md`. Do not treat generated or Codex-suggested answers as human approval. Natural and F5 review files are separate; the code does not promote them automatically to verified gold.
+Review the existing original Phase 5 bundle, audit/transfer genuine decisions to its original queue, complete its global signoff, and run the existing Phase 5 freeze validator as documented in `docs/RUNBOOK.md`. Natural and F5 review files are separate; the code does not promote them automatically to verified gold.
 
 After a valid original freeze **and** a successful `tuning_dev.json` exist, seal the new factual bank and fixed corpus/config, then request test retrieval:
 

@@ -13,9 +13,9 @@
 | Natural rewrites | Approved: 51 dev / 59 test |
 | Retrieval variants and selected retriever | Done, dev-only selection: R7b/C1 |
 | S0–S8 + ORACLE answering systems | Implemented; offline fixture tests pass |
-| Dev answering run | 80-question pilot complete: 720 answer slots across S0–S8; full dev roster not completed |
-| Answer scoring | Automatic scoring complete for the pilot; human review pending |
-| F5/grounding review and locked test | Human review and final comparison pending |
+| Dev answering run | 125-question pilot complete: 1,125 answer slots across S0–S8; full dev roster not completed |
+| Answer scoring | 86 required answer grades and 358 evidence decisions imported after user review and verification |
+| Locked test | Not run; the reviewed pilot is development evidence |
 
 ### First 30 minutes for the partner
 
@@ -23,7 +23,7 @@
 2. Create the ignored `.env` with your Groq key; add LangSmith credentials only if needed.
 3. Run the three offline unit-test commands in section 10.
 4. Run `quota` and `plan` from section 11; these make zero API calls.
-5. Open `outputs/evaluation/phase11/START_HERE.html` to inspect the pilot results and review answers. Section 12 explains scoring, review and run commands. The combined `REVIEW.csv` beside the page is the Excel alternative.
+5. Open `outputs/evaluation/phase11/pilot125/START_HERE.html` for the main reviewed results. Section 12 explains scoring, review and run commands. The combined `REVIEW.csv` beside the page is the Excel alternative.
 
 ## 3. Setup
 
@@ -241,7 +241,7 @@ LangGraph: `load_question → router → retrieve → pack_context → generate 
 | `scripts/smoke/check_structure.sh` | Structure/import check; no flags | `bash scripts/smoke/check_structure.sh` |
 | Unit tests | Offline answering, provider and retrieval fixtures | Three commands in section 10 |
 
-Older phase scripts under `scripts/` prepare data/benchmarks; that preparation is finished and should not be rerun. Package CLI equivalents are `python -m bugzilla_qa.answering.cli` and `python -m bugzilla_qa.retrieval_v3.cli`. The S evaluation and review entry point is `scripts/run_phase11_evaluation.ps1`; open `outputs/evaluation/phase11/START_HERE.html` for the saved comparison and review controls.
+Older phase scripts under `scripts/` prepare data/benchmarks; that preparation is finished and should not be rerun. Package CLI equivalents are `python -m bugzilla_qa.answering.cli` and `python -m bugzilla_qa.retrieval_v3.cli`. The S evaluation and review entry point is `scripts/run_phase11_evaluation.ps1`; open `outputs/evaluation/phase11/pilot125/START_HERE.html` for the saved comparison and review controls.
 
 ## 9. Observability
 
@@ -381,27 +381,26 @@ A provider-failure fallback can have `abstain=true` but `status=error`: **not a 
 
 ### B. Answer evaluation
 
-The S scorer covers typed answers, abstentions, failures, paired cluster comparisons and blinded human review exports. The fixed 80-question development pilot has 720 resolved answer slots across S0 through S8. Human review remains pending; no final answer-accuracy or locked-test comparison is claimed.
+The S scorer covers typed answers, abstentions, failures, paired cluster comparisons and blinded review exports. The main development pilot has 125 questions and 1,125 resolved answer slots across S0 through S8. The user confirmed completing manual review; 86 answer grades and 358 evidence decisions are imported. Verification corrected two explanation grades and one evidence decision. The original export and the corrections are preserved beside the results in `REVIEW_completed.csv` and `review_verification.json`. The locked test has not run.
 
 The evaluation runner automatically generates one review page and one combined review CSV after scoring, including when a quota stop leaves a partial result:
 
 ```powershell
-.\scripts\run_phase11_evaluation.ps1 --shared-source --pilot-size 80 --enable-llm
-Start-Process ".\outputs\evaluation\phase11\START_HERE.html"
+.\scripts\run_phase11_evaluation.ps1 --shared-source --pilot-size 125 --enable-llm --output outputs/evaluation/phase11/pilot125
 ```
 
 Repeat the evaluation command to resume saved progress. Available keys are read automatically from `.env`: `GROQ_API_KEY` and optional `GROQ_API_KEY_2`, `_3` and `_4`. One key is enough; missing entries are skipped and duplicate values are used once. Environment variables override matching `.env` entries. There is no need to list keys in the command. The default cap is 900 HTTP attempts per invocation, shared across all keys; `--max-requests` can override it. The shared-source option requires the matching local source databases and prepared runtime/index bundle; it verifies those inputs before inference. The old generated-question sample workflow has been removed.
 
-To extend the pilot to 125 questions, use `--pilot-size 125 --output outputs/evaluation/phase11/pilot125`. This retains the original 80 and adds 45 questions, producing 1,125 answer slots across the nine methods while reusing the 720 existing answers. The new review page is in that output folder. The collections remain separate; this deliberately selected development pilot is not a random estimate of the full 350-question roster.
+The 125-question selection retains the original 80 and adds 45 questions. The collections remain separate: 34 Phase 5, 20 natural and 71 v3 questions. This deliberately selected development pilot is not a random estimate of the full 350-question roster.
 
-Open `outputs/evaluation/phase11/START_HERE.html` by double-clicking it or using the command above. It is a self-contained local page: no web server or API key is needed to view the shared file. It shows every method response, its grading status, references and evidence. Method names can be revealed for comparison. The combined `REVIEW.csv` beside it is the Excel alternative. These two generated files are allowed through `.gitignore`; databases, prediction ledgers, caches and logs remain ignored. The page generator lives in `src/bugzilla_qa/evaluation/review.py`.
+Open `outputs/evaluation/phase11/pilot125/START_HERE.html` by double-clicking it. It is a self-contained local page: no web server or API key is needed to view it. It shows every method response, its grading status, references and evidence. Method names can be revealed for comparison. The combined `REVIEW.csv` beside it is the Excel alternative. Databases, prediction ledgers, caches and logs remain ignored. The page generator lives in `src/bugzilla_qa/evaluation/review.py`.
 
 ```powershell
-.\scripts\run_phase11_evaluation.ps1 --review
-.\scripts\run_phase11_evaluation.ps1 --import-review "$env:USERPROFILE\Downloads\REVIEW_completed.csv"
+.\scripts\run_phase11_evaluation.ps1 --output outputs/evaluation/phase11/pilot125 --review
+.\scripts\run_phase11_evaluation.ps1 --output outputs/evaluation/phase11/pilot125 --import-review outputs/evaluation/phase11/pilot125/REVIEW_verified.csv
 ```
 
-These commands rebuild the view or import review decisions from saved results without model requests. For the full configured question roster, omit `--pilot-size 80`. See [the review instructions](docs/PHASE11_EVALUATION.md#start-here).
+These commands rebuild the view or import the checked review decisions without model requests. For the full configured question roster, omit `--pilot-size 125` and use a separate output folder. See [the review instructions](docs/PHASE11_EVALUATION.md#start-here).
 
 ### C. Evaluation rules
 
