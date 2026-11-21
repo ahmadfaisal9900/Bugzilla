@@ -1,4 +1,5 @@
 """The exact tracking and trace vocabulary from OVERVIEW sections 4.5 and 4.6."""
+
 from __future__ import annotations
 
 import math
@@ -10,23 +11,53 @@ EXPERIMENTS = ("research-answer-eval", "research-retrieval-eval", "playground")
 REQUIRED_TAGS = frozenset({"source", "eval_set", "datasets", "split", "scorer", "git_sha"})
 REGISTRY_MODEL_NAME = "bugzilla-qa-config"
 CHAMPION_ALIAS = "champion"
+CONFIG_ORIGIN_TAG = "config_origin"
 PRESET_TAG_KEYS = ("preset_slug", "preset_label", "preset_description", "published")
 LANGSMITH_PROJECTS = ("ensf621-serving", "ensf621-dev")
-TRACE_METADATA_KEYS = frozenset({
-    "config_hash", "preset_slug", "system_id", "model", "retriever", "corpus", "route",
-    "degraded", "request_id", "session_id",
-})
+TRACE_METADATA_KEYS = frozenset(
+    {
+        "config_hash",
+        "preset_slug",
+        "system_id",
+        "model",
+        "retriever",
+        "corpus",
+        "route",
+        "degraded",
+        "request_id",
+        "session_id",
+    }
+)
 FEEDBACK_KEY = "user_rating"
 FAMILIES = ("F1", "F2", "F3", "F4", "F5", "F6", "KI", "MH", "F6H")
 RETRIEVAL_METRICS = (
-    "hit_at_1", "hit_at_5", "hit_at_10", "recall_at_5", "recall_at_10", "mrr_at_10",
-    "ndcg_at_10", "bug_hit_at_5", "mh_full_evidence_at_10", "latency_p50_ms", "latency_p95_ms",
-    "n", "r4_r3_jaccard_top10",
+    "hit_at_1",
+    "hit_at_5",
+    "hit_at_10",
+    "recall_at_5",
+    "recall_at_10",
+    "mrr_at_10",
+    "ndcg_at_10",
+    "bug_hit_at_5",
+    "mh_full_evidence_at_10",
+    "latency_p50_ms",
+    "latency_p95_ms",
+    "n",
+    "r4_r3_jaccard_top10",
 )
-COMMON_METRICS = frozenset({
-    "answer.macro", "abstain.correct_rate", "abstain.false_rate", "fail.rate",
-    "cost.llm_calls", "cost.tokens_in", "cost.tokens_out", "latency.p50_ms", "latency.p95_ms",
-})
+COMMON_METRICS = frozenset(
+    {
+        "answer.macro",
+        "abstain.correct_rate",
+        "abstain.false_rate",
+        "fail.rate",
+        "cost.llm_calls",
+        "cost.tokens_in",
+        "cost.tokens_out",
+        "latency.p50_ms",
+        "latency.p95_ms",
+    }
+)
 
 
 def answer_metric(family: str, measure: str = "score") -> str:
@@ -60,7 +91,12 @@ def validate_mlflow_run(params: dict, tags: dict, metrics: dict) -> None:
             except (ValueError, TypeError):
                 pass
         values[k] = v
-    cfg = RunConfig.model_validate(values).validate_against()
+    origin = tags.get(CONFIG_ORIGIN_TAG)
+    if origin is not None and origin not in ("historical", "reconstructed"):
+        raise ValueError("config_origin: expected historical or reconstructed")
+    if origin and tags.get("source") != "backfill":
+        raise ValueError("config_origin: record mode is restricted to backfills")
+    cfg = RunConfig.model_validate(values).validate_against(mode="record" if origin else "execute")
     if params["config_hash"] != config_hash(cfg):
         raise ValueError("config_hash: does not match canonical RunConfig")
     if not REQUIRED_TAGS <= tags.keys():
@@ -76,7 +112,8 @@ def validate_mlflow_run(params: dict, tags: dict, metrics: dict) -> None:
     allowed.update(
         retrieval_metric(d, f, m)
         for d in ("v3", "phase05", "natural")
-        for f in FAMILIES for m in RETRIEVAL_METRICS
+        for f in FAMILIES
+        for m in RETRIEVAL_METRICS
     )
     for k, v in metrics.items():
         if k not in allowed or isinstance(v, bool) or not isinstance(v, (int, float)):

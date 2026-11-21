@@ -1,0 +1,1072 @@
+{
+  "components": {
+    "schemas": {
+      "Answer": {
+        "additionalProperties": false,
+        "properties": {
+          "abstain": {
+            "title": "Abstain",
+            "type": "boolean"
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "answer_type": {
+            "title": "Answer Type",
+            "type": "string"
+          },
+          "bug_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Bug Ids",
+            "type": "array"
+          },
+          "citations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "rationale": {
+            "maxLength": 1000,
+            "title": "Rationale",
+            "type": "string"
+          }
+        },
+        "required": [
+          "abstain",
+          "answer",
+          "answer_type",
+          "rationale"
+        ],
+        "title": "Answer",
+        "type": "object"
+      },
+      "AnswerRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "$ref": "#/components/schemas/Answer"
+          },
+          "cache_hits": {
+            "minimum": 0.0,
+            "title": "Cache Hits",
+            "type": "integer"
+          },
+          "config_hash": {
+            "pattern": "^[a-f0-9]{12}$",
+            "title": "Config Hash",
+            "type": "string"
+          },
+          "degraded": {
+            "title": "Degraded",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItem"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "latency_ms": {
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "llm_calls": {
+            "minimum": 0.0,
+            "title": "Llm Calls",
+            "type": "integer"
+          },
+          "route": {
+            "title": "Route",
+            "type": "string"
+          },
+          "route_rule": {
+            "title": "Route Rule",
+            "type": "string"
+          },
+          "tokens": {
+            "additionalProperties": true,
+            "title": "Tokens",
+            "type": "object"
+          }
+        },
+        "required": [
+          "answer",
+          "route",
+          "route_rule",
+          "evidence",
+          "tokens",
+          "llm_calls",
+          "cache_hits",
+          "latency_ms",
+          "degraded",
+          "errors",
+          "config_hash"
+        ],
+        "title": "AnswerRecord",
+        "type": "object"
+      },
+      "AskResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "langsmith_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Langsmith Run Id"
+          },
+          "record": {
+            "$ref": "#/components/schemas/AnswerRecord"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "record"
+        ],
+        "title": "AskResponse",
+        "type": "object"
+      },
+      "ChatRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "maxLength": 6000,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "overrides": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overrides"
+          },
+          "preset_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preset Slug"
+          },
+          "session_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "message"
+        ],
+        "title": "ChatRequest",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "enum": [
+              "invalid_config",
+              "rate_limited",
+              "internal"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "retry_after": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retry After"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "EvidenceItem": {
+        "additionalProperties": false,
+        "properties": {
+          "bug_id": {
+            "title": "Bug Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "title": "Chunk Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "snippet": {
+            "title": "Snippet",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "chunk_id",
+          "bug_id",
+          "snippet",
+          "score",
+          "url"
+        ],
+        "title": "EvidenceItem",
+        "type": "object"
+      },
+      "FeedbackRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "score": {
+            "enum": [
+              0,
+              1
+            ],
+            "title": "Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "request_id",
+          "score"
+        ],
+        "title": "FeedbackRequest",
+        "type": "object"
+      },
+      "FeedbackResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "FeedbackResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ModelOption": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "max_context_tokens": {
+            "exclusiveMinimum": 0.0,
+            "title": "Max Context Tokens",
+            "type": "integer"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "rpd": {
+            "exclusiveMinimum": 0.0,
+            "title": "Rpd",
+            "type": "integer"
+          },
+          "rpm": {
+            "exclusiveMinimum": 0.0,
+            "title": "Rpm",
+            "type": "integer"
+          },
+          "tpd": {
+            "exclusiveMinimum": 0.0,
+            "title": "Tpd",
+            "type": "integer"
+          },
+          "tpm": {
+            "exclusiveMinimum": 0.0,
+            "title": "Tpm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provider",
+          "model_id",
+          "label",
+          "rpm",
+          "rpd",
+          "tpm",
+          "tpd",
+          "max_context_tokens"
+        ],
+        "title": "ModelOption",
+        "type": "object"
+      },
+      "ModelQuota": {
+        "additionalProperties": false,
+        "properties": {
+          "degraded_now": {
+            "title": "Degraded Now",
+            "type": "boolean"
+          },
+          "limit_requests": {
+            "exclusiveMinimum": 0.0,
+            "title": "Limit Requests",
+            "type": "integer"
+          },
+          "limit_tokens": {
+            "exclusiveMinimum": 0.0,
+            "title": "Limit Tokens",
+            "type": "integer"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "used_requests": {
+            "minimum": 0.0,
+            "title": "Used Requests",
+            "type": "integer"
+          },
+          "used_tokens": {
+            "minimum": 0.0,
+            "title": "Used Tokens",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "model",
+          "used_requests",
+          "limit_requests",
+          "used_tokens",
+          "limit_tokens",
+          "degraded_now"
+        ],
+        "title": "ModelQuota",
+        "type": "object"
+      },
+      "OptionsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "hyperparameters": {
+            "additionalProperties": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Hyperparameters",
+            "type": "object"
+          },
+          "models": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ModelOption"
+            },
+            "title": "Models",
+            "type": "object"
+          },
+          "presets": {
+            "items": {
+              "$ref": "#/components/schemas/Preset"
+            },
+            "title": "Presets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "models",
+          "hyperparameters",
+          "presets"
+        ],
+        "title": "OptionsResponse",
+        "type": "object"
+      },
+      "Preset": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/RunConfig"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "is_champion": {
+            "title": "Is Champion",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "slug": {
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "label",
+          "description",
+          "config",
+          "is_champion"
+        ],
+        "title": "Preset",
+        "type": "object"
+      },
+      "QuotaResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelQuota"
+            },
+            "title": "Models",
+            "type": "array"
+          }
+        },
+        "required": [
+          "models"
+        ],
+        "title": "QuotaResponse",
+        "type": "object"
+      },
+      "RunConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "context_budget_tokens": {
+            "default": 3000,
+            "minimum": 128.0,
+            "title": "Context Budget Tokens",
+            "type": "integer"
+          },
+          "corpus": {
+            "default": "C1",
+            "enum": [
+              "C0",
+              "C1",
+              "C2"
+            ],
+            "title": "Corpus",
+            "type": "string"
+          },
+          "model": {
+            "default": "openai/gpt-oss-20b",
+            "title": "Model",
+            "type": "string"
+          },
+          "prompt_version": {
+            "default": "answer-v1",
+            "enum": [
+              "answer-v1",
+              "answer-v2-compact"
+            ],
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "provider": {
+            "default": "groq",
+            "enum": [
+              "groq",
+              "mock"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "query_transform": {
+            "anyOf": [
+              {
+                "enum": [
+                  "R7a",
+                  "R7b"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query Transform"
+          },
+          "retriever": {
+            "default": "R7b",
+            "enum": [
+              "R1",
+              "R2",
+              "R3",
+              "R4",
+              "R5",
+              "R6",
+              "R7a",
+              "R7b"
+            ],
+            "title": "Retriever",
+            "type": "string"
+          },
+          "rrf_k": {
+            "anyOf": [
+              {
+                "maximum": 200.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rrf K"
+          },
+          "s4_tau": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "S4 Tau"
+          },
+          "s5_dossier_budget": {
+            "anyOf": [
+              {
+                "minimum": 128.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "S5 Dossier Budget"
+          },
+          "s7_max_tool_steps": {
+            "anyOf": [
+              {
+                "maximum": 4.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "S7 Max Tool Steps"
+          },
+          "system_id": {
+            "default": "S2",
+            "enum": [
+              "R0",
+              "S0",
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5",
+              "S6",
+              "S7",
+              "S8",
+              "ORACLE"
+            ],
+            "title": "System Id",
+            "type": "string"
+          },
+          "temperature": {
+            "default": 0.0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Temperature",
+            "type": "number"
+          },
+          "top_k": {
+            "default": 5,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Top K",
+            "type": "integer"
+          }
+        },
+        "title": "RunConfig",
+        "type": "object"
+      },
+      "StatusResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "StatusResponse",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Bugzilla QA",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/ask": {
+      "post": {
+        "operationId": "ask_v1_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Ask"
+      }
+    },
+    "/v1/chat/stream": {
+      "post": {
+        "operationId": "stream_v1_chat_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Stream"
+      }
+    },
+    "/v1/examples": {
+      "get": {
+        "operationId": "unavailable_v1_examples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response Unavailable V1 Examples Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Unavailable"
+      }
+    },
+    "/v1/feedback": {
+      "post": {
+        "operationId": "feedback_v1_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Feedback"
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "health_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/v1/options": {
+      "get": {
+        "operationId": "unavailable_v1_options_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Unavailable"
+      }
+    },
+    "/v1/presets": {
+      "get": {
+        "operationId": "unavailable_v1_presets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Preset"
+                  },
+                  "title": "Response Unavailable V1 Presets Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Unavailable"
+      }
+    },
+    "/v1/quota": {
+      "get": {
+        "operationId": "unavailable_v1_quota_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Unavailable"
+      }
+    },
+    "/v1/ready": {
+      "get": {
+        "operationId": "unavailable_v1_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "Unavailable"
+      }
+    }
+  }
+}

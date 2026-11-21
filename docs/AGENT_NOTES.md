@@ -142,3 +142,35 @@ The owner explicitly authorizes P0 to create the shared contracts; missing Phase
 Created deterministic synthetic fixture inputs (20 fake bugs, 61 public chunks, three tiny FTS5 indexes, 10 dev questions), sample answer/SSE/30 LangSmith runs and schema-shaped synthetic retrieval summary. Regenerated twice in temporary directories: bundle manifests are byte-identical. Fixture hashes/counts/dev-only checks and Python 3.11 syntax checks passed. Existing research regressions passed via unittest in the unmodified iqfm environment: 30 answering tests and 14 retrieval tests. No research files or real/frozen questions/gold were edited or loaded.
 
 **Not yet verified:** Python 3.11 Phase 0 pytest, local MLflow seed/registry/idempotence/fake-key checks, OpenAPI snapshot and Ruff. FastAPI is unavailable, so no fake OpenAPI snapshot is substituted; the initial tests/contracts/openapi.json must be generated after installing the declared pins, only with UPDATE_SNAPSHOTS=1. The current Python 3.9 environment cannot import the new Python 3.11 contracts. Source checks do not replace those gates. See docs/mlops/PHASE0_NOTES.md for exact commands and assumptions. No remote calls, dependency installs, commits or pushes during P0.
+
+## Stream B B1/B3 — approved archival amendment, 2026-11-21
+
+Current branch is `feature/mlops`; Python is Conda iqfm 3.11.15 with the pinned
+serving/dashboard/dev dependencies already present. Earlier missing-P0/environment
+notes above describe previous inspections. No installation or push in this task.
+
+Owner approved record-vs-execute RunConfig validation and the review-only pilot
+fallback; partner notified. See `mlops/PHASE0_NOTES.md` approved amendments.
+Tracking/backfill/registry/promotion code is implemented under Stream B ownership;
+research/API/chat/engine/serving-cap files remain untouched. No real registry,
+Groq, LangSmith or DagsHub calls, dataset rebuilds, or test gold access.
+
+Real-data dry runs: nine PILOT answer plans (auto -> review-only) and 24 retrieval
+pair plans. The current CSV has 358 rows and **zero human answer verdicts**, not a
+completed human evaluation: 272 automatic outcomes, 86 ungraded including all
+54 F5 rows. These are the current filesystem observations; no earlier reported
+human-decision counts are assumed. Missing exact raw prediction references are
+not a blocker for review-only. No raw answers/questions/reviewer identities are
+included in MLflow artifacts. Pending F5, absent costs/rates/latency and 12K
+historical S5/S8 budgets prevent automatic serving promotion, not archival logging.
+
+Details, source-to-metric mapping and ordered terminal commands are in
+`mlops/BACKFILL_MAPPING.md`; promotion was predeclared in `PROMOTION_POLICY.md`
+and `configs/promotion.yaml`. No champion was chosen by the coding agent.
+
+Verification: 46 offline contract/Stream B tests passed in 16.21 seconds;
+Ruff check and format check passed. The in-process FastAPI TestClient needed
+execution outside the sandbox because its AnyIO portal stalled inside it;
+no HTTP/live-service calls were made. Both real-data backfills dry-ran cleanly
+without tracking writes (9 answer / 24 retrieval plans). No source/frozen or
+Stream A code changed. Existing earlier notes edits are preserved unstaged.

@@ -45,6 +45,7 @@ line-length = 100
 include = [
     "src/bugzilla_serving/**/*.py", "tests/contracts/**/*.py",
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
+    "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/publish_preset.py",
 ]
 
 [tool.ruff.lint]

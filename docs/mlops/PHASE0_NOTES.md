@@ -153,3 +153,30 @@ synthetic tags/configs only, and publishes a synthetic fixture champion.
    only if it should be represented separately in a future reviewed contract.
 3. Both collaborators review the shared code and initial snapshot before A/B work.
    No live inference, DagsHub/LangSmith operations, deployment or pushes occurred.
+
+## Approved amendments — 2026-11-21
+
+Approved by **ahmadfaisal9900; partner notified**:
+
+- `RunConfig.validate_against(spec, mode="execute"|"record")` now separates
+  execution eligibility from archival recording. Default `execute` retains
+  serving ranges, applicability, allowed combinations and model caps. Engine/API
+  call sites remain unchanged and therefore execute-strict.
+- `record` preserves known typed configuration fields without numeric serving
+  caps/applicability checks. Enum identity, forbidden extra fields, strict types
+  and finite values still apply. Numeric bounds live in execute validation;
+  the execute-facing OpenAPI schema is unchanged.
+- `CONFIG_ORIGIN_TAG = "config_origin"` is exported in `names.py`. Only
+  `source=backfill` may use `historical`/`reconstructed` record validation.
+  Historical ledger imports use `historical`; review-only reconstruction uses
+  `reconstructed`. Neither implies deployability.
+- Preset publication and champion configuration loading always revalidate in
+  execute mode. A policy override cannot bypass this gate. Historical 12,000-token
+  S5/S8 dossiers remain recorded faithfully and cannot be published unchanged.
+- Missing exact pilot prediction references permit a review-only backfill;
+  cost/latency/token metrics are omitted. No synthetic replacement ledgers.
+
+The missing `tests/contracts/openapi.json` artifact was restored from the
+unchanged Phase 0 stub. Its JSON was compared byte-for-byte with OpenAPI generated
+using the pre-amendment RunConfig: identical. No API implementation or contract
+shape was changed. Golden RunConfig hashes remain covered by the original tests.
