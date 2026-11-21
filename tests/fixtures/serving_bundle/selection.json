@@ -1,0 +1,11 @@
+{
+  "index_build": "indexes",
+  "selected": {
+    "corpus": "C1",
+    "retriever": "R7b"
+  },
+  "sources": [],
+  "state": "SELECTED_DEV_ONLY",
+  "synthetic": true,
+  "test_used": false
+}

@@ -1,0 +1,15 @@
+{
+  "context_tokens": 3000,
+  "dossier_tokens": 4096,
+  "duckdb_memory": "64MB",
+  "history_checkpoint": "history.json",
+  "prompt_version": "answer-v1",
+  "query_transform": "R7b",
+  "retrieval_config": "retrieval.json",
+  "retrieval_k": 5,
+  "retrieval_runs": [],
+  "seed": 317,
+  "selection": "selection.json",
+  "source_config": "source.json",
+  "tool_steps": 4
+}

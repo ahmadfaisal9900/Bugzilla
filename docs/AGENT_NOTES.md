@@ -74,3 +74,71 @@ Phase 5 lacks family in question files: extract only metadata; never typed gold
 for inference. Natural/v3 imported aggregates use expanded-v2 partitions, distinct
 from Phase 5. Old M3 remains unchanged and deprecated for this comparison.
 No frozen/source edits, answer scoring, live API call or full experiment by agent.
+
+## Stream B inventory and Phase 0 gate — 2026-11-21
+
+Read `docs/mlops/OVERVIEW.md`, `STREAM_B.md` and `STREAM_A.md` before inventory. This inspection used only local metadata/code, the pilot CSV header and saved dev retrieval summaries; no test questions/gold or remote services were accessed.
+
+| Expected | Found |
+| --- | --- |
+| Integration branch `mlops` | Checkout is `main`; local branches are `main` and `feature/mlops`. No local `mlops` branch. No checkout, branch creation or network fetch performed. |
+| Approved `src/bugzilla_serving/contracts/` | Missing in the checkout and in the tracked tree of `feature/mlops`. |
+| Shared `engine.py` adapter | Missing on both local branches. |
+| Shared `configs/serving.yaml` | Missing on both local branches; no approved model limits or hyperparameter schema to consume. |
+| Phase 0 `tests/contracts/`, serving fixtures and MLflow seed script | Missing on both local branches. Existing CSV data fixtures are research fixtures, not the specified serving contracts. |
+| B-owned tracking, experiments and dashboard packages/scripts | Not present. |
+| Research retrievers/graphs/provider/scorer | Present at the supplied `src/bugzilla_qa/` paths; provider includes `MockProvider`, scorer is `evaluation/systems.py`. Research code was not changed. |
+| Answer-evaluation pilot | `outputs/evaluation/phase11/pilot125/` has only `REVIEW.csv` and `START_HERE.html`; no machine-readable score summary. Treat this as a PILOT subset, not full-dev results. The CSV includes references/answers; do not backfill its raw contents as metrics or tracking artifacts. |
+| Retrieval evaluation | Two existing versioned `summary.json`/`per_question.jsonl` pairs; summaries report `COMPLETE`, split `dev`. No evaluations rerun. |
+| Python 3.11 | `/usr/bin/python3.11` is 3.11.13. Its environment has PyYAML but no pytest, MLflow, Streamlit or Pydantic. Default `python` is 3.13.13. No dependency installation attempted. |
+| Spec cross-links | OVERVIEW names `mlops_stream_a_serving_chat.md` / `mlops_stream_b_experiments_dashboard.md`; stream docs name `mlops_overview.md`. Actual provided spec files are `docs/mlops/OVERVIEW.md`, `STREAM_A.md`, `STREAM_B.md`. Specs were left untouched. |
+
+**Gate:** OVERVIEW section 5 requires approved Phase 0 contracts, adapter and fixtures before the streams split. Rule 6 requires stopping rather than changing an impossible/unavailable contract. Stream B cannot validate exact RunConfig fields, engine outputs, configuration hashing or registry/trace fixtures against an approved implementation yet. No Stream A/shared implementation, dependency pins, tracking runs, dashboard or CI changes were made. No tests ran: the required contracts/fixtures and Python 3.11 test dependencies are absent. No commits or pushes were performed.
+
+### Open questions / prerequisite handoff
+
+1. Provide the approved Phase 0 commit/branch with `contracts/`, `engine.py`, `configs/serving.yaml`, serving fixtures, contract tests and the MLflow seed script; identify whether the intended integration branch is `mlops` or `feature/mlops`. No contract revision is proposed.
+2. Provide the machine-readable dev pilot scoring export for backfill, or identify its actual path. The supplied `pilot125` directory is a human-review bundle only. Keep its PILOT label and sample denominator when adapting it.
+3. Supply an offline Python 3.11 environment/wheel set for the agreed pinned Stream B dependencies. Tests must use MockProvider, synthetic fixtures, temporary file-based MLflow and fake-key output scanning once implementation is authorized by the Phase 0 handoff.
+
+
+## Stream B prerequisite recheck — 2026-11-21
+
+The current user instruction identifies **`feature/mlops` as the integration branch**, resolving the branch preference in the previous inventory. The checked-out branch remains `main`. Read-only `git ls-tree` inspection confirms that the local `feature/mlops` tracked tree also lacks `src/bugzilla_serving/contracts/`, `src/bugzilla_serving/engine.py`, `configs/serving.yaml`, `tests/contracts/` and `scripts/seed_mlflow_fixture.py`. The binding overview still names `mlops`; no shared spec was edited.
+
+| Expected → found | Result |
+| --- | --- |
+| Approved Phase 0 shared implementation → local checkout and integration tree | Required contracts, engine and serving config are absent in both. |
+| Phase 0 contract tests/seed fixtures → existing research fixtures | Research fixtures exist; the specified serving/MLflow contract fixtures do not. |
+| Research scorer/provider → supplied package | `evaluation/systems.py` and `llm/provider.py` including `MockProvider` are present; unchanged. |
+| Machine-readable answer pilot metrics → `pilot125` | Only `REVIEW.csv` and `START_HERE.html`. Header inspection confirms a question/answer/reference human-review sheet, not a scored metric export. No row contents were displayed. |
+| Dev retrieval results → saved summaries | Two COMPLETE dev summaries with per-question files. No evaluations rerun. |
+| Python 3.11 dependencies → `/usr/bin/python3.11` | Python 3.11.13 and PyYAML exist; pytest, MLflow, Streamlit and Pydantic are absent from that interpreter. |
+
+**Disposition:** blocked at the Phase 0 dependency gate, not an implemented Stream B delivery. Per user rule 6 and OVERVIEW section 5, no contracts were invented, no Stream A/shared/research files were changed, and no dashboard, tracking, runner or CI implementation was started. The pre-existing edits in this notes file and untracked `docs/mlops/` specs are preserved. Only this append was made; no commits, pushes, installations, remote calls or tests. No test questions/gold were read.
+
+**Open prerequisites:**
+1. Provide the reviewed Phase 0 commit on `feature/mlops`: exact contracts, serving config, engine, contract tests and synthetic fixtures/MLflow seed. No contract change is proposed.
+2. Identify or export the scored machine-readable dev pilot results; retain the PILOT subset label and actual denominators. Do not treat the review CSV as full-dev evaluation results.
+3. Provide the Python 3.11 offline environment/wheels for agreed, pinned Stream B dependencies. Implement and test against a temporary file MLflow store only after the shared handoff is available.
+
+## Phase 0 creation authorized — 2026-11-21
+
+The current P0 instruction explicitly authorizes creating missing contracts/engine/specs; missing Phase 0 files are no longer a gate. Existing `feature/mlops` and `main` start at the same commit. Work proceeds on `feature/mlops`; previous notes/spec edits are preserved. Python 3.11 exists and pinned local installation is authorized. Research graphs/provider/scorer and two COMPLETE dev retrieval summaries exist; pilot125 remains a human-review PILOT bundle, not machine-readable full-dev scores. The partner handle and model maximum-context value were placeholders; declared choices and remaining review items are in `docs/mlops/PHASE0_NOTES.md`. No contract/fixture implementation existed at inventory.
+
+
+## Phase 0 creation task — 2026-11-21
+
+The owner explicitly authorizes P0 to create the shared contracts; missing Phase 0 is no longer a reason to stop source implementation. Branch is now `feature/mlops`. Pre-existing uncommitted pyproject changes, package skeleton, partial RunConfig, configs and specs were preserved and extended. The partner username supplied in-session is `SpLasty`; shared CODEOWNERS lists both collaborators.
+
+| Expected → found | Resolution |
+| --- | --- |
+| Conda iqfm, Python 3.11 | Actual iqfm is Python 3.9.25. No installs: the owner's explicit do-not-install instruction takes precedence over the contradictory generic pip permission. |
+| Required packages | FastAPI, MLflow, Streamlit, pytest/pytest-cov and Ruff absent from iqfm; current Pydantic is newer than the pin. Exact extras are in pyproject and included by requirements.txt. |
+| Empty shared package | Partial uncommitted work existed; source implementation now adds the remaining contracts, thin graph adapter, API stub, seed script and tests. |
+| Model context limit | Not supplied; 4,096 remains a documented operational input cap for review, not an architectural claim. |
+| Partner pilot | Human-review CSV/HTML only. Synthetic partner fixtures match the header/two-file layout and remain explicitly PILOT. |
+
+Created deterministic synthetic fixture inputs (20 fake bugs, 61 public chunks, three tiny FTS5 indexes, 10 dev questions), sample answer/SSE/30 LangSmith runs and schema-shaped synthetic retrieval summary. Regenerated twice in temporary directories: bundle manifests are byte-identical. Fixture hashes/counts/dev-only checks and Python 3.11 syntax checks passed. Existing research regressions passed via unittest in the unmodified iqfm environment: 30 answering tests and 14 retrieval tests. No research files or real/frozen questions/gold were edited or loaded.
+
+**Not yet verified:** Python 3.11 Phase 0 pytest, local MLflow seed/registry/idempotence/fake-key checks, OpenAPI snapshot and Ruff. FastAPI is unavailable, so no fake OpenAPI snapshot is substituted; the initial tests/contracts/openapi.json must be generated after installing the declared pins, only with UPDATE_SNAPSHOTS=1. The current Python 3.9 environment cannot import the new Python 3.11 contracts. Source checks do not replace those gates. See docs/mlops/PHASE0_NOTES.md for exact commands and assumptions. No remote calls, dependency installs, commits or pushes during P0.

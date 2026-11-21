@@ -1,0 +1,22 @@
+{
+  "candidate_results": {
+    "100000": {
+      "history": {
+        "changes": [
+          {
+            "field_name": "resolution",
+            "new_value": "FIXED",
+            "old_value": "",
+            "when": "2020-01-03T00:00:00Z"
+          }
+        ],
+        "chronology_ok": true,
+        "first_fixed_at_utc": "2020-01-03T00:00:00Z",
+        "reopened_count": 0,
+        "same_time_groups": [],
+        "state": "PARSED"
+      },
+      "source_consistency_differences": []
+    }
+  }
+}

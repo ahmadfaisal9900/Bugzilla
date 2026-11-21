@@ -1,0 +1,782 @@
+[
+  {
+    "abstain": true,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-00",
+    "latency_ms": 100.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": true,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-0",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-0",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:00:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-01",
+    "latency_ms": 101.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-1",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-1",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:01:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-02",
+    "latency_ms": 102.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-2",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-2",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:02:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-03",
+    "latency_ms": 103.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-3",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-3",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:03:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-04",
+    "latency_ms": 104.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-4",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-4",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:04:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-05",
+    "latency_ms": 105.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": true,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-5",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-5",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:05:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-06",
+    "latency_ms": 106.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-6",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-6",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:06:00Z"
+  },
+  {
+    "abstain": true,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-07",
+    "latency_ms": 107.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-7",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-7",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:07:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-08",
+    "latency_ms": 108.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-8",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-8",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:08:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-09",
+    "latency_ms": 109.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-9",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-9",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:09:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-10",
+    "latency_ms": 110.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": true,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-10",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-10",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:10:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-11",
+    "latency_ms": 111.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-11",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-11",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:11:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-12",
+    "latency_ms": 112.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-12",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-12",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:12:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-13",
+    "latency_ms": 113.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-13",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-13",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:13:00Z"
+  },
+  {
+    "abstain": true,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-14",
+    "latency_ms": 114.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-14",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-14",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:14:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-15",
+    "latency_ms": 115.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": true,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-15",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-15",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:15:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-16",
+    "latency_ms": 116.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-16",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-16",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:16:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-17",
+    "latency_ms": 117.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-17",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-17",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:17:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-18",
+    "latency_ms": 118.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-18",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-18",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:18:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-19",
+    "latency_ms": 119.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-19",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-19",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:19:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-20",
+    "latency_ms": 120.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": true,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-20",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-20",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:20:00Z"
+  },
+  {
+    "abstain": true,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-21",
+    "latency_ms": 121.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-21",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-21",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:21:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-22",
+    "latency_ms": 122.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-22",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-22",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:22:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-23",
+    "latency_ms": 123.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-23",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-23",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:23:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-24",
+    "latency_ms": 124.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-24",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-24",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:24:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-25",
+    "latency_ms": 125.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": true,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-25",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-25",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:25:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-26",
+    "latency_ms": 126.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-26",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-26",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:26:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-27",
+    "latency_ms": 127.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "recommended",
+      "request_id": "r-27",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-27",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:27:00Z"
+  },
+  {
+    "abstain": true,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 0
+      }
+    ],
+    "id": "synthetic-run-28",
+    "latency_ms": 128.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "fast",
+      "request_id": "r-28",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-28",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:28:00Z"
+  },
+  {
+    "abstain": false,
+    "feedback": [
+      {
+        "comment": "Synthetic feedback",
+        "key": "user_rating",
+        "score": 1
+      }
+    ],
+    "id": "synthetic-run-29",
+    "latency_ms": 129.0,
+    "metadata": {
+      "config_hash": "082d4b9e3804",
+      "corpus": "C1",
+      "degraded": false,
+      "model": "openai/gpt-oss-20b",
+      "preset_slug": "deep",
+      "request_id": "r-29",
+      "retriever": "R7b",
+      "route": "S2",
+      "session_id": "s-29",
+      "system_id": "S2"
+    },
+    "project": "ensf621-serving",
+    "start_time": "2020-01-01T00:29:00Z"
+  }
+]

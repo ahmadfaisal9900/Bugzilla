@@ -1,0 +1,35 @@
+{
+  "answer": {
+    "abstain": false,
+    "answer": "Firefox",
+    "answer_type": "string",
+    "bug_ids": [
+      100000
+    ],
+    "citations": [
+      "metadata-100000:0"
+    ],
+    "rationale": "The synthetic metadata states the product."
+  },
+  "cache_hits": 0,
+  "config_hash": "082d4b9e3804",
+  "degraded": false,
+  "errors": [],
+  "evidence": [
+    {
+      "bug_id": "100000",
+      "chunk_id": "metadata-100000:0",
+      "score": 1.0,
+      "snippet": "Synthetic product Firefox.",
+      "url": "https://example.invalid/bugs/100000"
+    }
+  ],
+  "latency_ms": 12.0,
+  "llm_calls": 1,
+  "route": "S2",
+  "route_rule": "system_selected",
+  "tokens": {
+    "input": 10,
+    "output": 5
+  }
+}
