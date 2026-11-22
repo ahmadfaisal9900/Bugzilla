@@ -143,6 +143,30 @@ Created deterministic synthetic fixture inputs (20 fake bugs, 61 public chunks, 
 
 **Not yet verified:** Python 3.11 Phase 0 pytest, local MLflow seed/registry/idempotence/fake-key checks, OpenAPI snapshot and Ruff. FastAPI is unavailable, so no fake OpenAPI snapshot is substituted; the initial tests/contracts/openapi.json must be generated after installing the declared pins, only with UPDATE_SNAPSHOTS=1. The current Python 3.9 environment cannot import the new Python 3.11 contracts. Source checks do not replace those gates. See docs/mlops/PHASE0_NOTES.md for exact commands and assumptions. No remote calls, dependency installs, commits or pushes during P0.
 
+
+## Stream B1/B3 inventory and contract gate — 2026-11-21
+
+Read the overview and both stream specs. The checkout was clean on main; switched to the requested existing feature/mlops branch. Phase 0 contracts are present on both branches. Conda iqfm now has Python 3.11.15 and the declared MLflow 2.22.1, Pydantic 2.11.7, pytest 8.3.5, Ruff 0.11.13, PyYAML 6.0.2 and FastAPI 0.115.12. No installation was needed or attempted.
+
+| Expected → found | Evidence / handling |
+| --- | --- |
+| Phase 0 names and validators | Present; no shared contract changes made. CI-low/high are not allowed answer metric names; future backfill can retain intervals as artifacts, as the task permits. |
+| B-owned tracking implementation | Only tracking/__init__.py exists. No client, registry, backfills or publisher implemented during this gate inspection. |
+| pilot125 human-review bundle | Exactly REVIEW.csv and START_HERE.html. CSV has 358 review rows (86 answer verdicts); embedded HTML JSON contains 1,125 display records across 125 dev questions and nine methods, plus per-dataset comparison aggregates. This remains a PILOT subset. |
+| Exact typed prediction/config provenance for that pilot | Not included in the two-file bundle. HTML display rows have qids/methods and displayed answers but lack raw prediction/config hashes, token usage and per-question timings. There are no local phase05/dev or natural/dev prediction manifests. Five v3/dev manifests belong to partial/smoke runs; they cannot be silently substituted for the completed pilot. |
+| Original source configuration | Existing saved config snapshots use dossier_tokens=12000. |
+| Contract can represent historical runs | RunConfig.validate_against rejects S5 s5_dossier_budget=12000: maximum and operational model cap are 4096. Mapping it to 4096 or omitting the effective S5 budget would misstate the source run. |
+
+**Stopped under task rule 6.** The archived-S5 rejection was reproduced in a bounded offline check. No test questions/gold were loaded; no pytest suite, MLflow write, model request, network call, commit or push was run. Only this notes append was made. The human-review HTML was parsed in memory for schema/provenance inspection; no question, answer or raw source body was displayed or saved.
+
+### Proposed contract change — requires both collaborators' approval
+
+Separate historical tracking validation from deployability validation: permit authentic historical RunConfig values for source=backfill, with the original configuration and provenance retained, while preserving current serving caps and full validate_against checks for lab execution, registry publication and champion selection. This requires an explicitly reviewed shared validator/API change; no bypass or clamping was implemented. An alternative is an approved contract for archived research configs distinct from deployable RunConfig.
+
+### Required source handoff
+
+Provide the pilot125 latest/evaluation manifests, pilot selection, matching dev prediction ledgers and identity/config snapshots for all three collections (including the Phase 5 and natural runs). Dev gold already exists at the configured paths. These permit recomputation with bugzilla_qa.evaluation.systems and audited review-ID joins; the display HTML alone cannot establish typed predictions, actual source configuration or cost/latency. Do not regenerate answers, substitute smoke results, invent missing metrics or label the pilot full-dev.
+
 ## Stream B B1/B3 — approved archival amendment, 2026-11-21
 
 Current branch is `feature/mlops`; Python is Conda iqfm 3.11.15 with the pinned
