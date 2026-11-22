@@ -690,3 +690,48 @@ def test_batched_upload_resume_and_interrupted_artifact(tmp_path, monkeypatch):
     assert tracking.log_run(**plan) == rid
     assert tracking.client.get_run(rid).data.metrics["answer.F1.score"] == 0.0
     assert calls == ["first.txt", "second.txt", "second.txt"]
+
+
+def test_prediction_usage_and_mixed_cache_latency():
+    from bugzilla_serving.tracking.backfill import answered_latencies, usage_totals
+
+    rows = [
+        dict(
+            qid="a",
+            status="ok",
+            llm_cache_hit=True,
+            latency_ms=500,
+            tokens=dict(input=10, output=2, cached_input=30, cached_output=4),
+        ),
+        dict(
+            qid="b", status="ok", latency_ms=100, tokens=dict(input=0, output=0, usage_missing=True)
+        ),
+    ]
+    usage = usage_totals(rows)
+    assert usage == dict(
+        tokens_in=10, tokens_out=2, tokens_cached_in=30, tokens_cached_out=4, usage_missing_n=1
+    )
+    assert answered_latencies(rows) == [100, 500]
+    assert usage_totals(rows[1:]) == {"usage_missing_n": 1}
+    mixed_unknown = usage_totals([dict(tokens=dict(input=0, output=0)), rows[1]])
+    assert "tokens_in" not in mixed_unknown and "tokens_out" not in mixed_unknown
+    partial = usage_totals([dict(tokens=dict(input=20, output=3, usage_missing=True))])
+    assert partial == dict(tokens_in=20, tokens_out=3, usage_missing_n=1)
+    assert usage_totals([dict(tokens=dict(input_tokens=7, output_tokens=3))])["tokens_in"] == 7
+
+
+def test_registry_attaches_model_to_source_run(tmp_path):
+    tracking = TrackingClient((tmp_path / "source-model").as_uri())
+    cfg = RunConfig()
+    rid = tracking.log_run(
+        "research-answer-eval",
+        params_for(cfg),
+        tags(),
+        {"answer.F1.score": 1, "answer.F1.n": 1},
+        {"config.yaml": config_artifact(cfg)},
+    )
+    registry = Registry(tracking.uri)
+    version = registry.register_config_version(cfg, {"source_run_id": rid})
+    assert registry.client.get_model_version("bugzilla-qa-config", version).run_id == rid
+    assert len(tracking.runs("research-answer-eval")) == 1
+    assert tracking.runs("playground") == []

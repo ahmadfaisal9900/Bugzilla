@@ -52,6 +52,8 @@ COMMON_METRICS = frozenset(
         "abstain.false_rate",
         "fail.rate",
         "cost.llm_calls",
+        "cost.llm_calls_per_question",
+        "cost.usage_missing_n",
         "cost.tokens_in",
         "cost.tokens_out",
         "latency.p50_ms",
@@ -123,7 +125,7 @@ def validate_mlflow_run(params: dict, tags: dict, metrics: dict) -> None:
         if k.endswith((".score", "_rate", ".rate")) or k == "answer.macro":
             if v > 1:
                 raise ValueError(f"metric: rate outside [0,1] {k}")
-        if k.endswith((".n", ".pending")) and int(v) != v:
+        if (k.endswith((".n", ".pending")) or k == "cost.usage_missing_n") and int(v) != v:
             raise ValueError(f"metric: n must be an integer {k}")
 
 

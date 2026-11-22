@@ -186,3 +186,10 @@ shape was changed. Golden RunConfig hashes remain covered by the original tests.
 At ahmadfaisal9900's explicit request, `answer.<FAMILY>.pending` is now an allowed
 nonnegative integer metric alongside `.score` and `.n`. It records shared human
 review exclusions, not errors. No RunConfig, API or execution contract changed.
+
+### Approved amendment: usage accounting (2026-11-22)
+
+At ahmadfaisal9900's explicit request, `cost.usage_missing_n` and
+`cost.llm_calls_per_question` are allowed metrics. Cached token totals remain
+artifact columns, preserving the existing cached-token metric contract. Serving
+configuration and API contracts are unchanged.

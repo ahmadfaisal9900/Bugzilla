@@ -73,21 +73,31 @@ class Registry:
             finally:
                 mlflow.set_tracking_uri(previous)
                 mlflow.set_registry_uri(registry)
-            run_tags = dict(
-                source="lab",
-                eval_set="config-registry",
-                datasets="configuration",
-                split="dev",
-                scorer="not-scored",
-                git_sha=tags.get("git_sha", "unknown"),
-            )
-            run_id = self.tracking.log_run(
-                "playground",
-                params_for(config),
-                run_tags,
-                {},
-                {"config.yaml": config_artifact(config), "model": model},
-            )
+            source_run_id = tags.get("source_run_id")
+            if source_run_id:
+                source_run = self.client.get_run(source_run_id)
+                if source_run.data.params.get("config_hash") != h:
+                    raise ValueError("Source run config_hash differs from published config")
+                # Attach model to the evaluated source run; no params-only carrier run.
+                self.client.log_artifacts(source_run_id, str(model), artifact_path="model")
+                run_id = source_run_id
+            else:
+                run_tags = dict(
+                    source="lab",
+                    eval_set="config-registry",
+                    datasets="configuration",
+                    split="dev",
+                    scorer="not-scored",
+                    git_sha=tags.get("git_sha", "unknown"),
+                )
+                run_id = self.tracking.log_run(
+                    "playground",
+                    params_for(config),
+                    run_tags,
+                    {},
+                    {"config.yaml": config_artifact(config), "model": model},
+                )
+
         try:
             self.client.get_registered_model(REGISTRY_MODEL_NAME)
         except MlflowException as exc:

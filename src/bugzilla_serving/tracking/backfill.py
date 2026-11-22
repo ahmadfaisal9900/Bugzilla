@@ -382,6 +382,9 @@ def _ledger_scores(reviews, directories, root, source):
         selected, attempts, prediction_pins = scorer.select_predictions(directory, items, systems)
         pins.update(prediction_pins)
         pins[str(directory / "config_snapshot.json")] = sha(directory / "config_snapshot.json")
+        reuse_file = directory / "REUSED_PREDICTIONS.json"
+        if reuse_file.exists():
+            pins[str(reuse_file)] = sha(reuse_file)
         snapshot = read(directory / "config_snapshot.json")
         manifest = read(directory / "manifest.json")
         for name in ("config_snapshot.json", "identity.json"):
@@ -465,6 +468,48 @@ def _ledger_scores(reviews, directories, root, source):
                 )
     balanced_pending(all_scores)
     return all_scores, configs, events, pins
+
+
+def usage_totals(rows):
+    """Support saved research and fixture schemas; missing usage is never zero-filled."""
+    result = {"usage_missing_n": 0}
+    for output, aliases in {
+        "tokens_in": ("input", "input_tokens"),
+        "tokens_out": ("output", "output_tokens"),
+        "tokens_cached_in": ("cached_input",),
+        "tokens_cached_out": ("cached_output",),
+    }.items():
+        known = []
+        incomplete = False
+        for row in rows:
+            usage = row.get("tokens") or {}
+            value = next((usage[k] for k in aliases if k in usage), None)
+            missing = usage.get("usage_missing", row.get("usage_missing", False))
+            incomplete |= bool(missing) or not isinstance(value, (int, float))
+            if isinstance(value, (int, float)) and (not missing or value > 0):
+                # Keep known positive usage when another call/tool failed; unknown
+                # zero placeholders must not be presented as measured zero usage.
+                known.append(value)
+        if known and (sum(known) > 0 or not incomplete):
+            result[output] = sum(known)
+    for row in rows:
+        usage = row.get("tokens") or {}
+        if usage.get("usage_missing", row.get("usage_missing", False)) or any(
+            not isinstance(usage.get(key, usage.get(alias)), (int, float))
+            for key, alias in [("input", "input_tokens"), ("output", "output_tokens")]
+        ):
+            result["usage_missing_n"] += 1
+    return result
+
+
+def answered_latencies(rows):
+    # A row may have both cached and fresh calls; llm_cache_hit is not a latency filter.
+    final = {(r.get("dataset"), r["qid"]): r for r in rows}
+    return sorted(
+        r["latency_ms"]
+        for r in final.values()
+        if r.get("status") == "ok" and isinstance(r.get("latency_ms"), (int, float))
+    )
 
 
 def answer_intervals(source, root, system):
@@ -554,6 +599,16 @@ def answer_runs(source, mode="auto", root=ROOT):
                     for ref in read(path).get("input_sha256", {}):
                         if "/predictions/" in ref.replace("\\", "/"):
                             resolution[ref] = str(resolve_reference(ref, root))
+    reused_s3 = False
+    if selected_mode == "ledgers" and events.get("S3") and events.get("S2"):
+        s2 = {(e.get("dataset"), e["qid"]): e for e in events["S2"]}
+        reused_s3 = all(
+            e.get("call_count") == 0
+            and e.get("llm_cache_hit")
+            and (e.get("dataset"), e["qid"]) in s2
+            and e.get("answer") == s2[(e.get("dataset"), e["qid"])].get("answer")
+            for e in events["S3"]
+        )
     plans = []
     for system, values in sorted(scores.items()):
         metrics, families = aggregate(values)
@@ -561,19 +616,21 @@ def answer_runs(source, mode="auto", root=ROOT):
             attempts = events[system]
             if all(isinstance(e.get("call_count"), int) for e in attempts):
                 metrics["cost.llm_calls"] = sum(e["call_count"] for e in attempts)
-            for key, metric in [
-                ("input_tokens", "cost.tokens_in"),
-                ("output_tokens", "cost.tokens_out"),
-            ]:
-                if attempts and all(
-                    isinstance(e.get("tokens", {}).get(key), (int, float)) for e in attempts
-                ):
-                    metrics[metric] = sum(e["tokens"][key] for e in attempts)
-            latency = sorted(
-                e["latency_ms"]
-                for e in attempts
-                if not e.get("llm_cache_hit") and isinstance(e.get("latency_ms"), (int, float))
+            if "cost.llm_calls" in metrics and values:
+                metrics["cost.llm_calls_per_question"] = metrics["cost.llm_calls"] / len(values)
+            usage = usage_totals(attempts)
+            metrics.update(
+                {
+                    "cost." + k: v
+                    for k, v in usage.items()
+                    if k in ("tokens_in", "tokens_out", "usage_missing_n")
+                }
             )
+            for family in families:
+                family.update(
+                    usage_totals([e for e in attempts if e.get("family") == family["family"]])
+                )
+            latency = [] if system == "S3" and reused_s3 else answered_latencies(attempts)
             if latency:
                 metrics.update(
                     {
@@ -608,6 +665,8 @@ def answer_runs(source, mode="auto", root=ROOT):
             system_id=system,
             pending_n=str(sum(f["pending_n"] for f in families)),
         )
+        if system == "S3" and reused_s3:
+            tags["reused_from"] = "S2"
         for f in families:
             if f["human_n"]:
                 tags[f"scorer.{f['family']}"] = "human-review"

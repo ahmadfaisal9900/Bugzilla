@@ -51,6 +51,8 @@ def runs(tracking_uri: str, experiment: str) -> Snapshot[list[Run]]:
             )
             for r in records
             if r.data.tags.get("split") in ("dev", "test-aggregate")
+            and r.data.tags.get("source") in ("backfill", "lab")
+            and r.data.tags.get("eval_set") != "config-registry"
         ]
         return Snapshot(sorted(values, key=lambda r: r.started, reverse=True), now())
     except Exception as exc:

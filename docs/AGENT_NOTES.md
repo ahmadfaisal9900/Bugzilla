@@ -359,3 +359,15 @@ Verification: 37 tracking/experiment fixtures, 19 dashboard unit/AppTests,
 subprocess launches passed (94 distinct targeted tests). Ruff check/format
 clean. No raw corpus/model/frozen files staged; existing notes and untracked
 mlruns/ preserved. No champion/preset publication performed.
+
+### 2026-11-22: Cost and latency inspection
+
+Expected → found: saved usage uses `tokens.input/output/cached_input/cached_output`,
+not the old backfill's `input_tokens/output_tokens` keys. S8's cache flag can be
+true alongside fresh calls; it cannot filter latency. S3 has zero fresh calls and
+all 125 answers match S2; the Phase 5 REUSED_PREDICTIONS file records a separate
+run-migration provenance, not on its own proof of S2 reuse. Backfill now checks
+answer equality, matching qids and all-cache/zero-call rows before tagging S3.
+Registry carriers used `source=lab, eval_set=config-registry`; dashboard excludes
+these and non-backfill/non-lab sources. New publishes attach the model artifact
+to their source run rather than creating a carrier. Research files unchanged.

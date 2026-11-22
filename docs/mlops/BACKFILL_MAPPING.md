@@ -318,3 +318,42 @@ python scripts/backfill_retrieval_eval.py --apply --resume
 Validated with offline temporary MLflow stores, including an interrupted second
 artifact, changed metrics, an identical rerun and preserved run IDs. Remote speedup
 is not yet measured; no DagsHub writes were performed by the coding agent.
+
+## Cost/latency repair verified locally (2026-11-22)
+
+Prediction `tokens.input/output` are fresh usage; `cached_input/cached_output`
+are cache-served usage. Older fixtures use `input_tokens/output_tokens`, also
+supported. Sum known fresh usage over all attempts for the reviewed qids, including
+retries; divide call count by 125 source questions, not 119 scored questions.
+`usage_missing` indicates incomplete usage (or recorded errors in the research
+runner); retain known positive counts as lower bounds, but omit unknown zero
+placeholders. `cost.usage_missing_n` counts affected attempt rows. Cached totals
+are `tokens_cached_in/out` columns in `per_family.csv`, not new contract metrics.
+Dashboard token averages/quota percentages use known fresh tokens and explicitly
+state that positive missing-usage counts mean partial totals.
+
+Latency uses one final successful `latency_ms` per dataset/qid, including rows
+with mixed cached/fresh calls. The old `llm_cache_hit` exclusion incorrectly
+removed every S8 latency. S3's zero-call, all-cache answers match S2 across all
+125 questions: tag `reused_from=S2`, omit independent latency, label it explicitly
+in the dashboard. The saved Phase 5 run-migration note is pinned separately.
+
+| System | Calls | Calls/question | Fresh input | Fresh output | Missing-usage rows | p50 ms | p95 ms |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| S0 | 126 | 1.008 | 63607 | 9989 | 1 | 1749 | 48293 |
+| S1 | 133 | 1.064 | 241424 | 12477 | 1 | 13981 | 55965 |
+| S2 | 260 | 2.080 | 276710 | 23324 | 0 | 33354 | 60157 |
+| S3 | 0 | 0 | 0 | 0 | 0 | reused S2 | reused S2 |
+| S4 | 121 | 0.968 | 232493 | 12990 | 3 | 9392 | 51955 |
+| S5 | 127 | 1.016 | 235702 | 14196 | 0 | 6090 | 51430 |
+| S6 | 50 | 0.400 | 94926 | 5696 | 4 | 1950 | 35567 |
+| S7 | 409 | 3.272 | 319245 | 27566 | 77 | 52605 | 120085 |
+| S8 | 69 | 0.552 | 22318 | 2782 | 47 | 385 | 48809 |
+
+Local store `outputs/mlflow/b1-ledgers` updated with the same nine run IDs;
+registry aliases/version tags unchanged. Backup and aggregate verification:
+`outputs/mlops/backfill_repair/cost-latency-20261122/`. DagsHub not written.
+Evaluation views accept only `source=backfill|lab` and exclude
+`eval_set=config-registry` carriers, including old carriers. New preset publishes
+attach the config model to the source run; standalone fixture registration keeps
+its filtered carrier for backwards compatibility. Existing presets are untouched.

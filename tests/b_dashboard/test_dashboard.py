@@ -95,6 +95,22 @@ def store(tmp_path, monkeypatch):
         {},
         {"per_family.csv": "family,source_n,scored_n,pending_n\nF5,2,0,2\n"},
     )
+    tracker.log_run(
+        "playground",
+        params_for(RunConfig()),
+        {
+            k: v
+            for k, v in {
+                **tags,
+                "source": "lab",
+                "eval_set": "smoke-5",
+                "scorer": "synthetic",
+            }.items()
+            if k != "config_origin"
+        },
+        {"answer.F1.score": 0.5, "answer.F1.n": 2},
+        {"per_family.csv": "family,source_n,scored_n,pending_n\nF1,2,2,0\n"},
+    )
     return uri
 
 
@@ -311,3 +327,60 @@ def test_unpublish_and_policy_preview(store):
     registry.unpublish("fast")
     mf.clear()
     assert "fast" not in {p["slug"] for p in mf.presets(store).value}
+
+
+def test_evaluation_runs_hide_carriers_and_non_evaluation_sources(tmp_path):
+    from types import SimpleNamespace
+    from unittest.mock import patch
+
+    def record(source, eval_set):
+        return SimpleNamespace(
+            info=SimpleNamespace(run_id=source + eval_set, start_time=1, experiment_id="1"),
+            data=SimpleNamespace(
+                params={}, metrics={}, tags=dict(source=source, eval_set=eval_set, split="dev")
+            ),
+        )
+
+    candidates = [
+        record("lab", "config-registry"),
+        record("ci", "smoke"),
+        record("backfill", "pilot125"),
+        record("lab", "smoke-5"),
+    ]
+    with patch.object(TrackingClient, "runs", return_value=candidates):
+        result = mf.runs((tmp_path / "filtered").as_uri(), "playground").value
+    assert {r.tags["eval_set"] for r in result} == {"pilot125", "smoke-5"}
+
+
+@pytest.mark.ui
+def test_cost_page_reuse_label_and_usage_columns(store):
+    tracker = TrackingClient(store)
+    tracker.log_run(
+        "research-answer-eval",
+        params_for(RunConfig()),
+        dict(
+            source="backfill",
+            eval_set="reuse-fixture",
+            datasets="v3",
+            split="dev",
+            scorer="synthetic",
+            git_sha="synthetic",
+            reused_from="S2",
+        ),
+        {
+            "cost.tokens_in": 0,
+            "cost.tokens_out": 0,
+            "cost.llm_calls": 0,
+            "cost.llm_calls_per_question": 0,
+            "cost.usage_missing_n": 0,
+        },
+        {"per_family.csv": "family,source_n,scored_n,pending_n\nF1,2,2,0\n"},
+    )
+    mf.clear()
+    at = AppTest.from_file(str(APP), default_timeout=15).run()
+    at.switch_page("pages/cost_latency.py").run()
+    assert not at.exception
+    frame = at.dataframe[0].value
+    assert "reused from S2 (no own latency)" in frame["latency.p95_ms"].tolist()
+    assert "cost.llm_calls_per_question" in frame.columns
+    assert any("not interactive chat latency" in c.value for c in at.caption)

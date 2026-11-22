@@ -266,9 +266,15 @@ def retrieval_eval():
 
 def cost_latency():
     st.header("Cost & latency")
+    st.caption(
+        "Latency includes free-tier rate-limit waits during batch evaluation; "
+        "it is not interactive chat latency."
+    )
     values = filtered(records(("research-answer-eval", "playground")))
     keys = [
         "cost.llm_calls",
+        "cost.llm_calls_per_question",
+        "cost.usage_missing_n",
         "cost.tokens_in",
         "cost.tokens_out",
         "latency.p50_ms",
@@ -286,6 +292,9 @@ def cost_latency():
             "attempted n": n if n else "unknown",
         }
         row.update({k: missing(run, k) for k in keys})
+        if run.tags.get("reused_from"):
+            for key in ("latency.p50_ms", "latency.p95_ms"):
+                row[key] = f"reused from {run.tags['reused_from']} (no own latency)"
         if n and all(k in run.metrics for k in ("cost.tokens_in", "cost.tokens_out")):
             tokens = (run.metrics["cost.tokens_in"] + run.metrics["cost.tokens_out"]) / n
             row["reported tokens / question"] = tokens
@@ -308,7 +317,9 @@ def cost_latency():
     st.caption(
         "Token usage is not a dollar cost. Per-question usage requires source-row accounting; "
         "unknown denominators and review-only costs stay unavailable. Quota % uses configured "
-        "per-model daily limits, not the provider's current remaining allowance."
+        "per-model daily limits, not the provider's current remaining allowance. "
+        "Fresh tokens exclude cached tokens (reported in per_family.csv). Where usage_missing_n "
+        "is positive, token totals are partial known usage, not complete consumption."
     )
     if not table:
         st.info("No cost or latency records yet.")
