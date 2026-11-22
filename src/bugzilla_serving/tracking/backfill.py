@@ -48,9 +48,11 @@ def projected_config(system, config, root=ROOT, selected=None):
     """Translate saved research settings, preserving historical limits, never clipping."""
     root = Path(root)
     if selected is None:
-        selection = read(root / config.get("selection", "configs/selected_retriever.yaml"))
+        selection = read(
+            resolve_reference(config.get("selection", "configs/selected_retriever.yaml"), root)
+        )
         selected = selection["selected"]
-    llm = config.get("effective_llm") or read(root / config["llm_config"])
+    llm = config.get("effective_llm") or read(resolve_reference(config["llm_config"], root))
     # Provider configurations may store model settings under roles.
     role = llm.get("roles", {}).get(
         "generator", llm.get("models", {}).get("generator", llm.get("generator", {}))
@@ -64,7 +66,7 @@ def projected_config(system, config, root=ROOT, selected=None):
     if system == "S3":
         retriever = config["query_transform"]
     tau = config.get("corrective_tau")
-    calibration = root / config.get("corrective_calibration", "missing")
+    calibration = resolve_reference(config.get("corrective_calibration", "missing"), root)
     if tau is None and calibration.is_file():
         tau = read(calibration).get("tau")
     values = dict(
@@ -87,8 +89,15 @@ def projected_config(system, config, root=ROOT, selected=None):
     if system == "S3":
         values["query_transform"] = retriever
     if retriever not in ("R1", "R2"):
-        rc = read(root / config.get("retrieval_config", "configs/retrieval_v3.yaml"))
-        values["rrf_k"] = rc.get("rrf_k", 60)
+        path = resolve_reference(config.get("retrieval_config", "configs/retrieval_v3.yaml"), root)
+        if path.is_file():
+            values["rrf_k"] = read(path).get("rrf_k", 60)
+        elif config.get("effective_llm"):
+            # An archived run can have complete predictions but an absent runtime
+            # config. Nullable record fields preserve unknown settings honestly.
+            values["rrf_k"] = None
+        else:
+            raise ValueError("Referenced retrieval configuration unavailable: " + str(path))
     return RunConfig(**values).validate_against(mode="record")
 
 
@@ -203,6 +212,26 @@ def aggregate(scores):
     return metrics, families
 
 
+def resolve_reference(reference, root):
+    """Resolve an exact saved path; relocate only its unambiguous outputs/ suffix."""
+    root = Path(root).resolve()
+    raw = Path(reference)
+    parts = PureWindowsPath(reference).parts if "\\" in str(reference) else raw.parts
+    candidate = raw if raw.is_absolute() else root.joinpath(*parts)
+    foreign = PureWindowsPath(reference).is_absolute() and not raw.is_absolute()
+    if not foreign and candidate.exists():
+        return candidate
+    if parts.count("outputs") == 1:
+        suffix = parts[parts.index("outputs") :]
+        if ".." in suffix:
+            raise ValueError("Unsafe saved output reference")
+        relocated = root.joinpath(*suffix).resolve()
+        if not relocated.is_relative_to(root):
+            raise ValueError("Saved output reference escapes project root")
+        return relocated
+    return candidate
+
+
 def discover_ledgers(source, root):
     """Only exact references are eligible; never guess from nearby smoke runs.
 
@@ -221,23 +250,36 @@ def discover_ledgers(source, root):
     for dataset, record in read(latest).get("evaluations", {}).items():
         if not record.get("output"):
             continue
-        folder = Path(record["output"])
-        # A Windows absolute path is not a relative project path on POSIX.
-        # Treat unavailable provenance as unavailable; never guess a replacement.
-        if not folder.is_absolute() and PureWindowsPath(record["output"]).is_absolute():
-            return {}
-        folder = folder if folder.is_absolute() else root / folder
+        folder = resolve_reference(record["output"], root)
         if not (folder / "manifest.json").is_file():
             return {}
         manifest = read(folder / "manifest.json")
+        inputs = manifest.get("input_sha256", {})
+        references = {str(p).replace("\\", "/"): (p, h) for p, h in inputs.items()}
         candidates = [
-            p
-            for p in manifest.get("input_sha256", {})
-            if "predictions/" in p and p.endswith("/manifest.json")
+            p for p in references if "/predictions/" in p and p.endswith("/manifest.json")
         ]
         if len(candidates) != 1:
             return {}
-        result[dataset] = str(Path(candidates[0]).parent)
+        original, _ = references[candidates[0]]
+        prediction_manifest = resolve_reference(original, root)
+        if not prediction_manifest.is_file():
+            return {}
+        # Verify exact prediction inputs against the *evaluation* manifest too,
+        # not only the potentially different local prediction manifest.
+        for key, (ref, expected) in references.items():
+            if "/predictions/" not in key:
+                continue
+            parts = key.split("/")
+            at = parts.index("predictions")
+            if parts[at + 1 : at + 3] != [dataset, "dev"]:
+                raise ValueError("Non-dev or mismatched dataset prediction reference")
+            path = resolve_reference(ref, root)
+            if not path.is_file():
+                return {}
+            if sha(path) != expected:
+                raise ValueError("Evaluation prediction input checksum mismatch: " + str(path))
+        result[dataset] = str(prediction_manifest.parent)
     return result
 
 
@@ -282,6 +324,7 @@ def load_dev_items(root, config, dataset):
 
 def _ledger_scores(reviews, directories, root, source):
     from bugzilla_qa.evaluation import systems as scorer
+    from bugzilla_qa.retrieval_v3.common import digest as prediction_digest
 
     rc = read(root / "configs/retrieval_v3.yaml")
     all_scores, configs, events, pins = defaultdict(list), {}, defaultdict(list), {}
@@ -295,18 +338,30 @@ def _ledger_scores(reviews, directories, root, source):
         pins.update(prediction_pins)
         pins[str(directory / "config_snapshot.json")] = sha(directory / "config_snapshot.json")
         snapshot = read(directory / "config_snapshot.json")
+        manifest = read(directory / "manifest.json")
+        for name in ("config_snapshot.json", "identity.json"):
+            if (
+                name in manifest.get("sha256", {})
+                and sha(directory / name) != manifest["sha256"][name]
+            ):
+                raise ValueError("Prediction configuration checksum mismatch: " + name)
         identity_path = directory / "identity.json"
         selection = None
         if identity_path.exists():
             identity = read(identity_path)
-            manifest = read(directory / "manifest.json")
-            if scorer.digest(identity) != manifest["config_hash"]:
+            if prediction_digest(identity) != manifest["config_hash"]:
                 raise ValueError("Prediction identity hash mismatch")
             if any(snapshot.get(k) != v for k, v in identity["config"].items()):
                 raise ValueError("Snapshot and identity config disagree")
             snapshot = {**identity["config"], "effective_llm": identity["llm"]}
             selection = identity["selected"]
             pins[str(identity_path)] = sha(identity_path)
+            retrieval_path = resolve_reference(snapshot.get("retrieval_config", "missing"), root)
+            for ref, expected in identity.get("inputs", {}).items():
+                if resolve_reference(ref, root) == retrieval_path and retrieval_path.is_file():
+                    if sha(retrieval_path) != expected:
+                        raise ValueError("Historical retrieval configuration checksum mismatch")
+                    pins[str(retrieval_path)] = expected
         item_map = {i["qid"]: i for i in items}
         for system in systems:
             cfg = projected_config(system, snapshot, root, selected=selection)
@@ -359,7 +414,7 @@ def answer_intervals(source, root, system):
     for dataset, record in read(latest).get("evaluations", {}).items():
         if not record.get("output"):
             continue
-        folder = root / record["output"]
+        folder = resolve_reference(record["output"], root)
         summary_path = folder / "summary.json"
         if not summary_path.exists():
             continue
@@ -420,6 +475,23 @@ def answer_runs(source, mode="auto", root=ROOT):
             verdict, by = review_verdict(row)
             scores[system].append(dict(family=row["family"], verdict=verdict, scorer=by))
             configs[system] = projected_config(system, cfg, root)
+    resolution = {}
+    if selected_mode == "ledgers":
+        for name in ("latest.json", "provenance.json"):
+            if (source / name).is_file():
+                pins[str(source / name)] = sha(source / name)
+        if (source / "latest.json").is_file():
+            for record in read(source / "latest.json").get("evaluations", {}).values():
+                if not record.get("output"):
+                    continue
+                folder = resolve_reference(record["output"], root)
+                path = folder / "manifest.json"
+                if path.is_file():
+                    pins[str(path)] = sha(path)
+                    resolution[record["output"]] = str(folder)
+                    for ref in read(path).get("input_sha256", {}):
+                        if "/predictions/" in ref.replace("\\", "/"):
+                            resolution[ref] = str(resolve_reference(ref, root))
     plans = []
     for system, values in sorted(scores.items()):
         metrics, families = aggregate(values)
@@ -489,10 +561,14 @@ def answer_runs(source, mode="auto", root=ROOT):
                     mode=selected_mode,
                     reason=reason,
                     input_sha256=pins,
+                    resolved_references=resolution,
                     datasets=datasets,
                     source_rows=len(values),
                     pending_n=sum(f["pending_n"] for f in families),
                     omitted_metrics="Unavailable metrics omitted, never zero-filled",
+                    unknown_config_fields=["rrf_k"]
+                    if cfg.retriever not in ("R1", "R2") and cfg.rrf_k is None
+                    else [],
                 ),
                 indent=2,
             ),

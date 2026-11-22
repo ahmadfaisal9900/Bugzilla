@@ -78,6 +78,36 @@ latency, tokens, abstention and failure rates because the review sheet cannot
 establish those metrics reliably. Never zero-fill them. Ledger imports tag
 `provenance=ledgers`, `config_origin=historical`. Both are `source=backfill`.
 
+### Portable historical references
+
+Saved Windows/POSIX machine paths are resolved using their exact, unambiguous
+`outputs/…` suffix under this checkout. Relative Windows separators are normalized.
+Run IDs are preserved; no glob search or nearby-run substitution is used. Every
+prediction input must match the original evaluation manifest's SHA-256, and the
+partner scorer separately checks the prediction manifest's file hashes. Changed
+inputs raise an error; missing inputs permit review-only fallback. Test prediction
+references are refused before hashing or loading their contents. Source manifests
+are never rewritten. The provenance artifact records original-to-local mappings
+and pins the evaluation manifests and latest/provenance metadata.
+
+Prediction identity uses the answering runner's compact-JSON digest, not the
+evaluation scorer's differently serialized digest. Config/identity files are also
+checked against saved manifest hashes. For this local pilot all 30 prediction
+inputs (nine ledgers plus manifest per dataset) match their evaluation pins.
+
+The archived `outputs/evaluation/phase11/official_runtime/retrieval.json` is absent.
+Its RRF setting remains `null` in the historical config and is explicitly listed
+in provenance `unknown_config_fields`; today's setting is not substituted.
+Restore that archived file with its pinned hash before claiming a fully reproduced
+configuration or choosing a preset based on it. Other saved settings, including
+the selected pair and S4 tau, come from verified run identity/config snapshots.
+
+The actual dry-run selects `ledgers`: 1,125 system/question records (125-question
+pilot × nine systems), not just the 358 rows in the review CSV. Human verdicts
+remain joined to their original review IDs. Saved call-count metrics are present
+for nine systems and latency for seven; incomplete token usage remains omitted.
+This is a no-write backfill inspection, not a new inference or full-dev evaluation.
+
 ### Idempotency and immutable configuration
 
 Tracking identity is `(source, config_hash, eval_set)` within each experiment.
@@ -89,6 +119,14 @@ the adapter refuses rather than create another pilot/system or mutate immutable
 MLflow params. Reconcile that explicit source conflict; do not relabel historical
 settings as the reconstructed ones. Concurrent backfills are not supported: run
 one apply process at a time.
+
+Seven current `b1-local` review-only system configs differ from the archived
+ledger configs. Do not overwrite their immutable MLflow params. Inspect with
+`python scripts/backfill_answer_eval.py --mode ledgers`; write a separate local
+store with `--apply --tracking-uri "file:$PWD/outputs/mlflow/b1-ledgers"` if you
+want to preserve the reconstructed store. Point the dashboard at the chosen
+tracking URI. Backfill retrieval runs there separately if needed. No apply or
+remote write was performed while implementing this repair.
 
 ## Retrieval mapping
 

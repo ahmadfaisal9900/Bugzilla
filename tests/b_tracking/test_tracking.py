@@ -152,6 +152,68 @@ def test_explicit_review_only_does_not_discover_ledgers(tmp_path):
     assert info["mode"] == "review-only" and plans
 
 
+@pytest.mark.parametrize("prefix", [r"C:\Courses\ENSF 621\Bugzilla", "/former/owner/Project"])
+def test_relocated_exact_ledgers_are_hash_checked(tmp_path, prefix):
+    from bugzilla_serving.tracking.backfill import discover_ledgers, sha
+
+    root = tmp_path / "owner's Project"
+    source = root / "outputs/evaluation/phase11/pilot125"
+    evaluation = source / "natural/dev/run-eval"
+    directory = root / "outputs/predictions/natural/dev/run-exact"
+    evaluation.mkdir(parents=True)
+    directory.mkdir(parents=True)
+    (directory / "S0.jsonl").write_text("synthetic dev prediction\n")
+    (directory / "manifest.json").write_text("{}")
+
+    def saved(path):
+        suffix = str(path.relative_to(root))
+        return prefix + ("\\" + suffix.replace("/", "\\") if "\\" in prefix else "/" + suffix)
+
+    (source / "latest.json").write_text(
+        json.dumps({"evaluations": {"natural": {"output": saved(evaluation)}}})
+    )
+    (evaluation / "manifest.json").write_text(
+        json.dumps({"input_sha256": {saved(p): sha(p) for p in directory.iterdir()}})
+    )
+    assert discover_ledgers(source, root) == {"natural": str(directory)}
+    (directory / "S0.jsonl").write_text("modified prediction\n")
+    with pytest.raises(ValueError, match="checksum"):
+        discover_ledgers(source, root)
+    (directory / "manifest.json").unlink()
+    assert discover_ledgers(source, root) == {}
+
+
+def test_missing_archived_retrieval_setting_is_unknown():
+    cfg = read(ROOT / "configs/answering.yaml")
+    cfg["effective_llm"] = read(ROOT / "configs/llm.yaml")
+    cfg["retrieval_config"] = "outputs/not-present-archived-runtime/retrieval.json"
+    historical = projected_config("S2", cfg)
+    assert historical.rrf_k is None
+
+
+def test_saved_test_prediction_reference_refused_before_hashing(tmp_path, monkeypatch):
+    from bugzilla_serving.tracking import backfill as b
+
+    source = tmp_path / "pilot"
+    source.mkdir()
+    target = tmp_path / "outputs/predictions/natural/test/run-exact"
+    target.mkdir(parents=True)
+    (target / "manifest.json").write_text("{}")
+    (source / "latest.json").write_text(
+        json.dumps({"evaluations": {"natural": {"output": str(source)}}})
+    )
+    (source / "manifest.json").write_text(
+        json.dumps({"input_sha256": {str(target / "manifest.json"): "not-read"}})
+    )
+
+    def never_hash(path):
+        raise AssertionError("Must reject test reference before hashing its files")
+
+    monkeypatch.setattr(b, "sha", never_hash)
+    with pytest.raises(ValueError, match="Non-dev"):
+        b.discover_ledgers(source, tmp_path)
+
+
 def test_review_split_and_signature_refused(tmp_path):
     source = review_fixture(tmp_path)
     with (source / "REVIEW.csv").open() as f:
@@ -350,6 +412,17 @@ def test_ledger_mode_partner_scorer_and_upgrade(tmp_path, monkeypatch):
     prediction_dir.mkdir()
     snapshot = read(root / "configs/answering.yaml")
     (prediction_dir / "config_snapshot.json").write_text(json.dumps(snapshot))
+    from bugzilla_qa.retrieval_v3.common import digest as prediction_digest
+
+    identity = dict(
+        config=snapshot,
+        llm=read(root / "configs/llm.yaml"),
+        selected=read(root / "configs/selected_retriever.yaml")["selected"],
+        inputs={snapshot["retrieval_config"]: b.sha(root / snapshot["retrieval_config"])},
+    )
+    config_hash = prediction_digest(identity)
+    assert config_hash != scorer.digest(identity)
+    (prediction_dir / "identity.json").write_text(json.dumps(identity))
     predictions = []
     metadata, csv_rows = [], []
     for item in items:
@@ -361,7 +434,7 @@ def test_ledger_mode_partner_scorer_and_upgrade(tmp_path, monkeypatch):
             split="dev",
             family=item["family"],
             freeze_id="synthetic",
-            config_hash="research-source-config",
+            config_hash=config_hash,
             system_id="S1",
             model="openai/gpt-oss-20b",
             provider="groq",
@@ -396,8 +469,11 @@ def test_ledger_mode_partner_scorer_and_upgrade(tmp_path, monkeypatch):
     (prediction_dir / "manifest.json").write_text(
         json.dumps(
             dict(
-                config_hash="research-source-config",
-                sha256={"S1.jsonl": b.sha(prediction_dir / "S1.jsonl")},
+                config_hash=config_hash,
+                sha256={
+                    name: b.sha(prediction_dir / name)
+                    for name in ("S1.jsonl", "config_snapshot.json", "identity.json")
+                },
             )
         )
     )
@@ -429,6 +505,11 @@ def test_ledger_mode_partner_scorer_and_upgrade(tmp_path, monkeypatch):
     # Frozen dev pins are enforced, not regenerated.
     (prediction_dir / "S1.jsonl").write_text(json.dumps(predictions[0]) + "\n")
     with pytest.raises(ValueError, match="checksum"):
+        answer_runs(source, "ledgers", root=root)
+    (prediction_dir / "S1.jsonl").write_text("".join(json.dumps(p) + "\n" for p in predictions))
+    with (root / snapshot["retrieval_config"]).open("a") as handle:
+        handle.write("\n")
+    with pytest.raises(ValueError, match="Historical retrieval configuration checksum"):
         answer_runs(source, "ledgers", root=root)
 
 

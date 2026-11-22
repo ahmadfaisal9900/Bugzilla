@@ -266,3 +266,27 @@ including foreign/missing paths and bypassing unusable provenance in review-only
 The actual default dry-run now succeeds: review-only, 358 rows, three datasets,
 nine planned systems, no MLflow writes or API requests. Ruff clean; source files
 unchanged. Review-only omits unavailable cost/latency metrics as before.
+
+### Backfill verified portable ledger resolution — 2026-11-21
+
+The fallback-only fix was insufficient: the exact local natural/phase05/v3 runs
+exist. Resolve saved foreign paths by their exact outputs/ suffix, keep run IDs,
+and verify all prediction input hashes against original evaluation manifests.
+All 30 referenced prediction inputs match. Never search for substitute runs or
+rewrite archived manifests. Normalize relative Windows separators for config
+references too. Fixed identity validation to reuse the answering runner's compact
+digest; scorer.digest uses a different JSON serialization. Snapshot/identity
+checksums are enforced. Test prediction references fail before content access.
+
+The missing archived official_runtime/retrieval.json means historical rrf_k is
+unknown (nullable contract field), explicitly recorded in provenance; it is not
+inferred from today's config. No shared contract or research changes. Local
+default dry-run now uses ledgers: 1,125 system/question rows, three datasets,
+nine systems; calls present for nine and latency for seven. Token metrics remain
+omitted because saved usage is incomplete. No MLflow writes/API calls or answer
+regeneration. Original-to-local path mappings and provenance pins are artifacts.
+Tracking/experiment fixtures: 34 passed (10.85s), Ruff clean. Existing immutable
+review-only runs are not overwritten when historical config hashes differ.
+Seven local b1-local configs differ; use a fresh store for a preserving ledger
+import. Missing archived retrieval config, if restored, must match its identity
+input hash. Bounded --mode ledgers dry-run also passes without MLflow writes.
