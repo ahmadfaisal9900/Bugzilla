@@ -279,6 +279,12 @@ def test_policy_and_registry(tmp_path):
     policy = read(ROOT / "configs/promotion.yaml")
     assert assess(run, [run], policy)["allowed"]
     pub = module(ROOT / "scripts/publish_preset.py")
+    preview = pub.publish(registry, run_id, "fast", "Fast", "Synthetic only")
+    assert preview["policy"]["status"] == "not applicable (preset only)"
+    assert all(
+        r["champion_score"] == "none" and r["champion_n"] == "none" for r in preview["comparison"]
+    )
+    assert registry.get_champion() is None
     result = pub.publish(registry, run_id, "fast", "Fast", "Synthetic only", True, True)
     version = result["version"]
     assert registry.register_config_version(cfg, {}) == version
@@ -353,7 +359,76 @@ def test_fake_secret_never_written(tmp_path, monkeypatch):
 
 def test_missing_and_pending_families():
     metrics, families = aggregate([dict(family="F5", verdict="NEEDS_HUMAN", scorer="pending")])
-    assert metrics == {} and families[0]["pending_n"] == 1
+    assert metrics == {"answer.F5.n": 0, "answer.F5.pending": 1}
+    assert families[0]["pending_n"] == 1
+
+
+def test_equal_family_denominators_shared_pending_and_errors():
+    from bugzilla_serving.tracking.backfill import balanced_pending
+
+    values = {}
+    for system in (f"S{i}" for i in range(9)):
+        values[system] = [
+            dict(
+                dataset="synthetic",
+                qid="numeric",
+                family="F2",
+                verdict="INCORRECT" if system == "S7" else "CORRECT",
+                failed=system == "S7",
+                scorer="synthetic",
+            ),
+            dict(
+                dataset="synthetic",
+                qid="rationale",
+                family="F5",
+                verdict="NEEDS_HUMAN" if system == "S2" else "CORRECT",
+                scorer="synthetic",
+            ),
+        ]
+    balanced_pending(values)
+    counts = []
+    for rows in values.values():
+        metrics, _ = aggregate(rows)
+        counts.append({k: v for k, v in metrics.items() if k.endswith((".n", ".pending"))})
+        assert metrics["answer.F2.n"] == 1 and metrics["answer.F5.pending"] == 1
+        assert metrics["answer.F5.n"] == 0 and "answer.F5.score" not in metrics
+    assert all(c == counts[0] for c in counts)
+
+
+def test_unparseable_duration_is_failure_but_false_abstention_is_not():
+    from bugzilla_serving.tracking.backfill import prediction_failed
+
+    assert prediction_failed(dict(reason="ambiguous_duration_unit"), {}, {"status": "ok"})
+    assert prediction_failed(dict(reason="integer", absolute_error=None), {}, {"status": "ok"})
+    assert prediction_failed(dict(reason="execution_failure"), {}, {"status": "error"})
+    assert not prediction_failed(dict(reason="false_abstention"), {}, {"status": "ok"})
+    assert prediction_failed(
+        dict(reason="structured"), {}, {"status": "ok", "answer": {"answer": "not JSON"}}
+    )
+
+
+def test_partner_mh_set_order_and_id_format_are_already_normalized():
+    from bugzilla_qa.evaluation import systems as scorer
+
+    item = dict(
+        qid="synthetic",
+        dataset="synthetic",
+        family="MH",
+        cluster_id="1",
+        kind="structured",
+        expected={"depends_on": ["1", "2"], "resolved_fixed": ["2"]},
+    )
+    prediction = dict(
+        status="ok",
+        system_id="S7",
+        context_chunk_ids=[],
+        answer={
+            "abstain": False,
+            "citations": [],
+            "answer": json.dumps({"resolved_fixed": [2], "depends_on": [2, "01"]}),
+        },
+    )
+    assert scorer.grade(item, prediction)["verdict"] == "CORRECT"
 
 
 def test_projection_model_and_archival_dossier():

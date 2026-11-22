@@ -180,3 +180,9 @@ The missing `tests/contracts/openapi.json` artifact was restored from the
 unchanged Phase 0 stub. Its JSON was compared byte-for-byte with OpenAPI generated
 using the pre-amendment RunConfig: identical. No API implementation or contract
 shape was changed. Golden RunConfig hashes remain covered by the original tests.
+
+### Approved amendment: pending family counts (2026-11-21)
+
+At ahmadfaisal9900's explicit request, `answer.<FAMILY>.pending` is now an allowed
+nonnegative integer metric alongside `.score` and `.n`. It records shared human
+review exclusions, not errors. No RunConfig, API or execution contract changed.

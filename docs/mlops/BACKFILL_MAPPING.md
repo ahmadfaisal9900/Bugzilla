@@ -33,7 +33,8 @@ review is claimed. Grounding verdicts are not answer correctness.
 | Fraction CORRECT among scored system/family rows | `answer.<FAMILY>.score`, `.n` = scored rows |
 | Unweighted mean over families with scored rows | `answer.macro`; pending tag prevents automatic promotion |
 | Dataset names actually present | `datasets` tag; individual family coverage in artifacts |
-| No rows, or no scored rows, for a family | No score/n metric; artifact distinguishes pending from absent |
+| No rows for a family | No family metric (not in dataset) |
+| Present family, all rows pending | `.n=0`, `.pending` holds the known count; score omitted |
 
 ### Modes and provenance
 
@@ -59,8 +60,15 @@ the identity hash and snapshot agree before using archived LLM/selection setting
 Ledger mode maps:
 
 - Per-family partner CORRECT/INCORRECT to binary correctness (not relation-set F1).
-  Human verdicts override when signed; F5 otherwise remains ungraded.
-- `fail.rate`: missing/execution-failed predictions / pilot records.
+  Signed human verdicts remain source-bound. Under the requested balanced-pending
+  protocol, execution/malformed-output failures are incorrect even when the source
+  scorer requests clarification of an unparseable duration unit. Genuine review
+  pending qids (dataset + qid) are excluded identically for every system. Their
+  counts are `answer.<F>.pending`; present families have `.n`, including zero.
+- `fail.rate`: missing, execution-failed or malformed-output predictions divided
+  by the shared eligible pilot question count. Ordinary wrong answers/valid
+  abstentions are not execution failures. Source verdict/reason and the applied
+  denominator decision are retained in the aggregate-safe `score_audit.jsonl`.
 - `abstain.correct_rate`: abstained / records with explicitly unanswerable gold;
   `abstain.false_rate`: abstained / explicitly answerable records. Empty
   denominators omit metrics. Gold kind determines this, not a family guess.
@@ -70,6 +78,52 @@ Ledger mode maps:
   requests with missing usage. `latency.*`: saved non-cache attempt latencies,
   sorted p50 index n//2, p95 min(n-1,floor(.95n)), matching partner convention.
 - Source SHA-256s and per-family denominators are artifacts; no raw predictions.
+
+### Why F2 denominators differed; balanced-pending-v1
+
+The source scorer returned `NEEDS_HUMAN/ambiguous_duration_unit` for 32 F2
+system/question records (24 natural, eight Phase 5); these were excluded on a
+per-system basis. Two natural F2 records were execution failures, already graded
+incorrect. The new user-requested protocol treats unparseable duration outputs
+as incorrect/failures. The remaining shared pending set is exactly six F5 qids.
+All nine systems therefore have 119 scored + six pending out of 125 pilot qids.
+Every family denominator is identical: F1=21, F2=8, F3=15, F4=19, F5=0 (six
+pending), F6=13, KI=24, MH=8, F6H=11. Macros cover eight scored families only.
+Research grading code, frozen gold and original predictions remain unchanged.
+
+### MH/F3 diagnostics from saved S7 predictions (dev only)
+
+All questions below refer to recorded archive fields, not live state; snapshot
+date is UNKNOWN. These are observed saved answers, not newly generated answers.
+
+| Family / qid | Question and scope | Saved S7 answer / tool trace | Frozen gold | Source verdict |
+| --- | --- | --- | --- | --- |
+| MH `v3_13b1d27d94419f10879fac40` | How many cohort bugs explicitly blocking #1769546 are unresolved? Downloaded Firefox cohort, seed 317. | Answer `[0]`; `get_links(1769546, blocks)` returned `targets=[]`. | Scalar `0` | INCORRECT / integer: list is not a scalar number. |
+| MH `v3_0b91748d0094c32d222d04bd` | Within the downloaded Firefox cohort, what does #1874162 depend on, and which targets are resolved FIXED? | Abstained (`null`). `get_links(1874162, depends_on)` returned 1873766, 1874176, 1874184, 1874189; next `get_bug_fields(1873766, [resolution])` returned `known=false`, outside indexed cohort. No fields were fetched for in-cohort target 1874184. | `{"depends_on":["1874184"],"resolved_fixed":["1874184"]}` | INCORRECT / false_abstention. |
+| F3 `natural_14dea18947f819a165f2` | How many Security-component bugs in the seed-317 dev partition of 882 distinct bugs? Year means filing year. | `count_bugs(component=Security, scope=cohort)` returned count 29, partition=dev. Final answer `[29]`. | Scalar `29` | INCORRECT / integer: tool got the count, final answer had wrong shape. |
+| F3 `q_25ca7696bb093bcc4eb6` | How many distinct Firefox bugs have component=Search in the eligible seed-317 Phase 5 dev partition, denominator 592? | Abstained (`null`); zero tool steps, no count call. | Scalar `17` | INCORRECT / false_abstention. |
+
+Sources: `outputs/predictions/{natural,phase05,v3}/dev/` exact runs resolved from
+pilot125 manifests (natural run-022290e9f5c5f6a3, Phase 5 run-10ecc94f91603cbe,
+v3 run-bd6b90ea33a3d4b0), S7.jsonl; hashes remain pinned in backfill provenance.
+
+`evaluation/systems.py:grade` and its `number` helper reject singleton arrays for
+integer answers. No permissive singleton unwrapping was introduced. Structured
+MH comparison already ignores target-set order and normalizes numeric/string IDs
+through `id_set`; a fixture verifies that. S7's eight MH cases are seven false
+abstentions plus one malformed scalar answer, not a set-order mismatch. Its
+15 F3 cases are six false abstentions plus nine integer comparisons (one correct).
+In particular, saved tools successfully count the dev partition: lack of a dev
+filter is not the blanket cause. The unchanged count tool explicitly handles
+declared Phase 5/expanded-v2 partitions and distinct canonical IDs.
+
+There is also a directed-relationship limitation: benchmark blocking-count gold
+uses incoming `blocks` edges (target=root); `get_links(root, blocks)` retrieves
+outgoing edges. Consequently an empty outgoing list does not establish that
+there are no incoming blockers. Dependency tools can return targets outside the
+cohort, and the saved agent stopped on an out-of-cohort target instead of checking
+the eligible ones. These are observed method limitations, not permission to
+change frozen gold, rewrite existing predictions or rerun inference here.
 
 `review-only` uses CSV decisions/results above and system configuration projected
 from `configs/answering.yaml`, selection, LLM config and applicable calibration.
@@ -216,3 +270,26 @@ until policy passes. An owner may explicitly supply `--override-policy 'reason'`
 for policy thresholds only; this is audited, not generated by the agent. Missing
 metrics and missing human F5 grades remain missing. Unpublish without deletion:
 `python scripts/publish_preset.py --slug fast --unpublish --apply`.
+
+### Verified local balanced-family results
+
+Local store: `outputs/mlflow/b1-ledgers`. Original nine answer-run IDs retained;
+champion aliases and both registry versions/preset tags unchanged. A before-metrics
+backup and verification summary are under ignored
+`outputs/mlops/backfill_repair/20261122T025849Z/`.
+
+Cells are **correct/scored n**; `P6` means six shared pending answer-grading
+reviews, score unavailable. These are Phase 11 answer reviews, not pending
+benchmark-gold approvals; frozen benchmark files remain unchanged.
+
+| System | F1 | F2 | F3 | F4 | F5 | F6 | KI | MH | F6H |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S0 | 0/21 | 1/8 | 0/15 | 0/19 | P6 | 13/13 | 0/24 | 0/8 | 11/11 |
+| S1 | 8/21 | 1/8 | 0/15 | 18/19 | P6 | 13/13 | 16/24 | 0/8 | 11/11 |
+| S2 | 21/21 | 2/8 | 0/15 | 19/19 | P6 | 10/13 | 18/24 | 0/8 | 7/11 |
+| S3 | 21/21 | 2/8 | 0/15 | 19/19 | P6 | 10/13 | 18/24 | 0/8 | 7/11 |
+| S4 | 14/21 | 1/8 | 0/15 | 19/19 | P6 | 11/13 | 18/24 | 0/8 | 10/11 |
+| S5 | 20/21 | 2/8 | 0/15 | 17/19 | P6 | 12/13 | 18/24 | 0/8 | 7/11 |
+| S6 | 14/21 | 1/8 | 0/15 | 19/19 | P6 | 11/13 | 18/24 | 0/8 | 10/11 |
+| S7 | 21/21 | 2/8 | 1/15 | 18/19 | P6 | 13/13 | 0/24 | 0/8 | 8/11 |
+| S8 | 21/21 | 2/8 | 0/15 | 17/19 | P6 | 12/13 | 17/24 | 0/8 | 8/11 |

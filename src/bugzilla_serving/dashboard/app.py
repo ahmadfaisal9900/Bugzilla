@@ -34,6 +34,8 @@ def main():
     st.set_page_config(page_title="Bugzilla · Dev dashboard", layout="wide")
     if not authenticated():
         st.stop()
+    from bugzilla_serving.dashboard.data.common import tracking_location
+    from bugzilla_serving.dashboard.data.mlflow_source import uri
     from bugzilla_serving.dashboard.views import enabled
 
     st.title("Bugzilla · Dev dashboard")
@@ -62,6 +64,9 @@ def main():
         if module != "presets_page" or enabled()
     ]
     st.navigation(navigation).run()
+    st.sidebar.caption(f"MLflow: {tracking_location(uri())}")
+    source = "fixture" if os.environ.get("LANGSMITH_SOURCE") == "fixture" else "live"
+    st.sidebar.caption(f"LangSmith source: {source}")
 
 
 if __name__ == "__main__":

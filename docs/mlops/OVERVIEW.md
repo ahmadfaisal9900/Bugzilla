@@ -161,7 +161,9 @@ Error codes: `invalid_config` (422), `rate_limited` (429 + `retry_after`), `inte
 - **Run params:** every RunConfig field + `config_hash`.
 - **Required tags:** `source` (backfill|lab|ci), `eval_set`, `datasets`, `split` (dev|test-aggregate), `scorer`, `git_sha`.
 - **Metric names:**
-  - answers: `answer.<FAMILY>.score`, `answer.<FAMILY>.n`, `answer.macro`;
+  - answers: `answer.<FAMILY>.score`, `answer.<FAMILY>.n`, `answer.<FAMILY>.pending`, `answer.macro`;
+    `.pending` is a nonnegative integer shared human-review exclusion count
+    (owner-requested amendment, 2026-11-21); terminal/format failures remain in `.n` as incorrect;
   - abstention and failures: `abstain.correct_rate`, `abstain.false_rate`, `fail.rate`;
   - cost and latency: `cost.llm_calls`, `cost.tokens_in`, `cost.tokens_out`, `latency.p50_ms`, `latency.p95_ms`;
   - retrieval: `retr.<DATASET>.<FAMILY>.<metric>` (e.g. `retr.v3.KI.recall_at_10`).

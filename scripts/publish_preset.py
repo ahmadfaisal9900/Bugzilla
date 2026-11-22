@@ -4,7 +4,7 @@
 import argparse
 import json
 
-from bugzilla_serving.contracts.names import REGISTRY_MODEL_NAME
+from bugzilla_serving.contracts.names import FAMILIES, REGISTRY_MODEL_NAME
 from bugzilla_serving.contracts.run_config import ROOT, RunConfig
 from bugzilla_serving.tracking.client import assert_no_secrets
 from bugzilla_serving.tracking.policy import assess
@@ -38,7 +38,16 @@ def publish(
     cfg = executable(values)
     policy = policy or read(ROOT / "configs/promotion.yaml")
     peers = registry.tracking.runs("research-answer-eval")
-    result = assess(run, peers, policy)
+    result = (
+        assess(run, peers, policy)
+        if champion
+        else dict(
+            allowed=None,
+            status="not applicable (preset only)",
+            reasons=[],
+            families=[f for f in FAMILIES if f"answer.{f}.score" in run.data.metrics],
+        )
+    )
     old = registry.get_champion()
     current = registry.client.get_run(old.tags.get("source_run_id", old.run_id)) if old else None
     comparison = []
@@ -49,8 +58,8 @@ def publish(
                 family=family,
                 candidate_score=run.data.metrics.get(key + ".score"),
                 candidate_n=run.data.metrics.get(key + ".n"),
-                champion_score=current.data.metrics.get(key + ".score") if current else None,
-                champion_n=current.data.metrics.get(key + ".n") if current else None,
+                champion_score=current.data.metrics.get(key + ".score") if current else "none",
+                champion_n=current.data.metrics.get(key + ".n") if current else "none",
             )
         )
     if apply:

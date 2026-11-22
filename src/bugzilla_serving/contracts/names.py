@@ -61,7 +61,7 @@ COMMON_METRICS = frozenset(
 
 
 def answer_metric(family: str, measure: str = "score") -> str:
-    if family not in FAMILIES or measure not in ("score", "n"):
+    if family not in FAMILIES or measure not in ("score", "n", "pending"):
         raise ValueError("metric: unknown answer family/measure")
     return f"answer.{family}.{measure}"
 
@@ -108,7 +108,7 @@ def validate_mlflow_run(params: dict, tags: dict, metrics: dict) -> None:
     if any(not str(tags[k]).strip() for k in REQUIRED_TAGS):
         raise ValueError("tags: values cannot be empty")
     allowed = set(COMMON_METRICS)
-    allowed.update(answer_metric(f, m) for f in FAMILIES for m in ("score", "n"))
+    allowed.update(answer_metric(f, m) for f in FAMILIES for m in ("score", "n", "pending"))
     allowed.update(
         retrieval_metric(d, f, m)
         for d in ("v3", "phase05", "natural")
@@ -123,7 +123,7 @@ def validate_mlflow_run(params: dict, tags: dict, metrics: dict) -> None:
         if k.endswith((".score", "_rate", ".rate")) or k == "answer.macro":
             if v > 1:
                 raise ValueError(f"metric: rate outside [0,1] {k}")
-        if k.endswith(".n") and int(v) != v:
+        if k.endswith((".n", ".pending")) and int(v) != v:
             raise ValueError(f"metric: n must be an integer {k}")
 
 

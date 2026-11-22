@@ -304,3 +304,34 @@ Eighteen unit/AppTest checks passed (9.73s), plus two real localhost subprocess
 launch checks (6.03s); Ruff clean. No API, tracking-store or source-data changes.
 The separate MLflow model type-hint warning and download progress are benign.
 Pre-existing notes changes and untracked .../ and mlruns/ directories preserved.
+
+### Local tracking denominators and dashboard handoff repair — 2026-11-21
+
+Owner explicitly requested answer.<F>.pending: added the nonnegative integer
+counter to names/validator and contract docs/tests; no RunConfig or API changes.
+Ambiguous duration-unit outputs previously received per-system NEEDS_HUMAN,
+causing F2 n to differ. The requested adapter protocol marks malformed outputs
+incorrect/failures and shares genuine pending (dataset,qid) exclusions across
+all systems. Source grader verdict/reason are retained in score_audit.jsonl;
+research scorer/gold/predictions are unchanged. All systems now score 119/125,
+with six shared F5 answer-grading reviews pending; F2 n=8 for every system.
+
+Investigated MH/F3 using saved tool traces and original grading code. Set order
+and numeric ID normalization already work. S7's tools can count the dev
+partition, but several correct counts are returned as singleton lists and fail
+the scalar contract. MH also has false abstentions, incoming/outgoing link
+direction gaps and out-of-cohort target handling. Four sanitized dev examples
+and the complete corrected per-family table are in BACKFILL_MAPPING.md.
+
+Fixed no-champion comparison labels and preset-only policy N/A; predict() has
+supported type hints; sidebar footer displays credential-free MLflow host/path
+and live/fixture LangSmith source. Local authorized --mode ledgers --apply
+updated the original nine b1-ledgers run IDs. Aliases and both registry version
+tags/presets match the before snapshot exactly. Ignored backup/summary:
+outputs/mlops/backfill_repair/20261122T025849Z/. No DagsHub/Groq/LangSmith calls.
+
+Verification: 37 tracking/experiment fixtures, 19 dashboard unit/AppTests,
+35 contract fixtures plus the one offline OpenAPI snapshot and two localhost
+subprocess launches passed (94 distinct targeted tests). Ruff check/format
+clean. No raw corpus/model/frozen files staged; existing notes and untracked
+mlruns/ preserved. No champion/preset publication performed.

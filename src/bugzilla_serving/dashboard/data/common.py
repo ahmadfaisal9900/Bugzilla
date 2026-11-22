@@ -8,8 +8,20 @@ import os
 import re
 from dataclasses import dataclass
 from typing import Generic, TypeVar
+from urllib.parse import unquote, urlsplit
 
 T = TypeVar("T")
+
+
+def tracking_location(uri):
+    """Display only host + path; never userinfo, query, or fragment."""
+    parsed = urlsplit(uri)
+    host = parsed.hostname or ""
+    if ":" in host:
+        host = f"[{host}]"
+    if parsed.port:
+        host += f":{parsed.port}"
+    return scrub(host + unquote(parsed.path))
 
 
 def display_frame(rows):
@@ -79,6 +91,8 @@ def family_cell(
     value = metrics.get(prefix + "." + metric)
     if value is not None:
         return Cell(float(value), int(n) if n is not None else None, "value")
+    if metrics.get(prefix + ".pending", 0) and n == 0:
+        return Cell(None, 0, f"pending human review: {int(metrics[prefix + '.pending'])}")
     matches = [
         r
         for r in na_rows

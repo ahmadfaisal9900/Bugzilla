@@ -200,6 +200,8 @@ def aggregate(scores):
             human_n=sum(s["scorer"] == "human-review" for s in scored),
             score="",
         )
+        metrics[f"answer.{family}.n"] = len(scored)
+        metrics[f"answer.{family}.pending"] = len(members) - len(scored)
         if scored:
             row["score"] = sum(s["verdict"] == "CORRECT" for s in scored) / len(scored)
             metrics[f"answer.{family}.score"] = row["score"]
@@ -210,6 +212,49 @@ def aggregate(scores):
             bool(f["scored_n"]) for f in families
         )
     return metrics, families
+
+
+def balanced_pending(scores):
+    """Exclude genuinely pending question IDs identically for every system."""
+    cohorts = [{(r["dataset"], r["qid"]) for r in rows} for rows in scores.values()]
+    if cohorts and any(c != cohorts[0] for c in cohorts):
+        raise ValueError("Systems must share the same evaluation question roster")
+    pending = {
+        (r["dataset"], r["qid"])
+        for rows in scores.values()
+        for r in rows
+        if r["verdict"] == "NEEDS_HUMAN"
+    }
+    for rows in scores.values():
+        for row in rows:
+            if (row["dataset"], row["qid"]) in pending:
+                row.update(verdict="NEEDS_HUMAN", reason="shared_pending_human_review")
+
+
+def prediction_failed(result, item, prediction):
+    """Execution/format failures use the scorer's own contract and parse checks."""
+    if prediction is None or prediction.get("status") != "ok":
+        return True
+    reason = result["reason"]
+    if reason.startswith("invalid_") or reason == "ambiguous_duration_unit":
+        return True
+    if reason == "integer" and result.get("absolute_error") is None:
+        return True
+    if (
+        reason in ("calendar_hours", "calendar_duration")
+        and result.get("absolute_error_hours") is None
+    ):
+        return True
+    if reason == "structured":
+        from bugzilla_qa.evaluation.systems import id_set
+
+        value = prediction.get("answer", {}).get("answer")
+        try:
+            value = json.loads(value) if isinstance(value, str) else value
+        except (ValueError, TypeError):
+            return True
+        return not isinstance(value, dict) or any(id_set(v) is None for v in value.values())
+    return False
 
 
 def resolve_reference(reference, root):
@@ -388,20 +433,37 @@ def _ledger_scores(reviews, directories, root, source):
                     if rid != review["review_id"]:
                         raise ValueError("Human review is not bound to this prediction/source hash")
                 result = scorer.grade(item, pred)
+                source_verdict, source_reason = result["verdict"], result["reason"]
+                failed = prediction_failed(result, item, pred)
                 human = review.get("answer_verdict", "").strip().upper()
                 if human:
                     result.update(verdict=human, reason="human_review")
+                if failed:
+                    # Requested denominator protocol: malformed output is incorrect,
+                    # including a duration whose output unit cannot be interpreted.
+                    result.update(verdict="INCORRECT", reason=source_reason)
                 all_scores[system].append(
                     dict(
+                        qid=item["qid"],
+                        dataset=dataset,
                         family=item["family"],
                         verdict=result["verdict"],
                         reason=result["reason"],
-                        scorer="human-review" if human else scorer.VERSION,
+                        scorer=(scorer.VERSION + ":failure-policy")
+                        if failed
+                        else "human-review"
+                        if human
+                        else scorer.VERSION,
+                        human_verdict=human or None,
+                        source_verdict=source_verdict,
+                        source_reason=source_reason,
+                        failed=failed,
                         expected_unanswerable=item["kind"]
                         in ("unknown", "unanswerable", "abstain"),
                         abstained=bool(pred and pred.get("answer", {}).get("abstain")),
                     )
                 )
+    balanced_pending(all_scores)
     return all_scores, configs, events, pins
 
 
@@ -519,16 +581,15 @@ def answer_runs(source, mode="auto", root=ROOT):
                         "latency.p95_ms": latency[min(len(latency) - 1, int(0.95 * len(latency)))],
                     }
                 )
-            if values:
-                metrics["fail.rate"] = sum(
-                    v.get("reason") in ("execution_failure", "missing_prediction") for v in values
-                ) / len(values)
-            known = [v for v in values if v.get("expected_unanswerable")]
+            eligible = [v for v in values if v["verdict"] != "NEEDS_HUMAN"]
+            if eligible:
+                metrics["fail.rate"] = sum(v.get("failed", False) for v in eligible) / len(eligible)
+            known = [v for v in eligible if v.get("expected_unanswerable")]
             if known:
                 metrics["abstain.correct_rate"] = sum(
                     v.get("abstained", False) for v in known
                 ) / len(known)
-            answerable = [v for v in values if not v.get("expected_unanswerable")]
+            answerable = [v for v in eligible if not v.get("expected_unanswerable")]
             if answerable:
                 metrics["abstain.false_rate"] = sum(
                     v.get("abstained", False) for v in answerable
@@ -565,6 +626,9 @@ def answer_runs(source, mode="auto", root=ROOT):
                     datasets=datasets,
                     source_rows=len(values),
                     pending_n=sum(f["pending_n"] for f in families),
+                    denominator_protocol="balanced-pending-v1"
+                    if selected_mode == "ledgers"
+                    else "review-only-v1",
                     omitted_metrics="Unavailable metrics omitted, never zero-filled",
                     unknown_config_fields=["rrf_k"]
                     if cfg.retriever not in ("R1", "R2") and cfg.rrf_k is None
@@ -573,6 +637,31 @@ def answer_runs(source, mode="auto", root=ROOT):
                 indent=2,
             ),
         }
+        if selected_mode == "ledgers":
+            artifacts["score_audit.jsonl"] = "".join(
+                json.dumps(
+                    {
+                        k: v
+                        for k, v in row.items()
+                        if k
+                        in (
+                            "qid",
+                            "dataset",
+                            "family",
+                            "verdict",
+                            "reason",
+                            "source_verdict",
+                            "source_reason",
+                            "failed",
+                            "scorer",
+                            "human_verdict",
+                        )
+                    },
+                    sort_keys=True,
+                )
+                + "\n"
+                for row in values
+            )
         params = params_for(cfg)
         validate_mlflow_run(params, tags, metrics)
         plans.append(

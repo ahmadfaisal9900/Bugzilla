@@ -2,9 +2,26 @@
 
 import pytest
 
-from bugzilla_serving.contracts.names import CONFIG_ORIGIN_TAG, validate_mlflow_run
+from bugzilla_serving.contracts.names import CONFIG_ORIGIN_TAG, answer_metric, validate_mlflow_run
 from bugzilla_serving.contracts.run_config import RunConfig
 from bugzilla_serving.tracking.client import params_for
+
+
+def test_pending_metric_is_an_explicit_nonnegative_integer_count():
+    assert answer_metric("F5", "pending") == "answer.F5.pending"
+    tags = dict(
+        source="ci",
+        eval_set="synthetic",
+        datasets="synthetic",
+        split="dev",
+        scorer="synthetic",
+        git_sha="synthetic",
+    )
+    params = params_for(RunConfig())
+    validate_mlflow_run(params, tags, {"answer.F5.n": 0, "answer.F5.pending": 6})
+    for bad in (-1, 0.5, True):
+        with pytest.raises(ValueError):
+            validate_mlflow_run(params, tags, {"answer.F5.pending": bad})
 
 
 @pytest.mark.contract

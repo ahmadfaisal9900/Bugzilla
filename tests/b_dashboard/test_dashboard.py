@@ -14,7 +14,7 @@ from bugzilla_serving.contracts.run_config import ROOT, RunConfig
 from bugzilla_serving.dashboard import lab
 from bugzilla_serving.dashboard.data import langsmith_source as ls
 from bugzilla_serving.dashboard.data import mlflow_source as mf
-from bugzilla_serving.dashboard.data.common import display_frame, family_cell
+from bugzilla_serving.dashboard.data.common import display_frame, family_cell, tracking_location
 from bugzilla_serving.tracking.backfill import retrieval_runs
 from bugzilla_serving.tracking.client import TrackingClient, params_for
 
@@ -119,6 +119,8 @@ def test_every_page(store, page, caplog):
         at.switch_page(f"pages/{page}.py").run()
     assert not at.exception, [(e.message) for e in at.exception]
     assert any("Dev dashboard" in t.value for t in at.title)
+    assert any("MLflow:" in c.value for c in at.sidebar.caption)
+    assert any("LangSmith source: fixture" in c.value for c in at.sidebar.caption)
     if page in ("overview", "answer_eval", "retrieval_eval", "cost_latency", "presets_page"):
         assert at.dataframe
     assert "Serialization of dataframe to Arrow table was unsuccessful" not in caplog.text
@@ -151,6 +153,14 @@ def test_mixed_metric_display_is_arrow_safe_and_preserves_source():
     assert pd.isna(frame.loc[0, "n"])
     assert frame.loc[0, "numeric"] == 0.0
     assert rows[1]["macro"] == 0.625 and isinstance(rows[0]["answer"], dict)
+
+
+def test_tracking_footer_never_displays_credentials():
+    value = tracking_location(
+        "https://user:fake-secret@host.example/team/repo.mlflow?token=hidden#secret"
+    )
+    assert value == "host.example/team/repo.mlflow"
+    assert "user" not in value and "secret" not in value and "hidden" not in value
 
 
 @pytest.mark.ui

@@ -25,7 +25,7 @@ class ConfigWrapper(mlflow.pyfunc.PythonModel):
     def load_context(self, context):
         self.config = yaml.safe_load(Path(context.artifacts["config"]).read_text())
 
-    def predict(self, context, model_input, params=None):
+    def predict(self, context, model_input: list[str], params: dict | None = None) -> list[str]:
         return [json.dumps(self.config, sort_keys=True) for _ in range(len(model_input))]
 
 
