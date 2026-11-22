@@ -1,7 +1,12 @@
 # Stream B CI
 
 Run from the existing repository root with `conda activate iqfm` (Python 3.11).
-CI installs pinned extras directly from pyproject; it never reads `.env`.
+CI installs pinned extras directly from pyproject; it never reads the repository `.env`.
+The root CI conftest loads `tests/b_ci/pytest_offline.py` before collection. It
+removes inherited provider credentials and model overrides inside pytest only,
+so temporary synthetic `.env` files retain their intended meaning. Requests and
+HTTPX network transports are blocked; ASGI/fake clients and localhost launch
+checks remain available. The invoking shell environment stays unchanged.
 Provider/model tests use synthetic fixtures and Dense/Cross doubles. They need no
 Hugging Face downloads, so there is deliberately no model cache in CI.
 

@@ -88,3 +88,38 @@ def test_ci_boundaries_and_action_pins():
                 assert re.fullmatch(r"[^@]+@[a-f0-9]{40}", step["uses"])
     assert jobs["docker"]["needs"] == "lint"
     assert "DASHBOARD_LAB_ENABLED" in workflow["env"]
+
+
+def test_inherited_provider_environment_does_not_change_fixture_tests():
+    env = os.environ.copy()
+    env.update(
+        GROQ_API_KEY="synthetic-ambient-groq-key",
+        LLM_API_KEY="synthetic-ambient-gemini-key",
+        GEMINI_MODEL="gemini-2.0-flash",
+    )
+    targets = [
+        "tests/test_groq_provider.py::GroqTests::test_secret_prompt_refused_without_calls",
+        "tests/test_llm_provider.py::ProviderTests::test_daily_cap_uses_pacific_date_and_stops_before_call",
+        "tests/test_llm_provider.py::ProviderTests::test_http_status_reports_sanitized_provider_message",
+        "tests/test_v3_generation.py::GenerationTests::test_generation_resume_validation_privacy_and_freeze",
+    ]
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", *targets, "-q"],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=25,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_external_http_is_refused_before_transport():
+    import httpx
+    import pytest
+    import requests
+
+    with pytest.raises(AssertionError, match="Offline tests refuse"):
+        requests.get("https://example.invalid")
+    with pytest.raises(AssertionError, match="Offline tests refuse"):
+        httpx.get("https://example.invalid", trust_env=False)

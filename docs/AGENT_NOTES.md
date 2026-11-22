@@ -429,3 +429,33 @@ image sizes, remote MLflow state, parity/Compose integration and live Lab.
 Workflow YAML, shell syntax and action SHA shapes receive local static checks;
 these do not replace actionlint or real builds. Exact owner commands are in
 mlops/CI.md. No remote APIs, dataset jobs, credentials, pushes or research/A edits.
+
+### B4 follow-up: inherited environment isolation — 2026-11-22
+
+| Expected → found | Resolution |
+| --- | --- |
+| Owner full-suite result → 321 passed / four failures, 85.71% coverage | Prior clean-environment grouped checks did not cover inherited provider overrides |
+| Failure cause → ambient provider credentials/model selection override temporary synthetic .env files | Reproduced all four exact failure types using synthetic ambient values and a fake Groq response (zero network calls) |
+| Research code → read-only | No research or legacy-test changes; CI-owned root conftest loads tests/b_ci pytest plugin |
+| Existing local artifacts → modified egg-info SOURCES.txt plus build/, coverage and JUnit files | Preserved; excluded from staging |
+
+The CI plugin removes inherited provider credentials/model overrides before test
+collection, preserves local file-store URIs and forces offline/fixture settings
+inside the pytest process only. The invoking shell is unchanged. Suite-wide
+Requests/HTTPX sync/async transport guards prevent live HTTP even if a test's
+fixture configuration regresses; ASGI clients and existing localhost launches
+remain usable. Explicit synthetic credentials set within individual tests still
+work. Root conftest is CI test configuration, not production/research code.
+Added a child-pytest regression for the four failures under synthetic ambient
+keys/model and direct no-network transport assertions. No secrets read/printed,
+no live API calls or Docker builds. Owner reported Gitleaks scan passed on the
+previous commit; no new Gitleaks execution is claimed here.
+
+Follow-up verification: 327 distinct tests pass across bounded groups (all
+previous 325 plus two regression checks). The inherited-environment regression
+runs the four originally failing tests together under synthetic ambient values;
+all four pass. Direct Requests/HTTPX attempts fail before transport. Ruff check,
+format check and diff whitespace checks pass. No production source changed;
+coverage was not remeasured in this follow-up (owner's full-run result: 85.71%).
+Full single-invocation coverage rerun remains the exact command in CI.md for the
+owner, respecting the agent's 30-second per-invocation test bound. No pushes.

@@ -31,7 +31,7 @@ include = ["bugzilla_qa*", "bugzilla_serving*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src", "."]
+pythonpath = ["src", ".", "tests"]
 addopts = '-m "not live and not integration"'
 filterwarnings = [
     # LangGraph 0.6.11 imports the serializer without the new allowed_objects option.
@@ -53,7 +53,7 @@ include = [
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
     "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/publish_preset.py",
     "tests/b_experiments/**/*.py", "scripts/make_eval_sets.py", "scripts/run_experiment.py",
-    "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py",
+    "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py", "conftest.py",
 ]
 
 [tool.ruff.lint]
