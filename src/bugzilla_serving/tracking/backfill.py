@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 from collections import defaultdict
 from html.parser import HTMLParser
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 import yaml
 
@@ -222,7 +222,13 @@ def discover_ledgers(source, root):
         if not record.get("output"):
             continue
         folder = Path(record["output"])
+        # A Windows absolute path is not a relative project path on POSIX.
+        # Treat unavailable provenance as unavailable; never guess a replacement.
+        if not folder.is_absolute() and PureWindowsPath(record["output"]).is_absolute():
+            return {}
         folder = folder if folder.is_absolute() else root / folder
+        if not (folder / "manifest.json").is_file():
+            return {}
         manifest = read(folder / "manifest.json")
         candidates = [
             p
@@ -386,7 +392,7 @@ def answer_runs(source, mode="auto", root=ROOT):
     reviews = review_rows(source)
     if not reviews:
         raise ValueError("Empty review source")
-    directories = discover_ledgers(source, root)
+    directories = discover_ledgers(source, root) if mode != "review-only" else {}
     datasets = sorted({r["dataset"] for r in reviews})
     available = all(
         d in directories and (root / directories[d] / "manifest.json").is_file() for d in datasets

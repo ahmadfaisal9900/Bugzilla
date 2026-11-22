@@ -253,3 +253,16 @@ unsuccessful script completion. Both passed in 6.36s. Sources are fixture/local,
 credentials are stripped from child environments, telemetry is off and child
 processes are always terminated. No external service requests or contract changes.
 Full dashboard regression: 19 passed (15.74s); Ruff check/format clean.
+
+### Backfill foreign-path fallback — 2026-11-21
+
+pilot125/latest.json contains Windows-absolute evaluation output references.
+POSIX Path previously prepended the Linux repo root and discovery opened a
+missing manifest before auto-mode could fall back. Discovery now treats foreign
+absolute paths and missing manifests as unavailable evidence; explicit review-only
+skips ledger discovery. No source paths are guessed or rewritten. Explicit ledgers
+mode still refuses missing evidence. Fourteen tracking fixture checks pass (1.96s),
+including foreign/missing paths and bypassing unusable provenance in review-only.
+The actual default dry-run now succeeds: review-only, 358 rows, three datasets,
+nine planned systems, no MLflow writes or API requests. Ruff clean; source files
+unchanged. Review-only omits unavailable cost/latency metrics as before.

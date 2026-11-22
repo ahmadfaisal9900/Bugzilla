@@ -133,6 +133,25 @@ def test_review_only_temp_store_and_idempotency(tmp_path):
         tracker.log_run(**{**upgrade, "params": params_for(cfg)})
 
 
+@pytest.mark.parametrize("output", [r"C:\Courses\ENSF 621\Bugzilla\run-123", "missing/run-123"])
+def test_missing_or_foreign_manifest_falls_back(tmp_path, output):
+    source = review_fixture(tmp_path)
+    (source / "latest.json").write_text(json.dumps({"evaluations": {"sample": {"output": output}}}))
+    plans, info = answer_runs(source)
+    assert info["mode"] == "review-only"
+    assert plans[0]["tags"]["provenance"] == "review-only"
+    assert not any(k.startswith(("cost.", "latency.")) for k in plans[0]["metrics"])
+    with pytest.raises(ValueError, match="Exact referenced prediction ledgers unavailable"):
+        answer_runs(source, "ledgers")
+
+
+def test_explicit_review_only_does_not_discover_ledgers(tmp_path):
+    source = review_fixture(tmp_path)
+    (source / "latest.json").write_text("[invalid provenance metadata")
+    plans, info = answer_runs(source, "review-only")
+    assert info["mode"] == "review-only" and plans
+
+
 def test_review_split_and_signature_refused(tmp_path):
     source = review_fixture(tmp_path)
     with (source / "REVIEW.csv").open() as f:
