@@ -290,3 +290,17 @@ review-only runs are not overwritten when historical config hashes differ.
 Seven local b1-local configs differ; use a fresh store for a preserving ledger
 import. Missing archived retrieval config, if restored, must match its identity
 input hash. Bounded --mode ledgers dry-run also passes without MLflow writes.
+
+### Dashboard Arrow display-type correction — 2026-11-21
+
+Mixed scored and review-only rows placed float metrics and unavailable labels in
+the same object column, causing Streamlit's Arrow conversion warning/traceback.
+Dashboard tables now prepare a display copy: numeric-only columns stay numeric,
+columns with text use nullable string dtype, and nested records use JSON text.
+Raw metrics, scores and counts are unchanged; missing values never become zero.
+Regression checks serialize mixed/nested fixtures directly through PyArrow and
+assert all nine populated fixture pages avoid Arrow automatic-repair messages.
+Eighteen unit/AppTest checks passed (9.73s), plus two real localhost subprocess
+launch checks (6.03s); Ruff clean. No API, tracking-store or source-data changes.
+The separate MLflow model type-hint warning and download progress are benign.
+Pre-existing notes changes and untracked .../ and mlruns/ directories preserved.

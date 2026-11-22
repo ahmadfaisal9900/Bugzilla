@@ -14,7 +14,7 @@ from bugzilla_serving.contracts.run_config import ROOT, RunConfig
 from bugzilla_serving.dashboard import lab
 from bugzilla_serving.dashboard.data import langsmith_source as ls
 from bugzilla_serving.dashboard.data import mlflow_source as mf
-from bugzilla_serving.dashboard.data.common import family_cell
+from bugzilla_serving.dashboard.data.common import display_frame, family_cell
 from bugzilla_serving.tracking.backfill import retrieval_runs
 from bugzilla_serving.tracking.client import TrackingClient, params_for
 
@@ -113,7 +113,7 @@ def store(tmp_path, monkeypatch):
         "production",
     ],
 )
-def test_every_page(store, page):
+def test_every_page(store, page, caplog):
     at = AppTest.from_file(str(APP), default_timeout=15).run()
     if page != "overview":
         at.switch_page(f"pages/{page}.py").run()
@@ -121,6 +121,36 @@ def test_every_page(store, page):
     assert any("Dev dashboard" in t.value for t in at.title)
     if page in ("overview", "answer_eval", "retrieval_eval", "cost_latency", "presets_page"):
         assert at.dataframe
+    assert "Serialization of dataframe to Arrow table was unsuccessful" not in caplog.text
+
+
+def test_mixed_metric_display_is_arrow_safe_and_preserves_source():
+    import pandas as pd
+    import pyarrow as pa
+
+    rows = [
+        {
+            "macro": "not available yet: review-only",
+            "latency": "not available",
+            "n": None,
+            "answer": {"answer": [1, 2]},
+            "numeric": 0.0,
+        },
+        {
+            "macro": 0.625,
+            "latency": 25.5,
+            "n": 21,
+            "answer": {"answer": "synthetic"},
+            "numeric": 0.75,
+        },
+    ]
+    frame = display_frame(rows)
+    pa.Table.from_pandas(frame)
+    assert frame.loc[1, "macro"] == "0.625"
+    assert frame.loc[0, "macro"] == "not available yet: review-only"
+    assert pd.isna(frame.loc[0, "n"])
+    assert frame.loc[0, "numeric"] == 0.0
+    assert rows[1]["macro"] == 0.625 and isinstance(rows[0]["answer"], dict)
 
 
 @pytest.mark.ui

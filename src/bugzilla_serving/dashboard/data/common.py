@@ -3,12 +3,34 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 import os
 import re
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 T = TypeVar("T")
+
+
+def display_frame(rows):
+    """Keep display columns Arrow-compatible without changing source metrics."""
+    import pandas as pd
+
+    if not isinstance(rows, (list, tuple, pd.DataFrame)):
+        return rows  # An already prepared comparison Styler.
+    frame = pd.DataFrame(rows).copy()
+    for column in frame.columns:
+        values = frame[column].map(
+            lambda value: json.dumps(value, sort_keys=True, default=str)
+            if isinstance(value, (dict, list, tuple))
+            else value
+        )
+        present = values.dropna()
+        if any(isinstance(v, str) for v in present):
+            # StringDtype handles numeric + unavailable labels and nullable cells.
+            values = values.astype("string")
+        frame[column] = values
+    return frame
 
 
 @dataclass

@@ -13,9 +13,13 @@ from bugzilla_serving.contracts.names import EXPERIMENTS, FAMILIES, RETRIEVAL_ME
 from bugzilla_serving.contracts.run_config import FIXED_RETRIEVERS, RunConfig, load_spec
 from bugzilla_serving.dashboard.data import langsmith_source as ls
 from bugzilla_serving.dashboard.data import mlflow_source as mf
-from bugzilla_serving.dashboard.data.common import family_cell, scrub
+from bugzilla_serving.dashboard.data.common import display_frame, family_cell, scrub
 from bugzilla_serving.dashboard.theme import PALETTE, style
 from bugzilla_serving.tracking.backfill import read
+
+
+def dataframe(rows, **kwargs):
+    st.dataframe(display_frame(rows), **kwargs)
 
 
 def enabled():
@@ -119,7 +123,7 @@ def overview():
             None,
         )
         if source:
-            st.dataframe(answer_table([source]), use_container_width=True)
+            dataframe(answer_table([source]), use_container_width=True)
             st.caption(f"Champion p95 ms: {missing(source, 'latency.p95_ms')}")
     else:
         st.info(champion.error or "No champion published yet.")
@@ -128,7 +132,7 @@ def overview():
         "Leaderboard cells show score and scored n; click column headers to sort. "
         "No pooled overall score is the headline. pilot125 is a pilot subset."
     )
-    st.dataframe(answer_table(mf.latest_per_config(values)), use_container_width=True)
+    dataframe(answer_table(mf.latest_per_config(values)), use_container_width=True)
     if not values:
         st.info("No answer evaluation runs yet.")
 
@@ -143,12 +147,12 @@ def answer_eval():
             if cell.value is not None:
                 cells.append(dict(run=name(run), family=f, score=cell.value, n=cell.n))
     bars(cells, "Per-family correctness (inspect scorer and n)")
-    st.dataframe(answer_table(values), use_container_width=True)
+    dataframe(answer_table(values), use_container_width=True)
     for run in values:
         intervals = mf.artifact(mf.uri(), run.id, "intervals.json").value
         if intervals:
             st.caption(f"{name(run)} · saved intervals, no new intervals estimated")
-            st.dataframe(intervals, use_container_width=True)
+            dataframe(intervals, use_container_width=True)
             # Saved intervals can describe dataset-specific scores, while the main
             # bars pool a family across datasets. Plot the actual bounds separately.
             if all({"ci_low", "ci_high", "family", "n"} <= r.keys() for r in intervals):
@@ -170,7 +174,7 @@ def answer_eval():
                 figure.update_layout(xaxis_title="Saved confidence interval (score)")
                 st.plotly_chart(style(figure), use_container_width=True)
     st.subheader("Abstention and failures")
-    st.dataframe(
+    dataframe(
         [
             {
                 "run": name(r),
@@ -233,7 +237,7 @@ def retrieval_eval():
                 p95_ms=missing(run, f"retr.{dataset}.{family}.latency_p95_ms"),
             )
         )
-    st.dataframe(table, use_container_width=True)
+    dataframe(table, use_container_width=True)
     known = [r for r in table if r["value"] is not None]
     if known:
         frame = pd.DataFrame(known)
@@ -300,7 +304,7 @@ def cost_latency():
             row["reported tokens / question"] = "not available"
             row["daily token quota % / question"] = "not available"
         table.append(row)
-    st.dataframe(table, use_container_width=True)
+    dataframe(table, use_container_width=True)
     st.caption(
         "Token usage is not a dollar cost. Per-question usage requires source-row accounting; "
         "unknown denominators and review-only costs stay unavailable. Quota % uses configured "
@@ -333,11 +337,11 @@ def error_analysis():
     from collections import Counter
 
     counts = Counter(error.split(":")[0] for r in snapshot.value for error in r.get("errors", []))
-    st.dataframe([{"category": k, "n": v} for k, v in counts.items()], use_container_width=True)
+    dataframe([{"category": k, "n": v} for k, v in counts.items()], use_container_width=True)
     st.caption(
         "Dev predictions only; no test questions or gold. Citation IDs reference the run evidence."
     )
-    st.dataframe(snapshot.value, use_container_width=True)
+    dataframe(snapshot.value, use_container_width=True)
 
 
 def widgets(start):
@@ -563,7 +567,7 @@ def show_progress(token):
                     st.caption(f"Local MLflow run: {run.id} · {tracking} (view with mlflow ui)")
                 # The mock store may differ from the dashboard's remote read store.
                 families = mf.artifact(tracking, run.id, "per_family.csv").value or []
-                st.dataframe(
+                dataframe(
                     [
                         {
                             "family": f,
@@ -594,7 +598,7 @@ def compare_runs():
         if len({str(row[r.id[:8]]) for r in chosen}) > 1:
             different.append(key)
     frame = pd.DataFrame(rows).set_index("parameter")
-    st.dataframe(
+    dataframe(
         frame.style.apply(
             lambda s: ["background-color: #FEF3C7" if s.name in different else "" for _ in s],
             axis=1,
@@ -660,7 +664,7 @@ def presets_page():
         return
     existing = mf.presets(mf.uri())
     st.caption(f"Presets last updated {existing.updated_at}")
-    st.dataframe(existing.value, use_container_width=True)
+    dataframe(existing.value, use_container_width=True)
     if existing.error:
         st.warning(existing.error)
     values = [
@@ -728,7 +732,7 @@ def production():
     if not snapshot.value:
         st.info("No production data yet.")
         return
-    st.dataframe(ls.grouped(snapshot.value), use_container_width=True)
+    dataframe(ls.grouped(snapshot.value), use_container_width=True)
     from collections import Counter
 
     days = Counter(r["day"] for r in snapshot.value)
@@ -738,7 +742,7 @@ def production():
         f"Degraded requests: {sum(r['degraded'] for r in snapshot.value)} / n={len(snapshot.value)}"
     )
     st.subheader("Recent thumbs-down feedback (sanitized)")
-    st.dataframe(
+    dataframe(
         [
             {"day": r["day"], "preset": r["preset_slug"], "comment": r["comment"]}
             for r in sorted(snapshot.value, key=lambda r: r["started_at"], reverse=True)
