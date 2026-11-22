@@ -717,6 +717,14 @@ def test_prediction_usage_and_mixed_cache_latency():
     assert "tokens_in" not in mixed_unknown and "tokens_out" not in mixed_unknown
     partial = usage_totals([dict(tokens=dict(input=20, output=3, usage_missing=True))])
     assert partial == dict(tokens_in=20, tokens_out=3, usage_missing_n=1)
+    family_rows = [
+        dict(family="F1", **usage_totals(rows[1:])),
+        dict(family="F2", **usage_totals(rows[:1])),
+    ]
+    header = list(dict.fromkeys(k for row in family_rows for k in row))
+    exported = list(csv.DictReader(csv_text(family_rows, header).splitlines()))
+    assert exported[0]["tokens_cached_in"] == ""
+    assert exported[1]["tokens_cached_in"] == "30"
     assert usage_totals([dict(tokens=dict(input_tokens=7, output_tokens=3))])["tokens_in"] == 7
 
 

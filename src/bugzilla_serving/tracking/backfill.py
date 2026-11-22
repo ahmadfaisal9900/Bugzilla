@@ -672,7 +672,9 @@ def answer_runs(source, mode="auto", root=ROOT):
                 tags[f"scorer.{f['family']}"] = "human-review"
         artifacts = {
             "config.yaml": config_artifact(cfg),
-            "per_family.csv": csv_text(families, list(families[0])),
+            "per_family.csv": csv_text(
+                families, list(dict.fromkeys(k for f in families for k in f))
+            ),
             "intervals.json": json.dumps(
                 answer_intervals(source, root, system) if selected_mode == "ledgers" else []
             ),
