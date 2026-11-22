@@ -464,6 +464,11 @@ Use the roadmap's predefined numerical tolerances where appropriate; do not choo
 
 ## 15. Deeper documentation
 
+For the serving data package, see [Stream A, A1](docs/mlops/STREAM_A.md#a1-serving-bundle).
+`python scripts/build_serving_bundle.py --out serving_bundle` previews the copy;
+add `--apply` to build it. The current local runtime supplies C1 only; C0/C2 are
+reported as missing. The generated folder stays gitignored.
+
 - [Scientific roadmap](docs/reference/research_roadmap.tex): research questions, rubric and fairness controls.
 - [v3 benchmark](docs/BENCHMARK_V3.md): question generation, review and dataset coverage.
 - [Retrieval harness](docs/RETRIEVAL_V3.md): corpus variants, metrics and outputs.

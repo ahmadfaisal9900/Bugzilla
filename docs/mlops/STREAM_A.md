@@ -20,6 +20,42 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 
 **Done when:** the real bundle builds locally, the manifest shows no test files, and the loader works on the synthetic fixture bundle and the real one.
 
+Local A1 status: the builder and loader are implemented. The available Phase 11 runtime
+contains C1 only; C0 and C2 are absent. The built bundle records that limitation and
+the runner refuses missing corpora. Do not duplicate C1 under another corpus name.
+The real C1 bundle contains the 3,000-bug database, history, existing indexes, pinned
+model snapshots and 299 text-only Phase 5/v3 dev examples. No test questions or gold
+files are included. `load_bundle(path).examples()` returns a list of strings;
+`load_bundle(path).db` is read-only. Close the bundle when the application shuts down.
+
+From the repo root, with `iqfm` active:
+
+```powershell
+python scripts/build_serving_bundle.py --out serving_bundle
+python scripts/build_serving_bundle.py --out serving_bundle --apply
+python -m pytest tests/a_bundle -q
+```
+
+The first command only previews files and sizes. An existing output folder is never
+overwritten; choose another `--out` to rebuild. Add `--require-all` to refuse a build
+unless all three corpora are present. The builder copies data and model snapshots;
+it does not regenerate indexes, download models or call Groq. Copy the complete
+`serving_bundle/` folder to the host, alongside the installed application. It is
+gitignored. The source defaults come from the local `official_runtime/answering.json`;
+`--root` and `--runtime` allow the same layout on another machine.
+
+Real-data smoke check, without API calls:
+
+```powershell
+$env:BUNDLE_DIR = "serving_bundle"
+python -c "from bugzilla_serving.engine import build_runner; from bugzilla_serving.contracts.run_config import RunConfig; r=build_runner(RunConfig(system_id='S1',retriever='R1',provider='mock')); a=r.run('What component is bug 1701902 in?',on_event=print); print(a); r.close()"
+```
+
+Expect four status events, real Firefox sources and a mock abstention. A successful
+mock check verifies the package and retrieval wiring, not answer quality or every
+dense/reranking method. C0/C2 support remains pending delivery of their real indexes.
+An additional local S2/R2 mock check also passed using only the packaged model weights.
+
 ## A2. API core (FastAPI, `/v1`, contract section 4.4)
 
 - App factory; the bundle, indexes and model weights load at startup; one uvicorn worker; the engine runs in a threadpool.

@@ -156,6 +156,19 @@ def test_openapi_snapshot(monkeypatch):
     assert client.post("/v1/feedback", json={"request_id": "fake", "score": 1}).status_code == 501
 
 
+def test_mlflow_local_file_uri(tmp_path, monkeypatch):
+    from conftest import module
+
+    seed = module(ROOT / "scripts/seed_mlflow_fixture.py", "p0_seed_uri")
+    store = tmp_path / "tracking store"
+    monkeypatch.chdir(tmp_path)
+    assert seed.local_tracking_uri(store.as_uri()) == store.as_uri()
+    assert seed.local_tracking_uri("file:./tracking store") == store.as_uri()
+    for uri in ("https://example.com", "file://remote/share", "file:"):
+        with pytest.raises(ValueError):
+            seed.local_tracking_uri(uri)
+
+
 def test_mlflow_seed_idempotence_and_secret_scan(tmp_path, fixture_bundle, monkeypatch, capsys):
     from conftest import module
     from mlflow.tracking import MlflowClient

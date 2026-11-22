@@ -6,6 +6,8 @@ import argparse
 import json
 import tempfile
 from pathlib import Path
+from urllib.parse import urlsplit
+from urllib.request import url2pathname
 
 from bugzilla_serving.contracts.names import (
     CHAMPION_ALIAS, EXPERIMENTS, REGISTRY_MODEL_NAME, validate_mlflow_run,
@@ -13,15 +15,22 @@ from bugzilla_serving.contracts.names import (
 from bugzilla_serving.contracts.run_config import RunConfig, config_hash
 
 
-def seed(tracking_uri: str) -> dict:
-    if not tracking_uri.startswith("file:"):
+def local_tracking_uri(tracking_uri: str) -> str:
+    parts = urlsplit(tracking_uri)
+    if parts.scheme != "file" or parts.netloc not in ("", "localhost"):
         raise ValueError("tracking-uri: Phase 0 seed accepts only a local file: store")
+    if not parts.path or parts.query or parts.fragment:
+        raise ValueError("tracking-uri: expected a local file path without query or fragment")
+    return Path(url2pathname(parts.path)).resolve().as_uri()
+
+
+def seed(tracking_uri: str) -> dict:
+    uri = local_tracking_uri(tracking_uri)
     import mlflow
     import mlflow.pyfunc
     import yaml
     from mlflow.tracking import MlflowClient
 
-    uri = Path(tracking_uri[5:]).resolve().as_uri()
     client = MlflowClient(tracking_uri=uri, registry_uri=uri)
     previous, registry = mlflow.get_tracking_uri(), mlflow.get_registry_uri()
     mlflow.set_tracking_uri(uri)
