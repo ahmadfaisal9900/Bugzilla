@@ -46,6 +46,7 @@ include = [
     "src/bugzilla_serving/**/*.py", "tests/contracts/**/*.py",
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
     "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/publish_preset.py",
+    "tests/b_experiments/**/*.py", "scripts/make_eval_sets.py", "scripts/run_experiment.py",
 ]
 
 [tool.ruff.lint]

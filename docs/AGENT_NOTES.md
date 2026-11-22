@@ -174,3 +174,33 @@ execution outside the sandbox because its AnyIO portal stalled inside it;
 no HTTP/live-service calls were made. Both real-data backfills dry-ran cleanly
 without tracking writes (9 answer / 24 retrieval plans). No source/frozen or
 Stream A code changed. Existing earlier notes edits are preserved unstaged.
+
+## Stream B B2 inventory and implementation — 2026-11-21
+
+| Expected → found | Action |
+| --- | --- |
+| Integration root/branch → existing Project / feature/mlops | Retained; no remote changes or pushes |
+| Shared contracts/engine/B1 tracking → present | Reused unchanged; no new contract amendments |
+| Experiments → package stub only | Implemented B2 data/scoring/preflight/runner/sweep and CLI |
+| Dev sources → Phase 5=34, natural=51, v3=265 | Verified dev-only loader; generated qid-only sets with seed 317 |
+| recommended → configs/presets.yaml local fallback | Offline dry-run works without reading MLflow; not a champion claim |
+| Real serving bundle → serving_bundle/ absent | Execution prerequisite remains Stream A's bundle/indexes/local weights; no A implementation attempted |
+| Conda iqfm → Python 3.11 and existing pinned dependencies | No installs/new dependencies required |
+
+Real-data inspection is limited to dev inputs, hashes and dry-run estimates. No
+model calls, real indexing/evaluation or remote service operations. Mock jobs and
+live jobs have separate identities; mock metrics are explicitly simulated. F5 is
+not automatically judged. See `src/bugzilla_serving/experiments/README.md` for
+quota assumptions, resume/cancel semantics and exact ordered terminal commands.
+Current recommended smoke-5 estimate: 70 requests / 278,950 tokens, refused by
+the safe 180,000-token daily budget. Fast with context=512/top_k=2 estimates
+10 requests / 30,890 tokens; two top_k points estimate 20 / 61,780. No live
+consumption is claimed. Actual remaining quota is checked again at execution.
+
+B2 verification: 16 tests passed in 9.88s; unchanged contracts/B1: 46 passed
+in 25.05s, run as separate bounded groups (a combined invocation was stopped
+at the 30-second limit). Ruff check/format passed. Real recommended/Fast/sweep
+preflights and make_eval_sets dry-run succeeded with zero API calls. The explicit
+--fixture-bundle mock path reuses P0 synthetic model fixtures without downloads;
+live runs refuse synthetic bundles. No source/frozen, contract, engine, API or
+chat code changed. No real MLflow/Groq/LangSmith calls or pushes; no installs.
