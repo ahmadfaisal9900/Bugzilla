@@ -78,6 +78,11 @@ ruff format --check src/bugzilla_serving/dashboard tests/b_dashboard
 
 Tests deny HTTP and use temporary file stores plus synthetic fixtures,
 including a completed background mock job and fake-key output scan.
+The launch regression additionally starts real Streamlit subprocesses from
+the repo root and a temporary working directory containing spaces and an
+apostrophe. It polls local health, then uses local WebSocket sessions to
+execute all nine pages and check for server-side exceptions. These tests
+need permission to bind localhost ports; health alone cannot detect page errors.
 No test questions/gold are read. Test-aggregate runs expose metrics only;
 their artifacts are refused before download. Dev artifact reads are
 allowlisted and capped at 10 MB; no gold or raw prompt fields are displayed.

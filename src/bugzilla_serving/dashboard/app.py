@@ -54,7 +54,7 @@ def main():
     ]
     navigation = [
         st.Page(
-            str(Path(__file__).parent / "pages" / f"{module}.py"),
+            Path(__file__).resolve().parent / "pages" / f"{module}.py",
             title=title,
             default=module == "overview",
         )

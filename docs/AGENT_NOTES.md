@@ -239,3 +239,17 @@ read caps. Research, frozen data, contracts, engine, API and chat unchanged.
 No Groq, DagsHub or live LangSmith calls; no pushes. Real remote integration and
 live Lab remain operator checks after a real bundle is available. No contract
 amendments requested. The pre-existing unrelated notes edit is preserved.
+
+### Dashboard relative launch-path correction — 2026-11-21
+
+Streamlit's CLI may expose a relative __file__, while st.Page resolves relative
+paths against the main script directory. The previous construction could thus
+repeat the directory prefix. Page paths now use Path(__file__).resolve().parent,
+independent of cwd and safe with spaces/apostrophes. Real subprocess regressions
+launch via relative script paths from the repo root and a different temporary
+directory named partner's workspace. Each polls /_stcore/health, then connects
+over localhost WebSocket to execute all nine pages and reject exceptions or
+unsuccessful script completion. Both passed in 6.36s. Sources are fixture/local,
+credentials are stripped from child environments, telemetry is off and child
+processes are always terminated. No external service requests or contract changes.
+Full dashboard regression: 19 passed (15.74s); Ruff check/format clean.
