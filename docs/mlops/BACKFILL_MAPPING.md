@@ -293,3 +293,28 @@ benchmark-gold approvals; frozen benchmark files remain unchanged.
 | S6 | 14/21 | 1/8 | 0/15 | 19/19 | P6 | 11/13 | 18/24 | 0/8 | 10/11 |
 | S7 | 21/21 | 2/8 | 1/15 | 18/19 | P6 | 13/13 | 0/24 | 0/8 | 8/11 |
 | S8 | 21/21 | 2/8 | 0/15 | 17/19 | P6 | 12/13 | 17/24 | 0/8 | 8/11 |
+
+## Batched upload and resume (2026-11-22)
+
+Both backfills accept `--resume`; remote checkpoint resume is also the default.
+Stop any older backfill with Ctrl+C before restarting; do not run two uploaders
+against the same experiment concurrently. Run identities and registry aliases stay
+unchanged. Metrics are sent in batches of at most 100 instead of one HTTP request
+per metric; existing equal metrics and parameters are not rewritten.
+
+Each successful artifact upload receives a content-hash checkpoint on its MLflow
+run. A final upload hash is recorded only after all artifacts succeed. Identical
+completed uploads are skipped; interrupted uploads retry unfinished artifacts on
+the same run ID. Older uploads without checkpoints need one artifact upload to
+establish them. A changed plan updates the same identity after the existing
+immutable-parameter checks. Progress prints `[completed/total] uploaded` or
+`skipped_complete` after each run. No inference or scoring logic changes.
+
+```bash
+python scripts/backfill_answer_eval.py --mode ledgers --apply --resume
+python scripts/backfill_retrieval_eval.py --apply --resume
+```
+
+Validated with offline temporary MLflow stores, including an interrupted second
+artifact, changed metrics, an identical rerun and preserved run IDs. Remote speedup
+is not yet measured; no DagsHub writes were performed by the coding agent.

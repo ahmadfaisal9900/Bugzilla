@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import tempfile
+import time
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -71,6 +73,24 @@ class TrackingClient:
                         assert_no_secrets(file.read_bytes())
             else:
                 assert_no_secrets(value)
+        # Hash content, not temporary artifact paths. Checkpoints live on the remote
+        # run, so resume also works from another machine without a local state file.
+        artifact_hashes = {}
+        for name, value in artifacts.items():
+            h = hashlib.sha256()
+            if isinstance(value, Path):
+                files = sorted(value.rglob("*")) if value.is_dir() else [value]
+                for file in files:
+                    if file.is_file():
+                        relative = file.relative_to(value) if value.is_dir() else Path(file.name)
+                        h.update(str(relative).encode())
+                        h.update(file.read_bytes())
+            else:
+                h.update(value.encode("utf-8"))
+            artifact_hashes[name] = h.hexdigest()
+        upload_hash = hashlib.sha256(
+            json.dumps([params, tags, metrics, artifact_hashes], sort_keys=True).encode()
+        ).hexdigest()
         runs = self.runs(experiment)
         matches = [
             r
@@ -100,20 +120,51 @@ class TrackingClient:
                 old.data.tags.get("provenance") == "ledgers"
                 and tags.get("provenance") == "review-only"
             ):
+                self.last_action = "skipped_ledger_downgrade"
                 return old.info.run_id
             run_id = old.info.run_id
+            if old.data.tags.get("tracking.upload_sha256") == upload_hash:
+                if old.info.status != "FINISHED":
+                    self.client.set_terminated(run_id)
+                self.last_action = "skipped_complete"
+                return run_id
         else:
             exp = self.client.get_experiment_by_name(experiment)
             exp_id = exp.experiment_id if exp else self.client.create_experiment(experiment)
             run_id = self.client.create_run(exp_id, tags=tags).info.run_id
-        for key, value in params.items():
-            self.client.log_param(run_id, key, value)
-        for key, value in tags.items():
-            self.client.set_tag(run_id, key, str(value))
-        for key, value in metrics.items():
-            self.client.log_metric(run_id, key, float(value))
+        from mlflow.entities import Metric, Param, RunTag
+
+        old_params = matches[0].data.params if matches else {}
+        old_metrics = matches[0].data.metrics if matches else {}
+        old_tags = matches[0].data.tags if matches else {}
+        timestamp = int(time.time() * 1000)
+        pending_metrics = [
+            Metric(key, float(value), timestamp, 0)
+            for key, value in metrics.items()
+            if old_metrics.get(key) != float(value)
+        ]
+        pending_params = [
+            Param(key, str(value)) for key, value in params.items() if key not in old_params
+        ]
+        pending_tags = [
+            RunTag(key, str(value))
+            for key, value in tags.items()
+            if old_tags.get(key) != str(value)
+        ]
+        # MLflow accepts <=100 params/tags and <=1000 entities per batch.
+        # Keep batches at 100 metrics for conservative compatibility with DagsHub.
+        for offset in range(0, max(len(pending_metrics), 1), 100):
+            self.client.log_batch(
+                run_id,
+                metrics=pending_metrics[offset : offset + 100],
+                params=pending_params if offset == 0 else [],
+                tags=pending_tags if offset == 0 else [],
+            )
         with tempfile.TemporaryDirectory(prefix="bugzilla-tracking-") as tmp:
             for name, value in artifacts.items():
+                checkpoint = "tracking.artifact." + hashlib.sha256(name.encode()).hexdigest()[:16]
+                if old_tags.get(checkpoint) == artifact_hashes[name]:
+                    continue
                 if isinstance(value, Path):
                     if value.is_dir():
                         self.client.log_artifacts(run_id, str(value), artifact_path=name)
@@ -127,7 +178,11 @@ class TrackingClient:
                     file.write_text(value, encoding="utf-8")
                     parent = str(Path(name).parent)
                     self.client.log_artifact(run_id, str(file), None if parent == "." else parent)
+                self.client.set_tag(run_id, checkpoint, artifact_hashes[name])
+        # Written only after every artifact succeeds. A crash retries only unfinished work.
+        self.client.set_tag(run_id, "tracking.upload_sha256", upload_hash)
         self.client.set_terminated(run_id)
+        self.last_action = "uploaded"
         return run_id
 
 

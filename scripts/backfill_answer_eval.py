@@ -16,14 +16,19 @@ def main():
     parser.add_argument("--mode", choices=["auto", "ledgers", "review-only"], default="auto")
     parser.add_argument("--tracking-uri")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument(
+        "--resume", action="store_true", help="Resume remote checkpoints (also enabled by default)"
+    )
     parser.add_argument("--limit", type=int)
     args = parser.parse_args()
     plans, info = answer_runs(args.source, args.mode)
     plans = plans[: args.limit] if args.limit else plans
     tracking = TrackingClient(args.tracking_uri) if args.apply else None
     table = []
-    for plan in plans:
+    for index, plan in enumerate(plans, 1):
         rid = tracking.log_run(**plan) if tracking else None
+        if tracking:
+            print(f"[{index}/{len(plans)}] {tracking.last_action}: {rid}", flush=True)
         table.append(
             dict(
                 system=plan["params"]["system_id"],

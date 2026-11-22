@@ -646,3 +646,47 @@ def test_saved_intervals_are_aggregate_artifacts(tmp_path):
     (folder / "summary.json").write_text(json.dumps(summary))
     with pytest.raises(ValueError, match="Test source"):
         answer_intervals(source, tmp_path, "S1")
+
+
+def test_batched_upload_resume_and_interrupted_artifact(tmp_path, monkeypatch):
+    """Remote content checkpoints skip completed work and retry a failed artifact."""
+    from unittest.mock import Mock
+
+    tracking = TrackingClient((tmp_path / "resume-store").as_uri())
+    cfg = RunConfig()
+    plan = dict(
+        experiment="research-answer-eval",
+        params=params_for(cfg),
+        tags=tags(),
+        metrics={"answer.F1.score": 1.0, "answer.F1.n": 1},
+        artifacts={"first.txt": "synthetic first", "second.txt": "synthetic second"},
+    )
+    original = tracking.client.log_artifact
+    calls = []
+
+    def interrupted(run_id, path, artifact_path=None):
+        calls.append(Path(path).name)
+        if Path(path).name == "second.txt" and calls.count("second.txt") == 1:
+            raise RuntimeError("synthetic interrupted upload")
+        return original(run_id, path, artifact_path)
+
+    monkeypatch.setattr(tracking.client, "log_artifact", interrupted)
+    batch = Mock(wraps=tracking.client.log_batch)
+    monkeypatch.setattr(tracking.client, "log_batch", batch)
+    monkeypatch.setattr(
+        tracking.client, "log_metric", Mock(side_effect=AssertionError("unbatched"))
+    )
+    with pytest.raises(RuntimeError, match="interrupted"):
+        tracking.log_run(**plan)
+    rid = tracking.log_run(**plan)
+    assert calls == ["first.txt", "second.txt", "second.txt"]
+    assert len(tracking.runs("research-answer-eval")) == 1
+    batch.reset_mock()
+    assert tracking.log_run(**plan) == rid
+    assert tracking.last_action == "skipped_complete"
+    batch.assert_not_called()
+    assert calls == ["first.txt", "second.txt", "second.txt"]
+    plan["metrics"]["answer.F1.score"] = 0.0
+    assert tracking.log_run(**plan) == rid
+    assert tracking.client.get_run(rid).data.metrics["answer.F1.score"] == 0.0
+    assert calls == ["first.txt", "second.txt", "second.txt"]
