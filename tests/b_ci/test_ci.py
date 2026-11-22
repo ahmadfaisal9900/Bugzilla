@@ -123,3 +123,50 @@ def test_external_http_is_refused_before_transport():
         requests.get("https://example.invalid")
     with pytest.raises(AssertionError, match="Offline tests refuse"):
         httpx.get("https://example.invalid", trust_env=False)
+
+
+def test_fixture_jobs_work_without_local_outputs_or_ignored_indexes(tmp_path):
+    import shutil
+
+    clean = tmp_path / "clean source"
+    clean.mkdir()
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\0")
+    for name in filter(None, tracked):
+        path = Path(name)
+        if path.parts[0] not in {"src", "tests", "scripts", "configs", "prompts"} and name not in {
+            "pyproject.toml",
+            "conftest.py",
+        }:
+            continue
+        source = ROOT / path
+        if source.is_file():
+            target = clean / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, target)
+    assert not (clean / "outputs").exists()
+    assert not (clean / "tests/fixtures/serving_bundle/indexes").exists()
+    env = os.environ.copy()
+    env.update(
+        PYTHONPATH=str(clean / "src"),
+        # Share read-only commit provenance, not ignored workspace contents.
+        GIT_DIR=subprocess.check_output(
+            ["git", "rev-parse", "--absolute-git-dir"], cwd=ROOT, text=True
+        ).strip(),
+        GIT_WORK_TREE=str(clean),
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "-q",
+            "tests/test_phase05_assisted_review.py",
+            "tests/b_dashboard/test_dashboard.py::test_lab_mock_completion_and_secret_scan",
+        ],
+        cwd=clean,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=25,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr

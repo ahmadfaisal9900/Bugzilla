@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import tempfile
 import threading
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -79,6 +80,7 @@ class Jobs:
 
         def worker():
             previous = os.environ.get("BUNDLE_DIR")
+            fixture_directory = None
             try:
                 from bugzilla_serving.experiments.runner import run_experiment
 
@@ -92,9 +94,13 @@ class Jobs:
                     on_progress=progress,
                 )
                 if fixture:
-                    from bugzilla_serving.experiments.fixtures import build_fixture_runner
+                    from bugzilla_serving.experiments.fixtures import (
+                        build_fixture_runner,
+                        build_synthetic_bundle,
+                    )
 
-                    os.environ["BUNDLE_DIR"] = str(ROOT / "tests/fixtures/serving_bundle")
+                    fixture_directory = tempfile.TemporaryDirectory(prefix="dashboard-fixture-")
+                    os.environ["BUNDLE_DIR"] = str(build_synthetic_bundle(fixture_directory.name))
                     kwargs["build"] = build_fixture_runner
                 if grid:
                     from bugzilla_serving.experiments.sweep import run_sweep
@@ -119,7 +125,11 @@ class Jobs:
                     os.environ.pop("BUNDLE_DIR", None)
                 else:
                     os.environ["BUNDLE_DIR"] = previous
-                self.lock.release()
+                try:
+                    if fixture_directory is not None:
+                        fixture_directory.cleanup()
+                finally:
+                    self.lock.release()
 
         self.futures[token] = self.pool.submit(worker)
         return token

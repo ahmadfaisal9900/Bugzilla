@@ -10,6 +10,15 @@ from pathlib import Path
 from bugzilla_serving.contracts.run_config import ROOT
 
 
+def build_synthetic_bundle(directory):
+    """Materialize the tiny fixture, including indexes absent from a Git checkout."""
+    path = ROOT / "scripts/build_fixture_bundle.py"
+    spec = importlib.util.spec_from_file_location("lab_fixture_builder", path)
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    return builder.build(Path(directory) / "serving_bundle")
+
+
 def build_fixture_runner(cfg, provider):
     from bugzilla_qa.llm.provider import MockProvider
     from bugzilla_qa.retrieval_v3.registry import Engine

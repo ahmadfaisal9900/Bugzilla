@@ -30,7 +30,9 @@ job status, then a simulated playground run; zero provider requests. Mock
 writes always use a local file store, even when viewing remote MLflow. Those
 local results can be viewed by starting the dashboard with the local URI
 printed in job status. Mock answers against real dev questions are not
-research results. Synthetic retrieval weights never download models.
+research results. Synthetic retrieval weights never download models. The dashboard builds its tiny
+synthetic bundle (including lexical indexes) in a temporary directory for each
+mock fixture job and removes it afterward; ignored repository indexes are not required.
 
 ## DagsHub and real LangSmith
 

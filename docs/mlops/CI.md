@@ -9,6 +9,10 @@ HTTPX network transports are blocked; ASGI/fake clients and localhost launch
 checks remain available. The invoking shell environment stays unchanged.
 Provider/model tests use synthetic fixtures and Dense/Cross doubles. They need no
 Hugging Face downloads, so there is deliberately no model cache in CI.
+A clean-source regression excludes local outputs and ignored indexes. Mock Lab
+jobs build their tiny synthetic bundle in a temporary directory; assisted-review
+fixtures supply their own synthetic provenance manifest. No real research output
+or pre-generated fixture index needs to be uploaded or committed.
 
 | Job | Checks | Estimated minutes (cold / warm) |
 | --- | --- | --- |

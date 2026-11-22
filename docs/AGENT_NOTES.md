@@ -459,3 +459,27 @@ format check and diff whitespace checks pass. No production source changed;
 coverage was not remeasured in this follow-up (owner's full-run result: 85.71%).
 Full single-invocation coverage rerun remains the exact command in CI.md for the
 owner, respecting the agent's 30-second per-invocation test bound. No pushes.
+
+### B4 follow-up: clean-checkout fixture dependencies — 2026-11-22
+
+| Expected → found | Resolution |
+| --- | --- |
+| Mock Lab fixture complete in Git → serving_bundle indexes ignored/untracked | Mock worker materializes the existing tiny synthetic builder into a temporary directory, restores BUNDLE_DIR and cleans up after execution |
+| Four assisted-review fixture roots → Path('.') reads ignored real normalization manifest | Named failing tests now create a temporary synthetic manifest and pass that fixture root to validators |
+| Research package and real source data → read-only | Unchanged; no data/model artifacts added |
+
+Added a CI regression copying only tracked source/config/test files into a temp
+source tree, explicitly excluding outputs and ignored fixture indexes. It runs
+the entire assisted-review fixture module plus the dashboard mock completion/
+secret-scan test there. Commit provenance is read through the existing Git dir;
+no new Git repository is initialized. The Lab image includes the existing tiny
+fixture builder; no Docker image built here. No HTTP/model requests or real
+manifest access are needed by these fixture paths. Real-bundle behavior remains
+unchanged and no generated databases/indexes should be committed.
+
+Verification: 53 distinct targeted tests pass (10 assisted-review fixtures,
+21 dashboard unit/AppTests, 16 experiments and 6 B4 checks), including the clean
+tracked-source regression. Each invocation remained below 30 seconds. Suite
+collection reports 328 tests; the full coverage run remains owner-run. Ruff
+check/format and diff whitespace checks pass. No skipped failures, real manifest
+substitution, new fixture binaries, remote calls, Docker builds or pushes.

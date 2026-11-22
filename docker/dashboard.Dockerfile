@@ -23,7 +23,7 @@ CMD ["python", "-m", "streamlit", "run", "src/bugzilla_serving/dashboard/app.py"
 FROM dashboard-readonly AS dashboard-lab
 USER root
 COPY src/bugzilla_qa ./src/bugzilla_qa
-COPY scripts/run_experiment.py scripts/make_eval_sets.py ./scripts/
+COPY scripts/run_experiment.py scripts/make_eval_sets.py scripts/build_fixture_bundle.py ./scripts/
 COPY tests/fixtures ./tests/fixtures
 RUN pip install 'torch==2.6.0+cpu' --index-url https://download.pytorch.org/whl/cpu \
     && pip install '.[serving]' 'huggingface-hub==0.33.4'
