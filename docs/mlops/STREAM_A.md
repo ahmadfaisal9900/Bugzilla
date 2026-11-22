@@ -149,6 +149,15 @@ python -m pytest tests/a_quota tests/a_api -q
 - `/v1/feedback` → `create_feedback(run_id, key="user_rating", score, comment)` when the request was traced, and is always stored in local SQLite.
 - `docs/LANGSMITH_MONITORING.md`: how to filter the built-in Monitor charts by `preset_slug`, `model` and `degraded`.
 
+A4 is implemented in `tracing.py`. Sampling defaults to 20%, capped at 150 daily
+attempts in the local SQLite store. Missing keys quietly disable tracing. Root IDs
+are returned by `/ask` and the SSE `done` event; feedback is always stored locally
+and sent to LangSmith when a trace ID exists. Credentials are redacted at the SDK
+write boundary as well as in API outputs. See
+[the monitoring guide](../LANGSMITH_MONITORING.md) for the offline checks, one-question
+live check and two captured screenshots. Use `python scripts/check_serving_tracing.py`
+to preview; `--live` explicitly submits the mock question and feedback.
+
 ## A5. Chat UI (user-facing; Streamlit chat components)
 
 Design goals: fast perceived response, plain language, no S0–S8/R1–R7 jargon unless the user opens Advanced settings, and it works on a phone.

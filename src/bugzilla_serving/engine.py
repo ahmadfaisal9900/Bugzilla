@@ -228,7 +228,9 @@ class Runner:
                     return result
 
             try:
-                with tracing_context(enabled=False):
+                from .tracing import active
+
+                with tracing_context(enabled=active()):
                     graph = ProgressGraph(
                         outer.config, outer.provider, outer.backend, tools,
                         outer.prompt, lambda state: None,

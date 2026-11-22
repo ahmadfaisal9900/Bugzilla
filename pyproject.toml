@@ -47,6 +47,8 @@ include = [
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
     "scripts/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
     "tests/a_quota/**/*.py",
+    "tests/a_tracing/**/*.py",
+    "scripts/check_serving_tracing.py",
 ]
 
 [tool.ruff.lint]

@@ -38,6 +38,7 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setenv("SERVING_STATE_DIR", str(tmp_path / "state"))
     monkeypatch.setenv("SERVING_API_KEY", KEY)
     monkeypatch.setenv("LLM_PROVIDER", "mock")
+    monkeypatch.setenv("TRACE_SAMPLE", "0")
     monkeypatch.setattr(PresetStore, "_registry", Mock(side_effect=RuntimeError("offline")))
     from bugzilla_qa.answering.backend import Backend
     from bugzilla_qa.retrieval_v3.registry import Engine

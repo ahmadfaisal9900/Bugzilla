@@ -33,6 +33,7 @@ from bugzilla_serving.contracts.records import DoneEvent, ErrorEvent, EvidenceEv
 from bugzilla_serving.contracts.run_config import ROOT, RunConfig, config_hash, load_spec
 from bugzilla_serving.engine import build_runner
 from bugzilla_serving.quota import QuotaGuard, SessionLimiter, SessionRateLimit, degraded_config
+from bugzilla_serving.tracing import Tracer, sanitize
 
 from .presets import PresetStore
 
@@ -43,9 +44,11 @@ def fail(status, code, message, retry_after=None):
     )
 
 
-def save_request(path, request_id):
+def save_request(path, request_id, run_id):
     with closing(sqlite3.connect(path)) as db, db:
-        db.execute("INSERT INTO requests(request_id) VALUES (?)", (request_id,))
+        db.execute(
+            "INSERT INTO requests(request_id,langsmith_run_id) VALUES (?,?)", (request_id, run_id)
+        )
 
 
 def create_app() -> FastAPI:
@@ -61,6 +64,10 @@ def create_app() -> FastAPI:
                 "MLFLOW_TRACKING_URI",
                 "MLFLOW_TRACKING_USERNAME",
                 "MLFLOW_TRACKING_PASSWORD",
+                "LANGSMITH_API_KEY",
+                "LANGSMITH_ENDPOINT",
+                "TRACE_SAMPLE",
+                "TRACE_DAILY_CAP",
             ):
                 os.environ.setdefault(key, value)
         if not os.environ.get("SERVING_API_KEY"):
@@ -88,6 +95,18 @@ def create_app() -> FastAPI:
                     "score INTEGER NOT NULL, comment TEXT, "
                     "updated_at TEXT DEFAULT CURRENT_TIMESTAMP)"
                 )
+                if "langsmith_run_id" not in {
+                    r[1] for r in db.execute("PRAGMA table_info(requests)")
+                }:
+                    db.execute("ALTER TABLE requests ADD COLUMN langsmith_run_id TEXT")
+                if "remote_status" not in {r[1] for r in db.execute("PRAGMA table_info(feedback)")}:
+                    db.execute("ALTER TABLE feedback ADD COLUMN remote_status TEXT DEFAULT 'local'")
+            settings = app.state.spec.get("tracing", {})
+            app.state.tracer = Tracer(
+                app.state.feedback_db,
+                sample=float(os.environ.get("TRACE_SAMPLE", settings.get("trace_sample", 0.2))),
+                daily_cap=int(os.environ.get("TRACE_DAILY_CAP", settings.get("daily_cap", 150))),
+            )
             await run_in_threadpool(app.state.presets.get)
             app.state.ready = True
             yield
@@ -97,6 +116,8 @@ def create_app() -> FastAPI:
                 await asyncio.gather(*app.state.jobs, return_exceptions=True)
             for runner in app.state.runners.values():
                 runner.close()
+            if getattr(app.state, "tracer", None):
+                app.state.tracer.close()
             app.state.bundle.close()
 
     app = FastAPI(title="Bugzilla QA", version="1.0.0", lifespan=lifespan)
@@ -152,7 +173,7 @@ def create_app() -> FastAPI:
             corpora = app.state.bundle.manifest.get("available_corpora", ["C0", "C1", "C2"])
             if config.corpus not in corpora:
                 raise ValueError("corpus: not included in this bundle")
-            return config
+            return config, "custom" if body.overrides else preset.slug
         except ValidationError as error:
             fields = ", ".join(".".join(map(str, e["loc"])) for e in error.errors())
             fail(422, "invalid_config", fields + ": invalid value")
@@ -176,34 +197,39 @@ def create_app() -> FastAPI:
             raise RuntimeError("Runner did not complete successfully")
         return record
 
-    def execute(config, message, on_event):
+    def execute(config, message, on_event, request_id, session_id, preset_slug):
+        callback = (lambda event: on_event(sanitize(event))) if on_event else None
         decision = app.state.quota_check(config)
         reason = ""
         if decision and decision.action == "degrade":
             config = degraded_config(config)
             reason = decision.reason + "; showing sources without generating answer text."
-            if on_event:
-                on_event(
+            if callback:
+                callback(
                     StatusEvent(data={"stage": "retrieving", "detail": reason}).model_dump(
                         mode="json"
                     )
                 )
-        record = run(config, message, on_event)
-        if reason:
-            record = record.model_copy(
-                update={
-                    "route_rule": "quota_guard",
-                    "answer": record.answer.model_copy(update={"rationale": reason}),
-                }
-            )
-        return record
+
+        def invoke():
+            record = run(config, message, callback)
+            if reason:
+                record = record.model_copy(
+                    update={
+                        "route_rule": "quota_guard",
+                        "answer": record.answer.model_copy(update={"rationale": reason}),
+                    }
+                )
+            return record
+
+        return app.state.tracer.run(config, message, preset_slug, request_id, session_id, invoke)
 
     async def prepare(body):
         if not app.state.ready:
             fail(503, "internal", "API is not ready")
         if not body.message.strip():
             fail(422, "invalid_config", "message: must not be blank")
-        config = await run_in_threadpool(configuration, body)
+        config, preset_slug = await run_in_threadpool(configuration, body)
         try:
             app.state.sessions.admit(body.session_id)
         except SessionRateLimit as error:
@@ -213,7 +239,7 @@ def create_app() -> FastAPI:
                 "Six questions per session are allowed per minute",
                 error.retry_after,
             )
-        return config
+        return config, preset_slug
 
     @app.get("/v1/health", response_model=StatusResponse)
     def health():
@@ -277,17 +303,19 @@ def create_app() -> FastAPI:
 
     @app.post("/v1/ask", response_model=AskResponse, responses=errors, dependencies=protected)
     async def ask(body: ChatRequest):
-        config = await prepare(body)
+        config, preset_slug = await prepare(body)
         request_id = str(uuid4())
         async with app.state.runner_lock:
             try:
-                record = await run_in_threadpool(execute, config, body.message, None)
-                await run_in_threadpool(save_request, app.state.feedback_db, request_id)
+                record, run_id = await run_in_threadpool(
+                    execute, config, body.message, None, request_id, body.session_id, preset_slug
+                )
+                await run_in_threadpool(save_request, app.state.feedback_db, request_id, run_id)
             except HTTPException:
                 raise
             except Exception:
                 fail(500, "internal", "Answer generation failed")
-        return AskResponse(request_id=request_id, record=record, langsmith_run_id=None)
+        return AskResponse(request_id=request_id, record=record, langsmith_run_id=run_id)
 
     @app.post(
         "/v1/chat/stream",
@@ -298,15 +326,24 @@ def create_app() -> FastAPI:
         dependencies=protected,
     )
     async def stream(body: ChatRequest):
-        config = await prepare(body)
+        config, preset_slug = await prepare(body)
         request_id = str(uuid4())
         events = queue.Queue()
 
         async def work():
+            run_id = None
             async with app.state.runner_lock:
                 try:
-                    record = await run_in_threadpool(execute, config, body.message, events.put)
-                    await run_in_threadpool(save_request, app.state.feedback_db, request_id)
+                    record, run_id = await run_in_threadpool(
+                        execute,
+                        config,
+                        body.message,
+                        events.put,
+                        request_id,
+                        body.session_id,
+                        preset_slug,
+                    )
+                    await run_in_threadpool(save_request, app.state.feedback_db, request_id, run_id)
                     events.put(
                         EvidenceEvent(data={"items": record.evidence}).model_dump(mode="json")
                     )
@@ -320,7 +357,11 @@ def create_app() -> FastAPI:
                         ).model_dump(mode="json")
                     )
                 finally:
-                    events.put(DoneEvent(data={"request_id": request_id}).model_dump(mode="json"))
+                    events.put(
+                        DoneEvent(
+                            data={"request_id": request_id, "langsmith_run_id": run_id}
+                        ).model_dump(mode="json")
+                    )
                     events.put(None)
 
         async def content():
@@ -347,17 +388,30 @@ def create_app() -> FastAPI:
         "/v1/feedback", response_model=FeedbackResponse, responses=errors, dependencies=protected
     )
     def feedback(body: FeedbackRequest):
+        comment = sanitize(body.comment)
         with closing(sqlite3.connect(app.state.feedback_db)) as db, db:
-            if not db.execute(
-                "SELECT 1 FROM requests WHERE request_id=?", (body.request_id,)
-            ).fetchone():
+            saved = db.execute(
+                "SELECT langsmith_run_id FROM requests WHERE request_id=?", (body.request_id,)
+            ).fetchone()
+            if saved is None:
                 fail(404, "invalid_config", "request_id: unknown request")
             db.execute(
                 "INSERT INTO feedback(request_id,score,comment) VALUES (?,?,?) "
                 "ON CONFLICT(request_id) DO UPDATE SET score=excluded.score, "
                 "comment=excluded.comment, updated_at=CURRENT_TIMESTAMP",
-                (body.request_id, body.score, body.comment),
+                (body.request_id, body.score, comment),
             )
+            run_id = saved[0]
+            db.execute(
+                "UPDATE feedback SET remote_status=? WHERE request_id=?",
+                ("pending" if run_id else "local", body.request_id),
+            )
+        if app.state.tracer.feedback(run_id, body.score, comment):
+            with closing(sqlite3.connect(app.state.feedback_db)) as db, db:
+                db.execute(
+                    "UPDATE feedback SET remote_status='sent' WHERE request_id=?",
+                    (body.request_id,),
+                )
         return FeedbackResponse(status="ok")
 
     return app

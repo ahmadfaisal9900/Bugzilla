@@ -473,7 +473,8 @@ The serving API is `bugzilla_serving.api.app:app`. Set `BUNDLE_DIR`, `SERVING_AP
 and `LLM_PROVIDER=mock` in `.env`, then run
 `python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1`.
 See [Stream A, A2](docs/mlops/STREAM_A.md) for the authenticated request command,
-MLflow presets, quota guards and the remaining tracing work.
+MLflow presets and quota guards. [LangSmith monitoring](docs/LANGSMITH_MONITORING.md)
+documents sampled traces, feedback and the final checks.
 Protected API requests send the `.env` secret in the `X-API-Key` HTTP header.
 Near the local quota thresholds, the API returns sources through R0. Each session
 may submit six questions per minute; further requests receive HTTP 429.
