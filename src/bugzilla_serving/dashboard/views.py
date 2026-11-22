@@ -421,8 +421,6 @@ def widgets(start):
 
 
 def experiment_lab():
-    from bugzilla_serving.dashboard import lab
-
     st.header("Experiment Lab")
     if not enabled():
         st.info(
@@ -431,6 +429,8 @@ def experiment_lab():
             "The deployed read-only dashboard cannot spend LLM quota."
         )
         return
+    from bugzilla_serving.dashboard import lab
+
     st.warning("Experiments use dev questions only. Mock scores are simulated plumbing checks.")
     bundles = lab.real_bundle()
     if not bundles:

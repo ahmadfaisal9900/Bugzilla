@@ -33,6 +33,12 @@ include = ["bugzilla_qa*", "bugzilla_serving*"]
 testpaths = ["tests"]
 pythonpath = ["src", "."]
 addopts = '-m "not live and not integration"'
+filterwarnings = [
+    # LangGraph 0.6.11 imports the serializer without the new allowed_objects option.
+    'ignore:The default value of `allowed_objects` will change:langchain_core._api.deprecation.LangChainPendingDeprecationWarning:langgraph.cache.base',
+    # Starlette TestClient imports the deprecated AnyIO BlockingPortal alias.
+    'ignore:The anyio.abc.BlockingPortal alias is deprecated.*:DeprecationWarning:starlette.testclient',
+]
 markers = [
     "unit: offline unit checks", "contract: shared Phase 0 contracts",
     "ui: UI checks", "integration: explicitly requested integration checks",
@@ -47,7 +53,7 @@ include = [
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
     "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/publish_preset.py",
     "tests/b_experiments/**/*.py", "scripts/make_eval_sets.py", "scripts/run_experiment.py",
-    "tests/b_dashboard/**/*.py",
+    "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py",
 ]
 
 [tool.ruff.lint]
@@ -58,3 +64,21 @@ source = ["bugzilla_serving"]
 
 [tool.coverage.report]
 show_missing = true
+
+# Pre-existing Phase 0 formatting is owned by A/shared contracts. Do not
+# reformat those files as part of B4; remove exclusions with owner approval.
+[tool.ruff.format]
+exclude = [
+    "scripts/build_fixture_bundle.py", "src/bugzilla_serving/api/stub.py",
+    "src/bugzilla_serving/engine.py", "src/bugzilla_serving/contracts/api_models.py",
+    "src/bugzilla_serving/contracts/records.py", "tests/contracts/conftest.py",
+    "tests/contracts/test_contracts.py",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Existing engine import order; Stream A maintains this file.
+"src/bugzilla_serving/engine.py" = ["I001"]
+
+"scripts/build_fixture_bundle.py" = ["E501"]
+"src/bugzilla_serving/api/stub.py" = ["I001", "E501"]
+"tests/contracts/test_contracts.py" = ["I001", "E501"]

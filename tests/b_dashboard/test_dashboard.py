@@ -344,6 +344,7 @@ def test_evaluation_runs_hide_carriers_and_non_evaluation_sources(tmp_path):
     candidates = [
         record("lab", "config-registry"),
         record("ci", "smoke"),
+        record("registry", "config-registry"),
         record("backfill", "pilot125"),
         record("lab", "smoke-5"),
     ]

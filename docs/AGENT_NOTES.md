@@ -371,3 +371,61 @@ answer equality, matching qids and all-cache/zero-call rows before tagging S3.
 Registry carriers used `source=lab, eval_set=config-registry`; dashboard excludes
 these and non-backfill/non-lab sources. New publishes attach the model artifact
 to their source run rather than creating a carrier. Research files unchanged.
+
+## B4 inventory — 2026-11-22
+
+Read RESEARCH_STATUS, research roadmap, OVERVIEW (§4–6), both streams,
+PHASE0_NOTES, BACKFILL_MAPPING and PROMOTION_POLICY before implementation.
+
+| Expected → found | Handling |
+| --- | --- |
+| Project / feature/mlops / original GitHub origin → confirmed | No repository, branch or remote changes |
+| Existing B contracts/tracking/experiments/dashboard → present | Reuse; no research or Stream A edits |
+| Deprecated min_items → absent; predict annotations → present | Already satisfied; retain contracts unchanged |
+| Source attachment and dashboard filter → present; standalone carrier → playground/lab | Move new fallback carriers to registry/source=registry; preserve existing versions |
+| Dockerfile/dockerignore/CI/Dependabot → absent | Add B4 files |
+| iqfm Python 3.11 → available; Docker CLI → available, daemon permission denied; actionlint → absent | Offline checks only; owner builds images |
+
+Latest pasted instruction takes precedence: do not build Docker images here.
+CI readonly builds every PR; Lab/API/chat only PRs into main or manual dispatch.
+No live APIs, external tracking, pushes or test-split data access authorized.
+
+### B4 implementation and offline validation
+
+Added two dashboard Docker targets, context exclusions, SHA-pinned CI actions,
+weekly grouped Dependabot, CI commands/branch protection guide and Stream B
+handoff. Readonly image excludes torch/serving dependencies; Lab adds CPU torch
+2.6.0 and downloads only model/config/tokenizer files at the config revisions.
+Engine imports stay behind the exact Lab-enabled gate. No images were built,
+per the owner's amended request; sizes and container smoke remain owner checks.
+CI builds readonly on every public PR/push; Lab/API/chat only main PR/manual.
+No A Dockerfiles exist; CI emits notices rather than inventing them.
+
+New preset versions normally attach to source runs. PERMISSION_DENIED on an
+immutable source artifact write routes the fallback to registry/source=registry,
+with source_run_id; standalone registration uses source_run_id=standalone.
+Existing versions/aliases were not modified. Added fallback/source-filter tests.
+No deprecated min_items exists in contracts, and predict already had hints.
+The malformed model_construct test now checks an invalid enum without an integer
+serializer warning. Only exact LangGraph and Starlette/AnyIO upstream warnings
+are filtered. Remaining Pydantic warnings originate in MLflow's installed
+mlflow/types/chat.py (its own min_items/class-based config); not suppressed.
+
+Verification: **325 distinct offline tests passed**, split into bounded invocations:
+36 contracts, 28 tracking, 16 experiments, 21 dashboard unit/AppTests, 2 localhost
+Streamlit launch tests, 3 B4 checks and 219 existing research regressions. All
+checks use synthetic fixtures; no full-data processing/model downloads. One
+combined dashboard/experiment coverage invocation hit its 30-second bound;
+both groups then passed separately. Accumulated serving coverage is **85.68%**
+(coverage report/XML reviewed; temporary outputs retained under /tmp only).
+Ruff check and format check pass. Pre-existing shared/A formatting and existing
+lint findings are scoped as explicit Ruff baseline exceptions rather than
+editing protected files; remove after owner review. Any broad formatter edits
+to protected files were restored byte-for-byte from the clean initial HEAD.
+
+**Not executed/validated:** actionlint and Gitleaks (not installed; offline task
+forbids fetching tools), GitHub action execution, Docker builds/container health,
+image sizes, remote MLflow state, parity/Compose integration and live Lab.
+Workflow YAML, shell syntax and action SHA shapes receive local static checks;
+these do not replace actionlint or real builds. Exact owner commands are in
+mlops/CI.md. No remote APIs, dataset jobs, credentials, pushes or research/A edits.

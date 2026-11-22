@@ -18,7 +18,6 @@ from bugzilla_serving.tracking.client import (
     artifact_tracking_uri,
     assert_no_secrets,
     config_artifact,
-    params_for,
 )
 
 
@@ -75,30 +74,37 @@ class Registry:
                 mlflow.set_tracking_uri(previous)
                 mlflow.set_registry_uri(registry)
             source_run_id = tags.get("source_run_id")
+            run_id = None
             if source_run_id:
                 source_run = self.client.get_run(source_run_id)
                 if source_run.data.params.get("config_hash") != h:
                     raise ValueError("Source run config_hash differs from published config")
                 # Attach model to the evaluated source run; no params-only carrier run.
+                try:
+                    with artifact_tracking_uri(self.tracking.uri):
+                        self.client.log_artifacts(source_run_id, str(model), artifact_path="model")
+                    run_id = source_run_id
+                except MlflowException as exc:
+                    # Some archived runs are immutable. Transport/auth failures
+                    # must still surface rather than creating misleading carriers.
+                    if exc.error_code != "PERMISSION_DENIED":
+                        raise
+            if run_id is None:
+                exp = self.client.get_experiment_by_name("registry")
+                exp_id = exp.experiment_id if exp else self.client.create_experiment("registry")
+                run_id = self.client.create_run(
+                    exp_id,
+                    tags={
+                        "source": "registry",
+                        "source_run_id": source_run_id or "standalone",
+                        "config_hash": h,
+                    },
+                ).info.run_id
+                # Registry metadata is deliberately outside evaluation contracts.
                 with artifact_tracking_uri(self.tracking.uri):
-                    self.client.log_artifacts(source_run_id, str(model), artifact_path="model")
-                run_id = source_run_id
-            else:
-                run_tags = dict(
-                    source="lab",
-                    eval_set="config-registry",
-                    datasets="configuration",
-                    split="dev",
-                    scorer="not-scored",
-                    git_sha=tags.get("git_sha", "unknown"),
-                )
-                run_id = self.tracking.log_run(
-                    "playground",
-                    params_for(config),
-                    run_tags,
-                    {},
-                    {"config.yaml": config_artifact(config), "model": model},
-                )
+                    self.client.log_artifact(run_id, str(artifact))
+                    self.client.log_artifacts(run_id, str(model), artifact_path="model")
+                self.client.set_terminated(run_id)
 
         try:
             self.client.get_registered_model(REGISTRY_MODEL_NAME)

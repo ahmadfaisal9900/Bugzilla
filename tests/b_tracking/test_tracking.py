@@ -776,3 +776,40 @@ def test_explicit_artifact_uri_overrides_global_and_restores(tmp_path, monkeypat
         tracker.log_run(**plan)
     assert mlflow.get_tracking_uri() == previous
     assert os.environ.get("MLFLOW_TRACKING_URI") == previous_env
+
+
+@pytest.mark.parametrize("historical", [False, True])
+def test_registry_carriers_are_separate_from_evaluations(tmp_path, monkeypatch, historical):
+    from mlflow.exceptions import MlflowException
+    from mlflow.protos.databricks_pb2 import PERMISSION_DENIED
+
+    registry = Registry((tmp_path / "registry-carrier").as_uri())
+    cfg = RunConfig()
+    source_id = None
+    if historical:
+        source_id = registry.tracking.log_run(
+            "research-answer-eval",
+            params_for(cfg),
+            tags(),
+            {},
+            {"config.yaml": config_artifact(cfg)},
+        )
+        original = registry.client.log_artifacts
+
+        def immutable(run_id, *args, **kwargs):
+            if run_id == source_id:
+                raise MlflowException("Archived run is immutable", error_code=PERMISSION_DENIED)
+            return original(run_id, *args, **kwargs)
+
+        monkeypatch.setattr(registry.client, "log_artifacts", immutable)
+    version = registry.register_config_version(
+        cfg, {"source_run_id": source_id} if source_id else {}
+    )
+    registered = registry.client.get_model_version("bugzilla-qa-config", version)
+    carrier = registry.client.get_run(registered.run_id)
+    experiment = registry.client.get_experiment(carrier.info.experiment_id)
+    assert experiment.name == "registry"
+    assert carrier.data.tags["source"] == "registry"
+    assert carrier.data.tags["source_run_id"] == (source_id or "standalone")
+    assert registry.get_config(version) == cfg
+    assert registry.tracking.runs("playground") == []

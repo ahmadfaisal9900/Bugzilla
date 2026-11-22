@@ -473,3 +473,11 @@ Use the roadmap's predefined numerical tolerances where appropriate; do not choo
 - [Data dictionary](docs/DATA_DICTIONARY.md): canonical fields and provenance.
 - [Temporal validity](docs/TEMPORAL_VALIDITY.md): permissible event-time and snapshot claims.
 - [Agent notes](docs/AGENT_NOTES.md): implementation assumptions and adaptations.
+
+## Stream B: experiments and dashboard
+
+Stream B provides dev-only experiment planning/runs, MLflow backfills and presets,
+and the Streamlit dashboard on port 8502. Start with the
+[Stream B handoff](docs/mlops/STREAM_B_HANDOFF.md) for CLI examples, run modes,
+current evidence limits and partner integration; see [CI and dashboard images](docs/mlops/CI.md)
+for local checks, Docker commands and required GitHub checks.

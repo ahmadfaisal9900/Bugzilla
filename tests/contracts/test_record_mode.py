@@ -59,5 +59,7 @@ def test_record_still_checks_fields_types_and_mode():
             RunConfig(**values).validate_against(mode="record")
     with pytest.raises(ValueError, match="mode"):
         RunConfig().validate_against(mode="typo")
+    # An invalid enum exercises model_construct revalidation without passing a
+    # string to an integer serializer (which itself correctly emits a warning).
     with pytest.raises(ValueError):
-        RunConfig.model_construct(top_k="10").validate_against(mode="record")
+        RunConfig.model_construct(retriever="R99").validate_against(mode="record")

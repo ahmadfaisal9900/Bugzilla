@@ -1,0 +1,15 @@
+outputs/
+Dataset/
+logs/
+serving_bundle/
+.dvc/
+.env*
+mlruns/
+**/__pycache__/
+.git/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+results/
