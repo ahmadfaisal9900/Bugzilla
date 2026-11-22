@@ -15,6 +15,7 @@ from bugzilla_serving.contracts.names import CHAMPION_ALIAS, REGISTRY_MODEL_NAME
 from bugzilla_serving.contracts.run_config import RunConfig, config_hash
 from bugzilla_serving.tracking.client import (
     TrackingClient,
+    artifact_tracking_uri,
     assert_no_secrets,
     config_artifact,
     params_for,
@@ -79,7 +80,8 @@ class Registry:
                 if source_run.data.params.get("config_hash") != h:
                     raise ValueError("Source run config_hash differs from published config")
                 # Attach model to the evaluated source run; no params-only carrier run.
-                self.client.log_artifacts(source_run_id, str(model), artifact_path="model")
+                with artifact_tracking_uri(self.tracking.uri):
+                    self.client.log_artifacts(source_run_id, str(model), artifact_path="model")
                 run_id = source_run_id
             else:
                 run_tags = dict(
@@ -116,7 +118,8 @@ class Registry:
     def get_config(self, version):
         value = self.client.get_model_version(REGISTRY_MODEL_NAME, str(version))
         # All versions, including Phase 0, carry the pyfunc's config artifact.
-        path = self.client.download_artifacts(value.run_id, "config.yaml")
+        with artifact_tracking_uri(self.tracking.uri):
+            path = self.client.download_artifacts(value.run_id, "config.yaml")
         return executable(yaml.safe_load(Path(path).read_text()))
 
     def set_champion(self, version):

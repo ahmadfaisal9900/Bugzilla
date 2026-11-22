@@ -3,6 +3,7 @@
 import csv
 import importlib.util
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -743,3 +744,35 @@ def test_registry_attaches_model_to_source_run(tmp_path):
     assert registry.client.get_model_version("bugzilla-qa-config", version).run_id == rid
     assert len(tracking.runs("research-answer-eval")) == 1
     assert tracking.runs("playground") == []
+
+
+@pytest.mark.parametrize("fail", [False, True])
+def test_explicit_artifact_uri_overrides_global_and_restores(tmp_path, monkeypatch, fail):
+    import mlflow
+
+    previous = mlflow.get_tracking_uri()
+    previous_env = os.environ.get("MLFLOW_TRACKING_URI")
+    tracker = TrackingClient((tmp_path / "explicit-destination").as_uri())
+    original = tracker.client.log_artifact
+
+    def artifact(run_id, path, artifact_path=None):
+        assert mlflow.get_tracking_uri() == tracker.uri
+        if fail:
+            raise RuntimeError("synthetic artifact interruption")
+        return original(run_id, path, artifact_path)
+
+    monkeypatch.setattr(tracker.client, "log_artifact", artifact)
+    plan = dict(
+        experiment="research-answer-eval",
+        params=params_for(RunConfig()),
+        tags=tags(),
+        metrics={},
+        artifacts={"config.yaml": config_artifact(RunConfig())},
+    )
+    if fail:
+        with pytest.raises(RuntimeError, match="artifact interruption"):
+            tracker.log_run(**plan)
+    else:
+        tracker.log_run(**plan)
+    assert mlflow.get_tracking_uri() == previous
+    assert os.environ.get("MLFLOW_TRACKING_URI") == previous_env

@@ -357,3 +357,14 @@ Evaluation views accept only `source=backfill|lab` and exclude
 `eval_set=config-registry` carriers, including old carriers. New preset publishes
 attach the config model to the source run; standalone fixture registration keeps
 its filtered carrier for backwards compatibility. Existing presets are untouched.
+
+### Explicit destination artifact routing (2026-11-22)
+
+MLflow 2.x resolves `mlflow-artifacts:/` using its global tracking URI, even when
+`MlflowClient(tracking_uri=...)` has an explicit HTTPS destination. This caused
+`--tracking-uri` DagsHub uploads to fail if the environment still selected a local
+file store. Artifact upload/download scopes now temporarily select the client's
+URI under a shared lock, restoring both the previous global URI and environment
+value on success or failure. Offline regression tests cover both paths. Resume
+reuses existing remote metrics and retries the unfinished artifact on the same ID.
+No remote writes were performed while implementing this fix.

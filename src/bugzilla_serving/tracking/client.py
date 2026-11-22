@@ -7,13 +7,36 @@ import json
 import os
 import tempfile
 import time
+from contextlib import contextmanager
 from pathlib import Path
+from threading import RLock
 from urllib.parse import urlsplit
 
 import yaml
 
 from bugzilla_serving.contracts.names import EXPERIMENTS, validate_mlflow_run
 from bugzilla_serving.contracts.run_config import RunConfig, config_hash
+
+_ARTIFACT_URI_LOCK = RLock()
+
+
+@contextmanager
+def artifact_tracking_uri(uri):
+    """MLflow 2.x resolves mlflow-artifacts:/ via global URI, even on explicit clients."""
+    import mlflow
+
+    with _ARTIFACT_URI_LOCK:
+        previous = mlflow.get_tracking_uri()
+        previous_env = os.environ.get("MLFLOW_TRACKING_URI")
+        try:
+            mlflow.set_tracking_uri(uri)
+            yield
+        finally:
+            mlflow.set_tracking_uri(previous)
+            if previous_env is None:
+                os.environ.pop("MLFLOW_TRACKING_URI", None)
+            else:
+                os.environ["MLFLOW_TRACKING_URI"] = previous_env
 
 
 def params_for(config: RunConfig) -> dict:
@@ -160,7 +183,10 @@ class TrackingClient:
                 params=pending_params if offset == 0 else [],
                 tags=pending_tags if offset == 0 else [],
             )
-        with tempfile.TemporaryDirectory(prefix="bugzilla-tracking-") as tmp:
+        with (
+            artifact_tracking_uri(self.uri),
+            tempfile.TemporaryDirectory(prefix="bugzilla-tracking-") as tmp,
+        ):
             for name, value in artifacts.items():
                 checkpoint = "tracking.artifact." + hashlib.sha256(name.encode()).hexdigest()[:16]
                 if old_tags.get(checkpoint) == artifact_hashes[name]:
