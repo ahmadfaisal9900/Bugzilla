@@ -29,9 +29,10 @@ from bugzilla_serving.contracts.api_models import (
     QuotaResponse,
     StatusResponse,
 )
-from bugzilla_serving.contracts.records import DoneEvent, ErrorEvent, EvidenceEvent
+from bugzilla_serving.contracts.records import DoneEvent, ErrorEvent, EvidenceEvent, StatusEvent
 from bugzilla_serving.contracts.run_config import ROOT, RunConfig, config_hash, load_spec
 from bugzilla_serving.engine import build_runner
+from bugzilla_serving.quota import QuotaGuard, SessionLimiter, SessionRateLimit, degraded_config
 
 from .presets import PresetStore
 
@@ -69,6 +70,8 @@ def create_app() -> FastAPI:
         app.state.ready = False
         app.state.api_key = os.environ["SERVING_API_KEY"]
         app.state.spec = load_spec()
+        app.state.quota_guard = QuotaGuard(app.state.spec)
+        app.state.sessions = SessionLimiter()
         app.state.presets = PresetStore()
         app.state.runners = OrderedDict()
         app.state.runner_lock = asyncio.Lock()
@@ -122,36 +125,13 @@ def create_app() -> FastAPI:
         return JSONResponse(status_code=error.status_code, content=content, headers=headers)
 
     def quota_status():
-        from bugzilla_qa.answering.runner import quota_report
-
-        report = quota_report({"llm_config": "configs/llm.yaml"}, ROOT)
-        models = []
-        for option in app.state.spec["models"].values():
-            known = option["model_id"] == report["model"]
-            requests = report["local_guard_day_requests"] if known else 0
-            tokens = report["local_guard_day_reported_success_tokens"] if known else 0
-            models.append(
-                dict(
-                    model=option["model_id"],
-                    used_requests=requests,
-                    limit_requests=option["rpd"],
-                    used_tokens=tokens,
-                    limit_tokens=option["tpd"],
-                    degraded_now=bool(
-                        requests >= int(option["rpd"] * 0.9)
-                        or known
-                        and report["known_cooldown_active"]
-                    ),
-                )
-            )
-        return QuotaResponse(models=models)
+        try:
+            return app.state.quota_guard.status()
+        except (ValueError, KeyError, TypeError, OSError):
+            fail(503, "internal", "Local provider usage is unavailable")
 
     def quota_check(config):
-        if config.provider == "mock" or config.system_id == "R0":
-            return
-        current = next(m for m in quota_status().models if m.model == config.model)
-        if current.degraded_now:
-            fail(429, "rate_limited", "Local provider request guard or cooldown is active", 60)
+        return app.state.quota_guard.check(config, config.context_budget_tokens + 800)
 
     app.state.quota_check = quota_check
 
@@ -196,12 +176,44 @@ def create_app() -> FastAPI:
             raise RuntimeError("Runner did not complete successfully")
         return record
 
+    def execute(config, message, on_event):
+        decision = app.state.quota_check(config)
+        reason = ""
+        if decision and decision.action == "degrade":
+            config = degraded_config(config)
+            reason = decision.reason + "; showing sources without generating answer text."
+            if on_event:
+                on_event(
+                    StatusEvent(data={"stage": "retrieving", "detail": reason}).model_dump(
+                        mode="json"
+                    )
+                )
+        record = run(config, message, on_event)
+        if reason:
+            record = record.model_copy(
+                update={
+                    "route_rule": "quota_guard",
+                    "answer": record.answer.model_copy(update={"rationale": reason}),
+                }
+            )
+        return record
+
     async def prepare(body):
         if not app.state.ready:
             fail(503, "internal", "API is not ready")
         if not body.message.strip():
             fail(422, "invalid_config", "message: must not be blank")
-        return await run_in_threadpool(configuration, body)
+        config = await run_in_threadpool(configuration, body)
+        try:
+            app.state.sessions.admit(body.session_id)
+        except SessionRateLimit as error:
+            fail(
+                429,
+                "rate_limited",
+                "Six questions per session are allowed per minute",
+                error.retry_after,
+            )
+        return config
 
     @app.get("/v1/health", response_model=StatusResponse)
     def health():
@@ -268,10 +280,11 @@ def create_app() -> FastAPI:
         config = await prepare(body)
         request_id = str(uuid4())
         async with app.state.runner_lock:
-            await run_in_threadpool(app.state.quota_check, config)
             try:
-                record = await run_in_threadpool(run, config, body.message, None)
+                record = await run_in_threadpool(execute, config, body.message, None)
                 await run_in_threadpool(save_request, app.state.feedback_db, request_id)
+            except HTTPException:
+                raise
             except Exception:
                 fail(500, "internal", "Answer generation failed")
         return AskResponse(request_id=request_id, record=record, langsmith_run_id=None)
@@ -292,8 +305,7 @@ def create_app() -> FastAPI:
         async def work():
             async with app.state.runner_lock:
                 try:
-                    await run_in_threadpool(app.state.quota_check, config)
-                    record = await run_in_threadpool(run, config, body.message, events.put)
+                    record = await run_in_threadpool(execute, config, body.message, events.put)
                     await run_in_threadpool(save_request, app.state.feedback_db, request_id)
                     events.put(
                         EvidenceEvent(data={"items": record.evidence}).model_dump(mode="json")
