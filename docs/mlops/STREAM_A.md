@@ -64,7 +64,51 @@ An additional local S2/R2 mock check also passed using only the packaged model w
   - `ask`, `chat/stream` (SSE events exactly as in the contract), `feedback`.
 - **Presets source:** MLflow registry (`bugzilla-qa-config`, versions tagged `published=true`, plus alias `champion`), cached for 5 min. Falls back to `configs/presets.yaml` if MLflow is unreachable. Develop against the seeded local MLflow store.
 - **Request flow:** preset config + user overrides → `RunConfig` validation (`invalid_config` 422 with a field-level message the UI can show) → quota check → `engine.build_runner(cfg).run(question, on_event=…)` → SSE events.
-- Auth: `SERVING_API_KEY` header (the chat UI sends it), except on `health`.
+- Auth: `X-API-Key` header, compared against the `SERVING_API_KEY` environment variable, except on `health`.
+
+A2 is implemented in `api/app.py`; the Phase 0 stub and OpenAPI snapshot stay unchanged.
+The API loads the verified bundle at startup and caches up to four runners. Runner
+calls are serialized and run in worker threads because their search state is mutable.
+Published MLflow presets are cached for five minutes, with YAML fallback. Feedback
+is saved in `outputs/serving/feedback.sqlite`; LangSmith run IDs remain null until A4.
+
+With `iqfm` active, set these entries in the ignored `.env` (keep your other entries):
+
+```dotenv
+BUNDLE_DIR=serving_bundle
+SERVING_API_KEY=choose_a_local_secret
+LLM_PROVIDER=mock
+MLFLOW_TRACKING_URI=file:./outputs/mlflow-phase0
+```
+
+```powershell
+python scripts/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
+python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1
+```
+
+The API reads `.env` automatically; existing environment variables take precedence.
+Open `http://127.0.0.1:8000/docs` to inspect the unchanged contract. The frozen schema
+has no Swagger Authorize button, so use the key header when calling protected routes.
+In another terminal, replace the example key below with your `.env` value:
+
+```powershell
+$body = '{"session_id":"local","message":"What component is bug 1701902 in?","preset_slug":"fast","overrides":{"provider":"mock"}}'
+$body | curl.exe -N -H "X-API-Key: choose_a_local_secret" -H "Content-Type: application/json" --data-binary '@-' http://127.0.0.1:8000/v1/chat/stream
+```
+
+Use `/v1/ask` instead for one JSON response. `/health` means `/v1/health`; it needs no
+key. Every other `/v1` route requires the header. Request configuration errors return
+422 with the field name; incorrect keys return 401. Stream failures emit `error`
+then `done`; successful streams emit four `status` events, `evidence`, `answer`, `done`.
+
+The quota endpoint currently reports local provider-ledger request counts and known
+successful token usage, not the provider's remaining balance. A basic request/cooldown
+guard runs before live inference; mocks bypass it. A3 still needs the token/minute
+guard, session limits and R0 degradation. A4 adds tracing and remote feedback.
+
+```powershell
+python -m pytest tests/a_api tests/a_bundle tests/contracts tests/test_answering_graphs.py tests/test_retrieval_v3.py -q
+```
 
 ## A3. Quota and graceful degradation
 

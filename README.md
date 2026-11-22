@@ -469,6 +469,13 @@ For the serving data package, see [Stream A, A1](docs/mlops/STREAM_A.md#a1-servi
 add `--apply` to build it. The current local runtime supplies C1 only; C0/C2 are
 reported as missing. The generated folder stays gitignored.
 
+The serving API is `bugzilla_serving.api.app:app`. Set `BUNDLE_DIR`, `SERVING_API_KEY`
+and `LLM_PROVIDER=mock` in `.env`, then run
+`python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1`.
+See [Stream A, A2](docs/mlops/STREAM_A.md) for the authenticated request command,
+MLflow presets and the remaining quota/tracing work.
+Protected API requests send the `.env` secret in the `X-API-Key` HTTP header.
+
 - [Scientific roadmap](docs/reference/research_roadmap.tex): research questions, rubric and fairness controls.
 - [v3 benchmark](docs/BENCHMARK_V3.md): question generation, review and dataset coverage.
 - [Retrieval harness](docs/RETRIEVAL_V3.md): corpus variants, metrics and outputs.
