@@ -204,3 +204,38 @@ preflights and make_eval_sets dry-run succeeded with zero API calls. The explici
 --fixture-bundle mock path reuses P0 synthetic model fixtures without downloads;
 live runs refuse synthetic bundles. No source/frozen, contract, engine, API or
 chat code changed. No real MLflow/Groq/LangSmith calls or pushes; no installs.
+
+## Stream B B3 — Dev Dashboard, 2026-11-21
+
+| Expected → found | Handling |
+| --- | --- |
+| Existing Project origin / feature/mlops | Confirmed; no remote or branch changes. |
+| Dashboard implementation | Only package stub existed; added nine Streamlit pages under B ownership. |
+| B1 tracking/registry and B2 Lab | Present; reused clients, policy, strict execute gate, runner, preflight, sweep and mock fixture adapter. |
+| Local b1-local data including a mock Lab run | 9 review-only answer runs and 24 retrieval runs found; no playground run. Missing scores/costs/latency remain unavailable. |
+| Real serving bundle | Absent; explicit fixture/mock mode only until BUNDLE_DIR points to a real bundle. |
+| LangSmith source | Existing 30-root synthetic fixture and required contract keys reused; live service not contacted. |
+| Python / dashboard dependencies | Conda iqfm Python 3.11; declared pinned Streamlit, Plotly, MLflow and LangSmith installed. No installs or dependency changes needed. |
+
+Implemented typed source snapshots with 60-second caches/fetch times, family-cell
+missing/N/A distinctions, dev-only artifact gates, production aggregates, password
+gate, comparison, explicit registry confirmations and disabled-by-default Lab.
+Background mock writes stay local; completion uses that job's tracking URI.
+Quota panels reuse B2 estimates; no tracing writes or FastAPI calls. Saved CIs
+retain their dataset scope instead of being attached to pooled family scores.
+The read-only deployment hides Presets and all Lab controls. pilot125 is labelled
+pilot subset throughout. v3's no-F2/no-F5/no-test-F3 gaps stay explicit.
+
+Verification: 17 dashboard/AppTest checks passed (10.29s), including all populated
+pages, empty states, auth, cache, registry confirmation/policy, a completed mock
+background job and fake-key scan. B1/B2 regression: 27 passed (10.36s). Shared
+contracts: 34 passed (15.84s) plus the one offline OpenAPI check (0.24s), separate
+bounded invocations. Existing answering/retrieval fixture tests: 44 passed
+(8.89s). Total targeted checks: 123 passed. Ruff check/format clean.
+App startup on port 8502 confirmed
+with a four-second read-only/fixture launch; no browser session or live service
+was used. See dashboard/README.md under src/bugzilla_serving for commands and
+read caps. Research, frozen data, contracts, engine, API and chat unchanged.
+No Groq, DagsHub or live LangSmith calls; no pushes. Real remote integration and
+live Lab remain operator checks after a real bundle is available. No contract
+amendments requested. The pre-existing unrelated notes edit is preserved.
