@@ -72,6 +72,8 @@ select = ["E", "F", "I"]
 
 [tool.coverage.run]
 source = ["bugzilla_serving"]
+# Tests that copy the repo into pytest temp folders (tests/b_ci) must not count as source.
+omit = ["*/pytest-of-*/*"]
 
 [tool.coverage.report]
 show_missing = true
