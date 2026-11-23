@@ -15,6 +15,7 @@ from bugzilla_serving.contracts.names import (
 )
 from bugzilla_serving.contracts.run_config import ROOT
 from bugzilla_serving.dashboard.data.common import Snapshot, now, scrub
+from bugzilla_serving.dashboard.profiling import TimedClient, measured
 
 FIXTURE = ROOT / "tests/fixtures/sample_langsmith_runs.json"
 
@@ -23,8 +24,8 @@ def stamp(value):
     return dt.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def roots(source: str, start: str, end: str) -> Snapshot[list[dict]]:
+@measured("langsmith.roots")
+def _fetch_roots(source: str, start: str, end: str) -> Snapshot[list[dict]]:
     try:
         lower, upper = stamp(start), stamp(end)
         if source == "fixture":
@@ -32,7 +33,7 @@ def roots(source: str, start: str, end: str) -> Snapshot[list[dict]]:
         else:
             from langsmith import Client
 
-            client = Client()
+            client = TimedClient(Client(), "langsmith")
             values = list(
                 client.list_runs(
                     project_name=LANGSMITH_PROJECTS[0],
@@ -143,3 +144,66 @@ def grouped(rows):
             )
         )
     return result
+
+
+@st.cache_resource(show_spinner=False)
+def _production(source):
+    import os
+
+    from bugzilla_serving.dashboard.data.snapshot import directory, publish
+
+    folder = directory(
+        os.environ.get("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com")
+        + "/"
+        + LANGSMITH_PROJECTS[0]
+    )
+    path = folder / "production_meta.json"
+    if path.exists():
+        meta = json.loads(path.read_text())
+        payload = json.loads((folder / meta["file"]).read_text())
+        return Snapshot(**payload["snapshot"])
+    # Fetch a fixed retention window once; date widgets filter locally.
+    end = dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=1)
+    snap = _fetch_roots(source, (end - dt.timedelta(days=31)).isoformat(), end.isoformat())
+    from dataclasses import asdict
+
+    publish(folder, {"snapshot": asdict(snap)}, {"built_at": snap.updated_at}, prefix="production")
+    return snap
+
+
+def roots(source, start, end):
+    if source == "fixture":
+        return _fixture(source, start, end)
+    snap = _production(source)
+    return Snapshot(
+        [r for r in snap.value if stamp(start) <= stamp(r["started_at"]) < stamp(end)],
+        snap.updated_at,
+        snap.error,
+    )
+
+
+@st.cache_data(show_spinner=False)
+def _fixture(source, start, end):
+    return _fetch_roots(source, start, end)
+
+
+def clear():
+    _fixture.clear()
+    _production.clear()
+
+
+roots.clear = clear
+
+
+def refresh():
+    import os
+
+    from bugzilla_serving.dashboard.data.snapshot import directory
+
+    folder = directory(
+        os.environ.get("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com")
+        + "/"
+        + LANGSMITH_PROJECTS[0]
+    )
+    (folder / "production_meta.json").unlink(missing_ok=True)
+    clear()

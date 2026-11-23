@@ -45,7 +45,8 @@ def offline(monkeypatch, tmp_path):
     monkeypatch.setenv("LANGSMITH_SOURCE", "fixture")
     monkeypatch.setenv("DASHBOARD_LAB_ENABLED", "true")
     monkeypatch.delenv("DASHBOARD_PASSWORD", raising=False)
-    monkeypatch.delenv("BUNDLE_DIR", raising=False)
+    monkeypatch.setenv("BUNDLE_DIR", str(tmp_path / "absent-bundle"))
+    monkeypatch.setenv("DASHBOARD_CACHE_DIR", str(tmp_path / "cache"))
     uri = (tmp_path / "default").as_uri()
     before, registry = mlflow.get_tracking_uri(), mlflow.get_registry_uri()
     mlflow.set_tracking_uri(uri)
@@ -188,7 +189,8 @@ def test_read_only_and_empty(tmp_path, monkeypatch):
     assert any("No champion" in e.value for e in at.info)
     at.switch_page("pages/experiment_lab.py").run()
     assert not at.exception and any("disabled" in e.value for e in at.info)
-    assert not at.button and not at.toggle
+    assert not at.main.button and not at.main.toggle
+    assert [b.label for b in at.sidebar.button] == ["Refresh data"]
 
 
 def test_family_cells_and_test_artifact_gate(tmp_path):
@@ -304,9 +306,10 @@ def test_cache_and_no_api_imports(store, monkeypatch):
 def test_compare_and_registry_confirmation(store):
     at = AppTest.from_file(str(APP), default_timeout=15).run()
     at.switch_page("pages/compare_runs.py").run()
-    assert len(at.multiselect[0].options) >= 2, ([w.value for w in at.warning], mf.uri())
-    at.multiselect[0].set_value(at.multiselect[0].options[:2]).run()
-    assert not at.exception and at.dataframe
+    assert len(at.selectbox[0].options) >= 2
+    assert {w.label for w in at.selectbox} >= {"Baseline", "Candidate"}
+    assert not at.exception
+    assert any("Question sets" in w.value for w in at.warning)
     at.switch_page("pages/presets_page.py").run()
     # No publication writes occur while rendering or reviewing a confirmation.
     count = len(mf.presets(store).value)
@@ -382,6 +385,7 @@ def test_cost_page_reuse_label_and_usage_columns(store):
     at.switch_page("pages/cost_latency.py").run()
     assert not at.exception
     frame = at.dataframe[0].value
-    assert "reused from S2 (no own latency)" in frame["latency.p95_ms"].tolist()
-    assert "cost.llm_calls_per_question" in frame.columns
-    assert any("not interactive chat latency" in c.value for c in at.caption)
+    assert "Model calls / question" in frame.columns
+    times = at.dataframe[1].value
+    assert "Same as Smart search (reused)" in times["Slow-case time (s)"].tolist()
+    assert any("batch rate-limit waits" in c.value for c in at.caption)

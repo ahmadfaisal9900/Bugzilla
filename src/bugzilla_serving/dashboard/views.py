@@ -6,20 +6,44 @@ import datetime as dt
 import os
 
 import pandas as pd
-import plotly.express as px
 import streamlit as st
 
 from bugzilla_serving.contracts.names import EXPERIMENTS, FAMILIES, RETRIEVAL_METRICS
 from bugzilla_serving.contracts.run_config import FIXED_RETRIEVERS, RunConfig, load_spec
+from bugzilla_serving.dashboard import labels as L
 from bugzilla_serving.dashboard.data import langsmith_source as ls
 from bugzilla_serving.dashboard.data import mlflow_source as mf
 from bugzilla_serving.dashboard.data.common import display_frame, family_cell, scrub
+from bugzilla_serving.dashboard.profiling import page
 from bugzilla_serving.dashboard.theme import PALETTE, style
 from bugzilla_serving.tracking.backfill import read
 
 
 def dataframe(rows, **kwargs):
-    st.dataframe(display_frame(rows), **kwargs)
+    frame = display_frame(rows)
+    config = {}
+    glossary = {entry["name"]: entry["short"] for entry in L.catalog()["metrics"].values()}
+    for col in frame.columns:
+        key = str(col)
+        help_text = glossary.get(
+            key, f"{key}: recorded evaluation value; unavailable values are not zero."
+        )
+        if key == "Calls without usage data":
+            counts = frame[col].astype(str).str.extract(r"^(\d+)", expand=False).dropna()
+            n = int(counts.astype(int).max()) if len(counts) else 0
+            help_text = (
+                f"The provider didn't report usage for {n} calls, so this is a lower bound."
+                if n
+                else glossary[key]
+            )
+        if key.endswith("(s)") and pd.api.types.is_numeric_dtype(frame[col]):
+            config[col] = st.column_config.NumberColumn(format="%.1f", help=help_text)
+        elif key == "Questions" and pd.api.types.is_numeric_dtype(frame[col]):
+            config[col] = st.column_config.NumberColumn(format="localized", help=help_text)
+        else:
+            config[col] = st.column_config.Column(help=help_text)
+    kwargs.setdefault("column_config", config)
+    st.dataframe(frame, hide_index=True, **kwargs)
 
 
 def enabled():
@@ -32,21 +56,22 @@ def records(experiments=EXPERIMENTS):
         snapshot = mf.runs(mf.uri(), experiment)
         if snapshot.error:
             st.warning(snapshot.error)
-        st.caption(f"{experiment} · last updated {snapshot.updated_at} · reads cached 60 s")
         result.extend(snapshot.value)
+    st.session_state["_run_labels"] = L.run_labels(result)
     return result
 
 
 def name(run):
-    suffix = " · pilot subset" if run.tags.get("eval_set") == "pilot125" else ""
-    if run.tags.get("split") == "test-aggregate":
-        suffix += " · test-aggregate (metrics only)"
-    if run.tags.get("simulated") == "true" or run.tags.get("source") == "ci":
-        suffix += " · SIMULATED"
-    return (
-        f"{run.params.get('system_id', '?')} / {run.params.get('retriever', '?')} / "
-        f"{run.params.get('corpus', '?')} · {run.id[:8]}{suffix}"
+    label = st.session_state.get("_run_labels", {}).get(
+        run.id, L.name("systems", run.params.get("system_id", "?"))
     )
+    if st.session_state.get("technical_ids", False):
+        label += " · " + " / ".join(
+            run.params.get(k, "?") for k in ("system_id", "retriever", "corpus")
+        )
+    if run.tags.get("simulated") == "true":
+        label += " · Simulated"
+    return label
 
 
 def rows_for(run, artifact="per_family.csv"):
@@ -57,8 +82,22 @@ def rows_for(run, artifact="per_family.csv"):
 def filtered(values):
     sets = sorted({r.tags.get("eval_set", "unknown") for r in values})
     datasets = sorted({d for r in values for d in r.tags.get("datasets", "").split(",") if d})
-    chosen = st.multiselect("Evaluation sets", sets, default=sets)
-    dataset = st.selectbox("Dataset tag filter", ["All", *datasets])
+    chosen = st.multiselect(
+        "Question set",
+        sets,
+        default=sets,
+        format_func=lambda v: L.name("eval_sets", v),
+        help="Choose the dev questions used for evaluation; pilot results cover a subset.",
+    )
+    dataset = st.selectbox(
+        "Question source",
+        ["All", *datasets],
+        format_func=lambda v: v if v == "All" else L.name("dataset_tags", v),
+        help=(
+            "Filter runs containing this source. Scores retain their recorded scope; "
+            "mixed-source runs are not rescored."
+        ),
+    )
     return [
         r
         for r in values
@@ -69,124 +108,196 @@ def filtered(values):
 
 def answer_table(values):
     result = []
+    presets = mf.presets(mf.uri()).value
+    starred = {p["config"]["system_id"] for p in presets if p["slug"] in ("recommended", "fast")}
     for run in values:
+        if run.params.get("system_id") == "ORACLE":
+            continue
         families = rows_for(run)
         row = {
-            "Run": name(run),
-            "eval_set": run.tags.get("eval_set"),
-            "split": run.tags.get("split"),
-            "provenance": run.tags.get("provenance", "recorded"),
-            "scored families n": sum(f"answer.{f}.score" in run.metrics for f in FAMILIES),
-            "macro (scored families only)": missing(run, "answer.macro"),
+            "System": ("★ " if run.params.get("system_id") in starred else "") + name(run),
+            "Description": L.short("systems", run.params.get("system_id", "?")),
+            "Overall score": run.metrics.get("answer.macro"),
         }
         for family in FAMILIES:
-            row[family] = family_cell(
-                run.metrics, family, tags=run.tags, family_rows=families
-            ).label
+            cell = family_cell(run.metrics, family, tags=run.tags, family_rows=families)
+            row[L.name("families", family)] = cell.value if cell.value is not None else None
         result.append(row)
-    return result
+    return sorted(
+        result,
+        key=lambda r: r["Overall score"] if r["Overall score"] is not None else -1,
+        reverse=True,
+    )
 
 
 def bars(values, title, y="score"):
     if not values:
         st.info("No scored values available yet.")
         return
+    import plotly.express as px
+
     frame = pd.DataFrame(values)
-    frame["label"] = frame.apply(lambda r: f"{r[y]:.3g} · n={r['n']}", axis=1)
+    frame["label"] = frame[y].map(lambda v: f"{v:.0%}") + " · n=" + frame["n"].astype(str)
+    frame["family"] = frame["family"].map(lambda f: L.name("families", f) if f in FAMILIES else f)
     figure = px.bar(
         frame,
-        x="family",
-        y=y,
+        y="family",
+        x=y,
         color="run",
+        orientation="h",
         barmode="group",
         text="label",
         color_discrete_sequence=PALETTE,
         hover_data=["n"],
         title=title,
     )
+    figure.update_layout(xaxis_title="Share correct", yaxis_title="Question family")
+    figure.update_xaxes(tickformat=".0%")
     st.plotly_chart(style(figure), use_container_width=True)
 
 
+@page
 def overview():
-    st.header("Overview")
+    page_intro("Overview", "Research results and published modes at a glance.")
     champion = mf.champion(mf.uri())
-    st.caption(f"Registry last updated {champion.updated_at}")
-    if champion.value:
-        st.subheader(f"Champion · version {champion.value['version']}")
-        st.json(champion.value["config"])
-        source = next(
-            (
-                r
-                for r in records(("research-answer-eval", "playground"))
-                if r.id == champion.value["run_id"]
-            ),
-            None,
-        )
-        if source:
-            dataframe(answer_table([source]), use_container_width=True)
-            st.caption(f"Champion p95 ms: {missing(source, 'latency.p95_ms')}")
-    else:
-        st.info(champion.error or "No champion published yet.")
+    presets = mf.presets(mf.uri()).value
     values = filtered(records(("research-answer-eval", "playground")))
-    st.caption(
-        "Leaderboard cells show score and scored n; click column headers to sort. "
-        "No pooled overall score is the headline. pilot125 is a pilot subset."
+    latest = mf.latest_per_config(values)
+    columns = st.columns(5)
+    for column, slug, title in zip(
+        columns[:2], ("recommended", "fast"), ("Recommended mode", "Fast mode")
+    ):
+        preset = next((p for p in presets if p["slug"] == slug), None)
+        system = preset["config"]["system_id"] if preset else None
+        source = next((r for r in latest if r.params.get("system_id") == system), None)
+        column.metric(
+            title,
+            L.name("systems", system) if system else "Not published",
+            L.fmt_score(source.metrics.get("answer.macro")) if source else None,
+        )
+    scored = [
+        r for r in latest if "answer.macro" in r.metrics and r.params.get("system_id") != "ORACLE"
+    ]
+    best = max(scored, key=lambda r: r.metrics["answer.macro"], default=None)
+    columns[2].metric(
+        "Best overall in research",
+        name(best) if best else "Not available",
+        L.fmt_score(best.metrics["answer.macro"]) if best else None,
     )
-    dataframe(answer_table(mf.latest_per_config(values)), use_container_width=True)
-    if not values:
+    override = (champion.value or {}).get("tags", {}).get("policy_override")
+    if best and (override or best.tags.get("policy_override")):
+        columns[2].caption("not deployable: exceeds the 4,096-token serving limit")
+    columns[3].metric(
+        "Systems evaluated",
+        len({r.params.get("system_id") for r in latest if r.params.get("system_id") != "ORACLE"}),
+    )
+    pilot = [r for r in latest if r.tags.get("eval_set") == "pilot125"]
+    counts = [sum(int(f.get("source_n") or f.get("n") or 0) for f in rows_for(r)) for r in pilot]
+    columns[4].metric(
+        "Questions in the pilot", L.fmt_int(max(counts)) if counts else "Not available"
+    )
+    if not champion.value:
+        st.info(champion.error or "No champion published yet.")
+    rows = answer_table(latest)
+    if rows:
+        frame = pd.DataFrame(rows)
+        config = {
+            "System": st.column_config.TextColumn(
+                help="★ marks a published Recommended or Fast system."
+            ),
+            "Description": st.column_config.TextColumn(help="How the answering system works."),
+            "Overall score": st.column_config.ProgressColumn(
+                min_value=0, max_value=1, format="percent", help=L.short("metrics", "macro")
+            ),
+        }
+        for f in FAMILIES:
+            config[L.name("families", f)] = st.column_config.NumberColumn(
+                format="percent",
+                help=L.short("families", f)
+                + " Missing means unscored or unavailable. "
+                + "Inspect Answer evaluation for denominators.",
+            )
+        st.dataframe(
+            frame.style.map(
+                lambda v: f"background-color: rgba(37,99,235,{0.08 + 0.5 * v:.2f})"
+                if pd.notna(v)
+                else "",
+                subset=[L.name("families", f) for f in FAMILIES],
+            ),
+            column_config=config,
+            hide_index=True,
+            use_container_width=True,
+        )
+    else:
         st.info("No answer evaluation runs yet.")
+    st.subheader("Key findings")
+    with st.container(border=True):
+        for finding in read(L.ROOT / "configs/findings.yaml"):
+            st.markdown("- " + finding)
+    for run in latest:
+        technical(run)
 
 
+@page
 def answer_eval():
-    st.header("Answer eval")
+    page_intro(
+        "Answer evaluation",
+        "Correctness by question family, with recorded sample sizes and uncertainty.",
+    )
     values = filtered(records(("research-answer-eval", "playground")))
     cells = []
     for run in values:
+        families = rows_for(run)
         for f in FAMILIES:
-            cell = family_cell(run.metrics, f, tags=run.tags, family_rows=rows_for(run))
+            cell = family_cell(run.metrics, f, tags=run.tags, family_rows=families)
             if cell.value is not None:
                 cells.append(dict(run=name(run), family=f, score=cell.value, n=cell.n))
-    bars(cells, "Per-family correctness (inspect scorer and n)")
-    dataframe(answer_table(values), use_container_width=True)
-    for run in values:
-        intervals = mf.artifact(mf.uri(), run.id, "intervals.json").value
-        if intervals:
-            st.caption(f"{name(run)} · saved intervals, no new intervals estimated")
-            dataframe(intervals, use_container_width=True)
-            # Saved intervals can describe dataset-specific scores, while the main
-            # bars pool a family across datasets. Plot the actual bounds separately.
-            if all({"ci_low", "ci_high", "family", "n"} <= r.keys() for r in intervals):
-                import plotly.graph_objects as go
-
-                figure = go.Figure()
-                for row in intervals:
-                    label = f"{row.get('dataset', '')} / {row['family']} · n={row['n']}"
-                    figure.add_trace(
-                        go.Scatter(
-                            x=[row["ci_low"], row["ci_high"]],
-                            y=[label, label],
-                            mode="lines+markers",
-                            name=label,
-                            showlegend=False,
-                            line=dict(color=PALETTE[0]),
-                        )
-                    )
-                figure.update_layout(xaxis_title="Saved confidence interval (score)")
-                st.plotly_chart(style(figure), use_container_width=True)
-    st.subheader("Abstention and failures")
+    bars(cells, "Correct answers by family")
     dataframe(
         [
             {
-                "run": name(r),
-                **{
-                    k: missing(r, k)
-                    for k in ("abstain.correct_rate", "abstain.false_rate", "fail.rate")
-                },
+                "System": r["run"],
+                "Family": L.name("families", r["family"]),
+                "Score": L.fmt_score(r["score"]),
+                "Questions": r["n"],
+            }
+            for r in cells
+        ],
+        use_container_width=True,
+    )
+    st.subheader("Declined answers and errors")
+    dataframe(
+        [
+            {
+                "System": name(r),
+                "Correctly declined": L.fmt_score(r.metrics.get("abstain.correct_rate")),
+                "Incorrectly declined": L.fmt_score(r.metrics.get("abstain.false_rate")),
+                "Errors": L.fmt_score(r.metrics.get("fail.rate")),
             }
             for r in values
         ],
         use_container_width=True,
     )
+    with st.expander("Saved confidence intervals"):
+        for run in values:
+            intervals = mf.artifact(mf.uri(), run.id, "intervals.json").value
+            if intervals:
+                st.caption(name(run))
+                dataframe(
+                    [
+                        {
+                            k.replace("_", " ").capitalize(): L.name("families", v)
+                            if k == "family"
+                            else v
+                            for k, v in row.items()
+                            if k not in ("run_id", "config_hash", "git_sha")
+                        }
+                        for row in intervals
+                    ],
+                    use_container_width=True,
+                )
+    for run in values:
+        technical(run)
 
 
 def missing(run, key):
@@ -201,21 +312,33 @@ def missing(run, key):
     )
 
 
+@page
 def retrieval_eval():
-    st.header("Retrieval eval")
+    page_intro(
+        "Retrieval evaluation", "How well each search method finds the known supporting passages."
+    )
     values = records(("research-retrieval-eval",))
     sets = sorted({r.tags.get("eval_set", "unknown") for r in values})
     if sets:
-        selected_set = st.selectbox("Retrieval eval set", sets)
-        values = [r for r in values if r.tags.get("eval_set") == selected_set]
-    dataset = st.selectbox("Dataset", ["v3", "natural", "phase05"])
-    metric = st.selectbox(
-        "Metric", [m for m in RETRIEVAL_METRICS if m not in ("n", "r4_r3_jaccard_top10")], index=4
+        selected = st.selectbox("Question set", sets, format_func=lambda v: L.name("eval_sets", v))
+        values = [r for r in values if r.tags.get("eval_set") == selected]
+    dataset = st.selectbox(
+        "Question source",
+        ["v3", "natural", "phase05"],
+        format_func=lambda v: L.name("dataset_tags", v),
+        help=(
+            "Known supporting citations can be incomplete; "
+            "unlabelled passages are not necessarily irrelevant."
+        ),
     )
-    family = st.selectbox("Family", list(FAMILIES))
-    st.caption(
-        "KI and MH are key retrieval challenge families. Known-citation qrels are incomplete; "
-        "unlabeled passages are not established irrelevant."
+    metric = st.selectbox(
+        "Search measure",
+        [m for m in RETRIEVAL_METRICS if m not in ("n", "r4_r3_jaccard_top10")],
+        index=4,
+        format_func=lambda v: v.replace("_", " ").title(),
+    )
+    family = st.selectbox(
+        "Question family", list(FAMILIES), format_func=lambda f: L.name("families", f)
     )
     table = []
     for run in mf.latest_per_config(values):
@@ -226,114 +349,157 @@ def retrieval_eval():
             metric=metric,
             na_rows=rows_for(run, "na_cells.csv"),
         )
+        latency = run.metrics.get(f"retr.{dataset}.{family}.latency_p95_ms")
         table.append(
-            dict(
-                retriever=run.params.get("retriever"),
-                corpus=run.params.get("corpus"),
-                value=cell.value,
-                n=cell.n,
-                cell=cell.label,
-                selected=run.tags.get("selected") == "true",
-                p95_ms=missing(run, f"retr.{dataset}.{family}.latency_p95_ms"),
-            )
+            {
+                "Search method": L.name("retrievers", run.params.get("retriever", "?")),
+                "Archive format": L.name("corpora", run.params.get("corpus", "?")),
+                "Score": L.fmt_score(cell.value) if cell.value is not None else cell.state,
+                "Questions": cell.n,
+                "Selected": run.tags.get("selected") == "true",
+                "Slow-case time (s)": L.fmt_seconds(latency / 1000)
+                if latency is not None
+                else "Not available",
+            }
         )
     dataframe(table, use_container_width=True)
-    known = [r for r in table if r["value"] is not None]
+    known = [r for r in table if r["Score"].endswith("%")]
     if known:
-        frame = pd.DataFrame(known)
-        pivot = frame.pivot_table(
-            index="retriever", columns="corpus", values="value", aggfunc="first"
-        )
-        labels = frame.pivot_table(
-            index="retriever", columns="corpus", values="cell", aggfunc="first"
-        )
-        import plotly.graph_objects as go
+        import plotly.express as px
 
-        figure = go.Figure(
-            go.Heatmap(
-                z=pivot.values,
-                x=list(pivot.columns),
-                y=list(pivot.index),
-                text=labels.values,
-                texttemplate="%{text}",
-                colorscale=[[0, "#EFF6FF"], [1, PALETTE[0]]],
-            )
+        frame = pd.DataFrame(known)
+        frame["Score"] = frame["Score"].str.rstrip("%").astype(float) / 100
+        figure = px.density_heatmap(
+            frame,
+            x="Archive format",
+            y="Search method",
+            z="Score",
+            histfunc="avg",
+            range_color=(0, 1),
+            color_continuous_scale="Blues",
         )
         st.plotly_chart(style(figure), use_container_width=True)
-    elif not table:
-        st.info("No retrieval evaluation runs yet.")
-
-
-def cost_latency():
-    st.header("Cost & latency")
-    st.caption(
-        "Latency includes free-tier rate-limit waits during batch evaluation; "
-        "it is not interactive chat latency."
-    )
-    values = filtered(records(("research-answer-eval", "playground")))
-    keys = [
-        "cost.llm_calls",
-        "cost.llm_calls_per_question",
-        "cost.usage_missing_n",
-        "cost.tokens_in",
-        "cost.tokens_out",
-        "latency.p50_ms",
-        "latency.p95_ms",
-    ]
-    table = []
     for run in values:
-        families = rows_for(run)
-        n = sum(int(r.get("source_n") or r.get("n") or 0) for r in families)
-        # A scored n is only an attempted n when every attempted family is scored.
-        # With no accounting artifact, leave the per-question denominator unknown.
-        row = {
-            "run": name(run),
-            "model": run.params.get("model"),
-            "attempted n": n if n else "unknown",
-        }
-        row.update({k: missing(run, k) for k in keys})
-        if run.tags.get("reused_from"):
-            for key in ("latency.p50_ms", "latency.p95_ms"):
-                row[key] = f"reused from {run.tags['reused_from']} (no own latency)"
-        if n and all(k in run.metrics for k in ("cost.tokens_in", "cost.tokens_out")):
-            tokens = (run.metrics["cost.tokens_in"] + run.metrics["cost.tokens_out"]) / n
-            row["reported tokens / question"] = tokens
-            limits = next(
-                (
-                    m
-                    for m in load_spec()["models"].values()
-                    if m["model_id"] == run.params.get("model")
-                ),
-                {},
+        technical(run)
+
+
+@page
+def cost_latency():
+    page_intro("Cost & latency", "Reported model usage and batch time for each evaluated system.")
+    values = filtered(records(("research-answer-eval", "playground")))
+    usage, times = [], []
+    for run in values:
+        m = run.metrics
+        missing_n = m.get("cost.usage_missing_n", 0)
+        partial = " ⚠ partial" if missing_n > 0 else ""
+        tokens = [m.get("cost.tokens_in"), m.get("cost.tokens_out")]
+        limits = next(
+            (m for m in load_spec()["models"].values() if m["model_id"] == run.params.get("model")),
+            {},
+        )
+        quota = (
+            sum(tokens) / limits["tpd"]
+            if all(v is not None for v in tokens) and limits.get("tpd")
+            else None
+        )
+        usage.append(
+            {
+                "System": name(run),
+                "Model calls / question": m.get("cost.llm_calls_per_question"),
+                "Tokens in": L.fmt_int(tokens[0]) + partial,
+                "Tokens out": L.fmt_int(tokens[1]) + partial,
+                "Daily quota used": L.fmt_score(quota) + partial,
+                "Calls without usage data": L.fmt_int(missing_n) + partial,
+            }
+        )
+        reused = run.tags.get("reused_from") or run.params.get("system_id") == "S3"
+        row = {"System": name(run)}
+        for key, label in [
+            ("latency.p50_ms", "Typical time (s)"),
+            ("latency.p95_ms", "Slow-case time (s)"),
+        ]:
+            row[label] = (
+                "Same as Smart search (reused)" if reused else m[key] / 1000 if key in m else None
             )
-            row["daily token quota % / question"] = (
-                100 * tokens / limits["tpd"] if limits.get("tpd") else "not available"
-            )
-        else:
-            row["reported tokens / question"] = "not available"
-            row["daily token quota % / question"] = "not available"
-        table.append(row)
-    dataframe(table, use_container_width=True)
+        times.append(row)
+    st.subheader("Model usage")
     st.caption(
-        "Token usage is not a dollar cost. Per-question usage requires source-row accounting; "
-        "unknown denominators and review-only costs stay unavailable. Quota % uses configured "
-        "per-model daily limits, not the provider's current remaining allowance. "
-        "Fresh tokens exclude cached tokens (reported in per_family.csv). Where usage_missing_n "
-        "is positive, token totals are partial known usage, not complete consumption."
+        "Calls per question compare model effort; token totals and quota "
+        "describe the recorded batch."
     )
-    if not table:
-        st.info("No cost or latency records yet.")
+    dataframe(usage, use_container_width=True)
+    import plotly.express as px
+
+    known = [r for r in usage if r["Model calls / question"] is not None]
+    if known:
+        st.plotly_chart(
+            style(
+                px.bar(pd.DataFrame(known), x="Model calls / question", y="System", orientation="h")
+            ),
+            use_container_width=True,
+        )
+    token_rows = [
+        {
+            "System": name(r),
+            "Tokens in": r.metrics.get("cost.tokens_in"),
+            "Tokens out": r.metrics.get("cost.tokens_out"),
+            "Missing usage calls": r.metrics.get("cost.usage_missing_n", 0),
+        }
+        for r in values
+        if "cost.tokens_in" in r.metrics or "cost.tokens_out" in r.metrics
+    ]
+    if token_rows:
+        st.plotly_chart(
+            style(
+                px.bar(
+                    pd.DataFrame(token_rows),
+                    y="System",
+                    x=["Tokens in", "Tokens out"],
+                    barmode="group",
+                    orientation="h",
+                    hover_data=["Missing usage calls"],
+                    title="Reported fresh tokens (partial where usage is missing)",
+                )
+            ),
+            use_container_width=True,
+        )
+    st.subheader("Time per question")
+    st.caption(
+        "Typical is the median; slow-case is the 95th percentile, including batch rate-limit waits."
+    )
+    dataframe(times, use_container_width=True)
+    known = [r for r in times if isinstance(r["Typical time (s)"], (float, int))]
+    if known:
+        st.plotly_chart(
+            style(
+                px.bar(
+                    pd.DataFrame(known),
+                    y="System",
+                    x=["Typical time (s)", "Slow-case time (s)"],
+                    barmode="group",
+                    orientation="h",
+                )
+            ),
+            use_container_width=True,
+        )
+    with st.expander("Notes"):
+        for text in COST_NOTES:
+            st.markdown("- " + text)
+    for run in values:
+        technical(run)
 
 
+@page
 def error_analysis():
-    st.header("Error analysis")
+    page_intro("Error analysis", "Inspect dev answer failures and their recorded reasons.")
     values = [
         r for r in records(("research-answer-eval", "playground")) if r.tags.get("split") == "dev"
     ]
     if not values:
         st.info("No dev prediction artifacts yet.")
         return
-    run = st.selectbox("Dev run", values, format_func=name)
+    run = st.selectbox("Dev run", values, format_func=run_formatter(values))
+    technical(run)
     snapshot = mf.artifact(mf.uri(), run.id, "predictions.jsonl")
     if not snapshot.value:
         st.info(
@@ -352,7 +518,23 @@ def error_analysis():
     st.caption(
         "Dev predictions only; no test questions or gold. Citation IDs reference the run evidence."
     )
-    dataframe(snapshot.value, use_container_width=True)
+    rows = []
+    for row in snapshot.value:
+        answer = row.get("answer", "")
+        if isinstance(answer, dict):
+            answer = answer.get("answer", "")
+        rows.append(
+            {
+                "Family": L.name("families", row["family"])
+                if row.get("family")
+                else "Not recorded",
+                "Answer": str(answer),
+                "Status": row.get("status", "Not recorded"),
+                "Errors": "; ".join(map(str, row.get("errors", []))),
+                "Route": L.name("systems", row["route"]) if row.get("route") else "Not recorded",
+            }
+        )
+    dataframe(rows, use_container_width=True)
 
 
 def widgets(start):
@@ -363,6 +545,7 @@ def widgets(start):
         fields["system_id"]["choices"],
         index=fields["system_id"]["choices"].index(start.get("system_id", "S2")),
         help=fields["system_id"]["help"],
+        format_func=lambda v: L.name("systems", v),
     )
     model_ids = [m["model_id"] for m in spec["models"].values()]
     model = st.selectbox(
@@ -377,6 +560,16 @@ def widgets(start):
             continue
         default = start.get(key, knob["default"])
         choices = knob.get("choices")
+        if key == "corpus" and st.session_state.get("_bundle_report", {}).get("available_corpora"):
+            available = st.session_state["_bundle_report"]["available_corpora"]
+            for missing in [c for c in choices if c not in available]:
+                st.checkbox(
+                    L.name("corpora", missing) + " — isn't in this bundle",
+                    value=False,
+                    disabled=True,
+                    key="unavailable-" + missing,
+                )
+            choices = [c for c in choices if c in available]
         if key == "retriever":
             if system in FIXED_RETRIEVERS:
                 choices = [FIXED_RETRIEVERS[system]]
@@ -399,6 +592,12 @@ def widgets(start):
                 choices,
                 index=choices.index(default),
                 help=knob["help"],
+                format_func=(
+                    lambda v,
+                    kind={"corpus": "corpora", "retriever": "retrievers"}.get(key): L.name(kind, v)
+                )
+                if key in ("corpus", "retriever")
+                else str,
                 key=f"knob-{system}-{key}",
             )
         else:
@@ -420,8 +619,12 @@ def widgets(start):
     return RunConfig(**values).validate_against()
 
 
+@page
 def experiment_lab():
-    st.header("Experiment Lab")
+    page_intro(
+        "Experiment Lab",
+        "Plan a bounded dev experiment and inspect bundle readiness before running.",
+    )
     if not enabled():
         st.info(
             "Experiment Lab is disabled. "
@@ -432,7 +635,31 @@ def experiment_lab():
     from bugzilla_serving.dashboard import lab
 
     st.warning("Experiments use dev questions only. Mock scores are simulated plumbing checks.")
-    bundles = lab.real_bundle()
+    from pathlib import Path
+
+    from bugzilla_serving.experiments.bundle_verify import verify_bundle
+
+    bundle_path = Path(os.environ.get("BUNDLE_DIR", str(L.ROOT / "serving_bundle")))
+    report = verify_bundle(bundle_path)
+    st.session_state["_bundle_report"] = report
+    st.subheader("Serving bundle")
+    with st.container(border=True):
+        st.write("Verified ✓" if report["ok"] else "Verified ✗")
+        readable(
+            {
+                "split": report.get("split", "Unavailable"),
+                "corpora": ", ".join(report["available_corpora"]),
+                "embedder": report.get("embedding_model", "Unavailable"),
+                "reranker": report.get("reranker_model", "Unavailable"),
+                "size": f"{report.get('size_bytes', 0) / 1_000_000:.1f} MB",
+                "built date": report.get("built_at", "Not recorded"),
+            }
+        )
+        if report["errors"]:
+            st.caption("Bundle checks failed; open Technical details for the reasons.")
+    with st.expander("Technical details · Serving bundle"):
+        st.json(report)
+    bundles = report["ok"]
     if not bundles:
         st.info("No real BUNDLE_DIR: only fixture-bundle / MockProvider execution is available.")
     available = mf.presets(mf.uri()).value
@@ -442,26 +669,31 @@ def experiment_lab():
     origins = [
         "Defaults",
         *[f"Preset: {p['slug']}" for p in available],
-        *[f"Run: {r.id}" for r in source_runs],
+        *[f"Run: {name(r)}" for r in source_runs],
     ]
     origin = st.selectbox("Start from", origins)
     start = load_spec()["default_config"]
     if origin.startswith("Preset: "):
         start = next(p["config"] for p in available if p["slug"] == origin[8:])
     elif origin.startswith("Run: "):
-        r = next(r for r in source_runs if r.id == origin[5:])
+        r = next(r for r in source_runs if name(r) == origin[5:])
         import yaml
 
         start = {k: yaml.safe_load(v) for k, v in r.params.items() if k in RunConfig.model_fields}
     try:
         cfg = widgets(start)
+        if bundles:
+            from bugzilla_serving.experiments.preflight import bundle_preflight
+
+            bundle_preflight(cfg, bundle_path)
     except (ValueError, TypeError) as exc:
         st.error(scrub(str(exc)))
         return
     spec = read(lab.SETS_PATH)
     eval_set = st.selectbox(
-        "Eval set",
+        "Question set",
         list(spec["sets"]),
+        format_func=lambda v: L.name("eval_sets", v),
         index=list(spec["sets"]).index("smoke-5") if "smoke-5" in spec["sets"] else 0,
     )
     limit = st.number_input("Question limit", min_value=1, max_value=20, value=1)
@@ -498,7 +730,9 @@ def experiment_lab():
             plan = lab.preflight(cfg, eval_set, limit)
             estimated = plan["est_calls"]
         st.subheader("Preflight")
-        st.json(plan)
+        readable(plan)
+        with st.expander("Raw config (for debugging)"):
+            st.json(plan)
     except (ValueError, OSError, KeyError) as exc:
         st.error(f"Preflight unavailable: {scrub(str(exc))}")
         return
@@ -540,7 +774,9 @@ def show_progress(token):
         st.info("Waiting for job status…")
         return
     st.subheader("Job status")
-    st.json(state)
+    readable(state)
+    with st.expander("Technical details"):
+        st.json(state)
     total = state.get("total") or 1
     st.progress(min(1.0, state.get("done", 0) / total))
     if state.get("state") in ("RUNNING", "PREFLIGHT", "SCORING", "QUEUED"):
@@ -575,14 +811,14 @@ def show_progress(token):
                         tracking.rstrip("/") + f"/#/experiments/{run.experiment_id}/runs/{run.id}",
                     )
                 else:
-                    st.caption(f"Local MLflow run: {run.id} · {tracking} (view with mlflow ui)")
+                    technical(run)
                 # The mock store may differ from the dashboard's remote read store.
                 families = mf.artifact(tracking, run.id, "per_family.csv").value or []
                 dataframe(
                     [
                         {
-                            "family": f,
-                            "cell": family_cell(
+                            "Family": L.name("families", f),
+                            "Score": family_cell(
                                 run.metrics, f, tags=run.tags, family_rows=families
                             ).label,
                         }
@@ -592,48 +828,143 @@ def show_progress(token):
                 )
 
 
+@page
 def compare_runs():
-    st.header("Compare runs")
-    values = records(("research-answer-eval", "playground"))
-    by_label = {f"{name(r)} · {r.id}": r for r in values}
-    labels = st.multiselect("Choose 2–3 runs", list(by_label), max_selections=3)
-    chosen = [by_label[key] for key in labels]
-    if len(chosen) < 2:
-        st.info("Choose two or three runs with comparable eval sets and scored coverage.")
-        return
-    rows = []
-    different = []
-    for key in sorted(set().union(*(r.params for r in chosen))):
-        row = {"parameter": key, **{r.id[:8]: r.params.get(key, "not available") for r in chosen}}
-        rows.append(row)
-        if len({str(row[r.id[:8]]) for r in chosen}) > 1:
-            different.append(key)
-    frame = pd.DataFrame(rows).set_index("parameter")
-    dataframe(
-        frame.style.apply(
-            lambda s: ["background-color: #FEF3C7" if s.name in different else "" for _ in s],
-            axis=1,
-        ),
-        use_container_width=True,
+    from bugzilla_serving.dashboard.comparison import (
+        delta_to_questions,
+        noise_marker,
+        paired_counts,
+        summary,
     )
-    baseline = chosen[0]
+
+    values = records(("research-answer-eval", "playground"))
+    if len(values) < 2:
+        page_intro("Compare runs", "Compare correct answers for two systems on the same questions.")
+        st.info("Choose two runs once comparable evaluations are available.")
+        return
+    presets = mf.presets(mf.uri()).value
+    recommended = next(
+        (p["config"]["system_id"] for p in presets if p["slug"] == "recommended"), "S2"
+    )
+    index = next((i for i, r in enumerate(values) if r.params.get("system_id") == recommended), 0)
+    baseline = st.selectbox("Baseline", values, index=index, format_func=run_formatter(values))
+    others = [r for r in values if r.id != baseline.id]
+    matched = [
+        r
+        for r in others
+        if r.tags.get("eval_set") == baseline.tags.get("eval_set")
+        and r.tags.get("datasets") == baseline.tags.get("datasets")
+    ]
+    others = matched or others
+    candidate = st.selectbox("Candidate", others, format_func=run_formatter(values))
+    page_intro(
+        f"Where does {name(candidate)} do better or worse than {name(baseline)}?",
+        "Paired family scores reveal where a strategy gains or loses correct answers.",
+    )
+    if baseline.tags.get("eval_set") != candidate.tags.get("eval_set") or baseline.tags.get(
+        "datasets"
+    ) != candidate.tags.get("datasets"):
+        st.warning(
+            "Question sets or sources differ. Select matching runs for a controlled comparison."
+        )
+        technical(baseline)
+        technical(candidate)
+        return
+    snap = mf._snapshot(mf.uri())
+    score_a = snap["artifacts"].get(baseline.id + "/scores.jsonl", {}).get("value", [])
+    score_b = snap["artifacts"].get(candidate.id + "/scores.jsonl", {}).get("value", [])
     cells = []
-    for run in chosen[1:]:
-        for family in FAMILIES:
-            a = family_cell(baseline.metrics, family)
-            b = family_cell(run.metrics, family)
-            if a.value is not None and b.value is not None:
-                cells.append(
-                    dict(
-                        run=f"{name(run)} − {baseline.id[:8]}",
-                        family=family,
-                        score=b.value - a.value,
-                        n=f"{b.n} vs {a.n}",
-                    )
-                )
-    bars(cells, "Per-family score delta; n = candidate vs baseline")
-    if len({r.tags.get("eval_set") for r in chosen}) > 1:
-        st.warning("These eval sets differ. Deltas are descriptive, not a controlled comparison.")
+    for family in FAMILIES:
+        a, b = family_cell(baseline.metrics, family), family_cell(candidate.metrics, family)
+        if a.value is None or b.value is None:
+            continue
+        if not a.n or a.n != b.n:
+            st.warning(f"{L.name('families', family)}: question counts differ; omitted.")
+            continue
+        delta = b.value - a.value
+        noise = noise_marker(delta, a.n, paired_counts(score_a, score_b, family, a.n))
+        count = delta_to_questions(delta, a.n)
+        label = (
+            "both 0%"
+            if a.value == b.value == 0
+            else (
+                f"{L.fmt_delta(delta)} ({abs(count)} "
+                f"{'more' if count > 0 else 'fewer' if count < 0 else 'changed'} right)"
+            )
+        )
+        if noise["noise"]:
+            label += " ≈ within noise"
+        cells.append(
+            dict(family=family, n=a.n, a=a.value, b=b.value, delta=delta, label=label, **noise)
+        )
+    st.write(
+        summary(
+            name(candidate),
+            name(baseline),
+            cells,
+            baseline.metrics.get("answer.macro"),
+            candidate.metrics.get("answer.macro"),
+        )
+    )
+    grouped = [
+        dict(
+            run=name(r),
+            family=f"{L.name('families', row['family'])} ({row['n']} Qs)",
+            score=row[k],
+            n=row["n"],
+        )
+        for row in cells
+        for r, k in [(baseline, "a"), (candidate, "b")]
+    ]
+    bars(grouped, "Correct answers in each family")
+    if cells:
+        import plotly.graph_objects as go
+
+        colors = [
+            "rgba(13,148,136,0.35)" if r["noise"] else "#0D9488" if r["delta"] > 0 else "#DC2626"
+            for r in cells
+        ]
+        colors = [
+            (
+                "#94A3B8"
+                if r["delta"] == 0
+                else ("rgba(220,38,38,0.35)" if r["noise"] and r["delta"] < 0 else c)
+            )
+            for r, c in zip(cells, colors)
+        ]
+        fig = go.Figure(
+            go.Bar(
+                x=[r["delta"] * 100 for r in cells],
+                y=[L.name("families", r["family"]) for r in cells],
+                orientation="h",
+                text=[r["label"] for r in cells],
+                marker_color=colors,
+                customdata=[r["p"] for r in cells],
+                hovertemplate="%{text}<br>Exact paired p: %{customdata}<extra></extra>",
+            )
+        )
+        fig.update_layout(
+            xaxis_title="Candidate minus baseline (percentage points)",
+            yaxis_title="Question family",
+        )
+        st.plotly_chart(style(fig), use_container_width=True)
+        dataframe(
+            [
+                {
+                    "Family": L.name("families", r["family"]),
+                    "Questions": r["n"],
+                    "Difference": r["label"],
+                }
+                for r in cells
+            ],
+            use_container_width=True,
+        )
+    with st.expander("Families and scoring glossary"):
+        for family, entry in L.catalog()["families"].items():
+            st.markdown(f"**{entry['name']}**: {entry['short']}. Example: {entry['example']}")
+        st.write(L.short("metrics", "score") + " " + L.short("metrics", "macro"))
+    technical(baseline)
+    technical(candidate)
 
 
 @st.dialog("Confirm registry change")
@@ -641,26 +972,15 @@ def registry_dialog(payload):
     if not enabled():
         st.error("Lab is disabled; registry changes refused.")
         return
-    st.json(payload)
+    readable(payload)
+    with st.expander("Technical details"):
+        st.json(payload)
     confirmed = st.checkbox("I confirm this registry change")
     if st.button("Apply change", disabled=not confirmed):
         try:
             from bugzilla_serving.dashboard import lab
-            from bugzilla_serving.tracking.registry import Registry
 
-            registry = Registry(mf.uri())
-            if payload["action"] == "unpublish":
-                registry.unpublish(payload["slug"])
-            else:
-                lab.publication(
-                    registry,
-                    payload["run_id"],
-                    payload["slug"],
-                    payload["label"],
-                    payload["description"],
-                    champion=payload["champion"],
-                    apply=True,
-                )
+            lab.apply_registry_change(mf.uri(), payload)
             mf.clear()
             st.success("Registry updated.")
             lab.publication_preview.clear()
@@ -668,21 +988,33 @@ def registry_dialog(payload):
             st.error(f"Change refused: {scrub(str(exc))}")
 
 
+@page
 def presets_page():
-    st.header("Presets")
+    page_intro("Presets", "Review published modes and prepare an explicit registry change.")
     if not enabled():
         st.info("Registry controls are hidden in read-only mode.")
         return
     existing = mf.presets(mf.uri())
     st.caption(f"Presets last updated {existing.updated_at}")
-    dataframe(existing.value, use_container_width=True)
+    dataframe(
+        [
+            {
+                "Mode": p["label"],
+                "System": L.name("systems", p["config"]["system_id"]),
+                "Description": p["description"],
+                "Recommended": p["is_champion"],
+            }
+            for p in existing.value
+        ],
+        use_container_width=True,
+    )
     if existing.error:
         st.warning(existing.error)
     values = [
         r for r in records(("research-answer-eval", "playground")) if r.tags.get("split") == "dev"
     ]
     if values:
-        run = st.selectbox("Candidate run", values, format_func=name)
+        run = st.selectbox("Candidate run", values, format_func=run_formatter(values))
         slug = st.text_input("Preset slug", value="candidate")
         label = st.text_input("Preset label", value="Candidate")
         description = st.text_input(
@@ -694,7 +1026,21 @@ def presets_page():
 
             preview = lab.publication_preview(mf.uri(), run.id, slug, label, description, champion)
             st.subheader("Policy check and champion comparison")
-            st.json(preview)
+            readable(preview["policy"])
+            dataframe(
+                [
+                    {
+                        "Family": L.name("families", r["family"]),
+                        "Candidate score": L.fmt_score(r["candidate_score"]),
+                        "Candidate questions": r["candidate_n"],
+                        "Champion score": L.fmt_score(r["champion_score"]),
+                        "Champion questions": r["champion_n"],
+                    }
+                    for r in preview["comparison"]
+                ],
+                use_container_width=True,
+            )
+            technical(run)
             if st.button(
                 "Review publication", disabled=champion and not preview["policy"]["allowed"]
             ):
@@ -718,8 +1064,9 @@ def presets_page():
             registry_dialog(dict(action="unpublish", slug=slug))
 
 
+@page
 def production():
-    st.header("Production")
+    page_intro("Production", "Recent chat volume, feedback and time grouped by mode.")
     source = os.environ.get("LANGSMITH_SOURCE", "live")
     default = (
         dt.date(2020, 1, 1) if source == "fixture" else dt.date.today() - dt.timedelta(days=30)
@@ -734,30 +1081,154 @@ def production():
     snapshot = ls.roots(
         source, f"{start}T00:00:00+00:00", f"{end + dt.timedelta(days=1)}T00:00:00+00:00"
     )
-    st.caption(
-        f"ensf621-serving · {source} · last updated {snapshot.updated_at} · "
-        "cached 60 s; reads capped at 1,000 root runs / 2,000 feedback records"
+    from zoneinfo import ZoneInfo
+
+    from bugzilla_serving.dashboard.data.snapshot import stale
+
+    source_time = dt.datetime.fromisoformat(snapshot.updated_at).astimezone(
+        ZoneInfo(os.environ.get("TZ", "America/Winnipeg"))
     )
+    st.sidebar.caption(
+        "Production data as of "
+        + source_time.strftime("%d %b %Y, %-I:%M %p").replace("AM", "am").replace("PM", "pm")
+    )
+    if stale(
+        {"built_at": snapshot.updated_at},
+        float(os.environ.get("DASHBOARD_LANGSMITH_MAX_AGE_MIN", "5")),
+    ):
+        st.sidebar.caption("Production data is older than the configured age · Refresh data")
     if snapshot.error:
         st.warning(snapshot.error)
     if not snapshot.value:
         st.info("No production data yet.")
         return
-    dataframe(ls.grouped(snapshot.value), use_container_width=True)
+    groups = ls.grouped(snapshot.value)
+    dataframe(
+        [
+            {
+                "Mode": L.name("presets", r["preset"]),
+                "Model": r["model"],
+                "Degraded": r["degraded"],
+                "Questions": r["n"],
+                "Thumbs up": L.fmt_score(r["thumbs_up"]),
+                "Feedback count": r["feedback_n"],
+                "Declined": L.fmt_score(r["abstain_rate"]),
+                "Typical time (s)": L.fmt_seconds(r["p50_ms"] / 1000)
+                if r["p50_ms"] is not None
+                else "Not available",
+                "Slow-case time (s)": L.fmt_seconds(r["p95_ms"] / 1000)
+                if r["p95_ms"] is not None
+                else "Not available",
+            }
+            for r in groups
+        ],
+        use_container_width=True,
+    )
     from collections import Counter
 
     days = Counter(r["day"] for r in snapshot.value)
     values = [dict(family=d, score=n, n=n, run="questions/day") for d, n in sorted(days.items())]
-    bars(values, "Questions per day")
+    import plotly.express as px
+
+    st.plotly_chart(
+        style(
+            px.bar(
+                pd.DataFrame(values),
+                x="family",
+                y="n",
+                labels={"family": "Day (UTC)", "n": "Questions"},
+            )
+        ),
+        use_container_width=True,
+    )
     st.caption(
         f"Degraded requests: {sum(r['degraded'] for r in snapshot.value)} / n={len(snapshot.value)}"
     )
     st.subheader("Recent thumbs-down feedback (sanitized)")
     dataframe(
         [
-            {"day": r["day"], "preset": r["preset_slug"], "comment": r["comment"]}
+            {"day": r["day"], "Mode": L.name("presets", r["preset_slug"]), "comment": r["comment"]}
             for r in sorted(snapshot.value, key=lambda r: r["started_at"], reverse=True)
             if r["rating"] == 0 and r["comment"]
         ][:20],
         use_container_width=True,
     )
+
+
+COST_NOTES = [
+    "Tokens measure model usage, not money; the free tier costs nothing.",
+    (
+        '"Daily quota used" compares against our configured free-tier limits, '
+        "not Groq's live remaining allowance."
+    ),
+    "Answers served from cache don't count as fresh tokens.",
+    (
+        '"⚠ partial" means the provider didn\'t report usage for some calls, '
+        "so the total is a lower bound."
+    ),
+    (
+        "Times include waiting for free-tier rate limits during batch runs; "
+        "a single chat answer is much faster."
+    ),
+]
+
+
+def page_intro(title, description):
+    st.header(title)
+    st.caption(description)
+    with st.expander("How to read this"):
+        st.markdown(
+            "- Higher correctness is better; lower usage and time are better.\n-"
+            " Check the number of scored questions before comparing.\n- Missing "
+            "values are unavailable, never zero.\n- Pilot scores describe a dev "
+            "subset; simulated runs check plumbing only."
+        )
+    if title != "Cost & latency":
+        with st.expander("Notes"):
+            st.markdown(
+                "- Dev results do not establish test performance.\n- Family coverage"
+                " and pending human reviews affect averages.\n- Search citations are"
+                " incomplete labels, not a full relevance judgement."
+            )
+
+
+def technical(run):
+    with st.expander("Technical details · " + name(run)):
+        st.write("Run ID: " + run.id)
+        st.write("Config hash: " + str(run.params.get("config_hash", "Not recorded")))
+        st.write("Git SHA: " + run.tags.get("git_sha", "Not recorded"))
+        st.write("Source run: " + run.tags.get("source_run_id", "Not recorded"))
+        st.caption(" / ".join(run.params.get(k, "?") for k in ("system_id", "retriever", "corpus")))
+        fields = load_spec()["hyperparameters"]
+        dataframe(
+            [
+                {
+                    "Setting": fields.get(k, {}).get("label", k.replace("_", " ").title()),
+                    "Value": str(v),
+                }
+                for k, v in run.params.items()
+                if k != "config_hash"
+            ],
+            use_container_width=True,
+        )
+        with st.popover("Raw config (for debugging)"):
+            st.json(run.params)
+
+
+def readable(values):
+    # Top-level status/plan data gets a human-readable scalar table.
+    rows = []
+    for key, value in values.items():
+        if key in ("id", "job_id", "mlflow_run_id", "config_hash", "git_sha", "source_run_id"):
+            continue
+        if isinstance(value, (dict, list)):
+            continue
+        rows.append({"Setting": key.replace("_", " ").capitalize(), "Value": str(value)})
+    dataframe(rows, use_container_width=True)
+
+
+def run_formatter(values):
+    # Freeze the labels used by a widget; another page can change the visible
+    # group before Streamlit serializes this widget's previous state.
+    labels = {r.id: name(r) for r in values}
+    return lambda run: labels[run.id]

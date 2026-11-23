@@ -128,3 +128,4 @@ __pycache__/
 /outputs/evaluation/phase11/pilot125/*
 !/outputs/evaluation/phase11/pilot125/START_HERE.html
 !/outputs/evaluation/phase11/pilot125/REVIEW.csv
+serving_bundle/

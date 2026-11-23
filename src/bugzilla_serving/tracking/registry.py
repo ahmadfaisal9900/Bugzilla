@@ -46,7 +46,15 @@ class Registry:
         self.client = self.tracking.client
 
     def versions(self):
-        return list(self.client.search_model_versions(f"name = '{REGISTRY_MODEL_NAME}'"))
+        result, token = [], None
+        while True:
+            page = self.client.search_model_versions(
+                f"name = '{REGISTRY_MODEL_NAME}'", max_results=1000, page_token=token
+            )
+            result.extend(page)
+            token = getattr(page, "token", None)
+            if not token:
+                return result
 
     def register_config_version(self, config, tags):
         config = executable(config)

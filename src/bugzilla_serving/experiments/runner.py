@@ -248,6 +248,14 @@ def run_experiment(
         if (folder / "cancel.flag").exists():
             update(state="CANCELLED")
             return state
+        if bundle_manifest.exists():
+            from bugzilla_serving.experiments.preflight import bundle_preflight
+
+            try:
+                bundle_preflight(cfg, bundle_manifest.parent, allow_synthetic=not enable_llm)
+            except ValueError as exc:
+                update(state="REFUSED", error=str(exc))
+                return state
         if not plan["fits"]:
             update(state="REFUSED", error=plan["reason"])
             return state

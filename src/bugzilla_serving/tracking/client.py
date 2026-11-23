@@ -71,7 +71,15 @@ class TrackingClient:
 
     def runs(self, experiment: str) -> list:
         exp = self.client.get_experiment_by_name(experiment)
-        return list(self.client.search_runs([exp.experiment_id])) if exp else []
+        if not exp:
+            return []
+        result, token = [], None
+        while True:
+            page = self.client.search_runs([exp.experiment_id], max_results=1000, page_token=token)
+            result.extend(page)
+            token = getattr(page, "token", None)
+            if not token:
+                return result
 
     def log_run(self, experiment, params, tags, metrics, artifacts):
         """Upsert (source, config_hash, eval_set); never downgrade ledger provenance.

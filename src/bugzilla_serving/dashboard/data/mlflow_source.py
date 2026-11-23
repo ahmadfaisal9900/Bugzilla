@@ -15,7 +15,11 @@ import streamlit as st
 from bugzilla_serving.contracts.names import EXPERIMENTS
 from bugzilla_serving.contracts.run_config import ROOT
 from bugzilla_serving.dashboard.data.common import Snapshot, now, scrub
+from bugzilla_serving.dashboard.data.snapshot import directory, invalidate, load_snapshot
+from bugzilla_serving.dashboard.profiling import TimedClient, measured
 from bugzilla_serving.tracking.client import TrackingClient
+
+_USED = set()
 
 
 @dataclass
@@ -33,12 +37,14 @@ def uri():
     return os.environ.get("MLFLOW_TRACKING_URI") or (ROOT / "outputs/mlflow/b1-local").as_uri()
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def runs(tracking_uri: str, experiment: str) -> Snapshot[list[Run]]:
+@measured("mlflow.runs")
+def _fetch_runs(tracking_uri: str, experiment: str) -> Snapshot[list[Run]]:
     try:
         if experiment not in EXPERIMENTS:
             raise ValueError("Unknown experiment")
-        records = TrackingClient(tracking_uri).runs(experiment)
+        tracker = TrackingClient(tracking_uri)
+        tracker.client = TimedClient(tracker.client, "mlflow")
+        records = tracker.runs(experiment)
         values = [
             Run(
                 r.info.run_id,
@@ -50,9 +56,6 @@ def runs(tracking_uri: str, experiment: str) -> Snapshot[list[Run]]:
                 r.info.experiment_id,
             )
             for r in records
-            if r.data.tags.get("split") in ("dev", "test-aggregate")
-            and r.data.tags.get("source") in ("backfill", "lab")
-            and r.data.tags.get("eval_set") != "config-registry"
         ]
         return Snapshot(sorted(values, key=lambda r: r.started, reverse=True), now())
     except Exception as exc:
@@ -73,12 +76,13 @@ def latest_per_config(values):
     return list(result.values())
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def champion(tracking_uri: str) -> Snapshot[dict | None]:
+@measured("mlflow.champion")
+def _fetch_champion(tracking_uri: str) -> Snapshot[dict | None]:
     from bugzilla_serving.tracking.registry import Registry
 
     try:
         registry = Registry(tracking_uri)
+        registry.client = TimedClient(registry.client, "registry")
         version = registry.get_champion()
         if not version:
             return Snapshot(None, now())
@@ -95,18 +99,20 @@ def champion(tracking_uri: str) -> Snapshot[dict | None]:
         return Snapshot(None, now(), f"Registry unavailable ({type(exc).__name__})")
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def presets(tracking_uri: str) -> Snapshot[list[dict]]:
+@measured("mlflow.presets")
+def _fetch_presets(tracking_uri: str) -> Snapshot[list[dict]]:
     from bugzilla_serving.tracking.registry import Registry
 
     try:
-        return Snapshot(scrub(Registry(tracking_uri).list_presets()), now())
+        registry = Registry(tracking_uri)
+        registry.client = TimedClient(registry.client, "registry")
+        return Snapshot(scrub(registry.list_presets()), now())
     except Exception as exc:
         return Snapshot([], now(), f"Presets unavailable ({type(exc).__name__})")
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def artifact(tracking_uri: str, run_id: str, name: str) -> Snapshot[object]:
+@measured("mlflow.artifact")
+def _fetch_artifact(tracking_uri: str, run_id: str, name: str) -> Snapshot[object]:
     allowed = {
         "config.yaml",
         "per_family.csv",
@@ -119,7 +125,7 @@ def artifact(tracking_uri: str, run_id: str, name: str) -> Snapshot[object]:
     try:
         if name not in allowed:
             raise ValueError("Artifact not allowlisted")
-        client = TrackingClient(tracking_uri).client
+        client = TimedClient(TrackingClient(tracking_uri).client, "artifact")
         run = client.get_run(run_id)
         if run.data.tags.get("split") != "dev":
             return Snapshot(
@@ -174,6 +180,75 @@ def artifact(tracking_uri: str, run_id: str, name: str) -> Snapshot[object]:
         return Snapshot(None, now(), f"Artifact unavailable ({type(exc).__name__})")
 
 
+def _snapshot(tracking_uri):
+    _USED.add(tracking_uri)
+    return load_snapshot(tracking_uri)
+
+
+def runs(tracking_uri, experiment):
+    data = _snapshot(tracking_uri)
+    return Snapshot(
+        [
+            Run(**r)
+            for r in data["runs"].get(experiment, [])
+            if r["tags"].get("split") in ("dev", "test-aggregate")
+            and r["tags"].get("source") in ("backfill", "lab")
+            and r["tags"].get("eval_set") != "config-registry"
+        ],
+        data["meta"]["built_at"],
+        "; ".join(data["errors"]) or None,
+    )
+
+
+def champion(tracking_uri):
+    return Snapshot(**_snapshot(tracking_uri)["champion"])
+
+
+def presets(tracking_uri):
+    return Snapshot(**_snapshot(tracking_uri)["presets"])
+
+
+def checkpoint_artifact(tracking_uri, run_id, name):
+    # Resume immutable artifact reads across CLI/container restarts. Filenames are
+    # digests so callers cannot escape the credential-free per-source directory.
+    import hashlib
+    import uuid
+    from dataclasses import asdict
+
+    key = hashlib.sha256((run_id + "/" + name).encode()).hexdigest()
+    folder = directory(tracking_uri) / "artifacts"
+    path = folder / (key + ".json")
+    if path.exists():
+        try:
+            return Snapshot(**json.loads(path.read_text()))
+        except (OSError, ValueError, TypeError):
+            pass
+    result = _fetch_artifact(tracking_uri, run_id, name)
+    if not result.error:
+        folder.mkdir(parents=True, exist_ok=True)
+        temporary = folder / (key + "-" + uuid.uuid4().hex + ".tmp")
+        temporary.write_text(json.dumps(asdict(result)))
+        temporary.replace(path)
+    return result
+
+
+@st.cache_data(show_spinner=False)
+def _lazy_artifact(tracking_uri, run_id, name):
+    from bugzilla_serving.tracking.client import artifact_tracking_uri
+
+    with artifact_tracking_uri(tracking_uri):
+        return checkpoint_artifact(tracking_uri, run_id, name)
+
+
+def artifact(tracking_uri, run_id, name):
+    data = _snapshot(tracking_uri)
+    cached = data["artifacts"].get(run_id + "/" + name)
+    return Snapshot(**cached) if cached is not None else _lazy_artifact(tracking_uri, run_id, name)
+
+
 def clear():
-    for loader in (runs, champion, presets, artifact):
-        loader.clear()
+    for tracking_uri in list(_USED):
+        invalidate(tracking_uri)
+    _USED.clear()
+    _lazy_artifact.clear()
+    load_snapshot.clear()

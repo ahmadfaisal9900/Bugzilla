@@ -1,0 +1,7 @@
+- "Auto-router has the best overall score, but it can't be deployed: one of its routes (Full bug dossier) needs more than the 4,096-token serving limit."
+- "Smart search is the best system that fits the serving limit, so it is the Recommended mode. Smart search, Query rewriting and Full bug dossier are statistically tied just below Auto-router."
+- "No system answers Multi-step questions."
+- "Counting is near 0% for every system: the questions are limited to the dev partition, which the counting tool can't filter on."
+- "Database tools score 0% on Find bug by description, because every tool needs a bug ID."
+- "Closed-book declines almost everything, so it only scores on Unanswerable questions."
+- "Batch times include free-tier rate-limit waits; they are not chat response times."

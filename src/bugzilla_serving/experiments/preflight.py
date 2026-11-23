@@ -124,3 +124,9 @@ def estimate(cfg, items, *, root=ROOT, now=None):
         "bytes/4 estimate, one repair; SDK retries disabled for experiments; "
         "failed usage conservatively reserved; other clients may consume quota.",
     )
+
+
+def bundle_preflight(cfg, bundle=None, *, allow_synthetic=False):
+    from bugzilla_serving.experiments.bundle_verify import prepare_bundle
+
+    return prepare_bundle(cfg, bundle, allow_synthetic=allow_synthetic)

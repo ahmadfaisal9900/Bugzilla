@@ -483,3 +483,120 @@ tracked-source regression. Each invocation remained below 30 seconds. Suite
 collection reports 328 tests; the full coverage run remains owner-run. Ruff
 check/format and diff whitespace checks pass. No skipped failures, real manifest
 substitution, new fixture binaries, remote calls, Docker builds or pushes.
+
+## B5 inventory — 2026-11-22
+
+| Expected → found | Handling |
+| --- | --- |
+| Existing Project / feature/mlops / original origin → confirmed | No repo or remote changes |
+| B1–B4 contracts, tracking, experiments, nine pages, CI/Docker → present | Reuse; contracts and A/research read-only |
+| Data calls → independent 60-second caches | Profile first, then persisted snapshots |
+| Real serving_bundle → present | Accepted delivery, no contents changed |
+| Pins in serving.yaml → absent; exact pins in retrieval_v3.yaml | Verifier uses existing pins as explicit fallback; no shared contract edit |
+| Pre-existing .gitignore edit → present | Preserve, never stage |
+
+Offline only. No DagsHub, Groq, live LangSmith, pushes, bulk processing or image builds.
+
+### B5 BEFORE / AFTER — offline fixture measurements
+
+Measured with Streamlit AppTest against the same temporary seeded file store
+plus the existing sparse dashboard fixture runs. BEFORE clears the old data
+caches between pages. AFTER uses a warm disk snapshot and warmed Overview
+imports. These are server script times, not browser paint times or DagsHub
+measurements. All page exceptions were checked; none occurred. No external
+tracking endpoint was contacted.
+
+| Page | BEFORE (s) | Slowest BEFORE calls (s), up to 3 | AFTER (s) |
+| --- | ---: | --- | ---: |
+| overview | 0.202 | mlflow.champion 0.0104; mlflow.runs 0.0064; mlflow.runs 0.0061 | 0.035 |
+| answer_eval | 0.316 | mlflow.runs 0.0090; mlflow.runs 0.0088; mlflow.artifact 0.0025 | 0.396 |
+| retrieval_eval | 0.037 | mlflow.runs 0.0062; mlflow.artifact 0.0028 | 0.048 |
+| cost_latency | 0.028 | mlflow.runs 0.0062; mlflow.runs 0.0061; mlflow.artifact 0.0019 | 0.049 |
+| error_analysis | 0.022 | mlflow.runs 0.0067; mlflow.runs 0.0062; mlflow.artifact 0.0009 | 0.013 |
+| experiment_lab | 0.134 | mlflow.presets 0.0192; mlflow.runs 0.0060; mlflow.runs 0.0059 | 0.106 |
+| compare_runs | 0.019 | mlflow.runs 0.0059; mlflow.runs 0.0059 | 0.026 |
+| presets_page | 0.058 | mlflow.presets 0.0177; mlflow.runs 0.0060; mlflow.runs 0.0059 | 0.032 |
+| production | 0.040 | langsmith.roots 0.0032 | 0.040 |
+
+Cold snapshot build: **0.116 s** (same tiny fixture; stderr profile event).
+AFTER pages have no run/registry fetches. First Error analysis visit lazily reads
+an immutable artifact (0.0015 s); Production parses the local fixture (0.0027 s).
+Subsequent detail reads are cached without TTL.
+
+A separate populated B5 fixture adds two synthetic scored systems, both 20-question
+families, partial usage and latency. Its acceptance check denies SDK get/search/
+download calls, renders all nine pages, scans main-view table cells/labels for
+8+-character hex IDs, and checks <2 s per render / <1 s per switch. Reviewed
+result: latest cold build 0.1381 s; warm renders 0.015–0.352 s. This is fixture acceptance,
+not a remote or live-model performance claim. The comparison includes matching-n
+gates, binary paired sign tests when full paired rows exist, and the stated
+small-count heuristic otherwise. Aggregate question differences are rounded
+score-equivalent counts; they cannot recover individual outcomes from fractional
+scores.
+
+### B5 implementation and boundaries
+
+- Implemented manifest/stat/hash verification and atomic integrity cache; every
+  listed symlink target is checked. Lab and runner use corpus availability and
+  offline HF environment. CLI real bundles require dev / synthetic=false.
+- Snapshot generations publish atomically behind a process lock; a failed refresh
+  preserves the last good disk pointer. Immutable small-artifact checkpoints
+  support restarting an interrupted build. SDK call caps are explicit. Runs and
+  registry versions paginate; artifact downloads use at most eight workers while
+  holding the MLflow artifact-URI context in the parent.
+- Regular filters/page switches read only cached snapshots. Stale data stays
+  visible until Refresh data. Production has a separate persisted 31-day fetch
+  window and 5-minute stale indicator (1,000 roots / 2,000 feedback cap); date
+  widgets filter it locally. This window is a bounded view, not all history.
+- Display-only catalog/findings retain the requested text. Extra entries cover
+  existing deep, synthetic and retrieval fixture IDs. Findings are owner-supplied
+  narrative, not new experiment conclusions. IDs/configs are behind Technical
+  details; the raw-config control is a popover inside that expander because
+  pinned Streamlit 1.45.1 forbids nested expanders.
+- Docker startup builds a snapshot in the background into DASHBOARD_CACHE_DIR;
+  readonly remains torch-free. Existing CI workflow unchanged. No Docker build,
+  remote calls, bundle rehash of the 300 MB delivery, model execution, commit,
+  push, or PR performed. New files are staged by name so the existing tracked-
+  checkout regression can include them. The original .gitignore edit is excluded.
+
+Open contract question: configs/serving.yaml contains no embedding/reranker
+pins, and this task forbids changing it. Verification compares model names and
+revisions against the existing exact configs/retrieval_v3.yaml pins, reports that
+source explicitly, and switches to serving.yaml's retrieval mapping if approved
+pins are later added. Built date is shown as Not recorded when the manifest has
+neither built_at nor created_at; no date is invented.
+
+Commands, page layouts and owner validation gates: see
+[Stream B handoff](mlops/STREAM_B_HANDOFF.md#b5-operator-commands).
+
+### B5 final verification — 2026-11-22
+
+**337 distinct offline tests passed**, covering all 337 collected cases, in
+bounded invocations: 219 existing research fixture regressions (97 + 49 + 73),
+36 contracts (23 + 12 + one OpenAPI), 28 tracking, 16 experiments, 21 existing
+page/unit tests, two localhost launch tests, six CI checks and nine new B5
+acceptance tests. The new tests cover integrity/cache reuse/symlinks/model pins,
+corpus/HF env checks, catalog coverage, comparison math, mismatched n, no-hash UI,
+zero SDK calls on warm pages, disk reload and last-good refresh preservation.
+Latest affected page and experiment reruns passed (21 and 16 respectively).
+
+The original combined contract invocation hit its 28-second guard at the local
+OpenAPI test. Splitting the group and enabling local sockets completed all cases.
+The launch assertions were updated for the deliberately renamed page headings;
+launch fixtures now explicitly use an absent bundle and temporary cache so they
+cannot hash the delivered bundle. Both root and apostrophe/space cwd launches
+passed. No skipped failure or real-data substitute was introduced.
+
+Ruff check and format check pass, as do diff whitespace and both shell syntax
+checks. Tiny CLI checks confirmed verifier exit 0 / failed-check exit 1 / usage
+exit 2, and snapshot dry-run without store creation. All requested catalog texts
+were compared against the attachment and match verbatim; added catalog entries
+only cover existing IDs. The existing upstream MLflow/Pydantic deprecation
+warnings remain unsuppressed; no new warning from project code was found.
+No coverage remeasurement, Docker build, actionlint/Gitleaks execution or remote
+CI run is claimed. Real DagsHub speed/browser paint and actual bundle verification
+remain terminal commands for the owner. No commit/push/PR was performed.
+
+Final staged-checkout CI rerun: six checks passed in 8.81 s. Exact staged
+filenames were inspected: 29 B5 files, no contracts/research/A/bundle/workflow
+changes. The sole unstaged file is the owner's pre-existing .gitignore edit.

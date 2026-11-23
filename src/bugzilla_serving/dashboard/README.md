@@ -14,8 +14,9 @@ LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=true \
 python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
 ```
 
-Open <http://localhost:8502>. Expect nine pages, a **SIMULATED** champion,
+Open <http://localhost:8502>. Expect nine pages, a synthetic champion configuration,
 two synthetic presets and 30 fixture production roots dated January 1, 2020.
+The source=ci seed runs are deliberately excluded from research leaderboards.
 The seeder is idempotent. Its values are synthetic plumbing checks.
 
 For the existing backfilled local data, replace the tracking URI with
@@ -65,9 +66,24 @@ The Lab explains that it is disabled; Presets is hidden. Set a dashboard
 password for shared access; authentication is skipped when unset locally.
 Publish/unpublish requires an explicit confirmation. Champion promotion
 reuses the B1 policy and strict execute-mode config validation, without a
-dashboard override. Reads and publication previews cache for 60 seconds;
-each source shows its fetch time. Confirmation rechecks current policy
-before writing. Source credentials are environment-only.
+dashboard override. Reads use a persisted disk snapshot, loaded once per process.
+Ordinary reruns do not refresh it; the sidebar shows the local data time and an
+explicit Refresh data button. Publication previews use that same snapshot;
+confirmation rechecks current policy before writing. Credentials are environment-only.
+Snapshot staleness defaults to 30 minutes (`DASHBOARD_SNAPSHOT_MAX_AGE_MIN`).
+Production has its own 5-minute indicator (`DASHBOARD_LANGSMITH_MAX_AGE_MIN`).
+Stale data remains visible; it never triggers a background refresh on a rerun.
+`DASHBOARD_PROFILE=1` logs individual SDK/data calls and full renders to stderr
+and adds sidebar timing panels. It records labels/durations, never call arguments.
+
+Build explicitly with `scripts/build_dashboard_snapshot.py --max-requests 1000`;
+`--dry-run` only prints the destination. The resumable operator wrapper is
+`scripts/run_phase05_dashboard_snapshot.sh` (B5 operational work, not research
+Phase 5). It saves timestamped logs and summary JSON. Artifact checkpoints are
+immutable; repeat the command to resume. `DASHBOARD_CACHE_DIR` overrides the
+cache root. A failed refresh retains the last successful snapshot.
+`--profile-pages` measures warmed AppTest reruns and includes them in the JSON.
+See `docs/mlops/STREAM_B_HANDOFF.md` for full operator commands.
 
 ## Offline checks and interpretation
 
@@ -88,14 +104,15 @@ need permission to bind localhost ports; health alone cannot detect page errors.
 No test questions/gold are read. Test-aggregate runs expose metrics only;
 their artifacts are refused before download. Dev artifact reads are
 allowlisted and capped at 10 MB; no gold or raw prompt fields are displayed.
-Production reads are capped at 1,000 roots and 2,000 feedback records per
-date-range request, so high-volume views may be incomplete. Invalid trace
+Production fetches a fixed 31-day window once per explicit refresh, capped at
+1,000 roots and 2,000 feedback records; high-volume views may be incomplete.
+Date-range changes filter that retained window locally. Invalid trace
 metadata is excluded with a count. Text/email/credential redaction is a
 display safeguard, not permission to upload private source content.
 
 v3 has no F2/F5 and no test F3. Family charts show n. Saved confidence
-intervals are plotted separately by original dataset scope; the dashboard
-does not invent intervals for pooled scores. Token cost per question needs
+intervals retain their original dataset scope in the collapsed interval table;
+the dashboard does not invent intervals for pooled scores. Token cost per question needs
 source-row accounting and never substitutes the scored subset denominator.
 Quota percentage uses configured daily limits, not live provider headers.
 Unknown production abstention or unrated feedback keeps its own denominator.

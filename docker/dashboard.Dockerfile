@@ -3,6 +3,7 @@ FROM python:3.11-slim AS dashboard-readonly
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 STREAMLIT_BROWSER_GATHER_USAGE_STATS=false \
     DASHBOARD_LAB_ENABLED=false LANGSMITH_SOURCE=fixture \
+    DASHBOARD_CACHE_DIR=/app/outputs/dashboard_cache \
     PYTHONPATH=/app/src HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 WORKDIR /app
 RUN groupadd --gid 10001 dashboard && useradd --uid 10001 --gid dashboard --create-home dashboard
@@ -11,13 +12,15 @@ COPY src/bugzilla_serving ./src/bugzilla_serving
 # dashboard extra deliberately excludes serving (and therefore torch).
 RUN pip install '.[dashboard]' 'pydantic==2.11.7' && python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
 COPY configs ./configs
-COPY scripts/publish_preset.py scripts/seed_mlflow_fixture.py ./scripts/
+COPY scripts/publish_preset.py scripts/seed_mlflow_fixture.py scripts/build_dashboard_snapshot.py ./scripts/
+COPY docker/dashboard-entrypoint.sh ./docker/dashboard-entrypoint.sh
 COPY tests/fixtures/sample_langsmith_runs.json ./tests/fixtures/sample_langsmith_runs.json
 RUN mkdir -p /app/outputs && chown -R dashboard:dashboard /app /home/dashboard
 USER dashboard
 EXPOSE 8502
 HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8502/_stcore/health', timeout=2)"
+ENTRYPOINT ["/bin/sh", "/app/docker/dashboard-entrypoint.sh"]
 CMD ["python", "-m", "streamlit", "run", "src/bugzilla_serving/dashboard/app.py", "--server.address=0.0.0.0", "--server.port=8502"]
 
 FROM dashboard-readonly AS dashboard-lab

@@ -157,12 +157,60 @@ def publication(*args, **kwargs):
     return module.publish(*args, **kwargs)
 
 
-@st.cache_data(ttl=60, show_spinner=False)
+@st.cache_data(show_spinner=False)
 def publication_preview(tracking_uri, run_id, slug, label, description, champion):
+    # Reuse the policy CLI with a snapshot facade: preview never calls an SDK.
+    from types import SimpleNamespace
+
+    from bugzilla_serving.dashboard.data import mlflow_source as mf
+
+    values = [
+        r
+        for exp in ("research-answer-eval", "playground")
+        for r in mf.runs(tracking_uri, exp).value
+    ]
+    records = {
+        r.id: SimpleNamespace(
+            info=SimpleNamespace(run_id=r.id),
+            data=SimpleNamespace(params=r.params, tags=r.tags, metrics=r.metrics),
+        )
+        for r in values
+    }
+    champion_data = mf.champion(tracking_uri).value
+    old = (
+        SimpleNamespace(
+            tags={"source_run_id": champion_data["run_id"]}, run_id=champion_data["run_id"]
+        )
+        if champion_data and champion_data["run_id"] in records
+        else None
+    )
+    facade = SimpleNamespace(
+        client=SimpleNamespace(get_run=lambda rid: records[rid]),
+        get_champion=lambda: old,
+        tracking=SimpleNamespace(
+            runs=lambda exp: [records[r.id] for r in values if r.experiment == exp]
+        ),
+    )
+    return scrub(
+        publication(facade, run_id, slug, label, description, champion=champion, apply=False)
+    )
+
+
+def apply_registry_change(tracking_uri, payload):
     from bugzilla_serving.tracking.registry import Registry
 
-    return scrub(
+    if os.environ.get("DASHBOARD_LAB_ENABLED") != "true":
+        raise ValueError("Lab is disabled")
+    registry = Registry(tracking_uri)
+    if payload["action"] == "unpublish":
+        registry.unpublish(payload["slug"])
+    else:
         publication(
-            Registry(tracking_uri), run_id, slug, label, description, champion=champion, apply=False
+            registry,
+            payload["run_id"],
+            payload["slug"],
+            payload["label"],
+            payload["description"],
+            champion=payload["champion"],
+            apply=True,
         )
-    )

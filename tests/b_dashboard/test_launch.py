@@ -19,8 +19,8 @@ ROOT = Path(__file__).resolve().parents[2]
 APP = ROOT / "src/bugzilla_serving/dashboard/app.py"
 PAGES = {
     "Overview",
-    "Answer eval",
-    "Retrieval eval",
+    "Answer evaluation",
+    "Retrieval evaluation",
     "Cost & latency",
     "Error analysis",
     "Experiment Lab",
@@ -91,6 +91,8 @@ def test_real_streamlit_launch(tmp_path, from_root):
         LANGSMITH_TRACING="false",
         LANGCHAIN_TRACING="false",
         LANGCHAIN_TRACING_V2="false",
+        BUNDLE_DIR=str(tmp_path / "absent-bundle"),
+        DASHBOARD_CACHE_DIR=str(tmp_path / "cache"),
         HF_HUB_OFFLINE="1",
         TRANSFORMERS_OFFLINE="1",
     )

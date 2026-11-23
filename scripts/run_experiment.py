@@ -65,6 +65,7 @@ def main():
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--mock", action="store_true", help="Execute locally with MockProvider")
     mode.add_argument("--enable-llm", action="store_true")
+    parser.add_argument("--bundle", type=Path, help="Verify this real dev bundle before planning")
     parser.add_argument("--max-requests", type=int, default=100)
     parser.add_argument("--sweep", action="append", default=[])
     parser.add_argument("--tracking-uri")
@@ -74,6 +75,8 @@ def main():
     parser.add_argument("--status", metavar="JOB_ID")
     parser.add_argument("--cancel", metavar="JOB_ID")
     args = parser.parse_args()
+    if args.max_requests < 1:
+        parser.error("--max-requests must be positive")
     fixture_kwargs = {}
     if args.fixture_bundle:
         if not args.mock:
@@ -94,6 +97,12 @@ def main():
         result = cancel(args.cancel) if args.cancel else job_status(args.status)
     else:
         cfg = resolve_config(args)
+        bundle_report = None
+        if args.bundle:
+            from bugzilla_serving.experiments.preflight import bundle_preflight
+
+            os.environ["BUNDLE_DIR"] = str(args.bundle.resolve())
+            bundle_report = bundle_preflight(cfg, args.bundle)
         if args.sweep:
             grid = {}
             for entry in args.sweep:
@@ -122,6 +131,9 @@ def main():
                 config=cfg.model_dump(),
                 eval_set=args.eval_set,
                 **estimate(cfg, items),
+                bundle=bundle_report,
+                fits_request_cap=estimate(cfg, items)["est_calls"] <= args.max_requests,
+                max_requests=args.max_requests,
                 actual_api_calls=0,
                 preset_source="registry"
                 if args.registry_presets
