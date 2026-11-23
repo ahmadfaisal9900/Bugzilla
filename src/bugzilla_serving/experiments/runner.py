@@ -71,23 +71,38 @@ def job_lock(jobs):
 class PacedProvider:
     """Apply token/min pacing to the existing budget/cache/ledger provider."""
 
-    def __init__(self, provider, tpm, max_tokens, sleep=time.sleep):
+    def __init__(
+        self,
+        provider,
+        tpm,
+        max_tokens,
+        sleep=time.sleep,
+        *,
+        measured_tokens=None,
+        daily_remaining=None,
+    ):
         self.provider, self.tpm, self.max_tokens, self.sleep = provider, tpm, max_tokens, sleep
         self.events, self.reservations = [], []
+        self.measured_tokens = measured_tokens
+        self.daily_remaining = daily_remaining
+        self.daily_exhausted = False
 
     @property
     def calls(self):
         return self.provider.calls
 
     def invoke(self, method, prompt, *args, **kwargs):
-        # Actual request payload may exceed the planning estimate. Reject rather than burst.
-        cost = (
-            len(json.dumps(args, ensure_ascii=False).encode())
-            + len(prompt.encode())
-            + len(kwargs.get("system_prompt", "").encode())
-        ) + self.max_tokens
-        if cost > 0.9 * self.tpm:
-            raise RuntimeError("Request exceeds conservative experiment TPM allowance")
+        from bugzilla_serving.experiments.token_budget import trim_request
+
+        prompt, input_tokens, trimmed = trim_request(
+            prompt, args, kwargs.get("system_prompt", ""), self.max_tokens, self.tpm
+        )
+        self.last_gate = dict(estimated_input_tokens=input_tokens, trimmed=trimmed)
+        request_ceiling = input_tokens + self.max_tokens
+        if self.daily_remaining and request_ceiling > self.daily_remaining():
+            self.daily_exhausted = True
+            raise RuntimeError("Safe daily token budget exhausted; resume next quota day")
+        cost = min(0.9 * self.tpm, self.measured_tokens or request_ceiling)
         while True:
             now = time.monotonic()
             self.reservations = [(t, n) for t, n in self.reservations if now - t < 60]
@@ -95,7 +110,19 @@ class PacedProvider:
                 break
             self.sleep(max(0.01, 60 - (now - self.reservations[0][0])))
         self.reservations.append((time.monotonic(), cost))
-        response = getattr(self.provider, method)(prompt, *args, **kwargs)
+        try:
+            response = getattr(self.provider, method)(prompt, *args, **kwargs)
+        except BaseException:
+            # Unknown usage retains the measured call estimate for pacing.
+            self.reservations[-1] = (self.reservations[-1][0], cost)
+            raise
+        if response.get("state") in ("CACHE_HIT", "MOCK"):
+            actual = 0
+        elif all(type(response.get(k)) is int for k in ("input_tokens", "output_tokens")):
+            actual = response["input_tokens"] + response["output_tokens"]
+        else:
+            actual = cost
+        self.reservations[-1] = (self.reservations[-1][0], max(actual, cost) if actual else 0)
         self.events.append({k: v for k, v in response.items() if k != "value"})
         return response
 
@@ -126,7 +153,16 @@ def live_provider(cfg, max_requests, root):
         root=root,
         resolve_env=False,
     )
-    return PacedProvider(provider, limits["tpm"], config["max_output_tokens"])
+    from bugzilla_serving.experiments.preflight import usage
+    from bugzilla_serving.experiments.token_budget import historical_total
+
+    return PacedProvider(
+        provider,
+        limits["tpm"],
+        config["max_output_tokens"],
+        measured_tokens=historical_total(cfg, root),
+        daily_remaining=lambda: usage(cfg, config, root)["tokens"],
+    )
 
 
 def run_experiment(
@@ -223,7 +259,7 @@ def run_experiment(
         if set(completed) - keys:
             raise ValueError("Resume ledger contains out-of-scope qids")
         pending = [i for i in items if (i["dataset"], i["qid"]) not in completed]
-        plan = estimate(cfg, pending, root=root)
+        plan = estimate(cfg, pending, root=root, max_requests=max_requests)
         state = dict(
             id=job_id,
             state="PREFLIGHT",

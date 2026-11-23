@@ -48,6 +48,7 @@ RETRIEVAL_METRICS = (
 COMMON_METRICS = frozenset(
     {
         "answer.macro",
+        "answer.macro_excl_F5",
         "abstain.correct_rate",
         "abstain.false_rate",
         "fail.rate",
@@ -122,7 +123,10 @@ def validate_mlflow_run(params: dict, tags: dict, metrics: dict) -> None:
             raise ValueError(f"metric: invalid name/type {k}")
         if not math.isfinite(v) or v < 0:
             raise ValueError(f"metric: invalid value {k}")
-        if k.endswith((".score", "_rate", ".rate")) or k == "answer.macro":
+        if k.endswith((".score", "_rate", ".rate")) or k in (
+            "answer.macro",
+            "answer.macro_excl_F5",
+        ):
             if v > 1:
                 raise ValueError(f"metric: rate outside [0,1] {k}")
         if (k.endswith((".n", ".pending")) or k == "cost.usage_missing_n") and int(v) != v:

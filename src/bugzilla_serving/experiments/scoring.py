@@ -69,6 +69,14 @@ def score_predictions(items, predictions, *, partner=True):
             from bugzilla_qa.evaluation import systems as scorer
         except ImportError:
             pass
+    from bugzilla_serving.experiments.scorer_v2 import excluded, grade
+
+    items = [i for i in items if not excluded(i)]
+    predictions = {
+        k: v for k, v in predictions.items() if k in {(i["dataset"], i["qid"]) for i in items}
+    }
+    if not items:
+        return [], [], {}
     results = []
     for item in items:
         if item.get("split") != "dev":
@@ -79,7 +87,7 @@ def score_predictions(items, predictions, *, partner=True):
             raise ValueError("Prediction is not dev")
         if scorer is not None:
             try:
-                result = scorer.grade(item, pred)
+                result = grade(item, pred)
                 by = "bugzilla_qa.evaluation.systems"
             except ValueError as exc:
                 if not str(exc).startswith("Unsupported gold type:"):

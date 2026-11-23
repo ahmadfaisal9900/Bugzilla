@@ -127,6 +127,10 @@ class TrackingClient:
             r
             for r in runs
             if all(r.data.tags.get(k) == tags[k] for k in ("source", "config_hash", "eval_set"))
+            and r.data.tags.get("scorer_version", "1") == tags.get("scorer_version", "1")
+            and r.data.tags.get("system_id", r.data.params.get("system_id"))
+            == tags.get("system_id", params.get("system_id"))
+            and r.data.tags.get("variant_hash") == tags.get("variant_hash")
         ]
         # Do not silently create a second system run when historical reconstruction differed.
         if experiment == "research-answer-eval" and not matches:
@@ -136,6 +140,10 @@ class TrackingClient:
                 if r.data.tags.get("source") == tags["source"]
                 and r.data.tags.get("eval_set") == tags["eval_set"]
                 and r.data.params.get("system_id") == params["system_id"]
+                and r.data.tags.get("scorer_version", "1") == tags.get("scorer_version", "1")
+                and r.data.tags.get("system_id", r.data.params.get("system_id"))
+                == tags.get("system_id", params.get("system_id"))
+                and r.data.tags.get("variant_hash") == tags.get("variant_hash")
             ]
             if conflict:
                 raise ValueError(
@@ -145,6 +153,8 @@ class TrackingClient:
             raise ValueError("Duplicate tracking identity exists; inspect without overwriting")
         if matches:
             old = matches[0]
+            if old.data.tags.get("f5_gold") == "llm" and tags.get("f5_gold") != "llm":
+                raise ValueError("Refusing to downgrade an LLM-gold run to pending F5 metrics")
             if old.data.params != params:
                 raise ValueError("Immutable MLflow params differ; refusing overwrite")
             if (

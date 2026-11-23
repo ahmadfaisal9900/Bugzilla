@@ -600,3 +600,310 @@ remain terminal commands for the owner. No commit/push/PR was performed.
 Final staged-checkout CI rerun: six checks passed in 8.81 s. Exact staged
 filenames were inspected: 29 B5 files, no contracts/research/A/bundle/workflow
 changes. The sole unstaged file is the owner's pre-existing .gitignore edit.
+
+## B6 inventory — 2026-11-22
+
+| Expected → found | Handling |
+| --- | --- |
+| Existing Project / feature/mlops / clean tree → confirmed | No new repo/remotes; no pushes |
+| B4/B5 source, fixtures, snapshot/cache and Compare → present | Reuse; protected A/research/bundle inputs unchanged |
+| 54 pending F5 rows → 54 rows, 6 phase05 questions × S0–S8 | CSV references joined with HTML system/qid metadata |
+| Reference or verdict for each F5 row → all six references present identically across nine systems; all 54 answer verdicts blank | No missing-reference stop condition |
+| F5 research scorer → always NEEDS_HUMAN for valid explanations | User chose a separate capped semantic-grading job, then import saved verdicts; never invent scores |
+| Pilot selection → 125 dev questions: phase05 34, natural 20, v3 71 | Exact saved prediction manifests resolve locally |
+| Real API → Phase 0 stub only | Fake-engine API and stub parity tests; no A edits |
+| Dossier 12K → blocked by byte knob AND mistaken model-token-cap comparison | Approved amendment 2 corrects only dossier eligibility/unit |
+
+References (each applies to all nine systems, not nine different gold answers):
+
+| phase05 qid | Existing reference reason |
+| --- | --- |
+| q_0f02c856b8576c53962d | Manual ESR request because moz-phab uplift is broken |
+| q_103fc1febfb8153ed3d2 | Heading level 2, comparable with Settings |
+| q_639f25ec01824d49c28e | Synchronous layout flush before patch; suspected overflow-check race |
+| q_7e52cb5dac94d7614825 | Cannot link to about:preferences as a traditional page |
+| q_a5c70180da726d9445de | Stop dispatching at/after XPCOMShutdownThreads |
+| q_df73d0a04940f296b92e | Nonworking Open in Firefox option; suspected Windows-specific XML issue |
+
+No reference/answer content or verdict was changed. The user explicitly chose
+to prepare the semantic-grading job for their own terminal, not to run it here.
+Its dry-run has six requests (nine anonymous candidates per question), 54 pending
+rows, and zero model requests. Whole-input estimates for the six batches are
+723–922 tokens before the 2,048 output reservation. No LLM verdict exists yet,
+so 125/125 and the new F5-inclusive macro remain unexecuted owner steps.
+
+### B6 historical validation and unchanged policy preview
+
+Before importing F5, every historical configuration was revalidated. S1, S2, S3,
+S4, S5, S6 and S8 pass; S0 and S7 fail only because their recorded top_k is
+inapplicable. No archived knobs were silently rewritten. Engine's existing
+config update gives an explicit dossier value priority over bundle runtime.
+
+The unmodified policy selects **none**. Every system has existing families
+below 0.50 (notably MH=0 and F3 near zero); several also fail abstention/failure
+limits. Missing F5 additionally blocks the current preview. Importing F5 cannot
+remove the non-F5 minimum-score failures, so no replacement champion can pass
+this policy on these ledgers. A post-import preview command is provided; no
+post-import result is fabricated and the policy is not loosened. S2 remains
+champion and no publication/rollback on DagsHub was performed.
+
+### B6 live exception: one LangSmith smoke trace
+
+The explicitly authorized smoke created one root trace plus one user_rating=1
+feedback in ensf621-serving, no model calls. The first immediate read returned
+404; a later read of the SAME ID confirmed smoke=true and the feedback. No
+second trace/rating was created. Script read-back now retries bounded indexing
+delays and forces sampling=1 for this one intentional smoke.
+
+Trace: https://smith.langchain.com/o/e906d1d7-e702-4a19-a9ed-6fa3de69fe08/projects/p/8a6bd5d1-459e-4652-a21c-33d50de2470c/r/96b5c506-32c6-4205-ba1b-9eb67c8b0f50?poll=true
+
+Production visibility is implemented/tested offline; live dashboard Refresh is
+an owner check. No DagsHub or Groq calls were made. Credentials were loaded only
+into the smoke process and never printed/staged.
+
+### B6 published Fast dry-run
+
+Read the published Fast configuration from the local reference registry without
+changing knobs: S1/R1/C1, top_k=10, context_budget_tokens=3000. The smoke-5 plan
+with max_requests=8 reports fits=true, fits_request_cap=true, est_calls=8,
+est_tokens=34,128, input_estimate_source=UTF-8 bytes/3 and actual_api_calls=0.
+The real bundle was not rehashed for this agent check; real-bundle verification
+is in the owner's exact command. A separate synthetic fresh-quota test verifies
+the same five-base/three-repair cap. No live S1 evaluation was executed here.
+
+### B6 verification and remaining owner gates
+
+All **348 collected offline tests passed** in bounded groups: 219 existing
+research fixture regressions (97 + 26 + 23 + 73), 36 contracts (18 + 12 + five
+record-mode + one OpenAPI), 28 tracking, 16 B2 experiments, 30 B5 dashboard
+checks, two localhost launches, six CI checks and 11 new B6 checks. Both fake
+engine API and Phase 0 stub parity paths passed. OpenAPI golden bytes remain
+unchanged. Existing cap tests now use 12,001 as the invalid dossier value,
+while both 4,096 and 12,000 are tested valid. The real ledger adapter's synthetic
+fixture covers F5 verdict import and both macro metrics, not only review-only
+mode. Read-index retry, smoke filtering and anti-downgrade checks are covered.
+
+Ruff check/format, shell syntax and diff whitespace checks pass. No dependencies
+were installed, no protected A/research/review/bundle file changed, and no raw
+verdict/data/model/log/credential file is staged. Existing upstream MLflow /
+Pydantic warnings remain unsuppressed; no new project warning was introduced.
+One larger fixture group hit its 28-second guard under parallel load; smaller
+groups then completed all its cases. No skipped failure was used.
+
+The only live exception was the single LangSmith trace/rating described above.
+F5 judgment generation/import, local or remote backfill apply, S1 live execution,
+post-F5 policy preview, real API parity, live dashboard Refresh and Docker/GitHub
+CI execution remain owner steps. No new research score, 125/125 real denominator,
+champion change, DagsHub rollback, commit or push is claimed. The unrelated
+untracked ensf621_phase2_report.pdf that appeared during work is preserved and
+excluded from staging.
+# B6 follow-up: accepted bundle example format (2026-11-22)
+
+The owner's real parity invocation exposed an engine startup mismatch not covered
+by the original structured synthetic fixture. All 299 accepted bundle examples
+are text-only objects; the verified manifest declares their dev scope. The shared
+engine now normalizes only that exact format in memory. Structured rows still
+require explicit dev scope. No bundle content or manifest was changed.
+
+Verified: real S2/Mock bundle initialization loads all 299 examples with zero LLM
+calls. Six bounded regression cases pass: matching fake API and readable stub
+differences for both example formats, plus four invalid/non-dev row cases.
+This does not claim a complete real-bundle parity run or partner API validation.
+
+## B7 Part 1 inventory and stop — 2026-11-22
+
+| Expected → found | Handling |
+| --- | --- |
+| Existing Project / feature/mlops / original origin → confirmed | No repository/remote changes; no pushes |
+| Clean baseline → substantial staged B6 edits and two untracked PDFs | Preserve every existing edit and staging entry |
+| Stream B contracts/engine/configs/fixtures/tracking/experiments/dashboard → present | Reuse; no shared/A/research code changes |
+| Exact pilot125 inputs → manifest-referenced natural, phase05 and v3 ledgers present | Existing checksum/review-binding validation reused |
+| Missing partition handling → contradicted | count_bugs already uses sample_membership, conflict exclusion and frozen partition functions |
+| Missing lifecycle arithmetic → contradicted | get_lifecycle already computes first_fixed_hours with verified history safeguards |
+| All 37 questions use dev populations → contradicted | Three v3 dev-labeled F3 aggregates preserve original test-population scope |
+
+Following the user's explicit stop condition, completed the bounded offline
+Part 1 audit only. `outputs/analysis/failure_audit/audit.csv` contains 333 saved
+system/question rows (37 questions × nine systems); 17 are correct, 316 incorrect.
+Every incorrect row has exactly one primary diagnosis. Source scores, errors,
+raw/final answers, context/retrieval IDs and full tools remain separately visible.
+Saved 54 F5 judgments are fingerprint-verified, not regenerated. GOLD labels
+flag the dev/test-population policy conflict, not a proven wrong numeric gold.
+Record presence cannot prove untruncated evidence text; historical official_runtime
+is absent. The report states these attribution/provenance limits explicitly.
+
+Reproducible local command: `scripts/run_phase07_failure_audit.sh --apply --limit 37
+--max-requests 0` after activating iqfm. Default/`--dry-run` writes nothing.
+The task's bounded real audit completed in under one second, zero API requests.
+Input hashes are retained in ignored provenance.json; deterministic rebuild is
+the resume mechanism. Logs and timestamped summary stay ignored. Generated report
+is copied byte-for-byte to docs/mlops/FAILURE_AUDIT.md. Raw audit data remains
+ignored and is never staged. No new dependencies; existing exact pins retained.
+
+Parts 2–4, re-scoring, MLflow writes, v2 implementations, holdout selection and
+quota plans are deliberately not started. See FAILURE_AUDIT.md for amended-plan
+questions. The before-B7 byte pins cover all existing research modules and prompt
+files, including schemas and cache identities; the regression checks their bytes.
+
+B7 verification: **363 distinct collected tests pass** (353 existing + ten new),
+run in bounded invocations. Initial combined experiment/contract groups exceeded
+the 28-second guard; smaller groups completed. Restricted localhost launches
+failed socket binding, and TestClient cases stalled under that restriction;
+with local socket access, both launch tests, all 16 B6 tests and the single
+OpenAPI check pass. Contract checks completed as 19 + 11 + one; five record-mode
+checks pass separately. Tracking's 28 checks include the existing fake-key scan.
+Existing Pydantic dependency deprecations remain; no new project warning found.
+Ruff check/format, shell syntax, audit row/coverage invariants and exact README
+copy checks pass. All 72 original research/prompt file hashes match the B7 entry
+snapshot. No dependencies changed. The final audit-only rerun takes under one
+second and preserves zero calls. Current-corpus metadata lookup confirms all six
+public F5 target records exist and none contains its full hash in passage text;
+that observation and corpus hash are saved separately from historical evidence.
+
+Inspected the exact Git index: all 40 staged filenames remain the pre-existing
+B6 set; B7 staging was not performed. Only the B7 note append is newly unstaged
+in an existing tracked file. New B7 source/test/script/report files are untracked;
+raw audit CSV, provenance, summary, lookup observation and logs remain ignored.
+The user's two untracked PDFs are untouched. No commit or push was performed.
+
+## B7b inventory — 2026-11-22
+
+| Expected → found | Handling |
+| --- | --- |
+| B7 audit, exact ledgers and 72-file byte baseline → present | Reuse; no legacy research module edits |
+| Existing partition-aware count/lifecycle → present | New v2 subclass reuses both |
+| Three test-scoped development F3 aggregates → confirmed | Shared exclusions file; no test population computation |
+| Six F5 reference strings → exact frozen human-reviewed claims | Update display wording; saved judgments unchanged |
+| Historical runtime → absent | Approved record-level diagnosis; current accepted bundle used for future execution |
+| Prior B6 staged edits and B7 additions → present | Preserve; no pushes or live calls |
+
+Part A offline re-score: 122 questions per system; F3 n=12. Fourteen verdicts
+change (S7/S8 six F3 and one MH each), all numeric singleton unwrapping. F2 units
+are not inferred. All six references exactly match rendered signed-freeze claims.
+Existing policy preview selects none. TOOL breakdown has no saved 429/5xx;
+malformed/schema-rejected outputs and outside-cohort targets explain the saved
+messages. Full changed rows and comparison are under ignored outputs/analysis/b7b.
+
+### B7b implementation and verification — 2026-11-22
+
+Implemented scorer v2/exclusions, separate MLflow scorer-version/variant identities,
+v1 supersession tagging after successful v2 upload, default-v2 dashboard selection,
+and research-only S7v2/S8v2 modules. The shared RunConfig/API/engine and all 72
+original research/prompt files remain byte-identical to the B7 entry baseline.
+New variants carry canonical base configuration plus explicit variant tags/hash
+and artifact; they are not silently represented as shared serving systems.
+
+All six F5 grading-reference strings exactly equal the rendered signed-freeze
+claims. Catalog/findings/handoff now distinguish the human-reviewed reference
+from the LLM answer judge. The unchanged policy selects none on re-scored v2
+numbers. Nine MLflow plans are ready; no real MLflow upload or supersession tag
+write was executed. File-store synthetic tests prove distinct/resumable v1/v2 IDs.
+
+New tiny-fixture tests cover numeric singleton/unit rules and negatives, unchanged
+abstention, wrong count/list-typed gold/multi-element refusal, counted-quantity
+unit matching, cohort/conflict filtering, direction semantics, unknown/private
+comment refusal, cited-comment-first packing, one repair and exhaustion, provider
+error non-retry, byte preservation, exact legacy response-key hits, checkpoint/
+resume, partial-attempt cost preservation, dry-run backfill and selector v2→v1.
+Full research fixture regressions remain unchanged and pass. All **391 collected
+cases** are covered by passing bounded invocations (353 pre-existing, ten B7 audit,
+27 B7b system/scorer/job tests and one version-selector test). The original two
+new UI regressions (selector placement/catalog labels) and fixture Git-provenance
+issue were corrected and their affected tests rerun. OpenAPI/local launch tests
+passed with localhost socket access. Existing Pydantic/LangGraph dependency
+warnings remain; no new project warning was added. Ruff check/format and shell
+syntax checks pass. No tests or failure checks were skipped to obtain a pass.
+
+Offline plans: S7v2 focused pilot 21 questions, estimated 58 fresh calls / 417,600
+reserved tokens; S8v2 full eligible pilot 122 questions, 274 / 1,972,800. Current
+verified cache hits are zero; unchanged routes retain the old provider key and
+cache-only replay can credit future complete hits. All jobs cap fresh requests at
+25 per quota day with at most 180,000 reserved tokens (10% margin) and retain
+partial attempts for cost accounting. No live inference was executed. Holdout
+counts F2=0/F3=15/F5=0/MH=0; three families have fewer than five held-out items.
+Bounded actual executions here were only offline re-scoring, lookup/plan checks
+and synthetic tests. New live system accuracy remains unexecuted/unvalidated.
+
+New B7/B7b files were staged by explicit names to support the existing tracked-
+checkout CI test; the earlier B6 staged edits are preserved. The sandbox's first
+index write was read-only; the named staging operation succeeded with index-write
+access. Raw ledgers, ignored analysis reports, credentials, bundle/models/logs and
+the two unrelated PDFs are not staged. No commit/push/publication occurred.
+Exact commands, per-stage quota/day bounds, full score/error/reference tables and
+all fourteen changed rows are in STREAM_B_HANDOFF.md's B7b section.
+
+### B7 one-day amendment inventory (2026-11-22)
+
+Expected → found: feature/mlops and existing Project root → confirmed; B7b scorer,
+variant graphs, bounded runner and tests → present; exact pilot ledgers and audit →
+present; exclusion list → present (122 eligible dev questions); legacy byte baseline →
+present. Existing staged B6/B7 work and two untracked PDFs preserved.
+Read the binding MLOps specs, research status, roadmap and attached decisions before
+this amendment. Offline only; no research source edits, remote calls, commit or push.
+
+Question-stated hours rule now reads numeric scalars/singletons as hours only when
+explicitly asked. No-unit ambiguity, wrong numbers and incompatible days remain
+incorrect. Re-score: 27 changed rows, all explained by normalization rules;
+F2 S7/S8 become 7/8. Frozen gold, exclusions and all historical ledgers preserved.
+
+Measured planning/pacing uses reported-call input+output means plus 50%; incomplete
+aggregate rows do not contribute a misleading zero-usage denominator. The hard
+request gate remains input estimate + maximum output <=7,200. Unknown real usage
+still reserves the ceiling; live jobs recheck safe daily remaining tokens before
+requests. 25 fresh calls is an invocation cap, with repeated invocations allowed.
+
+Required changed-route scope is 79 questions, 43 carried, 271,770 estimated tokens
+including grading: it cannot meet 180K. Explicit optional `--scope priority` defers
+32 ordinary tool routes in F1/F6H, reruns 47, carries 75 and estimates
+175,706 tokens including six new-answer judge calls. Default scope remains all 79;
+no reduction is implicit. No separate S7v2 or holdout run is scheduled.
+See B7_ONE_DAY_PLAN.md for tables, exact owner commands and remaining limitations.
+
+Final amendment verification: 403 tests passed in bounded offline modules; Ruff
+check and format pass (80 Python files). Targeted 49 scorer/audit/variant tests
+were rerun after the scorer guard change. All staged prior work was preserved;
+new amendment remains reviewable in the working diff. No remote writes or push.
+
+### B7e inventory (2026-11-23)
+
+Expected → found: original Project / feature/mlops → confirmed; B7b/e v2 graph,
+count/history and link/comment tools → present; partial run-cf2c6f2cf859a3c6 →
+34 rows (18 new, 16 carried), six new F5 answers present; original byte baseline
+→ present. Twelve BadRequest failures had unknown usage; no 429 found in that
+quota window. Read research status/roadmap and retained binding MLOps contracts.
+Implement new plain-JSON planning and deterministic tools only in v2 modules.
+Old ledgers stay immutable; supersession will be recorded in a new resume run.
+No live calls, external writes, pushes or delegation are authorized here.
+
+B7e completion: pre-parser fully covers all 47 F2/F3/F4/MH pilot texts (8/12/19/8),
+without gold. Native tool generation is removed from new variant execution;
+strict JSON planning has one repair, then valid parser/BM25 fallback. Count,
+lifecycle, field and link answers are deterministic; common structured answers
+use JSON text. Original count/history implementations and S0–S8 byte baseline
+remain unchanged. Unknown/private evidence stays refused.
+
+Source scoring (new non-F5 rows, scorer v2): F2 2/4, F3 3/6, F4 2/2, MH 0/0.
+F4's repair-error entries did not prevent final correct answers; they are still
+superseded per request. Nine source qids are marked superseded in a new sidecar;
+source prediction and attempt files are not edited. Ten clean new answers,
+including six F5, are preserved; the ordered resume runs 83 questions and carries
+29 v1 answers. Estimate/upper: 2/3 fresh calls, 4,704/7,056 tokens with 50% margin.
+
+Final quota reconciliation uses exact-purpose reported input+output usage: nine
+unknown native turns at 2,309 plus three repairs at 2,629 = 28,668 reserve.
+90,171 reported +28,668 =118,839 accounted; 61,161 remains under 180K for Pacific
+2026-11-22 (early Nov 23 Winnipeg). No 7,200 default failed-call reservation.
+The per-request 7,200 gate, daily ceiling and 25-call invocation cap are retained.
+
+Exported actual blind 60-item F5 packet, public comments only, stable UUIDs and a
+separate mode-0600 key. Import validates complete coverage and one judge/packet,
+preserves exact prediction fingerprints and updates catalog text only when the
+owner supplies a real judge name. Both backfills accept the same complete file;
+dashboard judge/batch separation is fixture-tested. No external judgments exist
+yet. See docs/mlops/B7E_RESUME.md for commands and limits.
+
+Validation: 419 tests passed across bounded offline modules (including 66 targeted
+variant/audit/judge-selector tests); Ruff check/format pass (87 Python files, including the two new packet CLIs).
+Only existing dependency warnings, none from our code. No API/remote MLflow or
+LangSmith calls, commits or pushes. Prior staged files and unrelated PDFs remain
+preserved; generated packets/analysis are ignored and un-staged.

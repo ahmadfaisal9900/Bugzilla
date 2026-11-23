@@ -15,7 +15,7 @@
 | S0–S8 + ORACLE answering systems | Implemented; offline fixture tests pass |
 | Dev answering run | 80-question pilot complete: 720 answer slots across S0–S8; full dev roster not completed |
 | Answer scoring | Automatic scoring complete for the pilot; human review pending |
-| F5/grounding review and locked test | Human review and final comparison pending |
+| F5 grading / locked test | Owner-run LLM reference grading/import pending; locked test unchanged |
 
 ### First 30 minutes for the partner
 
@@ -481,3 +481,12 @@ and the Streamlit dashboard on port 8502. Start with the
 [Stream B handoff](docs/mlops/STREAM_B_HANDOFF.md) for CLI examples, run modes,
 current evidence limits and partner integration; see [CI and dashboard images](docs/mlops/CI.md)
 for local checks, Docker commands and required GitHub checks.
+
+### Stream B integration (B6)
+
+[Current handoff and terminal commands](docs/mlops/STREAM_B_HANDOFF.md) cover
+the separate capped F5 semantic-grading job/import, parity harness, LangSmith
+smoke, champion rollback and published Fast/S1 smoke. See
+[approved dossier amendment 2](docs/mlops/PHASE0_NOTES.md#amendment-2--dossier-evidence-cap-2026-11-22)
+and [verification status](docs/AGENT_NOTES.md). F5-inclusive real scores await
+the owner's judgment job/import; S2 remains champion. No hidden-test claim is made.

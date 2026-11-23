@@ -105,7 +105,9 @@ class RunConfig(BaseModel):
             if self.provider not in (model["provider"], "mock"):
                 errors.append("provider: incompatible with model")
             cap = model["max_context_tokens"]
-            for name in ("context_budget_tokens", "s5_dossier_budget"):
+            # Dossiers are UTF-8 evidence bytes, not the model's token-input cap.
+            # Amendment 2: their own YAML range is authoritative.
+            for name in ("context_budget_tokens",):
                 value = getattr(self, name)
                 if value is not None and value > cap:
                     errors.append(f"{name}: exceeds model cap {cap}")

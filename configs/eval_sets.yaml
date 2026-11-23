@@ -7,10 +7,6 @@ sets:
   - dataset: v3
     qid: v3_3ee2a5551995ab4c712a8a12
   - dataset: v3
-    qid: v3_1ed4fe1a80607e9f3859653e
-  - dataset: v3
-    qid: v3_807e12da0a9e8e5ccff422f7
-  - dataset: v3
     qid: v3_1ad904c2da865346f1cbdade
   smoke-20:
   - dataset: v3
@@ -18,17 +14,11 @@ sets:
   - dataset: v3
     qid: v3_3ee2a5551995ab4c712a8a12
   - dataset: v3
-    qid: v3_1ed4fe1a80607e9f3859653e
-  - dataset: v3
-    qid: v3_807e12da0a9e8e5ccff422f7
-  - dataset: v3
     qid: v3_1ad904c2da865346f1cbdade
   - dataset: phase05
     qid: q_103fc1febfb8153ed3d2
   - dataset: natural
     qid: natural_80391e86d039bd16cba1
-  - dataset: v3
-    qid: v3_17a6ecb8cba1a0ba952899f8
   - dataset: phase05
     qid: q_9b4f4c54225ff920a46a
   - dataset: v3
@@ -36,17 +26,11 @@ sets:
   - dataset: v3
     qid: v3_1805f8230f749ac18c96ba9f
   - dataset: v3
-    qid: v3_faa25690da3bc35ad5e794d3
-  - dataset: v3
-    qid: v3_14e10a05cabaeb2f24dad984
-  - dataset: v3
     qid: v3_95174ed43f1de3060de2772f
   - dataset: phase05
     qid: q_0f02c856b8576c53962d
   - dataset: v3
     qid: v3_3091c4b99dd8dd44eaa73ce7
-  - dataset: v3
-    qid: v3_0e028998f497de601074ee28
   - dataset: phase05
     qid: q_09b006748d0b8d182253
   - dataset: v3
@@ -54,20 +38,10 @@ sets:
   - dataset: v3
     qid: v3_a376de6654a3ee0175177998
   family-F1:
-  - dataset: v3
-    qid: v3_17a6ecb8cba1a0ba952899f8
-  - dataset: v3
-    qid: v3_0e028998f497de601074ee28
   - dataset: natural
     qid: natural_adcaaaac1df677ec21b0
   - dataset: phase05
     qid: q_3cce2a85bc1ec8aa483e
-  - dataset: v3
-    qid: v3_2983c6c29aab97f57c815c37
-  - dataset: v3
-    qid: v3_6231024161ceec9a2c26f90d
-  - dataset: v3
-    qid: v3_1c44effa45e16f9708bd9598
   - dataset: natural
     qid: natural_e0c8ba26412ad10d55ec
   - dataset: v3
@@ -78,20 +52,8 @@ sets:
     qid: natural_78ac30960aeba120ec11
   - dataset: phase05
     qid: q_4486ec2813041522a208
-  - dataset: v3
-    qid: v3_5a30d66355d65c9d31ff609f
-  - dataset: v3
-    qid: v3_f8a19fe812e3e953d3594228
   - dataset: natural
     qid: natural_17c17eb13a9fa4d2a6b4
-  - dataset: v3
-    qid: v3_0d2732873d94f21ebfae010b
-  - dataset: v3
-    qid: v3_7458216106b0977979e2e256
-  - dataset: v3
-    qid: v3_60d5e76d6b3541d1f6b0a3d9
-  - dataset: v3
-    qid: v3_c6254fa0b2c7efcfc9ef57f7
   - dataset: v3
     qid: v3_52b6e67cdb9dc08a25c9a190
   family-F2:
@@ -112,44 +74,18 @@ sets:
   - dataset: phase05
     qid: q_51d0dfe177d6f2885f66
   family-F3:
-  - dataset: v3
-    qid: v3_807e12da0a9e8e5ccff422f7
-  - dataset: v3
-    qid: v3_14e10a05cabaeb2f24dad984
-  - dataset: v3
-    qid: v3_96ed2fcdd56d74b3c8c1504f
   - dataset: natural
     qid: natural_1ff9db21c37498214734
   - dataset: natural
     qid: natural_14dea18947f819a165f2
-  - dataset: v3
-    qid: v3_ffb58b9a90a1c733c445cf63
-  - dataset: v3
-    qid: v3_1464037f83f0107e7bb4bbe1
   - dataset: phase05
     qid: q_6815339a29fca2b0a6a7
   - dataset: v3
-    qid: v3_158bc7909068c9730a03c097
-  - dataset: v3
-    qid: v3_32a15a37c79becf4fcfa7085
-  - dataset: v3
     qid: v3_349a7be783a29922f2e565f3
-  - dataset: v3
-    qid: v3_f9ee96d7d02708910415c0ba
-  - dataset: v3
-    qid: v3_649b4d1717073c7cbda80493
-  - dataset: v3
-    qid: v3_86bbebd87c7c016cc620f234
-  - dataset: v3
-    qid: v3_50923af12c80b394340e50d1
   - dataset: v3
     qid: v3_1acdb71503eeef5ca39e9eca
   - dataset: v3
     qid: v3_d059f1ffae471630adb6add9
-  - dataset: v3
-    qid: v3_15743dbe0fb29c1baf21750c
-  - dataset: v3
-    qid: v3_c36492dbaa5f030f08f4cc23
   - dataset: v3
     qid: v3_b19a8f4f427d4a3e9216c456
   family-F4:
@@ -158,21 +94,9 @@ sets:
   - dataset: v3
     qid: v3_3091c4b99dd8dd44eaa73ce7
   - dataset: v3
-    qid: v3_6f2b504a4755faf5ebde9925
-  - dataset: v3
     qid: v3_abe23011fb8dab08d9f93ae0
-  - dataset: v3
-    qid: v3_2cfcc21c1154ac53c1bbb775
-  - dataset: v3
-    qid: v3_8f7acd8043484a550118d2d3
-  - dataset: v3
-    qid: v3_5c39b11b1283fbfd3929f6f4
-  - dataset: v3
-    qid: v3_cee6bafa44b442294c93536a
   - dataset: natural
     qid: natural_93f22f3036a4f50820c3
-  - dataset: v3
-    qid: v3_e68c4f81a9e971aaf68d9fa0
   - dataset: natural
     qid: natural_2bd85ab1e0fd4584655e
   - dataset: natural
@@ -181,18 +105,10 @@ sets:
     qid: natural_7526ae258e9488275a1f
   - dataset: natural
     qid: natural_e2a5aa67f8deb240a1bd
-  - dataset: v3
-    qid: v3_65371610041742125436bcaf
   - dataset: natural
     qid: natural_6429f4c9251f429765c0
-  - dataset: v3
-    qid: v3_37021ad71cb9586c33fa98a7
   - dataset: natural
     qid: natural_d443f23fd0a34f855eb3
-  - dataset: v3
-    qid: v3_c315632c627ea11d5edabce0
-  - dataset: v3
-    qid: v3_4fda206b835d660cdfe5c6b0
   family-F5:
   - dataset: phase05
     qid: q_103fc1febfb8153ed3d2
@@ -207,30 +123,14 @@ sets:
   - dataset: phase05
     qid: q_df73d0a04940f296b92e
   family-F6:
-  - dataset: v3
-    qid: v3_1ed4fe1a80607e9f3859653e
-  - dataset: v3
-    qid: v3_faa25690da3bc35ad5e794d3
   - dataset: phase05
     qid: q_e39e28aa7f034f2ef4f4
   - dataset: v3
-    qid: v3_52921810932bdcd4d5a7a894
-  - dataset: v3
     qid: v3_73ccd43a591e77176f330137
-  - dataset: v3
-    qid: v3_632bf77e91cae529b20d591c
   - dataset: phase05
     qid: q_faccb3ba563ab7ca68c7
-  - dataset: v3
-    qid: v3_3b648b2c66d25664c1513da4
   - dataset: phase05
     qid: q_9940488831c9bb81264a
-  - dataset: v3
-    qid: v3_42519628d1e37b56ea35977d
-  - dataset: v3
-    qid: v3_08df4bf4b9655f70a8ccec18
-  - dataset: v3
-    qid: v3_60f2009a7e6aebfe679ef6cd
   - dataset: phase05
     qid: q_27791f312c9c478bfaed
   - dataset: phase05
@@ -240,13 +140,7 @@ sets:
   - dataset: v3
     qid: v3_e065da9c816e0fb6bbc52e80
   - dataset: v3
-    qid: v3_09613a08038f2282a43e6147
-  - dataset: v3
-    qid: v3_6da23f5ad979b4db93f8c0f4
-  - dataset: v3
     qid: v3_c11305bda7d7e3bc874efa48
-  - dataset: v3
-    qid: v3_7f033c324ddb57fcf1bd27c7
   family-F6H:
   - dataset: v3
     qid: v3_1ad904c2da865346f1cbdade
@@ -328,3 +222,322 @@ sets:
     qid: v3_13b1d27d94419f10879fac40
   - dataset: v3
     qid: v3_d611c18bc36b31969ea0a740
+  fix-pilot-tools:
+  - dataset: phase05
+    qid: q_09b006748d0b8d182253
+  - dataset: phase05
+    qid: q_0f02c856b8576c53962d
+  - dataset: phase05
+    qid: q_103fc1febfb8153ed3d2
+  - dataset: phase05
+    qid: q_25ca7696bb093bcc4eb6
+  - dataset: phase05
+    qid: q_639f25ec01824d49c28e
+  - dataset: phase05
+    qid: q_6815339a29fca2b0a6a7
+  - dataset: phase05
+    qid: q_686021bf3ab450fd2ec2
+  - dataset: phase05
+    qid: q_75254f1c7965693227cc
+  - dataset: phase05
+    qid: q_7e52cb5dac94d7614825
+  - dataset: phase05
+    qid: q_953d6724ed6e3e4748b9
+  - dataset: phase05
+    qid: q_a5c70180da726d9445de
+  - dataset: phase05
+    qid: q_cac169e33cd8b5d5b59c
+  - dataset: phase05
+    qid: q_df73d0a04940f296b92e
+  - dataset: v3
+    qid: v3_017a541299b56a0852e0a661
+  - dataset: v3
+    qid: v3_051f88995fc706e2e61a0018
+  - dataset: v3
+    qid: v3_0b91748d0094c32d222d04bd
+  - dataset: v3
+    qid: v3_13b1d27d94419f10879fac40
+  - dataset: v3
+    qid: v3_3691a70c89c351876dfe3efe
+  - dataset: v3
+    qid: v3_3757e7e43f8cd08f013c500c
+  - dataset: v3
+    qid: v3_d611c18bc36b31969ea0a740
+  - dataset: v3
+    qid: v3_eea2bf2c636e3ba691cbe015
+  pilot122-v2:
+  - dataset: phase05
+    qid: q_09b006748d0b8d182253
+  - dataset: phase05
+    qid: q_0cf05d22d7593912855a
+  - dataset: phase05
+    qid: q_0f02c856b8576c53962d
+  - dataset: phase05
+    qid: q_103fc1febfb8153ed3d2
+  - dataset: phase05
+    qid: q_25ca7696bb093bcc4eb6
+  - dataset: phase05
+    qid: q_27791f312c9c478bfaed
+  - dataset: phase05
+    qid: q_2eca34f4e9431df809b7
+  - dataset: phase05
+    qid: q_3cce2a85bc1ec8aa483e
+  - dataset: phase05
+    qid: q_4486ec2813041522a208
+  - dataset: phase05
+    qid: q_44ad225a6d43e12c108c
+  - dataset: phase05
+    qid: q_51d0dfe177d6f2885f66
+  - dataset: phase05
+    qid: q_5fc01675039dff53011c
+  - dataset: phase05
+    qid: q_639f25ec01824d49c28e
+  - dataset: phase05
+    qid: q_6815339a29fca2b0a6a7
+  - dataset: phase05
+    qid: q_686021bf3ab450fd2ec2
+  - dataset: phase05
+    qid: q_75254f1c7965693227cc
+  - dataset: phase05
+    qid: q_7e52cb5dac94d7614825
+  - dataset: phase05
+    qid: q_8635c48a2ee113d4c738
+  - dataset: phase05
+    qid: q_878bcc2579afe2d4b68f
+  - dataset: phase05
+    qid: q_953d6724ed6e3e4748b9
+  - dataset: phase05
+    qid: q_9940488831c9bb81264a
+  - dataset: phase05
+    qid: q_9b4f4c54225ff920a46a
+  - dataset: phase05
+    qid: q_a5c70180da726d9445de
+  - dataset: phase05
+    qid: q_adb067b9b97eebe455d1
+  - dataset: phase05
+    qid: q_b770c26229f85c947dbc
+  - dataset: phase05
+    qid: q_c839d38a0b56104c4de0
+  - dataset: phase05
+    qid: q_cac169e33cd8b5d5b59c
+  - dataset: phase05
+    qid: q_df73d0a04940f296b92e
+  - dataset: phase05
+    qid: q_e39e28aa7f034f2ef4f4
+  - dataset: phase05
+    qid: q_ea991d340566fc903e31
+  - dataset: phase05
+    qid: q_ecc7daafbbc3bc92ca64
+  - dataset: phase05
+    qid: q_f821d5a7d2148d961471
+  - dataset: phase05
+    qid: q_faccb3ba563ab7ca68c7
+  - dataset: phase05
+    qid: q_fd926740120468f215ef
+  - dataset: natural
+    qid: natural_14dea18947f819a165f2
+  - dataset: natural
+    qid: natural_1684d765b0495e493817
+  - dataset: natural
+    qid: natural_17c17eb13a9fa4d2a6b4
+  - dataset: natural
+    qid: natural_1ff9db21c37498214734
+  - dataset: natural
+    qid: natural_23fd50faa7fcb65e8180
+  - dataset: natural
+    qid: natural_45e9307006cfa002436c
+  - dataset: natural
+    qid: natural_64f5bc5dd888c2759fc8
+  - dataset: natural
+    qid: natural_7526ae258e9488275a1f
+  - dataset: natural
+    qid: natural_78ac30960aeba120ec11
+  - dataset: natural
+    qid: natural_7b48530f87e7d332df6e
+  - dataset: natural
+    qid: natural_90a3fe83a93721a2e2c9
+  - dataset: natural
+    qid: natural_93f22f3036a4f50820c3
+  - dataset: natural
+    qid: natural_a2bcc0c362e1feb00c3b
+  - dataset: natural
+    qid: natural_a2c95b9f68ea01c1c3b8
+  - dataset: natural
+    qid: natural_adcaaaac1df677ec21b0
+  - dataset: natural
+    qid: natural_c95c78bed9162eeb6c23
+  - dataset: natural
+    qid: natural_d13b1b77b018f58c7171
+  - dataset: natural
+    qid: natural_d73d4296a1ac26490fdb
+  - dataset: natural
+    qid: natural_dcb5cb325c23f50bd387
+  - dataset: natural
+    qid: natural_e55ee6422fa26a42ed73
+  - dataset: v3
+    qid: v3_0104248abe17554a341d3f67
+  - dataset: v3
+    qid: v3_011ebf3cf89ca55a816f1149
+  - dataset: v3
+    qid: v3_017a541299b56a0852e0a661
+  - dataset: v3
+    qid: v3_024301342c9615e171c99c3e
+  - dataset: v3
+    qid: v3_051f88995fc706e2e61a0018
+  - dataset: v3
+    qid: v3_0653baf5b6c1b9705b622611
+  - dataset: v3
+    qid: v3_09613a08038f2282a43e6147
+  - dataset: v3
+    qid: v3_0b91748d0094c32d222d04bd
+  - dataset: v3
+    qid: v3_0ccf01bbd6311acb2f919017
+  - dataset: v3
+    qid: v3_0e028998f497de601074ee28
+  - dataset: v3
+    qid: v3_0f94357d810c2641525ab6e3
+  - dataset: v3
+    qid: v3_136eca8ea14b0cc14f932df9
+  - dataset: v3
+    qid: v3_13b1d27d94419f10879fac40
+  - dataset: v3
+    qid: v3_16911b9ae12cae02c201d505
+  - dataset: v3
+    qid: v3_1ad904c2da865346f1cbdade
+  - dataset: v3
+    qid: v3_1b3ff16f909ac2e93a8c7422
+  - dataset: v3
+    qid: v3_23e46c6baa915b5d46451ced
+  - dataset: v3
+    qid: v3_24c291ff9ec21897dcdd78a8
+  - dataset: v3
+    qid: v3_281e56a72d58a775f9a1e3b6
+  - dataset: v3
+    qid: v3_2c77e957ad5cc1585e0b0e33
+  - dataset: v3
+    qid: v3_315be90cc9884d93d950e584
+  - dataset: v3
+    qid: v3_35b1c4d1c88f4bc12bb67151
+  - dataset: v3
+    qid: v3_3691a70c89c351876dfe3efe
+  - dataset: v3
+    qid: v3_37021ad71cb9586c33fa98a7
+  - dataset: v3
+    qid: v3_3757e7e43f8cd08f013c500c
+  - dataset: v3
+    qid: v3_4236ca0257a99af1bb359b5c
+  - dataset: v3
+    qid: v3_482cedebbfb07b797056c24f
+  - dataset: v3
+    qid: v3_4eb9d0e24fe41de3a6031844
+  - dataset: v3
+    qid: v3_4fda206b835d660cdfe5c6b0
+  - dataset: v3
+    qid: v3_553e4bce382f3aa2f9a89485
+  - dataset: v3
+    qid: v3_5c557111d7384a2c6de8f6b0
+  - dataset: v3
+    qid: v3_646f091178401b26dfbcb9f7
+  - dataset: v3
+    qid: v3_67ed021f4c7ef19a6e48c858
+  - dataset: v3
+    qid: v3_70823e5a01217ee34baa83df
+  - dataset: v3
+    qid: v3_723375c40ddf63cdc87e31f5
+  - dataset: v3
+    qid: v3_76c9dc08b0fada21f06697e3
+  - dataset: v3
+    qid: v3_79bb45ec3449635fdd8aae57
+  - dataset: v3
+    qid: v3_876ab493ff66e744fa43c09e
+  - dataset: v3
+    qid: v3_891fb323c13f3cd89c2d67ae
+  - dataset: v3
+    qid: v3_894929c5879358ee5df05d1a
+  - dataset: v3
+    qid: v3_8e6b14886df3fc053c301bb4
+  - dataset: v3
+    qid: v3_9105524617d84554e0ebbb8e
+  - dataset: v3
+    qid: v3_95174ed43f1de3060de2772f
+  - dataset: v3
+    qid: v3_96c760cadadeb0dbc5677ea0
+  - dataset: v3
+    qid: v3_9c969dadf9ea9e4b26d4b8cd
+  - dataset: v3
+    qid: v3_a376de6654a3ee0175177998
+  - dataset: v3
+    qid: v3_a3ddb4fb49d64113ec030b47
+  - dataset: v3
+    qid: v3_a5c93955826f47eef74e2a80
+  - dataset: v3
+    qid: v3_b2bc89e6f3d9680ca77268c1
+  - dataset: v3
+    qid: v3_b4d42aa0b5f18e1e0aa257c3
+  - dataset: v3
+    qid: v3_b72e73192e9037d14e4b0b6a
+  - dataset: v3
+    qid: v3_bae1b77c28a3d1956bcec8af
+  - dataset: v3
+    qid: v3_bb5fff7e16d6b379f9ddade7
+  - dataset: v3
+    qid: v3_bd18af5d52fe6e06292e5c4e
+  - dataset: v3
+    qid: v3_c11305bda7d7e3bc874efa48
+  - dataset: v3
+    qid: v3_c19818af0bbc18295ee3377e
+  - dataset: v3
+    qid: v3_c315632c627ea11d5edabce0
+  - dataset: v3
+    qid: v3_c405fd55813cd6dfaf9f9b72
+  - dataset: v3
+    qid: v3_c6fd38e2bb827ead5273e5db
+  - dataset: v3
+    qid: v3_d20db75cbfb4f45155d3c87d
+  - dataset: v3
+    qid: v3_d2ac1393d67741df1eaf2286
+  - dataset: v3
+    qid: v3_d58921a62453b0f37938a6df
+  - dataset: v3
+    qid: v3_d611c18bc36b31969ea0a740
+  - dataset: v3
+    qid: v3_ddd76440f9c9d1962a9f297b
+  - dataset: v3
+    qid: v3_e2b33bc52b1ad989c1470d3d
+  - dataset: v3
+    qid: v3_ee695ae6afe43c3b7e33a92c
+  - dataset: v3
+    qid: v3_eea2bf2c636e3ba691cbe015
+  - dataset: v3
+    qid: v3_faa25690da3bc35ad5e794d3
+  fix-holdout:
+  - dataset: v3
+    qid: v3_349a7be783a29922f2e565f3
+  - dataset: v3
+    qid: v3_b19a8f4f427d4a3e9216c456
+  - dataset: v3
+    qid: v3_41844257229be5a5c0a265cb
+  - dataset: v3
+    qid: v3_ccde1afd4fc822e1f98e37ec
+  - dataset: v3
+    qid: v3_06d7f7ecf650b3655633c03d
+  - dataset: v3
+    qid: v3_26a15401b93bec7b13574368
+  - dataset: v3
+    qid: v3_30bbeccb58dba5afd4ea7b57
+  - dataset: v3
+    qid: v3_00cbe05dd7ee8c4dd143525e
+  - dataset: v3
+    qid: v3_1faba5b2f63558a7cea269a6
+  - dataset: v3
+    qid: v3_1acdb71503eeef5ca39e9eca
+  - dataset: v3
+    qid: v3_d059f1ffae471630adb6add9
+  - dataset: v3
+    qid: v3_75d55672cd10d0b374bc3833
+  - dataset: v3
+    qid: v3_a3d7dd71ac8eadd46a7a66d4
+  - dataset: v3
+    qid: v3_3fec60ba22b8d220001831fd
+  - dataset: v3
+    qid: v3_11a4108303269d07a061509b

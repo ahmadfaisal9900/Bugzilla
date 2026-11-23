@@ -57,14 +57,42 @@ def records(experiments=EXPERIMENTS):
         if snapshot.error:
             st.warning(snapshot.error)
         result.extend(snapshot.value)
+    answers = [r for r in result if r.experiment == "research-answer-eval"]
+    if answers:
+        versions = sorted({r.tags.get("scorer_version", "1") for r in answers}, reverse=True)
+        version = st.sidebar.selectbox("Scorer version", versions, index=0, key="scorer_version")
+        result = [
+            r
+            for r in result
+            if r.experiment != "research-answer-eval"
+            or r.tags.get("scorer_version", "1") == version
+        ]
+    external = [
+        r
+        for r in result
+        if r.experiment == "research-answer-eval" and r.tags.get("f5_packet_sha256")
+    ]
+    if external:
+        judges = sorted({r.tags["f5_judge"] for r in external})
+        judge = st.sidebar.selectbox("F5 judge", judges, key="f5_judge")
+        batch = max(
+            (r for r in external if r.tags["f5_judge"] == judge), key=lambda r: r.started
+        ).tags["f5_packet_sha256"]
+        result = [
+            r
+            for r in result
+            if r.experiment != "research-answer-eval"
+            or (r.tags.get("f5_judge") == judge and r.tags.get("f5_packet_sha256") == batch)
+        ]
     st.session_state["_run_labels"] = L.run_labels(result)
     return result
 
 
 def name(run):
-    label = st.session_state.get("_run_labels", {}).get(
-        run.id, L.name("systems", run.params.get("system_id", "?"))
-    )
+    variant = run.tags.get("system_id", "")
+    if variant in ("S7v2", "S8v2"):
+        return L.name("systems", variant)
+    label = st.session_state.get("_run_labels", {}).get(run.id, L.name("systems", L.system_id(run)))
     if st.session_state.get("technical_ids", False):
         label += " · " + " / ".join(
             run.params.get(k, "?") for k in ("system_id", "retriever", "corpus")
@@ -111,13 +139,14 @@ def answer_table(values):
     presets = mf.presets(mf.uri()).value
     starred = {p["config"]["system_id"] for p in presets if p["slug"] in ("recommended", "fast")}
     for run in values:
-        if run.params.get("system_id") == "ORACLE":
+        if L.system_id(run) == "ORACLE":
             continue
         families = rows_for(run)
         row = {
-            "System": ("★ " if run.params.get("system_id") in starred else "") + name(run),
-            "Description": L.short("systems", run.params.get("system_id", "?")),
-            "Overall score": run.metrics.get("answer.macro"),
+            "System": ("★ " if L.system_id(run) in starred else "") + name(run),
+            "Description": L.short("systems", L.system_id(run)),
+            "Overall": run.metrics.get("answer.macro"),
+            "Overall without Reasons": run.metrics.get("answer.macro_excl_F5"),
         }
         for family in FAMILIES:
             cell = family_cell(run.metrics, family, tags=run.tags, family_rows=families)
@@ -125,7 +154,7 @@ def answer_table(values):
         result.append(row)
     return sorted(
         result,
-        key=lambda r: r["Overall score"] if r["Overall score"] is not None else -1,
+        key=lambda r: r["Overall"] if r["Overall"] is not None else -1,
         reverse=True,
     )
 
@@ -162,6 +191,11 @@ def overview():
     champion = mf.champion(mf.uri())
     presets = mf.presets(mf.uri()).value
     values = filtered(records(("research-answer-eval", "playground")))
+    if any(r.tags.get("evaluation") == "composite_changed_routes" for r in values):
+        st.caption(
+            "S8v2 composite evaluation carries S8 v1 answers outside its rerun scope. "
+            "Priority scope defers ordinary tool routes; see scope and carried_forward tags."
+        )
     latest = mf.latest_per_config(values)
     columns = st.columns(5)
     for column, slug, title in zip(
@@ -169,27 +203,41 @@ def overview():
     ):
         preset = next((p for p in presets if p["slug"] == slug), None)
         system = preset["config"]["system_id"] if preset else None
-        source = next((r for r in latest if r.params.get("system_id") == system), None)
+        source = next((r for r in latest if L.system_id(r) == system), None)
         column.metric(
             title,
             L.name("systems", system) if system else "Not published",
             L.fmt_score(source.metrics.get("answer.macro")) if source else None,
         )
-    scored = [
-        r for r in latest if "answer.macro" in r.metrics and r.params.get("system_id") != "ORACLE"
-    ]
+    scored = [r for r in latest if "answer.macro" in r.metrics and L.system_id(r) != "ORACLE"]
     best = max(scored, key=lambda r: r.metrics["answer.macro"], default=None)
     columns[2].metric(
         "Best overall in research",
         name(best) if best else "Not available",
         L.fmt_score(best.metrics["answer.macro"]) if best else None,
     )
-    override = (champion.value or {}).get("tags", {}).get("policy_override")
-    if best and (override or best.tags.get("policy_override")):
-        columns[2].caption("not deployable: exceeds the 4,096-token serving limit")
+    if best:
+        try:
+            import json
+
+            values = {
+                k: json.loads(v) if isinstance(v, str) and v in ("null", "true", "false") else v
+                for k, v in best.params.items()
+                if k in RunConfig.model_fields
+            }
+            for k, v in list(values.items()):
+                if isinstance(v, str):
+                    try:
+                        values[k] = json.loads(v)
+                    except ValueError:
+                        pass
+            RunConfig(**values).validate_against()
+            columns[2].caption("Passes current serving configuration validation")
+        except ValueError:
+            columns[2].caption("Fails current serving configuration validation")
     columns[3].metric(
         "Systems evaluated",
-        len({r.params.get("system_id") for r in latest if r.params.get("system_id") != "ORACLE"}),
+        len({L.system_id(r) for r in latest if L.system_id(r) != "ORACLE"}),
     )
     pilot = [r for r in latest if r.tags.get("eval_set") == "pilot125"]
     counts = [sum(int(f.get("source_n") or f.get("n") or 0) for f in rows_for(r)) for r in pilot]
@@ -206,10 +254,16 @@ def overview():
                 help="★ marks a published Recommended or Fast system."
             ),
             "Description": st.column_config.TextColumn(help="How the answering system works."),
-            "Overall score": st.column_config.ProgressColumn(
+            "Overall": st.column_config.ProgressColumn(
                 min_value=0, max_value=1, format="percent", help=L.short("metrics", "macro")
             ),
         }
+        config["Overall without Reasons"] = st.column_config.ProgressColumn(
+            min_value=0,
+            max_value=1,
+            format="percent",
+            help="Average over families excluding Reasons; comparable to earlier published scores.",
+        )
         for f in FAMILIES:
             config[L.name("families", f)] = st.column_config.NumberColumn(
                 format="percent",
@@ -245,6 +299,14 @@ def answer_eval():
         "Correctness by question family, with recorded sample sizes and uncertainty.",
     )
     values = filtered(records(("research-answer-eval", "playground")))
+    if any(r.tags.get("evaluation") == "composite_changed_routes" for r in values):
+        st.caption(
+            "Composite S8v2 evaluation preserves source answers outside its rerun scope; "
+            "inspect carried and preserved counts in run provenance."
+        )
+    judges = sorted({r.tags["f5_judge"] for r in values if r.tags.get("f5_judge")})
+    if judges:
+        st.caption("F5 judge: " + ", ".join(judges))
     cells = []
     for run in values:
         families = rows_for(run)
@@ -412,7 +474,7 @@ def cost_latency():
                 "Calls without usage data": L.fmt_int(missing_n) + partial,
             }
         )
-        reused = run.tags.get("reused_from") or run.params.get("system_id") == "S3"
+        reused = run.tags.get("reused_from") or L.system_id(run) == "S3"
         row = {"System": name(run)}
         for key, label in [
             ("latency.p50_ms", "Typical time (s)"),
@@ -846,7 +908,7 @@ def compare_runs():
     recommended = next(
         (p["config"]["system_id"] for p in presets if p["slug"] == "recommended"), "S2"
     )
-    index = next((i for i, r in enumerate(values) if r.params.get("system_id") == recommended), 0)
+    index = next((i for i, r in enumerate(values) if L.system_id(r) == recommended), 0)
     baseline = st.selectbox("Baseline", values, index=index, format_func=run_formatter(values))
     others = [r for r in values if r.id != baseline.id]
     matched = [
@@ -994,6 +1056,23 @@ def presets_page():
     if not enabled():
         st.info("Registry controls are hidden in read-only mode.")
         return
+    st.subheader("Champion rollback history")
+    versions = mf._snapshot(mf.uri()).get("versions", [])
+    history = [
+        {
+            "Target version": v["version"],
+            "Previous version": v["tags"].get("rolled_back_from"),
+            "Reason": v["tags"].get("rollback_reason"),
+            "Time (UTC)": v["tags"].get("rolled_back_at"),
+        }
+        for v in versions
+        if v.get("tags", {}).get("rolled_back_at")
+    ]
+    dataframe(history, use_container_width=True)
+    st.caption(
+        "Tags show the latest rollback into each version; "
+        "they are not a complete immutable alias event log."
+    )
     existing = mf.presets(mf.uri())
     st.caption(f"Presets last updated {existing.updated_at}")
     dataframe(
@@ -1078,8 +1157,12 @@ def production():
     if end < start:
         st.warning("End date must be on or after start date.")
         return
+    show_smoke = st.toggle("Show test traces", value=False)
     snapshot = ls.roots(
-        source, f"{start}T00:00:00+00:00", f"{end + dt.timedelta(days=1)}T00:00:00+00:00"
+        source,
+        f"{start}T00:00:00+00:00",
+        f"{end + dt.timedelta(days=1)}T00:00:00+00:00",
+        show_smoke=show_smoke,
     )
     from zoneinfo import ZoneInfo
 

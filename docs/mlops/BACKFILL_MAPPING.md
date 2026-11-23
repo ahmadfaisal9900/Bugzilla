@@ -368,3 +368,49 @@ URI under a shared lock, restoring both the previous global URI and environment
 value on success or failure. Offline regression tests cover both paths. Resume
 reuses existing remote metrics and retries the unfinished artifact on the same ID.
 No remote writes were performed while implementing this fix.
+
+## B7b exclusions and scorer versions — 2026-11-22
+
+`configs/scoring_exclusions.yaml` (`f3_test_scope_v1`) excludes these development-
+labelled aggregates from **every** development scorer/backfill version:
+
+- `v3_32a15a37c79becf4fcfa7085`
+- `v3_3e67864a44bf9484ad5f5a8a`
+- `v3_f0f6f6f8844506e3e480ec86`
+
+Their original scope is expanded-v2's test population. Never compute that
+population; frozen inputs, gold and prediction ledgers stay untouched. The
+pilot scoring roster is now 122 questions; F3 n=12 for every system. Catalog
+selection also refuses other test-scoped aggregates. Historical audit rows are
+retained as diagnostic evidence, not development scores.
+
+Scorer v2 wraps the frozen scorer: finite numeric singleton lists are unwrapped
+only for scalar numeric gold; numeric strings with an explicit unit matching
+the question are parsed. Existing one-hour/exact-count tolerances and abstention
+rules remain. The one-day amendment adds rule (d): explicit question wording
+"in hours" or "how many calendar hours" supplies hours for bare numeric scalars
+and singletons. No question unit stays ambiguous; days-labelled answers are never
+converted for an hours question. Twenty-seven pilot rows change: fourteen F3/MH
+singleton fixes plus thirteen F2 fixes (S2 +1, S3 +1, S5 +1, S7 +5, S8 +5).
+Frozen F5 references match all six grading
+strings exactly; they are human-reviewed benchmark references, with LLM judgments.
+
+`--scorer-version 2` creates a separate tracking identity (source, config_hash,
+eval_set, scorer_version, system variant). Old runs remain, retagged
+`superseded_by` only after the new run uploads successfully. No live write was
+performed by the agent. Use the v1 command first to apply the required exclusions
+to the old runs without changing their IDs, then import v2. Both versions log
+answer.macro and answer.macro_excl_F5. Dashboard Scorer version defaults to the
+highest available version; v1 remains selectable. No promotion policy changes.
+
+
+### B7e external F5 judgments
+
+Use one complete 60-candidate blind packet: 54 original answers plus six preserved
+S8v2 answers. Import validates all items, stable binding fingerprints, packet/key
+checksums and a single judge. The combined verdict file is accepted by original
+and variant backfills only after full-packet validation; no partial or mixed
+judge source is permitted. Preserved F5 answers retain their source config hash
+for grading fingerprints while the new run gets a separate identity. MLflow tags
+name f5_judge and f5_packet_sha256; display catalog wording is updated only when
+an actual judge name is supplied by validated import. See B7E_RESUME.md.

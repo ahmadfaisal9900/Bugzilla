@@ -37,7 +37,7 @@ def test_config_and_golden_hashes(fixture_bundle):
     ({"top_k": 0}, "top_k"),
     ({"context_budget_tokens": 4097}, "context_budget_tokens"),
     ({"system_id": "S1", "s4_tau": 0.0}, "s4_tau"),
-    ({"system_id": "S5", "s5_dossier_budget": 4097}, "s5_dossier_budget"),
+    ({"system_id": "S5", "s5_dossier_budget": 12001}, "s5_dossier_budget"),
     ({"system_id": "S1", "rrf_k": 5}, "rrf_k"),
     ({"system_id": "R0", "retriever": "R7b"}, "retriever"),
     ({"system_id": "S3", "query_transform": "R7a", "retriever": "R7b"}, "query_transform"),

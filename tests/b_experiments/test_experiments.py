@@ -323,8 +323,8 @@ def test_runtime_tpm_guard_zero_http():
 
     provider = Provider()
     paced = runner.PacedProvider(provider, 8000, 2048)
-    with pytest.raises(RuntimeError, match="TPM"):
-        paced.generate_json("x" * 8000, {})
+    with pytest.raises(ValueError, match="TPM"):
+        paced.generate_json("x" * 24000, {})
     assert provider.calls == 0
 
 

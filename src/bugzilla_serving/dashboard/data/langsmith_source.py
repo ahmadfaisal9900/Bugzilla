@@ -97,6 +97,7 @@ def _fetch_roots(source: str, start: str, end: str) -> Snapshot[list[dict]]:
             result.append(
                 dict(
                     id=r["id"],
+                    smoke=str(r["metadata"].get("smoke", False)).lower() == "true",
                     started_at=r["start_time"],
                     day=stamp(r["start_time"]).date().isoformat(),
                     preset_slug=r["metadata"]["preset_slug"],
@@ -171,12 +172,20 @@ def _production(source):
     return snap
 
 
-def roots(source, start, end):
+def roots(source, start, end, show_smoke=False):
     if source == "fixture":
-        return _fixture(source, start, end)
+        snap = _fixture(source, start, end)
+        return Snapshot(
+            [r for r in snap.value if show_smoke or not r.get("smoke")], snap.updated_at, snap.error
+        )
     snap = _production(source)
     return Snapshot(
-        [r for r in snap.value if stamp(start) <= stamp(r["started_at"]) < stamp(end)],
+        [
+            r
+            for r in snap.value
+            if stamp(start) <= stamp(r["started_at"]) < stamp(end)
+            and (show_smoke or not r.get("smoke"))
+        ],
         snap.updated_at,
         snap.error,
     )

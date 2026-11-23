@@ -193,3 +193,39 @@ At ahmadfaisal9900's explicit request, `cost.usage_missing_n` and
 `cost.llm_calls_per_question` are allowed metrics. Cached token totals remain
 artifact columns, preserving the existing cached-token metric contract. Serving
 configuration and API contracts are unchanged.
+
+## Amendment 2 — dossier evidence cap (2026-11-22)
+
+Approved by both collaborators in the B6 instruction. The former 4,096 dossier
+maximum was a conservative Phase 0 placeholder, not a Groq quota limit. Raise
+only s5_dossier_budget.max to 12,000; retain its 4,096 default, the separate
+context_budget_tokens maximum, model operational cap, tool-step and other caps.
+The label/help explicitly identify UTF-8 evidence bytes. The RunConfig validator
+uses this knob's own byte range rather than comparing it to a token-input cap.
+Its fields, hash serialization and OpenAPI schema remain unchanged.
+
+Evidence from the accepted pilot: S5 reports 235,702 input tokens / 127 calls =
+1,855.9 input tokens per call, with a 12,000-byte dossier budget, on the same
+8,000 TPM / 200,000 TPD / 30 RPM / 1,000 RPD free tier. This is an observed
+mean, not a maximum or proof every future request fits.
+
+Engine resolution is unchanged: it loads runtime.json, then updates
+dossier_tokens from cfg.s5_dossier_budget when provided; otherwise it uses the
+serving.yaml default. Thus explicit 12,000 overrides bundle runtime 4,096. A
+4,096-era config remains valid. Input estimates use complete historical system
+usage when available, otherwise UTF-8 bytes/3. The send-time gate estimates the
+whole request, including schema/tools and system instructions; it trims only
+evidence when needed, or rejects fixed overhead that cannot fit. Estimated
+input + maximum output (2,048) must fit 90% of TPM (7,200). One pacing instance
+covers router, rewriting, tools and answers across a job. Daily quota guard and
+explicit request caps remain active. The bytes/3 fallback is an estimate, not
+a tokenizer or an architectural model-context measurement.
+
+B6 additionally approves the explicit answer.macro_excl_F5 tracking metric,
+bounded to [0,1], to preserve comparisons to pre-F5 scores. LLM-reference
+semantic grades are imported only from a complete fingerprint-bound verdict
+ledger; no research scorer or review file is changed.
+
+Integration: API options/config validation must read the same dossier cap and
+unit from serving.yaml. Its provider path must enforce the same request gate;
+Stream B's pacing adapter alone does not alter the unmerged Stream A API.

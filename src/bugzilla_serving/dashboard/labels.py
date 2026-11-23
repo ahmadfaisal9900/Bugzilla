@@ -57,11 +57,15 @@ def fmt_int(value):
     return f"{value:,.0f}" if isinstance(value, (float, int)) else "Not available"
 
 
+def system_id(run):
+    return run.tags.get("system_id", run.params.get("system_id", "?"))
+
+
 def run_labels(runs):
     """Smallest field that distinguishes the whole visible same-system group."""
     result = {}
-    for system in dict.fromkeys(r.params.get("system_id", "?") for r in runs):
-        group = [r for r in runs if r.params.get("system_id", "?") == system]
+    for system in dict.fromkeys(system_id(r) for r in runs):
+        group = [r for r in runs if system_id(r) == system]
         base = name("systems", system)
         suffixes = [""] * len(group)
         if len(group) > 1:

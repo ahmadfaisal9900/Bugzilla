@@ -151,14 +151,14 @@ hyperparameters:
   s5_dossier_budget:
     type: integer
     default: 4096
-    label: Deep-read budget
-    help: Evidence-byte bound for all public records of selected bugs.
+    label: Evidence size (bytes)
+    help: Evidence size, UTF-8 bytes; all public records of selected bugs.
     applies_to:
     - S5
     - S8
     advanced: true
     min: 128
-    max: 4096
+    max: 12000
   s7_max_tool_steps:
     type: integer
     default: 4

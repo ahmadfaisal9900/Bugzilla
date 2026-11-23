@@ -127,12 +127,13 @@ def main():
             )
         elif not (args.mock or args.enable_llm):
             items, _ = load_eval_set(args.eval_set, args.limit)
+            plan = estimate(cfg, items, max_requests=args.max_requests)
             result = dict(
                 config=cfg.model_dump(),
                 eval_set=args.eval_set,
-                **estimate(cfg, items),
+                **plan,
                 bundle=bundle_report,
-                fits_request_cap=estimate(cfg, items)["est_calls"] <= args.max_requests,
+                fits_request_cap=plan["est_calls"] <= args.max_requests,
                 max_requests=args.max_requests,
                 actual_api_calls=0,
                 preset_source="registry"

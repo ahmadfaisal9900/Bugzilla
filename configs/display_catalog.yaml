@@ -8,6 +8,8 @@ systems:
   S6: {name: "Linked-bugs search", short: "Also pulls in bugs linked to the ones found", long: "Graph expansion: after searching, it adds bugs connected through blocks / depends-on / duplicate links."}
   S7: {name: "Database tools", short: "Answers with exact database lookups", long: "The model calls structured tools (field lookups, counts, relations) on the bug database. Precise, but the tools need a bug ID."}
   S8: {name: "Auto-router", short: "Picks a strategy per question type", long: "Rule-based router: detects the kind of question and sends it to the system that suits it (e.g. tools for counts, dossier for timelines)."}
+  S7v2: {name: "Database tools v2", short: "Cohort-aware linked bugs and public comment lookup"}
+  S8v2: {name: "Auto-router v2", short: "Routes multi-step questions to v2 tools and pins cited comments"}
   ORACLE: {name: "Oracle (diagnostic only)", short: "Upper bound using the gold evidence — not a real system", long: "Diagnostic only; never shown in leaderboards."}
   R0: {name: "Search-only fallback", short: "Shows matching bugs without an AI answer", long: "Used when the free LLM quota is exhausted: returns the best-matching bug passages, no generated answer."}
 retrievers:
@@ -28,12 +30,13 @@ families:
   F2:  {name: "Lifecycle & timing", short: "Time to fix, reopen counts — from change history", example: "How many calendar hours elapsed before bug 1794818 first reached FIXED?"}
   F3:  {name: "Counting", short: "How many bugs match a condition", example: "How many dev-partition bugs have component Search?"}
   F4:  {name: "Bug relationships", short: "Blocks / depends-on / duplicate links", example: "Which bugs does bug 1854980 depend on?"}
-  F5:  {name: "Reasons (human-graded)", short: "Why something happened, from a cited comment", example: "What reason is stated in the cited comment for bug 1708248?"}
+  F5:  {name: "Reasons (LLM-graded)", short: "Graded by an LLM judge against the human-reviewed reference from the frozen benchmark", example: "What reason is stated in the cited comment for bug 1708248?"}
   F6:  {name: "Unanswerable", short: "The records can't answer it — correct is to decline", example: "How many engineer work hours did bug 1798041 require?"}
   F6H: {name: "Hard unanswerable", short: "Looks answerable but isn't — correct is to decline", example: "What exact export timestamp establishes the archived fields for bug 1707396?"}
   KI:  {name: "Find bug by description", short: "Identify a bug from a description, no ID given", example: "Which bug report describes: Pocket section in German displays English topics?"}
   MH:  {name: "Multi-step", short: "Combine facts across linked bugs", example: "Bug 1771951 depends on which bugs, and which of those are FIXED?"}
 metrics:
+  macro_excl_F5: {name: "Overall without Reasons", short: "Unweighted family average excluding Reasons; comparable to earlier scores."}
   score: {name: "Score", short: "Share of questions answered correctly. For Unanswerable families, correct means the system declined."}
   macro: {name: "Overall score", short: "Average of the family scores, each family counted equally (so small families matter as much as big ones)."}
   n: {name: "Questions", short: "Number of scored questions in this family."}
@@ -48,10 +51,14 @@ metrics:
   latency_p95: {name: "Slow-case time (s)", short: "95th-percentile time per question (1 in 20 questions is slower)."}
   delta: {name: "Difference", short: "Candidate minus baseline, in percentage points (pts)."}
 presets:
+  smart: {name: "Smart search", short: "Published Smart search configuration"}
   deep: {name: "Deep read", short: "Full bug dossier mode"}
   recommended: {name: "Recommended", short: "Best deployable accuracy"}
   fast: {name: "Fast", short: "Fewest model calls, quickest answers"}
 eval_sets:
+  fix-pilot-tools: {name: "Pilot tool diagnosis (21 questions)"}
+  pilot122-v2: {name: "Pilot (122 eligible dev questions)"}
+  fix-holdout: {name: "Fix holdout (15 counting questions)"}
   retrieval-v3-dev: {name: "Dev search benchmark"}
   synthetic-dev-10: {name: "Synthetic check (10 questions)"}
   pilot125: {name: "Pilot (125 dev questions)"}
@@ -63,3 +70,6 @@ dataset_tags:
   v3: {name: "Benchmark v3", short: "Final benchmark incl. find-by-description and multi-step"}
   phase05: {name: "Phase 5 benchmark", short: "Original templated questions"}
   natural: {name: "Natural rewrites", short: "The same questions phrased the way a person would ask"}
+
+knobs:
+  s5_dossier_budget: {name: "Evidence size (bytes)", short: "Evidence size, UTF-8 bytes"}

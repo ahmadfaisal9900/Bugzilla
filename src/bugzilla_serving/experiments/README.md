@@ -18,9 +18,10 @@ Mixed natural rows are byte-filtered to dev before gold parsing (B1 helper).
 
 The loader checks frozen hashes and dev membership. Gold stays in scoring;
 engine calls receive only question text. The partner scorer receives adapted
-AnswerRecords. F5 and ambiguous answers needing human assessment stay NOT_SCORED
-with null per-item score and explicit source/scored/pending n. No fabricated
-human judgments. Missing families have no metric. If the partner cannot handle
+AnswerRecords. The live Lab scorer does not infer semantic explanation grades;
+F5 remains NOT_SCORED there with explicit counts. B6's separate historical F5
+workflow imports complete, fingerprint-bound LLM semantic verdicts against the
+existing references; it does not require human review or invent decisions. Missing families have no metric. If the partner cannot handle
 a gold type or is unavailable, only F1/F3/F4/F6/F6H/KI fallbacks apply; F4 fallback
 is set-F1 (the partner path uses its existing scoring semantics). Family scorer
 tags distinguish these. The adapter conservatively treats nonempty engine errors
@@ -38,15 +39,17 @@ headers/dashboard remain authoritative. Per-system estimates include one answer
 repair, query transforms, tool turns/searches, and optional router repair. They
 are conservative logical-call estimates, not guaranteed actual consumption.
 Context budgets in the current graphs are UTF-8 bytes despite knob names;
-planning estimates bytes/4 plus shared prompt/question/schema allowance/output.
+planning uses the system's complete historical input-tokens/calls mean when
+available, otherwise UTF-8 bytes/3 plus shared prompt/question/schema allowance.
+The explicit S1 smoke cap reserves five base calls plus up to three repairs.
 
 One shared provider enforces max_requests for the whole job. Cache is isolated
 by RunConfig hash (including temperature), ledger remains shared. SDK/provider
 HTTP retries are disabled for experiments to avoid retry bursts; failed method
 records are retained and scored as failures, never silently replaced. Runtime
-pacing uses a conservative byte upper bound plus output allowance per request
-and may refuse a large payload even when approximate planning fitted. Use a
-smaller context/limit rather than bypass the guard. Bulk tracing is disabled.
+pacing estimates the full serialized input in tokens and reserves output. It
+trims evidence until estimated input plus output fits 90% of TPM; fixed overhead
+that cannot fit is refused. One shared pacing instance covers all calls. Bulk tracing is disabled.
 
 CLI default is planning only. `--mock` executes with MockProvider, forces a
 local file store, tags simulated=true, omits API cost metrics and uses a distinct
@@ -94,58 +97,15 @@ and refuses a fresh safe 180,000-token day. Use bounded Fast for initial executi
 
 1. Generate/recheck qid-only sets and offline tests:
 
-```bash
-conda activate iqfm
-python scripts/make_eval_sets.py --dry-run
-python scripts/make_eval_sets.py
-python -m pytest tests/b_experiments tests/b_tracking -q
-python scripts/run_experiment.py --preset recommended --eval-set smoke-5 --dry-run
-```
-
-Expected: 11 named sets; smoke sizes 5 and 20; passing tests; zero-call preflight.
-
-2. A standalone mock demo uses the existing synthetic bundle/model fixtures:
-its questions are from smoke-5, but answers/evidence are simulated. No downloads
-or Stream A artifact is needed for this CLI plumbing check:
+Current commands use the registry or an exact run ID, with published knobs unchanged.
+See [B6 operator commands](../../../docs/mlops/STREAM_B_HANDOFF.md#operator-commands)
+for F5 grading/import, parity, rollback and the capped S1 smoke-5 live loop.
+The Recommended YAML fallback is stale and must not select a live job.
 
 ```bash
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 \
-  --set context_budget_tokens=512 --set top_k=2 --mock \
-  --fixture-bundle tests/fixtures/serving_bundle \
-  --tracking-uri "file:$PWD/outputs/mlops/mlflow" --label mock-smoke
+python scripts/run_experiment.py --registry-presets --preset fast \
+  --eval-set smoke-5 --max-requests 8 --label live-smoke-s1 --dry-run
 ```
 
-Expected: COMPLETED job, source=lab/simulated=true, one local MLflow run. Repeating
-uses the same job/run without new engine calls. No Groq requests.
-
-3. Live execution prerequisite: export BUNDLE_DIR to Stream A's actual verified
-**dev-only** serving bundle with valid indexes and locally available weights.
-The current default serving_bundle/ is absent; B2 does not build A's artifacts.
-Securely export Groq and DagsHub variables (do not put keys on the CLI).
-Do not use the synthetic demo bundle for live research results:
-
-```bash
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 \
-  --set context_budget_tokens=512 --set top_k=2 --dry-run
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 \
-  --set context_budget_tokens=512 --set top_k=2 \
-  --enable-llm --max-requests 12 --label live-smoke
-```
-
-Observed fresh-day estimate: 10 requests / 30,890 tokens; actual use/cache may
-reduce it. Preflight checks the current day's remaining budget before execution.
-Expected: one DagsHub playground run with explicit scoring coverage and request cap.
-
-4. Small one-day sweep (after checking remaining quota):
-
-```bash
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 \
-  --set context_budget_tokens=512 --sweep top_k=1,2 --dry-run
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 \
-  --set context_budget_tokens=512 --sweep top_k=1,2 \
-  --enable-llm --max-requests 24 --label top-k-smoke
-```
-
-Observed combined estimate: 20 requests / 61,780 tokens; two sequential runs,
-shared sweep_id. This fits a fresh safe day, not necessarily the remaining quota
-when you run it. Neither command accesses locked test data or publishes presets.
+On fresh quota the five base calls plus at most three repairs fit the cap.
+No live run, score or champion update is implied by a dry-run.

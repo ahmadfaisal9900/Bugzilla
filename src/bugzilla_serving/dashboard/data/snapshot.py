@@ -87,7 +87,11 @@ def _build_snapshot(tracking_uri, progress=None):
         errors.append(f"Registry versions unavailable ({type(exc).__name__})")
     # Keep only small aggregate artifacts; predictions stay lazy and dev-gated.
     jobs = [
-        (r["id"], name)
+        (
+            r["id"],
+            name,
+            r["tags"].get("tracking.artifact." + hashlib.sha256(name.encode()).hexdigest()[:16]),
+        )
         for values in runs.values()
         for r in values
         if r["tags"].get("split") == "dev"
@@ -97,8 +101,10 @@ def _build_snapshot(tracking_uri, progress=None):
     ]
 
     def fetch(job):
-        rid, name = job
-        value = mf.checkpoint_artifact(tracking_uri, rid, name)
+        rid, name, revision = job
+        value = mf.checkpoint_artifact(
+            tracking_uri, rid, name, revision=revision, refresh=not bool(revision)
+        )
         return rid + "/" + name, asdict(value)
 
     from bugzilla_serving.tracking.client import artifact_tracking_uri

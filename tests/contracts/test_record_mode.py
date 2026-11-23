@@ -28,7 +28,7 @@ def test_pending_metric_is_an_explicit_nonnegative_integer_count():
 @pytest.mark.parametrize(
     "values",
     [
-        {"system_id": "S5", "s5_dossier_budget": 12000},
+        {"system_id": "S5", "s5_dossier_budget": 12001},
         {"top_k": 100, "temperature": 2.0, "s7_max_tool_steps": 20},
         {"model": "historical-model"},
     ],

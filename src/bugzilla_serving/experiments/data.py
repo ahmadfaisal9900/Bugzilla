@@ -33,7 +33,9 @@ def catalog(root=ROOT, retrieval_config=None):
     identities = [(r["dataset"], r["qid"]) for r in items]
     if len(identities) != len(set(identities)):
         raise ValueError("Duplicate dev dataset/qid identity")
-    return items, pins
+    from bugzilla_serving.experiments.scorer_v2 import excluded
+
+    return [i for i in items if not excluded(i)], pins
 
 
 def validate_members(members, items):

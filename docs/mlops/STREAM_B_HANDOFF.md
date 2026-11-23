@@ -1,318 +1,589 @@
 # Stream B integration handoff
 
-Stream B provides contracts-compatible tracking and registry clients in
-`src/bugzilla_serving/tracking/`, bounded dev experiment planning/execution in
-`experiments/`, and the nine-page Streamlit dashboard in `dashboard/`. Research
-code remains unchanged. Shared contracts/engine/configs and synthetic fixtures
-are reused. See [CI.md](CI.md) for validation, images, exact local CI equivalents,
-PR commands and required GitHub checks; [BACKFILL_MAPPING.md](BACKFILL_MAPPING.md)
-for provenance/denominators; [promotion policy](../PROMOTION_POLICY.md) for gates.
+B4/B5 and B6 implementation are in the existing `Project` repository on
+`feature/mlops`. No Stream A API/chat/Compose/CD code, research implementation,
+review input, delivered bundle, or promotion policy was edited. No push or new
+champion publication was performed. Direct dependencies remain exactly pinned.
+The shared engine includes a compatibility fix for the accepted bundle's
+text-only examples: it inherits dev scope from the verified manifest for those
+rows, while structured rows still require an explicit dev split.
+See [CI.md](CI.md), [dashboard README](../../src/bugzilla_serving/dashboard/README.md)
+and [AGENT_NOTES.md](../AGENT_NOTES.md) for checks and timing evidence.
 
-## CLI reference
+## Registry source of truth and current state
 
-Use `conda activate iqfm`, Python 3.11, from the existing Project root. All paths
-containing spaces/apostrophes must be quoted. `PYTHONPATH=src` works without an
-editable installation. No `.env` is loaded by tests or CI. Backfills default to
-planning; only the explicit owner `--apply` commands below write tracking data.
-These are instructions, not claims that remote execution occurred.
+DagsHub is the source of truth. Read the reason from the champion registry
+version's `policy_override` tag. The owner supplied its current text:
 
-```bash
-# Synthetic local tracking/registry. Repeating reports created_runs=0.
-python scripts/seed_mlflow_fixture.py --tracking-uri "file:$PWD/outputs/mlflow/dashboard-demo" --dry-run
-python scripts/seed_mlflow_fixture.py --tracking-uri "file:$PWD/outputs/mlflow/dashboard-demo"
+> Policy winner S8 (0.563) routes to the S5 12K dossier, which exceeds the serving cap; S2 (0.551) is the best config that passes serving validation.
 
-# Historical dev answer ledger adapter; no inference. Existing raw files stay local.
-python scripts/backfill_answer_eval.py --mode ledgers
-python scripts/backfill_answer_eval.py --mode ledgers --apply --resume
-# Retrieval aggregates, idempotent/checkpointed uploads.
-python scripts/backfill_retrieval_eval.py
-python scripts/backfill_retrieval_eval.py --apply --resume
+This records the decision before dossier amendment 2; it is not rewritten by a
+backfill or cap change. `outputs/mlflow/b1-ledgers` is a **local reference store**
+whose registry tags predate the final publish. Its old override is not authoritative.
+The capped-S8 versus S2 live comparison is dropped. S2 remains champion. No agent
+published, rolled back, or otherwise changed DagsHub registry state.
 
-# Publish: inspect comparison/policy first; RUN_ID must identify a dev run.
-python scripts/publish_preset.py --run-id RUN_ID --slug fast --label Fast --description 'BM25 dev configuration'
-python scripts/publish_preset.py --run-id RUN_ID --slug fast --label Fast --description 'BM25 dev configuration' --apply
-# Optional champion path; strict execute validation always applies.
-python scripts/publish_preset.py --run-id RUN_ID --slug recommended --label Recommended --description 'Dev selection' --champion
-# Only an explicit justified owner decision may add --override-policy 'reason'.
-python scripts/publish_preset.py --slug fast --unpublish --apply
+The unchanged promotion policy requires **every** scored family >=0.50, false
+abstention <=0.20, failure <=0.05, complete grading, and p95 time. It then chooses
+macro accuracy, breaking ties within 0.01 by p95. Current ledgers select **none**:
+all systems fail existing non-F5 family minimums (including MH=0 and F3≈0).
+Adding F5 cannot fix these failures. Do not publish a policy winner that does not
+exist, weaken the policy, or add an override for the conditional commands below.
 
-# Dev qid sets only (no question/gold text in YAML).
-python scripts/make_eval_sets.py --dry-run
-python scripts/make_eval_sets.py
-# Default run plans only. Use --limit for a bounded subset.
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 --limit 1 --set context_budget_tokens=512 --set top_k=2 --dry-run
-# Synthetic engine plumbing; local file store, no model download or provider call.
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 --limit 1 --set context_budget_tokens=512 --set top_k=2 --mock --fixture-bundle tests/fixtures/serving_bundle --tracking-uri "file:$PWD/outputs/mlops/mlflow" --label mock-smoke
-# Live owner command requires A's real dev bundle and quota; preflight first.
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 --limit 1 --set context_budget_tokens=512 --set top_k=2 --enable-llm --max-requests 4 --label live-smoke
-# Sweeps: ≤2 knobs, combined budget, sequential points, shared sweep_id.
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 --limit 1 --set context_budget_tokens=512 --sweep top_k=1,2 --dry-run
-python scripts/run_experiment.py --preset fast --eval-set smoke-5 --limit 1 --set context_budget_tokens=512 --sweep top_k=1,2 --mock --fixture-bundle tests/fixtures/serving_bundle --tracking-uri "file:$PWD/outputs/mlops/mlflow"
-python scripts/run_experiment.py --status JOB_ID
-python scripts/run_experiment.py --cancel JOB_ID
-```
+## B6 changes and execution state
 
-Expected: dry-run JSON plans; seed COMPLETE/9 new runs/2 presets on a new store;
-mock COMPLETED means plumbing finished, never answer quality. Backfill resume
-skips completed hashes and preserves run IDs. Job manifests/checkpoints live in
-`outputs/mlops/jobs/`; rerun the identical command to resume. Cancellation is
-checked between questions, not during an in-flight call. See
-[experiments README](../../src/bugzilla_serving/experiments/README.md) for quota,
-checkpoint identity, cancellation and scoring details. Local `--preset` uses YAML
-fallbacks; `--registry-presets` or `--run-id` explicitly reads MLflow. YAML's
-recommended fallback is S8 and is not the published S2 champion.
+- **F5:** the 54 pending responses are six dev questions × nine systems. Every
+  question has one existing reference shared by all systems; no saved verdicts
+  exist. Following the user's clarified choice, `grade_f5.py` prepares a separate
+  semantic-grading job, six question batches with anonymous candidates. It does
+  not regenerate references or answers. `--f5-gold human` keeps the previous
+  backfill behavior. `--f5-gold llm` requires all saved judgments to match their
+  reference/answer fingerprints before scoring anything. Imported runs carry
+  `f5_gold=llm`, F5-inclusive `answer.macro` and comparable
+  `answer.macro_excl_F5`. A human-mode rerun cannot silently downgrade an already
+  imported LLM-gold run. The real judgment job/import are **not executed** yet;
+  denominators become 125/125 only after the complete verdict ledger is imported.
+- **Parity:** three questions from smoke-5 pass through the same engine used by
+  Lab and POST `/v1/ask`. Compare answer text, abstention, cited bug IDs and config
+  hash. Mock mode is default; both sides receive the same mock-provider config.
+  A fake API matches; the Phase 0 stub returns a readable HTTP 501 mismatch and
+  exit 1. Real partner API parity remains an integration check.
+- **LangSmith:** one live `smoke=true` trace and one positive `user_rating` were
+  created and read back, with zero LLM calls. A transient indexing 404 was resolved
+  by reading the same ID later; no duplicate trace/rating was created. Production
+  hides smoke traces by default; turn on Show test traces after Refresh.
+- **Rollback:** dry-run by default; apply requires a reason, validates the target,
+  and records `rollback_reason`, `rolled_back_from`, `rolled_back_at` before moving
+  the champion alias. Presets displays those tags from its snapshot. These tags
+  show the latest rollback into each version, not a full immutable alias log.
+  Mutation was tested only in a temporary local store.
+- **Dossier amendment 2:** only the evidence-byte knob max becomes 12,000, with
+  truthful byte labeling. Its default remains 4,096; all other limits remain.
+  The validator no longer compares dossier bytes to the model's token cap. The
+  engine already overrides bundle runtime with an explicit config dossier value.
+  See [PHASE0_NOTES.md](PHASE0_NOTES.md#amendment-2--dossier-evidence-cap-2026-11-22).
+  History-complete usage supplies the planning mean; otherwise use UTF-8 bytes/3.
+  Send-time estimates include schema/tools/system prompt. Evidence is trimmed
+  until estimated input + 2,048 output <=7,200, or fixed overhead is refused.
+  One pacing instance covers router, rewrites, tools and answers; request/daily
+  limits remain active. No capped live S8/S2 comparison is scheduled.
 
-## Dashboard modes and environment
+## Operator commands
 
-```bash
-# Local seed above first. CI-source runs are intentionally hidden from evaluation
-# tables, but the synthetic champion and presets demonstrate registry plumbing.
-MLFLOW_TRACKING_URI="file:$PWD/outputs/mlflow/dashboard-demo" LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=false python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
-# Existing real dev local store, when present:
-MLFLOW_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers" LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=false python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
-# DagsHub: securely export the MLFLOW variables from local .env first.
-LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=false python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
-# Local Lab: mock toggle is default; real bundle required to enable live requests.
-LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=true python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
-```
-
-| Variable | Purpose |
-| --- | --- |
-| MLFLOW_TRACKING_URI | DagsHub HTTPS endpoint or absolute local file URI |
-| MLFLOW_TRACKING_USERNAME / MLFLOW_TRACKING_PASSWORD | Remote credentials, environment only |
-| LANGSMITH_SOURCE | `fixture` offline; `live` for Production reads |
-| LANGSMITH_API_KEY | Required only for real Production reads |
-| DASHBOARD_LAB_ENABLED | Exact `true` enables local controls; `false` on host |
-| DASHBOARD_PASSWORD | Shared dashboard login; optional for local fixture checks |
-| LLM_PROVIDER / GROQ_API_KEY | Mock for offline checks; live provider requires key |
-| BUNDLE_DIR | Verified real dev bundle/indexes for live Lab |
-| HF_HUB_OFFLINE / TRANSFORMERS_OFFLINE | `1` at image runtime and in CI |
-
-Readonly mode hides Presets and disables Lab execution. Sources cache reads for
-60 seconds and display fetch times. The dashboard never calls FastAPI. It loads
-neither engine/experiments nor torch when Lab is disabled; a fresh-process test
-executes all readonly pages and checks these module boundaries. Mock writes stay
-in a local file store even when browsing DagsHub.
-
-## Current tracking state and limitations
-
-The local `outputs/mlflow/b1-ledgers` metadata was inspected offline on
-2026-11-22: experiments `research-answer-eval`, `research-retrieval-eval`,
-`playground`; registered model `bugzilla-qa-config`; champion alias version 1,
-recommended/S2; published fast/S1 version 2. No DagsHub query was made, so its
-current state is **not independently verified**. Owner-provided remote state is
-recommended/S2 champion and fast/S1 preset; existing versions/aliases are untouched.
-
-The recorded champion override reason is: “Policy winner S5 (0.6446) uses a 12K
-dossier that exceeds the serving cap; S2 (0.6444) is within 0.01 pt and fits the
-cap. Capped-S5 vs S2 comparison scheduled as a Lab run.” This reason records a
-selection decision; it does not claim that the scheduled Lab comparison ran.
-
-Existing versions may reference old config-only carrier runs in playground
-(`source=lab`, `eval_set=config-registry`). Dashboard tables exclude these and
-all sources outside `{backfill, lab}`. New publication attaches the config model
-to its evaluated source run. If an archived run refuses artifact writes with
-PERMISSION_DENIED, fallback carriers go to experiment `registry`, tagged
-`source=registry`, `source_run_id=<original>`. Standalone fixture registration uses
-`source_run_id=standalone`. No shared evaluation contract was expanded for these
-metadata-only runs. Transport/authentication errors surface instead of fallback.
-
-- pilot125 is a development pilot subset, not full dev or hidden-test evidence.
-  Current answer denominators are 119/125, with six shared F5 questions pending
-  human answer review. No synthetic replacements or automated human decisions.
-- MH=0 and F3≈0 across systems. BACKFILL_MAPPING's source trace audit found genuine
-  failures: direction/out-of-cohort/abstention problems and singleton-list versus
-  scalar count outputs. Set order/ID normalization already works. Do not present
-  these scores as merely a missing scorer fix; research behavior remains unchanged.
-- S3 has zero fresh calls and all 125 answers match S2: `reused_from=S2`, duplicate
-  outcome evidence, no independent S3 latency claim.
-- Batch latency includes quota/rate-limit waits. Lab is end-to-end wall time;
-  backfill uses final successful per-question timings. Missing usage remains
-  explicit; positive partial token totals are lower bounds, unknown is not zero.
-- Live Lab is blocked until A supplies `scripts/build_serving_bundle.py` and a
-  verified real dev bundle/indexes/weights. Baking weights into an image supplies
-  no canonical database or serving bundle. The synthetic bundle is mock-only.
-- Historical S5/S8 12K configs are recordable but fail serving execute caps;
-  policy override cannot make them deployable. v3 lacks F2/F5 and test F3;
-  retrieval N/A differs from a missing family. No test questions/gold are exposed.
-
-## Stream A integration expectations
-
-Read presets through `Registry.list_presets()` and `get_champion()` under the
-shared registry contract: model `bugzilla-qa-config`, alias `champion`, version tags
-`preset_slug`, `preset_label`, `preset_description`, `published=true`; pyfunc
-config artifact. Keep YAML fallback behavior explicit. Do not infer a champion
-from leaderboard ordering or assume carrier runs are evaluations.
-
-Write serving root traces to `ensf621-serving` (optional dev traces to
-`ensf621-dev`) with metadata `config_hash`, `preset_slug` or `custom`, `system_id`,
-`model`, `retriever`, `corpus`, `route`, `degraded`, `request_id`, `session_id`.
-Feedback key `user_rating` is 0/1 with comment. B only reads these sources.
-
-Ports: API 8000, chat 8501, dashboard 8502. Image names:
-`ghcr.io/<owner>/bugzilla-{api,chat,dashboard}:<tag>`. B supplies
-`docker/dashboard.Dockerfile` targets `dashboard-readonly` (host default) and
-`dashboard-lab` (local only, CPU torch and config-pinned model revisions).
-A owns API/chat Dockerfiles, Compose and CD. Mount real bundle read-only, keep
-credentials outside images, disable Lab on deployed host. CI builds but never
-pushes images. API/chat builds are conditional on file presence and main PR/manual.
-
-At integration perform OVERVIEW §6: registry mode picker, champion parity on
-three dev questions with MockProvider + real bundle, chat feedback visible in
-Production, then enable compose smoke. No parity, compose, remote or deployment
-success is claimed by this handoff. Docker builds/sizes/smoke are owner-run per
-the latest task instruction.
-
-## B5 operator commands
-
-B5 is implemented and tested offline with tiny fixtures. The real bundle, DagsHub,
-Groq, live LangSmith, Docker images and GitHub CI execution remain operator checks.
-Do not run model jobs during an interactive agent session. No new dependencies
-were added; existing exact versions in `pyproject.toml` remain in force.
-
-Run from the existing repository (the quote in its path matters):
+Run in your own terminal. No `.env` is required by CI; never commit its values.
+The shell examples use registry configs unchanged and never the Recommended YAML
+fallback. The full-data/model jobs remain owner-terminal operations.
 
 ```bash
 conda activate iqfm
 cd "/home/ict317/master's/ENSF 621/Project"
 export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
-# Only in your own terminal; never paste the values into chat or commit .env.
 set -a
 source .env
 set +a
+export BUNDLE_DIR="$PWD/serving_bundle"
+export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
+# MLFLOW_TRACKING_URI from .env must point to DagsHub for the remote commands.
 ```
 
-1. Verify the delivered bundle. The first call hashes listed files; a subsequent
-   call re-stats them. `--rehash` explicitly repeats hashing. Unlisted HF cache
-   blobs/refs/locks are ignored; listed symlinks are followed.
+1. **Prepare the F5 judgments, then backfill local, then DagsHub, then refresh.**
 
    ```bash
-   python scripts/verify_bundle.py --bundle ./serving_bundle --json
-   python scripts/verify_bundle.py --bundle ./serving_bundle --json
+   scripts/run_phase06_f5_grade.sh --dry-run --limit 6 --max-requests 6
+   # The separately authorized job you chose to run: six batches, 54 verdicts.
+   scripts/run_phase06_f5_grade.sh --enable-llm --limit 6 --max-requests 6
+   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm \
+     --tracking-uri "$LOCAL_TRACKING_URI"
+   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm \
+     --tracking-uri "$LOCAL_TRACKING_URI" --apply
+   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm
+   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --apply
+   scripts/run_phase05_dashboard_snapshot.sh --max-requests 1000
    ```
 
-   Expected: exit 0, `ok: true`, split `dev`, `synthetic: false`, available `C1`,
-   missing `C0,C2`, then `cache_reused: true`. A failed check exits 1; invalid CLI
-   syntax exits 2. Inspect `pins_source`: the frozen serving YAML lacks model pins,
-   so the verifier reports its exact `retrieval_v3.yaml` fallback. No bundle file
-   is modified. The cache lives in `outputs/bundle_verify/`.
+   Expected first: DRY_RUN, six batches, 54 pending rows, zero API calls. The live
+   job saves complete, fingerprint-bound batches to
+   `outputs/mlops/f5_gold/verdicts.jsonl`; repeat to resume. Timestamped log and
+   summary paths are under `outputs/mlops/f5_gold/jobs/`. On success expect 54
+   verdicts and COMPLETE, with at most six model requests on an uncached run.
+   Missing, partial, duplicate, stale or out-of-scope judgments refuse import.
+   Backfill dry-runs create no tracking client. Applied runs keep identities and
+   have F5 n=6, pending=0 and 125 scored answers per system. They show Overall
+   and Overall without Reasons. No gold/reference text is added to MLflow.
+   Scores are graded by an LLM judge against the human-reviewed reference from the frozen benchmark; this is not evidence that
+   the references or model judge are infallible. Neither backfill changes aliases.
+   Snapshot refresh uses artifact content revisions so updated aggregate scores
+   replace earlier cached ones while unchanged downloads remain resumable.
 
-2. Build and time the DagsHub snapshot in your terminal. Artifact checkpoints make
-   repeating this command resumable; failed refreshes keep the last good snapshot.
-   The cap counts SDK calls, not hidden SDK HTTP retries or provider requests.
+2. **Parity against the Phase 0 stub.** In one terminal:
 
    ```bash
-   scripts/run_phase05_dashboard_snapshot.sh --dry-run --max-requests 1000
-   /usr/bin/time -p scripts/run_phase05_dashboard_snapshot.sh --max-requests 1000
-   # Optional warmed page measurements with stderr call timings, no model calls:
-   env -u DASHBOARD_PASSWORD LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=true \
-     scripts/run_phase05_dashboard_snapshot.sh --max-requests 1000 --profile-pages
+   python -m uvicorn bugzilla_serving.api.stub:create_app --factory \
+     --host 127.0.0.1 --port 8000
    ```
 
-   Expected: timestamp/PID/log paths, then `COMPLETE`, sanitized tracking URI,
-   `run_counts`, `built_at` UTC and `duration_seconds`. Snapshot JSON and metadata
-   are under `outputs/dashboard_cache/<source slug>/`; wrapper logs and summary
-   JSON are under its `jobs/<UTC timestamp>/`. `--profile-pages` adds each page's
-   total seconds, slowest calls and errors. A warm page should have no MLflow SDK
-   calls. A request cap, failed artifact or unavailable source reports `PARTIAL`
-   and exit 1; repeat after resolving it. To include live production reads, set
-   `LANGSMITH_SOURCE=live` explicitly; the default command uses the fixture.
-   Offline BEFORE/AFTER measurements and their scope are in AGENT_NOTES.md.
-
-3. Start the dashboard with profiling. This uses only reads until an explicit Lab
-   or registry action; live inference stays off by default.
+   In another, with the same environment:
 
    ```bash
-   BUNDLE_DIR="$PWD/serving_bundle" LANGSMITH_SOURCE=fixture \
-   DASHBOARD_PROFILE=1 DASHBOARD_LAB_ENABLED=true \
+   python scripts/parity_check.py --api-url http://127.0.0.1:8000 \
+     --config-source champion --provider mock --n 3
+   # An exact evaluated config can instead be selected with --config-source run:ID.
+   ```
+
+   Expected: three rows, API HTTP 501 / DIFF, exit 1; no crash or quota use.
+   Against the partner's working API, expect four matching fields per row and
+   exit 0. Mock must be supported on both sides. The real bundle is verified and
+   used by default; local model files are required even with MockProvider.
+
+3. **LangSmith smoke and Production.** The requested check already exists at
+   [this trace](https://smith.langchain.com/o/e906d1d7-e702-4a19-a9ed-6fa3de69fe08/projects/p/8a6bd5d1-459e-4652-a21c-33d50de2470c/r/96b5c506-32c6-4205-ba1b-9eb67c8b0f50?poll=true).
+   To deliberately create another single test trace later:
+
+   ```bash
+   python scripts/langsmith_smoke.py
+   LANGSMITH_SOURCE=live DASHBOARD_LAB_ENABLED=true \
      python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
    ```
 
-   Expected: nine pages at localhost:8502, named modes/families, local snapshot
-   time in the sidebar, technical IDs off, and render/data timings in stderr and
-   the sidebar. Change filters and switch pages: no SDK calls should recur.
-   A first immutable detail read is allowed, then cached. Refresh data rebuilds
-   explicitly. The readonly deployment uses `DASHBOARD_LAB_ENABLED=false` and
-   hides Presets. Set `DASHBOARD_SNAPSHOT_MAX_AGE_MIN=30` and
-   `DASHBOARD_LANGSMITH_MAX_AGE_MIN=5` to change stale indicators; stale data stays
-   visible. Docker's background entrypoint uses writable `DASHBOARD_CACHE_DIR`
-   and preserves the torch-free readonly target; Docker health/build remains an
-   operator CI check, not validated by AppTest.
+   Expected smoke JSON: trace URL, smoke=true, llm_calls=0; exactly one root and
+   one rating per invocation. It forces sampling for the intentional smoke and
+   retries bounded read-index delays. In Production click Refresh data, then
+   Show test traces. The trace has rating 1. With the toggle off it is excluded
+   from tables, charts and aggregates. Live dashboard rendering itself remains
+   an operator check; its filtering and feedback parsing have offline coverage.
 
-4. Plan capped smoke-20 runs against the verified bundle. These are dry-runs:
-   no inference, embedding generation, model loading or tracking writes.
+4. **Rollback demo, dry-run only on DagsHub.** Save the current S2 version before
+   any future promotion (read the registry champion version; do not assume the
+   local store's version number matches DagsHub).
 
    ```bash
-   python scripts/run_experiment.py --bundle ./serving_bundle --preset recommended \
-     --set system_id=S8 --set corpus=C1 --set s5_dossier_budget=4096 \
-     --set s7_max_tool_steps=1 --eval-set smoke-20 --limit 20 \
-     --max-requests 160 --dry-run
-   python scripts/run_experiment.py --bundle ./serving_bundle --preset recommended \
-     --set system_id=S2 --set corpus=C1 --set top_k=2 \
-     --set context_budget_tokens=512 --eval-set smoke-20 --limit 20 \
-     --max-requests 60 --dry-run
+   python scripts/rollback_champion.py
+   python scripts/rollback_champion.py --to-version "$S2_VERSION" \
+     --reason 'Demo: return to the previously published Smart search'
    ```
 
-   Expected: verified bundle report, `actual_api_calls: 0`, 20 selected questions,
-   request cap, `fits_request_cap`, estimates and today's remaining safe budget.
-   S8 estimates 160 logical calls with one tool step; S2 estimates 60. S8's token
-   estimate exceeds the configured daily allowance; S2 may also be refused,
-   depending on current usage. `fits: false` is a safe planning refusal, not an
-   executed failure or evidence of successful scoring. Do not replace `--dry-run`
-   with execution merely to make this check pass. Dry-run always reports planning;
-   execution additionally refuses an estimate above its cap. Scored Lab questions
-   still come from `configs/eval_sets.yaml`, never the bundle's no-gold examples.
+   Expected: DRY_RUN with before/after versions, no writes. If S2 is still the
+   current champion, the explicit S2 target reports Already champion; there is
+   no rollback to perform. With no `--to-version`, previous means the nearest
+   smaller registered version, not an inferred previous alias event. Applying
+   would additionally require `--apply --reason TEXT`; do not apply on DagsHub
+   as part of this handoff. Do not move champion merely to manufacture a demo.
 
-5. Review, commit, push and open a draft PR yourself. The B5 files are staged by
-   exact name for the clean-checkout regression; the pre-existing `.gitignore`
-   edit is excluded. Check the staged list before committing anything.
+5. **Minimal live Lab loop, published Fast/S1 unchanged.**
+
+   ```bash
+   python scripts/run_experiment.py --registry-presets --preset fast \
+     --bundle ./serving_bundle --eval-set smoke-5 --max-requests 8 \
+     --label live-smoke-s1 --dry-run
+   python scripts/run_experiment.py --registry-presets --preset fast \
+     --bundle ./serving_bundle --eval-set smoke-5 --max-requests 8 \
+     --label live-smoke-s1 --enable-llm
+   scripts/run_phase05_dashboard_snapshot.sh --max-requests 1000
+   ```
+
+   Expected on fresh daily quota: fits=true and fits_request_cap=true. Five normal
+   S1 calls plus up to three repair calls fit the eight-request cap; provider
+   reservation enforces it. No top_k/context or other knob changes are made.
+   A synthetic fresh-quota test checks this cap and token estimate. Current used
+   quota may correctly refuse it. Live execution is owner-run, resumable and
+   paced; it creates a playground run with source=lab, label=live-smoke-s1.
+   After rebuilding the snapshot and Refresh data, find the named Lab run on the
+   dashboard. This checks plumbing, not a new research comparison.
+
+6. **Execute validation, post-F5 policy preview, conditional publication.**
+
+   ```bash
+   # Current view without generating/scoring F5:
+   python scripts/preview_promotion.py
+   # Run only after step 1 has produced the complete saved judgment ledger:
+   python scripts/preview_promotion.py --f5-gold llm
+   ```
+
+   Expected execute validation: S1–S6 and S8 pass; S0/S7 retain their recorded
+   inapplicable top_k failures. Current policy selects none; non-F5 family scores
+   make this invariant to the missing F5 grades. No changed champion is expected.
+   If a future fully evidenced preview genuinely selects another config, these
+   are the conditional commands; never bypass the policy:
+
+   ```bash
+   # POLICY_WINNER_RUN_ID must be the policy-allowed historical run on DagsHub.
+   python scripts/publish_preset.py --run-id "$POLICY_WINNER_RUN_ID" \
+     --slug recommended --label Recommended --description 'Policy-selected dev config' \
+     --champion
+   # Only after that dry-run passes; no --override-policy:
+   python scripts/publish_preset.py --run-id "$POLICY_WINNER_RUN_ID" \
+     --slug recommended --label Recommended --description 'Policy-selected dev config' \
+     --champion --apply
+   # Keep S2 selectable without changing its configuration:
+   python scripts/publish_preset.py --run-id "$S2_RUN_ID" --slug smart \
+     --label 'Smart search' --description 'Published Smart search configuration'
+   python scripts/publish_preset.py --run-id "$S2_RUN_ID" --slug smart \
+     --label 'Smart search' --description 'Published Smart search configuration' --apply
+   python scripts/rollback_champion.py --to-version "$S2_VERSION" \
+     --reason 'Demo: return to Smart search'
+   ```
+
+   Expected today: no winner, so skip the recommended publication commands.
+   The Smart search republish is supplied for the conditional future change;
+   it was not applied. The rollback command is always a dry-run here.
+
+7. **Review, commit and push `feature/mlops`; no PR into main.**
 
    ```bash
    git diff --cached --check
    git diff --cached --name-only
    git diff --cached --stat
-   git commit -m "Implement B5 bundle verification and snapshot-backed dashboard"
+   git commit -m "Complete B6 integration tools and approved dossier amendment"
    git push origin feature/mlops
-   cat > /tmp/bugzilla-b5-pr.md <<'EOF'
-   The dashboard now reads persisted snapshots so ordinary reruns avoid remote
-   data calls, and presents named systems, family comparisons and usage in plain
-   language. Lab execution verifies bundle integrity/corpus availability and sets
-   offline Hugging Face paths before loading models.
-
-   Validation: bounded offline fixture, tracking, experiment, CI, contract and
-   Streamlit checks; exact results and timing scope are in docs/AGENT_NOTES.md.
-   Remote service measurements and Docker/GitHub execution remain operator gates.
-   No contracts, research code, Stream A files or delivered bundle were changed.
-   EOF
-   gh pr create --draft --base main --head feature/mlops \
-     --title "B5: verified bundles and faster, readable dashboard" \
-     --body-file /tmp/bugzilla-b5-pr.md
    ```
 
-   Expected: one local commit, normal branch push and a draft PR URL. If a PR for
-   this branch already exists, review/update that PR instead of creating another.
-   These commands were not executed by the agent.
+   Review the exact named B6 staged set before committing. No raw data, model,
+   credential, generated verdict ledger or large log belongs in that set. These
+   commands are provided for you; no push or publication was performed by the agent.
 
-### Page layout checklist (three lines per page)
+## Retained deployment and dashboard behavior
 
-| Page | First line | Second line | Third line |
-| --- | --- | --- | --- |
-| Overview | Five mode/coverage KPI cards | Score-sorted named leaderboard, score bar and family shading | Key findings; collapsed technical records |
-| Answer evaluation | Question-set/source filters | Named family correctness bars with n; declined/errors table | Saved intervals and technical records collapsed |
-| Retrieval evaluation | Named source/family/search-measure filters | Search × archive heatmap and formatted scores/counts | Missing/N/A distinction and technical records |
-| Cost & latency | Model usage table, calls and fresh-token bars | Typical/slow-case seconds table and grouped bars | Exact requested Notes and technical records collapsed |
-| Error analysis | Named dev run picker | Failure categories and answer text, no gold fields | Run identifiers/config only in Technical details |
-| Experiment Lab | Verified bundle status, split/corpora/models/size/date | Catalog-labelled knobs; missing corpora disabled | Readable preflight, explicit run controls, bounded progress |
-| Compare runs | Named baseline/candidate pickers and question title | Automatic summary plus paired bars/differences with words/signs | n mismatch warnings, noise labels, collapsed family glossary |
-| Presets | Named published modes | Snapshot-only policy preview and scalar comparison | Confirmed registry action; technical configs collapsed |
-| Production | Local date filter over the retained window | Named mode aggregates in seconds and question-volume chart | Sanitized feedback; source freshness in sidebar |
+Snapshot JSON is under `outputs/dashboard_cache/<credential-free source>/` and
+loaded once via cache_resource. Missing snapshots build with progress; stale ones
+stay visible (30-minute default, separate five-minute LangSmith indicator).
+Refresh data is explicit. Immutable details are lazy; mutable aggregate artifacts
+are keyed by their tracked content revisions. Small downloads use eight workers.
+`DASHBOARD_PROFILE=1` prints SDK/data/page timings to stderr and sidebar.
 
-Every page includes its purpose sentence, collapsed How to read this and Notes.
-Streamlit 1.45.1 forbids nested expanders, so raw-config debugging uses a popover
-inside each Technical details expander. IDs remain inside that technical view.
+The readonly Docker target stays torch-free, starts its snapshot builder in the
+background, and uses writable DASHBOARD_CACHE_DIR. Lab-only imports and registry
+writes remain gated by DASHBOARD_LAB_ENABLED=true. Stream B supplies dashboard
+Dockerfile and CI; A owns API/chat images, Compose and CD. Docker/GitHub execution
+remain operator gates, separate from fixture/AppTest/localhost checks.
 
-Open questions: serving.yaml's missing model pins need a future approved shared
-change; missing manifest build dates are shown as Not recorded. The supplied
-findings are reproduced verbatim, including their counting-tool explanation;
-B5 does not rerun or revalidate those research claims. No new experiment success
-is claimed. DagsHub/browser paint/Docker/GitHub performance remains unvalidated.
+Every dashboard page has its purpose, How to read this, Notes, human labels and
+technical details. Overview has both macro scores; Compare preserves matching n,
+paired tests when complete per-question binary data exists, and heuristic noise
+labels otherwise. Test-aggregate runs expose only metrics, never questions/gold.
+
+## Integration open questions
+
+1. `configs/presets.yaml` fallback still says recommended=S8. It must match the
+   registry's recommended=S2 under a separately approved shared-file change; B6
+   does not edit it. Never use that fallback for the examples above.
+2. The real API must read the dossier max/unit from serving.yaml and apply the
+   same request/pacing gate. Stream B cannot change its unmerged provider path.
+3. Run the six-request F5 job and import all saved judgments before claiming
+   125/125 denominators or reporting an F5-inclusive real score.
+4. The existing policy cannot automatically promote any current pilot system.
+   Keep S2; changing that policy would be a separate explicit decision.
+5. Real API parity, live S1 completion, live dashboard Refresh and Docker/GitHub
+   CI execution are owner/integration gates. B6 does not claim they passed.
+
+
+## B7b — scorer v2, audited tools and owner runbook (2026-11-22)
+
+**Superseded plan:** the original score table and quota commands in this section
+predate rule (d) and measured pacing. Use [B7_ONE_DAY_PLAN.md](B7_ONE_DAY_PLAN.md)
+for current scores, composite scope and owner commands. No separate S7v2 or
+holdout run is scheduled by the current plan.
+
+Implemented and tested offline. No live model, DagsHub or LangSmith requests;
+no commit, push, publication or champion change. Nine re-score plans are ready,
+not uploaded. New system answer quality is **not executed or validated**.
+
+### Decisions, exclusions and F5 provenance
+
+`configs/scoring_exclusions.yaml` is the authoritative `f3_test_scope_v1` list.
+The three dev-labelled test-population F3 aggregates are excluded for every
+system/version; no test population is computed. Pilot scoring n=122 and F3 n=12.
+Other dev-labelled single-bug questions retain their frozen v3 dev identity;
+original-v2 partition labels do not turn them into aggregate test populations.
+Gold, freeze files and all original ledgers are unchanged.
+
+All six pilot grading references equal the signed Phase 5 supported_explanation
+claims rendered as text. The reference is human-reviewed; the **answer judge is
+an LLM**. This supersedes B6's inaccurate reference-origin wording above. Original
+judge verdicts/fingerprints were reused without regeneration.
+
+| qid | Equal to frozen human-reviewed claim? |
+| --- | --- |
+| q_0f02c856b8576c53962d | yes |
+| q_103fc1febfb8153ed3d2 | yes |
+| q_639f25ec01824d49c28e | yes |
+| q_7e52cb5dac94d7614825 | yes |
+| q_a5c70180da726d9445de | yes |
+| q_df73d0a04940f296b92e | yes |
+
+There are no reference diffs. The display short text is now:
+“Graded by an LLM judge against the human-reviewed reference from the frozen benchmark”.
+
+### Old → new correct counts
+
+Both columns apply the exclusions, so old F3 is zero for all nine systems (the
+previous one S7 success was an excluded test-population aggregate). Denominators:
+F1=21, F2=8, F3=12, F4=19, F5=6, F6=13, KI=24, MH=8, F6H=11.
+
+| System | F1 | F2 | F3 | F4 | F5 | F6 | KI | MH | F6H |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| S0 | 0→0 | 1→1 | 0→0 | 0→0 | 0→0 | 13→13 | 0→0 | 0→0 | 11→11 |
+| S1 | 8→8 | 1→1 | 0→0 | 18→18 | 0→0 | 13→13 | 16→16 | 0→0 | 11→11 |
+| S2 | 21→21 | 2→2 | 0→0 | 19→19 | 0→0 | 10→10 | 18→18 | 0→0 | 7→7 |
+| S3 | 21→21 | 2→2 | 0→0 | 19→19 | 0→0 | 10→10 | 18→18 | 0→0 | 7→7 |
+| S4 | 14→14 | 1→1 | 0→0 | 19→19 | 0→0 | 11→11 | 18→18 | 0→0 | 10→10 |
+| S5 | 20→20 | 2→2 | 0→0 | 17→17 | 1→1 | 12→12 | 18→18 | 0→0 | 7→7 |
+| S6 | 14→14 | 1→1 | 0→0 | 19→19 | 0→0 | 11→11 | 18→18 | 0→0 | 10→10 |
+| S7 | 21→21 | 2→2 | 0→6 | 18→18 | 0→0 | 13→13 | 0→0 | 0→1 | 8→8 |
+| S8 | 21→21 | 2→2 | 0→6 | 17→17 | 1→1 | 12→12 | 17→17 | 0→1 | 8→8 |
+
+Fourteen changed verdicts, all INCORRECT → CORRECT by `singleton_number`:
+
+| System | Dataset | qid | Family | Rule |
+| --- | --- | --- | --- | --- |
+| S7 | natural | natural_14dea18947f819a165f2 | F3 | singleton_number |
+| S7 | natural | natural_1ff9db21c37498214734 | F3 | singleton_number |
+| S7 | v3 | v3_bb5fff7e16d6b379f9ddade7 | F3 | singleton_number |
+| S7 | v3 | v3_13b1d27d94419f10879fac40 | MH | singleton_number |
+| S7 | v3 | v3_16911b9ae12cae02c201d505 | F3 | singleton_number |
+| S7 | v3 | v3_315be90cc9884d93d950e584 | F3 | singleton_number |
+| S7 | v3 | v3_c405fd55813cd6dfaf9f9b72 | F3 | singleton_number |
+| S8 | natural | natural_14dea18947f819a165f2 | F3 | singleton_number |
+| S8 | natural | natural_1ff9db21c37498214734 | F3 | singleton_number |
+| S8 | v3 | v3_16911b9ae12cae02c201d505 | F3 | singleton_number |
+| S8 | v3 | v3_bb5fff7e16d6b379f9ddade7 | F3 | singleton_number |
+| S8 | v3 | v3_13b1d27d94419f10879fac40 | MH | singleton_number |
+| S8 | v3 | v3_315be90cc9884d93d950e584 | F3 | singleton_number |
+| S8 | v3 | v3_c405fd55813cd6dfaf9f9b72 | F3 | singleton_number |
+
+The MH [0] format correction does not validate its original link-direction reasoning;
+these are answer-score changes, not new grounding or generation results.
+
+F2 is unchanged: the approved adapter does not infer an hours unit for a bare
+number labelled `answer_type=number`. Explicit matching-unit strings are parsed;
+finite numeric singleton lists are unwrapped only for scalar numeric gold.
+Wrong counts, multi-element lists, list-typed gold, abstentions and original
+one-hour tolerance are unchanged. Archived confidence intervals predate these
+exclusions/scores and are omitted rather than reused with new denominators.
+
+The unchanged promotion-policy preview selects **none**. No publication occurs.
+MLflow keeps canonical base RunConfig params; scorer_version distinguishes v1/v2.
+System variants use `system_id=S7v2|S8v2`, iteration, variant_hash and a complete
+system_variant.json artifact. The shared contracts do not support these IDs, so
+these are **research-only** systems, executed through the new CLI, not serving
+API presets. Dashboard labels read the variant tag, and Scorer version defaults
+to v2 when present. V1 remains selectable. Historical costs are reused for
+re-scoring; the offline adapter itself makes zero model requests.
+
+### TOOL-error breakdown (28 primary TOOL rows)
+
+Incidence is per row and overlaps: a row can contain both rejected output and
+answer-contract failure. Raw saved messages are preserved below. No 429/5xx is
+recorded in these 28 prediction rows; this does not claim the provider never
+rate-limited other runs. Three tool results preserve only ValueError, not the
+underlying exception message.
+
+| Saved error class/message | Row incidence |
+| --- | ---: |
+| `answer_contract:ValidationError` | 24 |
+| `answer_contract:ValueError` | 2 |
+| `invalid_output:InvalidJSONResponse:Model produced a rejected tool call; return answer JSON without tool calls` | 17 |
+| `invalid_output:InvalidJSONResponse:Provider rejected model output against the requested schema` | 7 |
+| `known=false:Outside the public indexed study cohort` | 6 |
+| `tool_rejected:ValueError` | 3 |
+| `tool_result:ValueError` | 3 |
+
+V2 accepts exactly one call per tool turn, validates its exact name and arguments
+before execution and allows one repair request for malformed/schema-rejected
+calls. Failed repair exhausts that turn; provider RuntimeErrors (including rate
+limits/server failures) receive no tool repair. Every fresh attempt counts in
+llm_calls. Four native tool steps remain; count and lifecycle computation are
+inherited unchanged. No duplicate count/history implementation exists.
+
+Linked-bug semantics: bugs blocking X = X.depends_on targets; bugs X blocks =
+X.blocks. Each target has status, resolution, component and in_cohort. Membership
+uses sample_membership seed=317 plus conflict exclusion. Cohort-scoped questions
+exclude out-of-cohort/conflicted targets without stopping on the first unknown.
+Public comment hashes resolve through record IDs; private/unknown-visibility
+segments and unknown/ambiguous hashes are refused. The cited comment is the first
+labelled dossier block. All other routes/prompt/cache-key calculations remain
+those of S8. The local cache has zero verified complete matches at planning time;
+no speculative hits are subtracted. A cache-only replay can credit complete
+matches after earlier jobs warm the cache, without model loading or API calls.
+
+Findings includes exactly:
+“Version-2 tools and router were developed after a failure audit on the development pilot (FAILURE_AUDIT.md); their pilot scores are therefore optimistic.”
+
+### Held-out coverage and quota plan
+
+fix-holdout is deterministic, excludes pilot IDs and all test-scoped F3
+aggregates, and has **F2=0, F3=15, F5=0, MH=0**. Three families have fewer than
+five items. This can check counting only, not generalization on the other fixes.
+No replacement questions were generated.
+
+Plans use 7,200 tokens/request as a conservative reservation (estimated input
+plus 2,048 output), respecting a 10% TPM margin. Each invocation permits at most
+25 **fresh** requests and checks the shared provider ledger before starting:
+25 × 7,200 = 180,000/day, a 10% TPD margin. Cached requests do not count as fresh
+calls. Actual future usage is unknown. Per-day caps are enforced; no background
+sleep across quota days. PAUSED_QUOTA is resumed by invoking the same command on
+a later provider quota day. Earlier partial-attempt usage is retained separately
+and included in backfill costs. Repaired/transient logs do not silently turn
+completed successful answers into failures.
+
+| Run | Questions | Verified cache hits | Estimated fresh calls | Reserved tokens | Upper calls/tokens | Expected relative days | Worst-case relative days |
+| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
+| S7v2 / fix-pilot-tools | 21 | 0 | 58 | 417,600 | 210 / 1,512,000 | D1–D3 | D1–D9 |
+| S8v2 / pilot122-v2 | 122 | 0 | 274 | 1,972,800 | 1051 / 7,567,200 | D4–D14 | D10–D52 |
+| S7v2 / fix-holdout | 15 | 0 | 30 | 216,000 | 150 / 1,080,000 | D16–D17 | D54–D59 |
+| S8v2 / fix-holdout | 15 | 0 | 30 | 216,000 | 150 / 1,080,000 | D18–D19 | D60–D65 |
+
+These are reservations and bounds, not measured tokens or promised durations.
+Start each stage on the next quota day after its predecessor completes; re-plan
+then to credit warmed caches. Expected day 15 (worst-case day 53) reserves up to
+12 F5 grading calls across both new systems: **86,400 tokens**. Optional holdout
+starts on the following quota day. Days are relative provider quota days, not
+wall-clock dates; the current day may have other organization usage.
+
+### Numbered owner commands
+
+Use the existing checkout and Conda iqfm; paths are quoted for the apostrophe
+and spaces. No dependency installation or .env requirement for offline checks.
+
+1. Offline re-score and compare (zero API calls/tokens):
+
+```bash
+cd "/home/ict317/master's/ENSF 621/Project"
+conda activate iqfm
+export PYTHONPATH="$PWD/src:$PWD${PYTHONPATH:+:$PYTHONPATH}"
+python -m bugzilla_serving.experiments.rescore
+```
+
+Expected: the table above, fourteen changed rows with rules, six equality=yes,
+TOOL table and promotion selected=None. Analysis reports go to ignored
+outputs/analysis/b7b/. No MLflow write.
+
+2. Inspect both MLflow versions and the unchanged policy (zero inference quota):
+
+```bash
+python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 1
+python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2
+python scripts/preview_promotion.py --f5-gold llm --scorer-version 2
+```
+
+Expected: nine plans per version, F3 n=12 and both macro metrics; policy selects
+none, published=false. Scripts must resolve this checkout's source (the existing
+editable installation or PYTHONPATH set as in command 1).
+
+3. Explicit owner MLflow upload, local store or DagsHub URI supplied through
+MLFLOW_TRACKING_URI (no credentials in arguments/history):
+
+```bash
+python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 1 --apply --resume
+python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2 --apply --resume
+```
+
+Expected: existing v1 IDs updated only for the required exclusions, nine distinct
+v2 runs; v1 superseded_by points to its corresponding fully uploaded v2 run.
+Re-running preserves IDs. No registry alias changes. Zero model calls/tokens;
+MLflow SDK calls are live only when the owner runs --apply. Never run concurrent
+uploaders.
+
+4. Reproduce plans (zero live calls; no models loaded):
+
+```bash
+scripts/run_phase07_v2.sh plan --system S7v2 --eval-set fix-pilot-tools --dry-run
+scripts/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --dry-run
+scripts/run_phase07_v2.sh plan --system S7v2 --eval-set fix-holdout --dry-run
+scripts/run_phase07_v2.sh plan --system S8v2 --eval-set fix-holdout --dry-run
+```
+
+Expected: DRY_RUN, actual_api_calls=0, counts/reservations above. The full pilot
+means 125 original questions minus the three binding exclusions = 122 eligible.
+
+5. Owner-only resumable inference, in the stage/day order above. Invoke the same
+command on a subsequent quota day after PAUSED_QUOTA, until COMPLETE. Optional
+--limit caps newly completed questions per invocation without changing the roster.
+
+```bash
+scripts/run_phase07_v2.sh run --system S7v2 --eval-set fix-pilot-tools --enable-llm --max-requests 25
+scripts/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 --enable-llm --max-requests 25
+```
+
+Expected: timestamped summary/manifest and immutable completed prediction rows in
+outputs/predictions/v2/dev/run-*/. The printed ledger path is authoritative.
+Daily maximum reservation 180,000 tokens; request pacing reserves at most 7,200
+per minute. Failed/incomplete attempts remain in attempts.jsonl. Original ledgers
+are never modified. Do not run both inference commands on the same quota day
+unless a fresh preflight establishes remaining allowance.
+
+6. Set S7_LEDGER and S8_LEDGER to the exact paths printed by the completed jobs;
+then plan and run source-bound grading on the next quota day:
+
+```bash
+scripts/run_phase07_v2.sh grade --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --dry-run
+scripts/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --dry-run
+scripts/run_phase07_v2.sh grade --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --enable-llm --max-requests 6
+scripts/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --enable-llm --max-requests 6
+```
+
+Expected: six requests per new system before cache hits, maximum 43,200 tokens
+each (86,400 combined). The judge uses the frozen human-reviewed reference;
+new fingerprints bind the new answers/configs. Old pilot verdicts are never
+applied to new answers. Grading checkpoints each question; repeat to resume.
+
+7. New-ledger backfill, dry-run first and then explicit owner apply:
+
+```bash
+scripts/run_phase07_v2.sh backfill --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --dry-run
+scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --dry-run
+scripts/run_phase07_v2.sh backfill --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --apply
+scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --apply
+```
+
+Expected: complete source/checksum-bound research-answer-eval runs with
+iteration=v2, diagnosed_on=pilot125, scorer_version=2 and exclusions=f3_test_scope_v1.
+Zero inference quota. Incomplete ledgers/ref mismatches are refused. Without a
+new F5 verdict file, F5 remains pending, not an invented score.
+
+8. Optional holdout, starting the next quota day after the required stages:
+
+```bash
+scripts/run_phase07_v2.sh run --system S7v2 --eval-set fix-holdout --enable-llm --max-requests 25
+scripts/run_phase07_v2.sh run --system S8v2 --eval-set fix-holdout --enable-llm --max-requests 25
+```
+
+Expected: fifteen development F3 questions each. Use separate quota days and
+resume as above. Then use backfill with --eval-set fix-holdout and the exact new
+ledger path, first --dry-run, then --apply; no F5 verdict file is needed. Both
+remain tagged iteration=v2, diagnosed_on=pilot125. Estimates 30 calls/216,000
+reserved tokens each; conservative upper 150/1,080,000, split into daily caps.
+
+9. Snapshot rebuild after uploads (zero inference quota):
+
+```bash
+LANGSMITH_SOURCE=fixture python scripts/build_dashboard_snapshot.py --dry-run
+LANGSMITH_SOURCE=fixture python scripts/build_dashboard_snapshot.py --max-requests 1000
+```
+
+Expected: explicit MLflow snapshot fetch with no live LangSmith request; COMPLETE
+when all configured MLflow sources/artifacts are available. Dashboard defaults
+to scorer v2, with v1 selectable. This does not publish a champion.
+
+### Open questions / practical limits
+
+No scientific decision is blocking the implemented work. The optional holdout
+has only F3 coverage. Exact historical payload matches are unavailable locally;
+restore a matching response cache to reduce the conservative plans. V2 is a
+research-only extension; exposing new IDs through the shared API/RunConfig would
+require a separate approved contract change. It is not needed for these jobs.
+No new system accuracy claim is made before owner-run ledgers and judgments are
+reviewed. Persisted snapshots refresh only through the explicit command above.
+
+
+## B7e — JSON tools and immutable resume (2026-11-23)
+
+The native-tool B7b/day-plan is superseded by [B7E_RESUME.md](B7E_RESUME.md).
+Pilot F2/F3/F4/MH parser coverage is 47/47. New tool routes use bounded plain JSON
+planning and deterministic numerical/link answers, preserving S0–S8 bytes.
+The run-cf2c6f2cf859a3c6 source stays immutable: ten clean new answers (six F5)
+are preserved, nine failed/error qids marked superseded, 83 questions rerun and
+29 v1 answers carried in a new run. Estimate: two fresh calls / 4,704 tokens;
+upper three / 7,056. Daily accounted usage is 118,839 with 61,161 remaining for
+the run's Pacific quota date. All 60 F5 candidates are exported blind for one
+external judge; validated import updates catalog wording and supplies provenance
+for every system. No live execution or external judgment has occurred here.

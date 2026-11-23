@@ -50,6 +50,10 @@ target-version = "py311"
 line-length = 100
 include = [
     "src/bugzilla_serving/**/*.py", "tests/contracts/**/*.py",
+    "src/bugzilla_qa/answering_v2/**/*.py",
+    "scripts/parity_check.py", "scripts/langsmith_smoke.py", "scripts/rollback_champion.py",
+    "scripts/grade_f5.py", "scripts/preview_promotion.py",
+    "scripts/export_f5_grading_packet.py", "scripts/import_f5_verdicts.py",
     "scripts/verify_bundle.py", "scripts/build_dashboard_snapshot.py",
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
     "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/publish_preset.py",

@@ -319,7 +319,7 @@ def test_policy_and_registry(tmp_path):
         override_policy="synthetic policy exception",
     )
     assert registry.get_champion().tags["policy_override"] == "synthetic policy exception"
-    historical = RunConfig(system_id="S5", s5_dossier_budget=12000)
+    historical = RunConfig(system_id="S5", s5_dossier_budget=12001)
     hid = registry.tracking.log_run(
         "research-answer-eval",
         params_for(historical),
@@ -436,8 +436,7 @@ def test_projection_model_and_archival_dossier():
     cfg = projected_config("S5", read(ROOT / "configs/answering.yaml"))
     assert cfg.s5_dossier_budget == 12000
     assert cfg.model == "openai/gpt-oss-20b"
-    with pytest.raises(ValueError):
-        cfg.validate_against(mode="execute")
+    assert cfg.validate_against(mode="execute") is cfg
 
 
 def test_ledger_mode_partner_scorer_and_upgrade(tmp_path, monkeypatch):
@@ -578,6 +577,36 @@ def test_ledger_mode_partner_scorer_and_upgrade(tmp_path, monkeypatch):
     assert tracking.log_run(**plan) == rid
     assert len(tracking.runs("research-answer-eval")) == 1
     assert tracking.client.get_run(rid).data.tags["config_origin"] == "historical"
+    # Exercise the LLM-verdict branch through the real ledger/scorer adapter.
+    for row in csv_rows:
+        if row["review_id"] == metadata[-1]["review_id"]:
+            row.update(answer_verdict="", reviewer="", note="")
+    (source / "REVIEW.csv").write_text(csv_text(csv_rows, list(csv_rows[0])))
+    from bugzilla_serving.tracking.f5_gold import VERSION, fingerprint
+
+    pending = next(r for r in b.review_rows(source) if r["family"] == "F5")
+    verdicts = root / "synthetic-verdicts.jsonl"
+    verdicts.write_text(
+        json.dumps(
+            dict(
+                review_id=pending["review_id"],
+                fingerprint=fingerprint(pending),
+                version=VERSION,
+                judge_model="synthetic-judge",
+                verdict="INCORRECT",
+                reason="Different substantive reason",
+            )
+        )
+        + "\n"
+    )
+    pending_plan, _ = answer_runs(source, "ledgers", root=root)
+    assert pending_plan[0]["metrics"]["answer.F5.n"] == 0
+    complete, _ = answer_runs(source, "ledgers", root=root, f5_gold="llm", f5_verdicts=verdicts)
+    assert complete[0]["metrics"]["answer.F5.n"] == 1
+    assert complete[0]["metrics"]["answer.F5.score"] == 0
+    assert complete[0]["metrics"]["answer.macro"] == pytest.approx(2 / 3)
+    assert complete[0]["metrics"]["answer.macro_excl_F5"] == 1
+    assert complete[0]["tags"]["f5_gold"] == "llm"
     # Frozen dev pins are enforced, not regenerated.
     (prediction_dir / "S1.jsonl").write_text(json.dumps(predictions[0]) + "\n")
     with pytest.raises(ValueError, match="checksum"):

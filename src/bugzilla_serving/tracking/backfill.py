@@ -367,7 +367,7 @@ def load_dev_items(root, config, dataset):
     return items, {str(path): original_hash, str(manifest_path): sha(manifest_path)}
 
 
-def _ledger_scores(reviews, directories, root, source):
+def _ledger_scores(reviews, directories, root, source, f5_verdicts=None, scorer_version="1"):
     from bugzilla_qa.evaluation import systems as scorer
     from bugzilla_qa.retrieval_v3.common import digest as prediction_digest
 
@@ -435,18 +435,35 @@ def _ledger_scores(reviews, directories, root, source):
                     )[:24]
                     if rid != review["review_id"]:
                         raise ValueError("Human review is not bound to this prediction/source hash")
-                result = scorer.grade(item, pred)
+                if str(scorer_version) == "2":
+                    from bugzilla_serving.experiments.scorer_v2 import grade, normalize
+
+                    result = grade(item, pred)
+                    checked_pred, rules = normalize(item, pred)
+                else:
+                    result = scorer.grade(item, pred)
+                    checked_pred, rules = pred, []
                 source_verdict, source_reason = result["verdict"], result["reason"]
-                failed = prediction_failed(result, item, pred)
+                failed = prediction_failed(result, item, checked_pred)
                 human = review.get("answer_verdict", "").strip().upper()
                 if human:
                     result.update(verdict=human, reason="human_review")
+                llm_verdict = (f5_verdicts or {}).get(review["review_id"])
+                if (
+                    llm_verdict
+                    and item["family"] == "F5"
+                    and (not human or llm_verdict.get("packet_sha256"))
+                ):
+                    result.update(
+                        verdict=llm_verdict["verdict"], reason="llm_semantic_reference_grade"
+                    )
                 if failed:
                     # Requested denominator protocol: malformed output is incorrect,
                     # including a duration whose output unit cannot be interpreted.
                     result.update(verdict="INCORRECT", reason=source_reason)
                 all_scores[system].append(
                     dict(
+                        normalization_rules=rules,
                         qid=item["qid"],
                         dataset=dataset,
                         family=item["family"],
@@ -456,6 +473,8 @@ def _ledger_scores(reviews, directories, root, source):
                         if failed
                         else "human-review"
                         if human
+                        else "llm-gold:" + llm_verdict["version"]
+                        if llm_verdict
                         else scorer.VERSION,
                         human_verdict=human or None,
                         source_verdict=source_verdict,
@@ -549,9 +568,21 @@ def answer_intervals(source, root, system):
     return intervals
 
 
-def answer_runs(source, mode="auto", root=ROOT):
+def answer_runs(
+    source, mode="auto", root=ROOT, *, f5_gold="human", f5_verdicts=None, scorer_version="1"
+):
     source, root = Path(source), Path(root)
+    if str(scorer_version) not in ("1", "2"):
+        raise ValueError("scorer_version must be 1 or 2")
     reviews = review_rows(source)
+    if f5_gold not in ("human", "llm"):
+        raise ValueError("f5-gold must be human or llm")
+    saved_f5 = {}
+    if f5_gold == "llm":
+        from bugzilla_serving.tracking.f5_gold import DEFAULT_VERDICTS, load_verdicts
+
+        path = Path(f5_verdicts or root / DEFAULT_VERDICTS)
+        saved_f5 = load_verdicts(reviews, path)
     if not reviews:
         raise ValueError("Empty review source")
     directories = discover_ledgers(source, root) if mode != "review-only" else {}
@@ -562,17 +593,23 @@ def answer_runs(source, mode="auto", root=ROOT):
     selected_mode = ("ledgers" if available else "review-only") if mode == "auto" else mode
     if selected_mode == "ledgers" and not available:
         raise ValueError("Exact referenced prediction ledgers unavailable; use --mode review-only")
+    if str(scorer_version) == "2" and selected_mode != "ledgers":
+        raise ValueError("Scorer v2 requires exact ledgers")
     reason = (
         "Exact referenced prediction runs available"
         if available
         else "Exact prediction references/manifests missing; no substitute smoke runs used"
     )
     pins = {str(source / "REVIEW.csv"): sha(source / "REVIEW.csv")}
+    if f5_gold == "llm":
+        pins[str(path)] = sha(path)
     if (source / "START_HERE.html").exists():
         pins[str(source / "START_HERE.html")] = sha(source / "START_HERE.html")
     if selected_mode == "ledgers":
         reviews = review_rows(source, include_all=True)
-        scores, configs, events, ledger_pins = _ledger_scores(reviews, directories, root, source)
+        scores, configs, events, ledger_pins = _ledger_scores(
+            reviews, directories, root, source, saved_f5, scorer_version
+        )
         pins.update(ledger_pins)
     else:
         scores, configs, events = defaultdict(list), {}, {}
@@ -580,8 +617,22 @@ def answer_runs(source, mode="auto", root=ROOT):
         for row in reviews:
             system = row["system_id"]
             verdict, by = review_verdict(row)
-            scores[system].append(dict(family=row["family"], verdict=verdict, scorer=by))
+            if row["review_id"] in saved_f5:
+                verdict, by = saved_f5[row["review_id"]]["verdict"], "llm-gold:f5-semantic-v1"
+            scores[system].append(
+                dict(qid=row["qid"], family=row["family"], verdict=verdict, scorer=by)
+            )
             configs[system] = projected_config(system, cfg, root)
+    from bugzilla_serving.experiments.scorer_v2 import exclusions
+
+    excluded_qids = set(exclusions()["qids"])
+    pins[str(ROOT / "configs/scoring_exclusions.yaml")] = sha(
+        ROOT / "configs/scoring_exclusions.yaml"
+    )
+    for system in scores:
+        scores[system] = [r for r in scores[system] if r.get("qid") not in excluded_qids]
+        if system in events:
+            events[system] = [r for r in events[system] if r.get("qid") not in excluded_qids]
     resolution = {}
     if selected_mode == "ledgers":
         for name in ("latest.json", "provenance.json"):
@@ -612,6 +663,9 @@ def answer_runs(source, mode="auto", root=ROOT):
     plans = []
     for system, values in sorted(scores.items()):
         metrics, families = aggregate(values)
+        without = [f["score"] for f in families if f["family"] != "F5" and f["scored_n"]]
+        if without:
+            metrics["answer.macro_excl_F5"] = sum(without) / len(without)
         if selected_mode == "ledgers":
             attempts = events[system]
             if all(isinstance(e.get("call_count"), int) for e in attempts):
@@ -661,10 +715,15 @@ def answer_runs(source, mode="auto", root=ROOT):
             git_sha=git_sha(root),
             provenance=selected_mode,
             config_origin="historical" if selected_mode == "ledgers" else "reconstructed",
+            scorer_version=str(scorer_version),
+            exclusions="f3_test_scope_v1",
             pilot="true",
             system_id=system,
             pending_n=str(sum(f["pending_n"] for f in families)),
         )
+        if f5_gold == "llm":
+            tags["f5_gold"] = "llm"
+            tags["scorer.F5"] = "llm-semantic-reference-v1"
         if system == "S3" and reused_s3:
             tags["reused_from"] = "S2"
         for f in families:
@@ -676,11 +735,14 @@ def answer_runs(source, mode="auto", root=ROOT):
                 families, list(dict.fromkeys(k for f in families for k in f))
             ),
             "intervals.json": json.dumps(
-                answer_intervals(source, root, system) if selected_mode == "ledgers" else []
+                []  # Archived intervals predate exclusions/scorer v2; never mislabel them.
             ),
             "provenance.json": json.dumps(
                 dict(
                     mode=selected_mode,
+                    scorer_version=str(scorer_version),
+                    exclusions="f3_test_scope_v1",
+                    excluded_qids=sorted(excluded_qids),
                     reason=reason,
                     input_sha256=pins,
                     resolved_references=resolution,
@@ -734,6 +796,15 @@ def answer_runs(source, mode="auto", root=ROOT):
                 artifacts=artifacts,
             )
         )
+    if saved_f5:
+        judges = {r["judge_model"] for r in saved_f5.values()}
+        if len(judges) != 1:
+            raise ValueError("Mixed F5 judges refused")
+        packets = {r.get("packet_sha256", "") for r in saved_f5.values()}
+        if len(packets) != 1:
+            raise ValueError("Mixed F5 packets refused")
+        for plan in plans:
+            plan["tags"].update(f5_judge=next(iter(judges)), f5_packet_sha256=next(iter(packets)))
     return plans, dict(mode=selected_mode, reason=reason, rows=len(reviews), datasets=datasets)
 
 

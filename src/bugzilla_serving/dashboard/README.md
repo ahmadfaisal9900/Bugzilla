@@ -26,7 +26,7 @@ answer runs and 24 retrieval runs, with no playground run. `pilot125` is a
 and latencies stay unavailable; absent families and retrieval N/A differ.
 
 Without a real `BUNDLE_DIR`, the Lab enables only the synthetic bundle and
-MockProvider. Start with Defaults / S2, smoke-5, limit 1. Expect a preflight,
+MockProvider. For an offline demo start from a seeded registry preset, smoke-5, limit 1. Expect a preflight,
 job status, then a simulated playground run; zero provider requests. Mock
 writes always use a local file store, even when viewing remote MLflow. Those
 local results can be viewed by starting the dashboard with the local URI
@@ -116,3 +116,12 @@ the dashboard does not invent intervals for pooled scores. Token cost per questi
 source-row accounting and never substitutes the scored subset denominator.
 Quota percentage uses configured daily limits, not live provider headers.
 Unknown production abstention or unrated feedback keeps its own denominator.
+
+## B6 integration tools
+
+See [the current Stream B handoff](../../../docs/mlops/STREAM_B_HANDOFF.md) for
+F5 semantic-grading/import, parity against the stub, the completed LangSmith
+smoke, rollback and the unchanged Fast/S1 live command. Production excludes
+smoke=true traces unless Show test traces is on. Overview displays Overall and
+Overall without Reasons; F5 remains unscored until complete saved LLM verdicts
+are imported. Presets lists rollback metadata from the snapshot.

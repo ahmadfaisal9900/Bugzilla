@@ -71,6 +71,9 @@ def latest_per_config(values):
             r.params.get("config_hash"),
             r.tags.get("eval_set"),
             r.tags.get("split"),
+            r.tags.get("scorer_version", "1"),
+            r.tags.get("system_id", r.params.get("system_id")),
+            r.tags.get("variant_hash"),
         )
         result.setdefault(key, r)
     return list(result.values())
@@ -208,17 +211,17 @@ def presets(tracking_uri):
     return Snapshot(**_snapshot(tracking_uri)["presets"])
 
 
-def checkpoint_artifact(tracking_uri, run_id, name):
+def checkpoint_artifact(tracking_uri, run_id, name, refresh=False, revision=None):
     # Resume immutable artifact reads across CLI/container restarts. Filenames are
     # digests so callers cannot escape the credential-free per-source directory.
     import hashlib
     import uuid
     from dataclasses import asdict
 
-    key = hashlib.sha256((run_id + "/" + name).encode()).hexdigest()
+    key = hashlib.sha256((run_id + "/" + name + "/" + str(revision or "")).encode()).hexdigest()
     folder = directory(tracking_uri) / "artifacts"
     path = folder / (key + ".json")
-    if path.exists():
+    if path.exists() and not refresh:
         try:
             return Snapshot(**json.loads(path.read_text()))
         except (OSError, ValueError, TypeError):
