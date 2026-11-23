@@ -21,3 +21,5 @@ docs/
 Frontend/
 .coverage*
 htmlcov/
+build/
+**/*.egg-info/

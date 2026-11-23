@@ -24,6 +24,17 @@ fail() { printf 'FAIL  %s\n' "$*" >&2; failures=$((failures + 1)); }
 
 status_of() { curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$@" || true; }
 
+# Wait until a URL answers 200 (the UIs can start a few seconds after the API is ready).
+wait_200() {
+  local url="$1" code="" until=$((SECONDS + 60))
+  while :; do
+    code="$(status_of "$url")"
+    [[ "$code" == 200 || SECONDS -ge until ]] && break
+    sleep 2
+  done
+  printf '%s' "$code"
+}
+
 # 1. /v1/ready returns 200 (the API loads the bundle at startup, so allow time).
 deadline=$((SECONDS + SMOKE_TIMEOUT))
 until [[ "$(status_of -H "X-API-Key: ${SERVING_API_KEY}" "${API_URL}/v1/ready")" == 200 ]]; do
@@ -81,13 +92,13 @@ fi
 
 # 3. The chat page (Streamlit's own health route, then the page itself).
 for path in /_stcore/health /; do
-  code="$(status_of "${CHAT_URL}${path}")"
+  code="$(wait_200 "${CHAT_URL}${path}")"
   [[ "$code" == 200 ]] && pass "chat ${path} 200" || fail "chat ${path} HTTP ${code}"
 done
 
 # 4. The dashboard.
 if [[ "$SMOKE_DASHBOARD" == 1 ]]; then
-  code="$(status_of "${DASHBOARD_URL}/")"
+  code="$(wait_200 "${DASHBOARD_URL}/")"
   [[ "$code" == 200 ]] && pass "dashboard / 200" || fail "dashboard / HTTP ${code}"
 else
   printf 'SKIP  dashboard (SMOKE_DASHBOARD=0)\n'
