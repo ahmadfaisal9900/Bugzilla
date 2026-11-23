@@ -105,10 +105,7 @@ def test_get_routes(client):
 )
 def test_auth_required(client, method, path):
     assert client.request(method, path, json={}).status_code == 401
-    assert (
-        client.request(method, path, headers={"X-API-Key": "wrong"}, json={}).status_code
-        == 401
-    )
+    assert client.request(method, path, headers={"X-API-Key": "wrong"}, json={}).status_code == 401
 
 
 def test_ask_feedback_and_threadpool(client, monkeypatch):

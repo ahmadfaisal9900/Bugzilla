@@ -131,3 +131,9 @@ __pycache__/
 
 /serving_bundle/
 /.serving-build-*/
+
+# Local build and test leftovers
+/build/
+*.egg-info/
+.coverage
+/serving_bundle.zip
