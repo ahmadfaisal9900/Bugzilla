@@ -27,6 +27,21 @@ $env:DASHBOARD_LAB_ENABLED = "false"
 # would make them disagree (HTTP 401), so drop it.
 Remove-Item Env:SERVING_API_KEY -ErrorAction SilentlyContinue
 
+# An API or Streamlit left running from an earlier session would answer instead of the new one
+# (with stale code), so refuse to start until those ports are free.
+$ports = @(8000, 8501)
+if (-not $NoDashboard) { $ports += 8502 }
+$busy = Get-NetTCPConnection -LocalPort $ports -State Listen -ErrorAction SilentlyContinue
+if ($busy) {
+    foreach ($connection in $busy) {
+        $owner = Get-Process -Id $connection.OwningProcess -ErrorAction SilentlyContinue
+        Write-Host ("Port {0} is in use by {1} (PID {2})." -f $connection.LocalPort, $owner.ProcessName, $connection.OwningProcess)
+    }
+    Write-Host "Stop those first, e.g.:"
+    Write-Host "  Get-NetTCPConnection -LocalPort $($ports -join ',') -State Listen | ForEach-Object { Stop-Process -Id `$_.OwningProcess -Force }"
+    exit 1
+}
+
 function Start-Part([string]$arguments) {
     Start-Process -FilePath $python -ArgumentList $arguments -NoNewWindow -PassThru
 }
