@@ -26,6 +26,11 @@ $env:DASHBOARD_LAB_ENABLED = "false"
 # The API and the chat both read SERVING_API_KEY from .env. A stale copy in this terminal
 # would make them disagree (HTTP 401), so drop it.
 Remove-Item Env:SERVING_API_KEY -ErrorAction SilentlyContinue
+# Test settings left in this terminal (e.g. LLM_PROVIDER=mock from a pytest run) would make
+# the API skip Groq and abstain on every question, so drop them too.
+foreach ($name in "LLM_PROVIDER", "LANGSMITH_SOURCE") {
+    Remove-Item "Env:$name" -ErrorAction SilentlyContinue
+}
 
 # An API or Streamlit left running from an earlier session would answer instead of the new one
 # (with stale code), so refuse to start until those ports are free.
