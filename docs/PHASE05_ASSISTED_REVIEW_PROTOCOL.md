@@ -56,13 +56,13 @@ Human review is still required for every retained F5 gold, every retained challe
 From the existing `Project/` root, first inspect the plan:
 
 ```bash
-bash scripts/run_phase05_agent_review_prep.sh --dry-run --batch 10
+bash scripts/phases/run_phase05_agent_review_prep.sh --dry-run --batch 10
 ```
 
 Then run the full local packet preparation in the user's terminal:
 
 ```bash
-bash scripts/run_phase05_agent_review_prep.sh --batch 10 --resume
+bash scripts/phases/run_phase05_agent_review_prep.sh --batch 10 --resume
 ```
 
 Optional `--limit 10` creates a separate marked prefix run for a bounded terminal smoke; it does not stand in for the complete packet set. `--resume` only reuses checksummed packets for identical inputs. The runner timestamps its log under `outputs/benchmark/phase05/logs/`.

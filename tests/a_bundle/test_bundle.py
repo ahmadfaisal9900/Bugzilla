@@ -16,7 +16,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def module(name):
-    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / (name + ".py"))
+    path = next((ROOT / "scripts").rglob(name + ".py"))
+    spec = importlib.util.spec_from_file_location(name, path)
     loaded = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(loaded)
     return loaded

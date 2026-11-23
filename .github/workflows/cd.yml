@@ -37,7 +37,7 @@ jobs:
       - name: Fetch pinned retrieval models
         run: |
           python3 -m pip install --quiet huggingface_hub==0.30.2
-          python3 scripts/fetch_models.py
+          python3 scripts/app/fetch_models.py
       - name: Build and start the CI stack
         run: |
           dashboard=""
@@ -46,7 +46,7 @@ jobs:
       - name: Smoke test
         run: |
           if [ ! -f docker/dashboard.Dockerfile ]; then export SMOKE_DASHBOARD=0; fi
-          bash scripts/smoke.sh
+          bash scripts/testing/smoke.sh
       - name: Logs on failure
         if: failure()
         run: docker compose -f compose.ci.yaml --profile dashboard logs --no-color --tail 200
@@ -82,7 +82,7 @@ jobs:
         if: matrix.service == 'api'
         run: |
           python3 -m pip install --quiet huggingface_hub==0.30.2
-          python3 scripts/fetch_models.py
+          python3 scripts/app/fetch_models.py
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         if: steps.meta.outputs.present
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
@@ -142,9 +142,9 @@ jobs:
           EOF
       - name: Copy compose file and smoke script
         run: |
-          ssh deploy "mkdir -p ~/${APP_DIR}/scripts"
+          ssh deploy "mkdir -p ~/${APP_DIR}/scripts/testing"
           scp compose.yaml deploy:~/${APP_DIR}/compose.yaml
-          scp scripts/smoke.sh deploy:~/${APP_DIR}/scripts/smoke.sh
+          scp scripts/testing/smoke.sh deploy:~/${APP_DIR}/scripts/testing/smoke.sh
       - name: Pull and start ${{ env.TAG }}
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -159,7 +159,7 @@ jobs:
         run: |
           ssh deploy "cd ~/${APP_DIR} \
             && export SERVING_API_KEY=\"\$(grep '^SERVING_API_KEY=' .env | cut -d= -f2-)\" \
-            && SMOKE_DASHBOARD=0 bash scripts/smoke.sh --r0-only"
+            && SMOKE_DASHBOARD=0 bash scripts/testing/smoke.sh --r0-only"
       - name: Record ${{ env.TAG }} as last good
         run: ssh deploy "cd ~/${APP_DIR} && echo '${TAG}' > .last_good"
       - name: Roll back to .last_good

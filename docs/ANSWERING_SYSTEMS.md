@@ -119,26 +119,26 @@ conda activate iqfm
 python -m pip install -r requirements-answering.txt
 
 # 1. Offline score-distribution suggestion; inspect output, then save it.
-bash scripts/run_phase10_answering.sh suggest-tau --dry-run
-bash scripts/run_phase10_answering.sh suggest-tau --write
+bash scripts/phases/run_phase10_answering.sh suggest-tau --dry-run
+bash scripts/phases/run_phase10_answering.sh suggest-tau --write
 
 # 2. Zero-call plans, including cache hits, tokens, quota and remaining work.
 for dataset in v3 phase05 natural; do
-  bash scripts/run_phase10_answering.sh plan --dataset "$dataset" --resume
+  bash scripts/phases/run_phase10_answering.sh plan --dataset "$dataset" --resume
  done
 
 # 3. Fixed pilot: first up to three questions per present family per system.
 # Each invocation is capped; repeat the SAME command on PARTIAL after quota resets.
 for dataset in v3 phase05 natural; do
-  bash scripts/run_phase10_answering.sh run --dataset "$dataset" \
+  bash scripts/phases/run_phase10_answering.sh run --dataset "$dataset" \
     --limit-per-family 3 --run-tag pilot --enable-llm --max-requests 100 \
     --trace --trace-sample 1 --resume
  done
 
 # 4. Daily dev batch; repeat for each dataset until remaining_by_system is zero.
 # Without --limit-per-family, --limit advances through pending questions.
-bash scripts/run_phase10_answering.sh plan --dataset v3 --limit 25 --resume
-bash scripts/run_phase10_answering.sh run --dataset v3 --limit 25 \
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 --limit 25 --resume
+bash scripts/phases/run_phase10_answering.sh run --dataset v3 --limit 25 \
   --enable-llm --max-requests 200 --resume
 # Repeat with --dataset phase05 and --dataset natural.
 
@@ -146,8 +146,8 @@ bash scripts/run_phase10_answering.sh run --dataset v3 --limit 25 \
 # Add --trace --trace-sample 0.1 to the run command.
 
 # Optional dev references in LangSmith; no answer evaluation is run.
-bash scripts/run_phase10_answering.sh upload-dev --dry-run
-bash scripts/run_phase10_answering.sh upload-dev --enable-upload --max-requests 100 --resume
+bash scripts/phases/run_phase10_answering.sh upload-dev --dry-run
+bash scripts/phases/run_phase10_answering.sh upload-dev --enable-upload --max-requests 100 --resume
 ```
 
 The suggestion reports n, score quantiles and tau. Plan reports `DRY_RUN`, zero
@@ -216,9 +216,9 @@ The owner requested a smaller check to conserve free API quota. Use exactly one
 fixed development QID across S0–S8, not three questions per family/dataset:
 
 ```bash
-bash scripts/run_phase10_answering.sh plan --dataset v3 \
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 \
   --qid v3_03f2ea205396f26d0fef9e5f --run-tag smoke-one --resume
-bash scripts/run_phase10_answering.sh run --dataset v3 \
+bash scripts/phases/run_phase10_answering.sh run --dataset v3 \
   --qid v3_03f2ea205396f26d0fef9e5f --run-tag smoke-one \
   --enable-llm --max-requests 12 --trace --resume
 ```
@@ -245,7 +245,7 @@ answer-pilot calls. No new request was made during this change.
 ## Token-quota diagnosis and zero-call inspection
 
 ```bash
-bash scripts/run_phase10_answering.sh quota
+bash scripts/phases/run_phase10_answering.sh quota
 ```
 
 This reads configuration, successful-usage/request ledger aggregates and any
@@ -306,7 +306,7 @@ outputs/predictions/prompt_audits/audit-b8f157b894f057e7/summary.json.
 Use the offline plan first; it shows the new profile's cache misses:
 
 ```bash
-bash scripts/run_phase10_answering.sh plan --dataset v3 \
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 \
   --qid v3_03f2ea205396f26d0fef9e5f --run-tag compact-smoke \
   --compact-prompts --resume
 ```

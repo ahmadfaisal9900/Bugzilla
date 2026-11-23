@@ -1,6 +1,6 @@
 # CI and local smoke stack: builds the images here, serves the synthetic fixture bundle and uses
 # the mock LLM, so it needs no keys, no real data and no network at runtime.
-#   docker compose -f compose.ci.yaml up --build -d && bash scripts/smoke.sh
+#   docker compose -f compose.ci.yaml up --build -d && bash scripts/testing/smoke.sh
 # The dashboard joins with --profile dashboard (read-only target of docker/dashboard.Dockerfile).
 name: bugzilla-ci
 
@@ -20,7 +20,7 @@ services:
     <<: *api-build
     # One-shot: writes the synthetic bundle (20 made-up bugs) into a shared volume, then exits.
     user: root
-    command: ["python", "scripts/build_fixture_bundle.py", "--output", "/fixture/bundle"]
+    command: ["python", "scripts/testing/build_fixture_bundle.py", "--output", "/fixture/bundle"]
     volumes:
       - fixture:/fixture
 

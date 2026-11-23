@@ -144,7 +144,7 @@ def test_r0_removes_inapplicable_options():
 @pytest.fixture
 def client(tmp_path, monkeypatch, guard):
     spec = importlib.util.spec_from_file_location(
-        "quota_builder", ROOT / "scripts/build_fixture_bundle.py"
+        "quota_builder", ROOT / "scripts/testing/build_fixture_bundle.py"
     )
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)

@@ -54,16 +54,16 @@ line-length = 100
 include = [
     "src/bugzilla_serving/**/*.py", "tests/contracts/**/*.py",
     "src/bugzilla_qa/answering_v2/**/*.py",
-    "scripts/parity_check.py", "scripts/langsmith_smoke.py", "scripts/rollback_champion.py",
-    "scripts/grade_f5.py", "scripts/preview_promotion.py",
-    "scripts/export_f5_grading_packet.py", "scripts/import_f5_verdicts.py",
-    "scripts/verify_bundle.py", "scripts/build_dashboard_snapshot.py",
-    "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
-    "scripts/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
+    "scripts/mlops/parity_check.py", "scripts/mlops/langsmith_smoke.py", "scripts/mlops/rollback_champion.py",
+    "scripts/mlops/grade_f5.py", "scripts/mlops/preview_promotion.py",
+    "scripts/mlops/export_f5_grading_packet.py", "scripts/mlops/import_f5_verdicts.py",
+    "scripts/app/verify_bundle.py", "scripts/mlops/build_dashboard_snapshot.py",
+    "scripts/testing/build_fixture_bundle.py", "scripts/testing/seed_mlflow_fixture.py", "pyproject.toml",
+    "scripts/app/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
     "tests/a_quota/**/*.py", "tests/a_tracing/**/*.py", "tests/a_ui/**/*.py",
-    "scripts/check_serving_tracing.py",
-    "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/publish_preset.py",
-    "tests/b_experiments/**/*.py", "scripts/make_eval_sets.py", "scripts/run_experiment.py",
+    "scripts/app/check_serving_tracing.py",
+    "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/mlops/publish_preset.py",
+    "tests/b_experiments/**/*.py", "scripts/mlops/make_eval_sets.py", "scripts/mlops/run_experiment.py",
     "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py", "conftest.py",
 ]
 
@@ -82,7 +82,7 @@ show_missing = true
 # reformat those files as part of B4; remove exclusions with owner approval.
 [tool.ruff.format]
 exclude = [
-    "scripts/build_fixture_bundle.py", "src/bugzilla_serving/api/stub.py",
+    "scripts/testing/build_fixture_bundle.py", "src/bugzilla_serving/api/stub.py",
     "src/bugzilla_serving/engine.py", "src/bugzilla_serving/contracts/api_models.py",
     "src/bugzilla_serving/contracts/records.py", "tests/contracts/conftest.py",
     "tests/contracts/test_contracts.py",
@@ -92,6 +92,6 @@ exclude = [
 # Existing engine import order; Stream A maintains this file.
 "src/bugzilla_serving/engine.py" = ["I001"]
 
-"scripts/build_fixture_bundle.py" = ["E501"]
+"scripts/testing/build_fixture_bundle.py" = ["E501"]
 "src/bugzilla_serving/api/stub.py" = ["I001", "E501"]
 "tests/contracts/test_contracts.py" = ["I001", "E501"]

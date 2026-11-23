@@ -1,8 +1,8 @@
 # Stream A: Serving & Chat (FastAPI, Chat UI, LangSmith tracing, CD, hosting)
 
-Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 contracts and fixtures. Until integration, it uses `scripts/seed_mlflow_fixture.py` instead of the real MLflow, and `MockProvider` instead of Groq.
+Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 contracts and fixtures. Until integration, it uses `scripts/testing/seed_mlflow_fixture.py` instead of the real MLflow, and `MockProvider` instead of Groq.
 
-**Owns:** `src/bugzilla_serving/api/`, `bundle.py`, `quota.py`, `tracing.py`, `chat_ui/`, `engine.py` (maintenance), `scripts/build_serving_bundle.py`, `docker/api.Dockerfile`, `docker/chat.Dockerfile`, `compose*.yaml`, `.github/workflows/cd.yml`, `docs/DEPLOYMENT.md`, `tests/a_*`.
+**Owns:** `src/bugzilla_serving/api/`, `bundle.py`, `quota.py`, `tracing.py`, `chat_ui/`, `engine.py` (maintenance), `scripts/app/build_serving_bundle.py`, `docker/api.Dockerfile`, `docker/chat.Dockerfile`, `compose*.yaml`, `.github/workflows/cd.yml`, `docs/DEPLOYMENT.md`, `tests/a_*`.
 
 **Never touches:** `tracking/`, `experiments/`, `dashboard/`, `ci.yml`, research code. Shared files only through a PR both people approve.
 
@@ -10,7 +10,7 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 
 ## A1. Serving bundle
 
-- `scripts/build_serving_bundle.py --out serving_bundle/`. Dry-run by default; `--apply` writes.
+- `scripts/app/build_serving_bundle.py --out serving_bundle/`. Dry-run by default; `--apply` writes.
 - Contents:
   - a DuckDB with `bugs` + `bug_links` metadata, public comments for the 3,000 cohort bugs, and the Phase 4 history overlay;
   - corpora C0/C1/C2 with their FTS5 + FAISS indexes;
@@ -31,8 +31,8 @@ files are included. `load_bundle(path).examples()` returns a list of strings;
 From the repo root, with `iqfm` active:
 
 ```powershell
-python scripts/build_serving_bundle.py --out serving_bundle
-python scripts/build_serving_bundle.py --out serving_bundle --apply
+python scripts/app/build_serving_bundle.py --out serving_bundle
+python scripts/app/build_serving_bundle.py --out serving_bundle --apply
 python -m pytest tests/a_bundle -q
 ```
 
@@ -82,7 +82,7 @@ MLFLOW_TRACKING_URI=file:./outputs/mlflow-phase0
 ```
 
 ```powershell
-python scripts/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
+python scripts/testing/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
 python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1
 ```
 
@@ -155,7 +155,7 @@ are returned by `/ask` and the SSE `done` event; feedback is always stored local
 and sent to LangSmith when a trace ID exists. Credentials are redacted at the SDK
 write boundary as well as in API outputs. See
 [the monitoring guide](../LANGSMITH_MONITORING.md) for the offline checks, one-question
-live check and two captured screenshots. Use `python scripts/check_serving_tracing.py`
+live check and two captured screenshots. Use `python scripts/app/check_serving_tracing.py`
 to preview; `--live` explicitly submits the mock question and feedback.
 
 ## A5. Chat UI (user-facing; Streamlit chat components)
@@ -193,7 +193,7 @@ Design goals: fast perceived response, plain language, no S0–S8/R1–R7 jargon
   - the bundle mounted read-only; an app-data volume; `env_file: .env`;
   - `DASHBOARD_LAB_ENABLED=false` on the host.
 - `compose.ci.yaml`: fixture bundle, `LLM_PROVIDER=mock`, local builds.
-- `scripts/smoke.sh`: `/v1/ready`, one `/v1/ask` per preset with mock, chat page and dashboard return 200.
+- `scripts/testing/smoke.sh`: `/v1/ready`, one `/v1/ask` per preset with mock, chat page and dashboard return 200.
 - `.github/workflows/cd.yml`:
   - triggered by tags `v*` and manual dispatch;
   - build and push all three images to GHCR, using amd64 + arm64 if the host is ARM;

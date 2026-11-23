@@ -34,9 +34,9 @@ The commands below document generation for a new version. The user has already g
 From the existing Project root, using the Python environment with free DuckDB 1.4.4:
 
 ```bash
-bash scripts/run_phase05_generate_benchmark.sh --dry-run --seed 317
-bash scripts/run_phase05_generate_benchmark.sh --seed 317 --resume &&
-bash scripts/run_phase05_prepare_review.sh --seed 317 --resume
+bash scripts/phases/run_phase05_generate_benchmark.sh --dry-run --seed 317
+bash scripts/phases/run_phase05_generate_benchmark.sh --seed 317 --resume &&
+bash scripts/phases/run_phase05_prepare_review.sh --seed 317 --resume
 ```
 
 An optional bounded trial uses `--limit 2`; it produces a separate marked prefix that can never be frozen. `--f5-target 10` is an optional reduced manual workload; use the same generation options on resume. Output directories are versioned by source pins, seed, limits, and code hashes. A completed matching generation is skipped on resume; an interrupted generation can be deterministically restarted. No previous benchmark or user review is deleted.
@@ -56,8 +56,8 @@ Run prepare-review with `--resume` after rejections: it preserves review edits a
 Finally fill `review_signoff.json` with a reviewer and UTC review time, set `approve_freeze=true` and `acknowledge_actual_reduced_coverage=true` only after checking the actual counts and mandatory reviews. This is human sign-off; scripts never approve rows or the sign-off automatically.
 
 ```bash
-bash scripts/run_phase05_validate_freeze.sh --dry-run --seed 317
-bash scripts/run_phase05_validate_freeze.sh --seed 317 --resume
+bash scripts/phases/run_phase05_validate_freeze.sh --dry-run --seed 317
+bash scripts/phases/run_phase05_validate_freeze.sh --seed 317 --resume
 ```
 
 The terminal freeze rehashes the canonical database (a sequential 1.89-GB read, potentially minutes on slow storage), validates the compact manifests/caches, and independently rebuilds factual gold. It refuses prefixes, missing reviews, altered sources, future evidence, duplicate questions, changed gold, and unsigned F5. It writes `frozen-<identity>/` with a quality report, checksummed manifests and separate `dev`, `test`, and `challenge` question/gold JSONL files. A `FROZEN` pointer prevents replacing a locked test with edited reviews; an amendment needs a new generation version. Resume validates the existing release rather than overwriting it.
@@ -97,8 +97,8 @@ the original run. The added questions are practice only and should be scored
 separately from the reviewed benchmark.
 
 ```bash
-bash scripts/run_phase05_dev_supplement.sh --limit 30 --dry-run
-bash scripts/run_phase05_dev_supplement.sh --limit 30
+bash scripts/phases/run_phase05_dev_supplement.sh --limit 30 --dry-run
+bash scripts/phases/run_phase05_dev_supplement.sh --limit 30
 ```
 
 Use `--resume` with the same arguments to recover an interrupted run or verify a
@@ -107,7 +107,7 @@ To smoke-test M0 or M3 on the supplement, set `MODEL` to the installed local Oll
 model name. For M3, change the method to `m3-llm`.
 
 ```bash
-bash scripts/run_phase06_baselines.sh m0 --model "$MODEL" --run outputs/benchmark/phase05/dev-supplement-30 --unfrozen-dev-smoke --limit 5 --max-requests 5
+bash scripts/phases/run_phase06_baselines.sh m0 --model "$MODEL" --run outputs/benchmark/phase05/dev-supplement-30 --unfrozen-dev-smoke --limit 5 --max-requests 5
 ```
 
 The tiny fixture verifies split isolation, unchanged parent checksums, SQL scoring
@@ -126,10 +126,10 @@ UNKNOWN, and the original signoffs do not carry over to new practice items.
 
 ```bash
 SAMPLE='C:/Courses/ENSF 621/BUGZILLA/Bugzilla/data/firefox-sample-seed317-20261102'
-bash scripts/run_phase05_dev_supplement.sh --sample-bundle "$SAMPLE" --limit 30 --dry-run
-bash scripts/run_phase05_dev_supplement.sh --sample-bundle "$SAMPLE" --limit 30
+bash scripts/phases/run_phase05_dev_supplement.sh --sample-bundle "$SAMPLE" --limit 30 --dry-run
+bash scripts/phases/run_phase05_dev_supplement.sh --sample-bundle "$SAMPLE" --limit 30
 PRACTICE='outputs/benchmark/phase05/dev-supplement-shared-30'
-bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --run "$PRACTICE" --unfrozen-dev-smoke --limit 5
+bash scripts/phases/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --run "$PRACTICE" --unfrozen-dev-smoke --limit 5
 ```
 
 The M3 command checks the supplement checkpoint and sample hashes before

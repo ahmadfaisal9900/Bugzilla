@@ -88,7 +88,7 @@ def test_log_filter_removes_secret_and_exception(monkeypatch):
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     spec = importlib.util.spec_from_file_location(
-        "trace_builder", ROOT / "scripts/build_fixture_bundle.py"
+        "trace_builder", ROOT / "scripts/testing/build_fixture_bundle.py"
     )
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
@@ -207,7 +207,7 @@ def test_trace_outage_does_not_repeat_inference(client, monkeypatch):
 
 
 def test_live_check_defaults_to_preview(monkeypatch, capsys):
-    path = ROOT / "scripts/check_serving_tracing.py"
+    path = ROOT / "scripts/app/check_serving_tracing.py"
     spec = importlib.util.spec_from_file_location("tracing_check", path)
     script = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(script)

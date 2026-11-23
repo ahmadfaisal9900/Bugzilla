@@ -596,7 +596,7 @@ def main():
     print(json.dumps({'output':str(out),'stages':{k:v['state'] for k,v in summaries.items()}},indent=2))
     blocked=[k for k,v in summaries.items() if v['state']=='BLOCKED']
     if blocked:
-        print('Resume after resolving the reported blockers: bash scripts/run_eval_extension.sh --resume',file=sys.stderr)
+        print('Resume after resolving the reported blockers: bash scripts/phases/run_eval_extension.sh --resume',file=sys.stderr)
         raise SystemExit(1)
 
 

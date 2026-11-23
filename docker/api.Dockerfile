@@ -31,7 +31,7 @@ RUN mkdir -p src/bugzilla_qa src/bugzilla_serving \
 COPY src ./src
 COPY configs ./configs
 COPY prompts ./prompts
-COPY scripts/build_fixture_bundle.py ./scripts/build_fixture_bundle.py
+COPY scripts/testing/build_fixture_bundle.py ./scripts/testing/build_fixture_bundle.py
 COPY models ./models
 
 RUN useradd --create-home --uid 10001 app \

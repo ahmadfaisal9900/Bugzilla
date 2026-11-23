@@ -129,7 +129,7 @@ def test_bundle_rejects_tamper_and_non_dev(fixture_bundle):
 def test_fixture_rebuild_deterministic(tmp_path):
     from conftest import module
 
-    builder = module(ROOT / "scripts/build_fixture_bundle.py", "builder_determinism")
+    builder = module(ROOT / "scripts/testing/build_fixture_bundle.py", "builder_determinism")
     first = builder.build(tmp_path / "first")
     second = builder.build(tmp_path / "second")
     assert (first / "manifest.json").read_bytes() == (second / "manifest.json").read_bytes()
@@ -159,7 +159,7 @@ def test_openapi_snapshot(monkeypatch):
 def test_mlflow_local_file_uri(tmp_path, monkeypatch):
     from conftest import module
 
-    seed = module(ROOT / "scripts/seed_mlflow_fixture.py", "p0_seed_uri")
+    seed = module(ROOT / "scripts/testing/seed_mlflow_fixture.py", "p0_seed_uri")
     store = tmp_path / "tracking store"
     monkeypatch.chdir(tmp_path)
     assert seed.local_tracking_uri(store.as_uri()) == store.as_uri()
@@ -176,7 +176,7 @@ def test_mlflow_seed_idempotence_and_secret_scan(tmp_path, fixture_bundle, monke
     key = "fake-secret-phase0-NEVER-PERSIST-123456"
     for variable in ("GROQ_API_KEY", "LANGSMITH_API_KEY", "MLFLOW_TRACKING_PASSWORD"):
         monkeypatch.setenv(variable, key)
-    seed = module(ROOT / "scripts/seed_mlflow_fixture.py", "p0_seed")
+    seed = module(ROOT / "scripts/testing/seed_mlflow_fixture.py", "p0_seed")
     uri = (tmp_path / "mlruns").as_uri()
     first, second = seed.seed(uri), seed.seed(uri)
     assert first["created_runs"] == 9 and second["created_runs"] == 0

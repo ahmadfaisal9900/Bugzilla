@@ -6,7 +6,7 @@ automatically if the post-deploy smoke query fails.
 ```
 git tag v0.1.0 && git push origin v0.1.0
   └─ .github/workflows/cd.yml
-       1. smoke   compose.ci.yaml (fixture bundle, mock LLM) + scripts/smoke.sh
+       1. smoke   compose.ci.yaml (fixture bundle, mock LLM) + scripts/testing/smoke.sh
        2. images  api, chat, dashboard → ghcr.io/<owner>/bugzilla-<service>:<tag>  (amd64 + arm64)
        3. deploy  ssh → docker compose pull && up -d → R0 smoke query (0 LLM calls)
                   pass: write .last_good    fail: redeploy the tag in .last_good
@@ -19,9 +19,9 @@ git tag v0.1.0 && git push origin v0.1.0
 | Dashboard image | `docker/dashboard.Dockerfile` (dashboard stream) |
 | Production stack | `compose.yaml` |
 | CI and local smoke stack | `compose.ci.yaml` |
-| Local full stack (your bundle and `.env`) | `compose.local.yaml`, `scripts/run_local.ps1` |
-| Smoke checks | `scripts/smoke.sh` |
-| Model download for CI | `scripts/fetch_models.py` |
+| Local full stack (your bundle and `.env`) | `compose.local.yaml`, `scripts/app/run_local.ps1` |
+| Smoke checks | `scripts/testing/smoke.sh` |
+| Model download for CI | `scripts/app/fetch_models.py` |
 | Pipeline | `.github/workflows/cd.yml` |
 
 ## Host: Oracle Always Free A1 VM
@@ -147,21 +147,21 @@ and dashboard together:
 
 | How | Command | Stop |
 |---|---|---|
-| Your venv, one PowerShell terminal | `.\scripts\run_local.ps1` (`-NoDashboard` to skip it) | Ctrl+C |
+| Your venv, one PowerShell terminal | `.\scripts\app\run_local.ps1` (`-NoDashboard` to skip it) | Ctrl+C |
 | Docker Desktop, built from this checkout | `docker compose -f compose.local.yaml up --build` | Ctrl+C, then `docker compose -f compose.local.yaml down` |
 
 Chat http://localhost:8501, dashboard http://localhost:8502. The venv needs
 `pip install ".[serving,ui,dashboard]"` once. The Docker build needs `models/` (run
-`python scripts/fetch_models.py` if it is missing) and takes a while the first time.
+`python scripts/app/fetch_models.py` if it is missing) and takes a while the first time.
 
 ## Test locally first
 
 Docker Desktop, from the repo root in Git Bash:
 
 ```bash
-python scripts/fetch_models.py      # only if models/ is missing
+python scripts/app/fetch_models.py      # only if models/ is missing
 docker compose -f compose.ci.yaml up --build -d
-SMOKE_DASHBOARD=0 bash scripts/smoke.sh
+SMOKE_DASHBOARD=0 bash scripts/testing/smoke.sh
 docker compose -f compose.ci.yaml down -v
 ```
 

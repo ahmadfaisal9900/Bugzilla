@@ -67,8 +67,8 @@ python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --wo
 In another terminal, preview the check, then explicitly run it:
 
 ```powershell
-python scripts/check_serving_tracing.py
-python scripts/check_serving_tracing.py --live
+python scripts/app/check_serving_tracing.py
+python scripts/app/check_serving_tracing.py --live
 ```
 
 The live command submits exactly one mock question and one thumbs-up, then reads

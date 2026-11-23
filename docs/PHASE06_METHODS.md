@@ -12,7 +12,7 @@
 | `retrieval/bm25.py` | Standard-library BM25, the shared text corpus, Recall@k and Precision@k | Fixture-tested |
 | `methods/local_model.py`, `methods/generation.py` | Local Ollama connection; M0 without records and M1 using bounded BM25 evidence | Fake-model and fixture-tested; no real model call |
 | `methods/m3_intent.py` | Local model classifies the question into a validated JSON intent for the SQL store | Fake-model and fixture-tested |
-| `evaluation/phase06.py`, `scripts/run_phase06_baselines.sh` | Development-only runner for M0/M1/M3/BM25 and the study M3 path with checkpoints and a summary JSON | Fixture-tested; real-input dry-run reports `BLOCKED` here |
+| `evaluation/phase06.py`, `scripts/phases/run_phase06_baselines.sh` | Development-only runner for M0/M1/M3/BM25 and the study M3 path with checkpoints and a summary JSON | Fixture-tested; real-input dry-run reports `BLOCKED` here |
 
 ## Scoring rules
 
@@ -52,9 +52,9 @@ Not shown: nothing has run against the real database, so real M3 accuracy and BM
 4. After the freeze, run every arm once on the locked test. This needs a deliberate new option; today's runner has no way to select test.
 
 ```bash
-bash scripts/run_phase06_baselines.sh m3 --unfrozen-dev-smoke --dry-run
-bash scripts/run_phase06_baselines.sh m3 --unfrozen-dev-smoke
-bash scripts/run_phase06_baselines.sh bm25 --unfrozen-dev-smoke
+bash scripts/phases/run_phase06_baselines.sh m3 --unfrozen-dev-smoke --dry-run
+bash scripts/phases/run_phase06_baselines.sh m3 --unfrozen-dev-smoke
+bash scripts/phases/run_phase06_baselines.sh bm25 --unfrozen-dev-smoke
 ```
 
 Expected from the M3 smoke: every F1–F4 and F6 development row correct, and all six F5 rows false abstentions. Any other F1–F4 or F6 result is a defect to investigate, not a finding. Results marked `UNFROZEN_DEV_SMOKE` are never study results.
@@ -79,10 +79,10 @@ The user authorized treating the remaining 31 answers as provisionally valid to 
 After installing and starting a suitable model on the data machine, substitute its exact installed name for `YOUR_INSTALLED_MODEL`. Run M0 before M1. These are user-terminal commands, not commands run by the agent:
 
 ```bash
-bash scripts/run_phase06_baselines.sh m0 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
-bash scripts/run_phase06_baselines.sh m0 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5
-bash scripts/run_phase06_baselines.sh m1 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
-bash scripts/run_phase06_baselines.sh m1 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5
+bash scripts/phases/run_phase06_baselines.sh m0 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
+bash scripts/phases/run_phase06_baselines.sh m0 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5
+bash scripts/phases/run_phase06_baselines.sh m1 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
+bash scripts/phases/run_phase06_baselines.sh m1 --model YOUR_INSTALLED_MODEL --unfrozen-dev-smoke --limit 5 --max-requests 5
 ```
 
 Inspect `outputs/phase06/logs/` and the run's `summary.json`, `predictions.jsonl` and `scores.jsonl`. M1 constructs its source index before answering; `--limit` limits questions, not index size. Resume the same settings with `--resume`; the default is at most five new model calls per invocation. No real inference, embedding generation or full evaluation was executed here.
@@ -99,8 +99,8 @@ installed model name and use it for both methods. Run the dry-runs first, then r
 the commands with `--dry-run` removed.
 
 ```bash
-bash scripts/run_phase06_baselines.sh m0 --model "$MODEL" --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
-bash scripts/run_phase06_baselines.sh m3-llm --model "$MODEL" --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
+bash scripts/phases/run_phase06_baselines.sh m0 --model "$MODEL" --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
+bash scripts/phases/run_phase06_baselines.sh m3-llm --model "$MODEL" --unfrozen-dev-smoke --limit 5 --max-requests 5 --dry-run
 ```
 
 Use `--resume` for the same configuration and raise `--limit` to progress beyond the
@@ -131,8 +131,8 @@ local Windows location as an example.
 ```bash
 SAMPLE='/c/Courses/ENSF 621/BUGZILLA/Bugzilla/data/firefox-sample-seed317-20261102'
 REVIEW='outputs/benchmark/phase05/agent_review/signoff/run-65c5be3381f66811'
-bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5 --dry-run
-bash scripts/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5
+bash scripts/phases/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5 --dry-run
+bash scripts/phases/run_phase06_baselines.sh m3 --sample-bundle "$SAMPLE" --limit 5
 ```
 
 The SQL-only check uses the development wording parser. This Windows machine
@@ -142,8 +142,8 @@ Keep the same model and runtime setting for both arms.
 
 ```bash
 MODEL='qwen2.5:1.5b-instruct-q4_K_M'
-bash scripts/run_phase06_baselines.sh m0 --review-bundle "$REVIEW" --model "$MODEL" --cpu --limit 5 --max-requests 5
-bash scripts/run_phase06_baselines.sh m3-llm --sample-bundle "$SAMPLE" --model "$MODEL" --cpu --limit 5 --max-requests 5
+bash scripts/phases/run_phase06_baselines.sh m0 --review-bundle "$REVIEW" --model "$MODEL" --cpu --limit 5 --max-requests 5
+bash scripts/phases/run_phase06_baselines.sh m3-llm --sample-bundle "$SAMPLE" --model "$MODEL" --cpu --limit 5 --max-requests 5
 ```
 
 Use `--resume` to continue the same output. Inspect the logged path and the
@@ -160,7 +160,7 @@ terminal to check responses on the real development quiz.
 From PowerShell in the project folder, run:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_phase06_verify.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\phases\run_phase06_verify.ps1
 ```
 
 The script creates the Python environment, checks the inputs, runs the tests,

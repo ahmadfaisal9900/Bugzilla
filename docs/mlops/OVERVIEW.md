@@ -108,8 +108,8 @@ flowchart LR
 | `src/bugzilla_serving/api/`, `bundle.py`, `quota.py`, `tracing.py` | A |
 | `src/bugzilla_serving/chat_ui/` | A |
 | `src/bugzilla_serving/tracking/`, `experiments/`, `dashboard/` | B |
-| `scripts/build_serving_bundle.py`, `scripts/seed_*` | A (bundle), Phase 0 (seeds) |
-| `scripts/backfill_*.py`, `scripts/run_experiment.py`, `scripts/publish_preset.py` | B |
+| `scripts/app/build_serving_bundle.py`, `scripts/seed_*` | A (bundle), Phase 0 (seeds) |
+| `scripts/backfill_*.py`, `scripts/mlops/run_experiment.py`, `scripts/mlops/publish_preset.py` | B |
 | `docker/api.Dockerfile`, `docker/chat.Dockerfile`, `compose*.yaml`, `.github/workflows/cd.yml`, `docs/DEPLOYMENT.md` | A |
 | `docker/dashboard.Dockerfile`, `.github/workflows/ci.yml`, `.github/dependabot.yml`, `pyproject` test/lint config | B |
 | `tests/contracts/`, `tests/fixtures/` | Shared |
@@ -205,7 +205,7 @@ Done by one person, reviewed and approved by the other. Deliverables:
    - sample SSE event and `AnswerRecord` JSON;
    - a sample LangSmith feedback/run export;
    - a sample partner eval output.
-4. `scripts/seed_mlflow_fixture.py`: creates a local file-based MLflow store with 3 fake runs, a champion and 2 presets. A uses it before B's real backfill exists.
+4. `scripts/testing/seed_mlflow_fixture.py`: creates a local file-based MLflow store with 3 fake runs, a champion and 2 presets. A uses it before B's real backfill exists.
 5. `tests/contracts/` tests both streams must keep green: RunConfig validation, hash stability, OpenAPI snapshot (initially a stub app), MLflow naming checker, LangSmith metadata checker.
 6. `CODEOWNERS`, `.env.example`, empty package skeletons per the ownership table, and the minimal `pyproject` deps.
 

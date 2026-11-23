@@ -382,7 +382,7 @@ caption{text-align:left;font-weight:600;padding-bottom:4px}
     <li>Open <b>Evidence given to the method</b> and decide whether those snippets back up the answer. Choose <b>Not applicable</b> only when the method gave no answer.</li>
     <li>Add a short note and click <b>Save and next</b>.</li>
     <li>Then do <b>Needs evidence check</b>. These were already graded automatically; you only judge the evidence.</li>
-    <li>When finished, click <b>Download CSV</b> and run <kbd>scripts\run_phase11_evaluation.ps1 --import-review PATH_TO_CSV</kbd> to update the official scores.</li>
+    <li>When finished, click <b>Download CSV</b> and run <kbd>scripts\phases\run_phase11_evaluation.ps1 --import-review PATH_TO_CSV</kbd> to update the official scores.</li>
   </ol>
   <p>Shortcuts: <kbd>Y</kbd> correct, <kbd>X</kbd> incorrect, <kbd>S</kbd> supported, <kbd>U</kbd> unsupported, <kbd>C</kbd> unclear, <kbd>N</kbd> not applicable, <kbd>Ctrl</kbd>+<kbd>Enter</kbd> save, <kbd>J</kbd>/<kbd>K</kbd> next or previous response.</p>
   <p>Your decisions are saved in this browser as you go. Download the CSV to keep a copy.</p>

@@ -29,7 +29,7 @@ BODY = {
 
 @pytest.fixture
 def client(tmp_path, monkeypatch):
-    script = ROOT / "scripts/build_fixture_bundle.py"
+    script = ROOT / "scripts/testing/build_fixture_bundle.py"
     spec = importlib.util.spec_from_file_location("api_fixture_builder", script)
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)

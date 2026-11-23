@@ -78,8 +78,8 @@ pending family counts remain visible. Cancel is checked between questions;
 in-flight requests finish. Status and cancel:
 
 ```bash
-python scripts/run_experiment.py --status JOB_ID
-python scripts/run_experiment.py --cancel JOB_ID
+python scripts/mlops/run_experiment.py --status JOB_ID
+python scripts/mlops/run_experiment.py --cancel JOB_ID
 ```
 
 Rerun the same command to resume a crash/logging failure. A cancelled job keeps
@@ -103,7 +103,7 @@ for F5 grading/import, parity, rollback and the capped S1 smoke-5 live loop.
 The Recommended YAML fallback is stale and must not select a live job.
 
 ```bash
-python scripts/run_experiment.py --registry-presets --preset fast \
+python scripts/mlops/run_experiment.py --registry-presets --preset fast \
   --eval-set smoke-5 --max-requests 8 --label live-smoke-s1 --dry-run
 ```
 

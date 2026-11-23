@@ -137,3 +137,8 @@ __pycache__/
 *.egg-info/
 .coverage
 /serving_bundle.zip
+
+# Test reports (CI writes them at the root; scripts/testing/test_coverage.* writes results/coverage/).
+/coverage.xml
+/junit.xml
+/results/coverage/
