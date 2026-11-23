@@ -19,6 +19,7 @@ git tag v0.1.0 && git push origin v0.1.0
 | Dashboard image | `docker/dashboard.Dockerfile` (dashboard stream) |
 | Production stack | `compose.yaml` |
 | CI and local smoke stack | `compose.ci.yaml` |
+| Local full stack (your bundle and `.env`) | `compose.local.yaml`, `scripts/run_local.ps1` |
 | Smoke checks | `scripts/smoke.sh` |
 | Model download for CI | `scripts/fetch_models.py` |
 | Pipeline | `.github/workflows/cd.yml` |
@@ -138,6 +139,20 @@ Any pushed tag works, because every image stays in GHCR (Packages on the repo pa
 | `GROQ_API_KEY`, `LANGSMITH_API_KEY`, MLflow | Revoke the old key with the provider, put the new one in `.env`, restart as above. |
 | Deploy SSH key | Make a new key pair, add the new public key to `~/.ssh/authorized_keys`, update the `DEPLOY_SSH_KEY` secret, run cd once, then remove the old line from `authorized_keys`. |
 | GHCR access | Nothing to rotate: the workflow logs in with its own short-lived `GITHUB_TOKEN` and logs out after each pull. |
+
+## Run the whole app locally
+
+With your `serving_bundle/` and `.env` (real data, Groq), either of these starts the API, chat
+and dashboard together:
+
+| How | Command | Stop |
+|---|---|---|
+| Your venv, one PowerShell terminal | `.\scripts\run_local.ps1` (`-NoDashboard` to skip it) | Ctrl+C |
+| Docker Desktop, built from this checkout | `docker compose -f compose.local.yaml up --build` | Ctrl+C, then `docker compose -f compose.local.yaml down` |
+
+Chat http://localhost:8501, dashboard http://localhost:8502. The venv needs
+`pip install ".[serving,ui,dashboard]"` once. The Docker build needs `models/` (run
+`python scripts/fetch_models.py` if it is missing) and takes a while the first time.
 
 ## Test locally first
 
