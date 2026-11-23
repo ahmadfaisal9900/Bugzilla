@@ -152,11 +152,18 @@ class Runner:
             finally:
                 db.close()
             self._source_override = str(db_path)
-        self.examples = list(read_jsonl(self.root / self.manifest["dev_questions"]))
-        if not self.manifest.get("synthetic"):
-            self.examples = [dict(question=q["text"], split="dev") for q in self.examples]
+        # The accepted real bundle uses text-only examples; their dev scope is
+        # declared by the checksum-verified manifest. Structured rows still
+        # require an explicit dev split, including any future metadata format.
+        self.examples = [
+            {"question": q["text"], "split": "dev"} if set(q) == {"text"} else q
+            for q in read_jsonl(self.root / self.manifest["dev_questions"])
+        ]
         if any(q.get("split") != "dev" for q in self.examples):
             raise ValueError("bundle: non-dev question refused")
+        if any(not isinstance(q.get("question"), str) or not q["question"].strip()
+               for q in self.examples):
+            raise ValueError("bundle: expected nonempty question or text-only example")
 
     def _serving_engine(self):
         from bugzilla_qa.retrieval_v3.registry import Engine

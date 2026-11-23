@@ -487,3 +487,20 @@ may submit six questions per minute; further requests receive HTTP 429.
 - [Data dictionary](docs/DATA_DICTIONARY.md): canonical fields and provenance.
 - [Temporal validity](docs/TEMPORAL_VALIDITY.md): permissible event-time and snapshot claims.
 - [Agent notes](docs/AGENT_NOTES.md): implementation assumptions and adaptations.
+
+## Stream B: experiments and dashboard
+
+Stream B provides dev-only experiment planning/runs, MLflow backfills and presets,
+and the Streamlit dashboard on port 8502. Start with the
+[Stream B handoff](docs/mlops/STREAM_B_HANDOFF.md) for CLI examples, run modes,
+current evidence limits and partner integration; see [CI and dashboard images](docs/mlops/CI.md)
+for local checks, Docker commands and required GitHub checks.
+
+### Stream B integration (B6)
+
+[Current handoff and terminal commands](docs/mlops/STREAM_B_HANDOFF.md) cover
+the separate capped F5 semantic-grading job/import, parity harness, LangSmith
+smoke, champion rollback and published Fast/S1 smoke. See
+[approved dossier amendment 2](docs/mlops/PHASE0_NOTES.md#amendment-2--dossier-evidence-cap-2026-11-22)
+and [verification status](docs/AGENT_NOTES.md). F5-inclusive real scores await
+the owner's judgment job/import; S2 remains champion. No hidden-test claim is made.

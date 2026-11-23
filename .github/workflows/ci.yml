@@ -1,0 +1,180 @@
+name: CI
+on:
+  pull_request:
+    branches: [feature/mlops, main]
+  push:
+    branches: [feature/mlops, main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  LLM_PROVIDER: mock
+  LANGSMITH_SOURCE: fixture
+  LANGSMITH_TRACING: 'false'
+  LANGCHAIN_TRACING_V2: 'false'
+  DASHBOARD_LAB_ENABLED: 'false'
+  HF_HUB_OFFLINE: '1'
+  TRANSFORMERS_OFFLINE: '1'
+  PYTHONPATH: src
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install ruff==0.11.13
+      - run: ruff check && ruff format --check
+      - name: actionlint 1.7.7
+        run: |
+          curl -fsSL https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz -o "$RUNNER_TEMP/actionlint.tgz"
+          tar -xzf "$RUNNER_TEMP/actionlint.tgz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" .github/workflows/ci.yml
+  contracts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install '.[serving,ui,dashboard,dev]'
+      - run: pytest tests/contracts -q
+        env:
+          MLFLOW_TRACKING_URI: file:${{ runner.temp }}/mlruns
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install '.[serving,ui,dashboard,dev]'
+      # Synthetic Dense/Cross doubles need no weights. Add an HF cache keyed on
+      # configs/retrieval_v3.yaml revisions only if real-model tests are introduced.
+      - run: pytest -m "not live and not integration" --cov=src/bugzilla_serving --cov-fail-under=70 --cov-report=xml --junitxml=junit.xml -q
+        env:
+          MLFLOW_TRACKING_URI: file:${{ runner.temp }}/mlruns
+      - name: Coverage and failures summary
+        if: always()
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          lines = ['## Offline tests']
+          if Path('coverage.xml').exists():
+              coverage = float(ET.parse('coverage.xml').getroot().attrib['line-rate']) * 100
+              lines.append(f'Coverage: {coverage:.2f}% (required: 70%)')
+          else:
+              lines.append('Coverage unavailable: setup or test execution failed.')
+          if Path('junit.xml').exists():
+              cases = ET.parse('junit.xml').getroot().iter('testcase')
+              failed = [f"{c.get('classname')}::{c.get('name')}" for c in cases if c.find('failure') is not None or c.find('error') is not None]
+              lines.extend(['Failed tests:'] + failed if failed else ['Failed tests: none'])
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('\n'.join(lines) + '\n')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            junit.xml
+            coverage.xml
+          if-no-files-found: warn
+  secrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      # Public repo: this free action needs no GITLEAKS_LICENSE secret.
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.24.3
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+  docker:
+    needs: lint
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.repository.private == false) ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+      - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: .
+          file: docker/dashboard.Dockerfile
+          target: dashboard-readonly
+          tags: bugzilla-dashboard:readonly
+          load: true
+          push: false
+          cache-from: type=gha,scope=dashboard-readonly
+          cache-to: type=gha,mode=max,scope=dashboard-readonly
+      - name: Smoke readonly with a temporary seeded file store
+        run: |
+          store="$RUNNER_TEMP/dashboard-fixture"
+          mkdir -p "$store"
+          docker run --rm --user "$(id -u):$(id -g)" -v "$store:$store" --entrypoint python bugzilla-dashboard:readonly scripts/seed_mlflow_fixture.py --tracking-uri "file:$store/mlruns"
+          docker run -d --name dashboard-ci -p 8502:8502 -v "$store:$store:ro" -e "MLFLOW_TRACKING_URI=file:$store/mlruns" -e LANGSMITH_SOURCE=fixture -e DASHBOARD_LAB_ENABLED=false bugzilla-dashboard:readonly
+          trap 'docker logs dashboard-ci; docker rm -f dashboard-ci' EXIT
+          timeout 90 bash -c 'until curl --fail --silent http://localhost:8502/_stcore/health; do sleep 2; done'
+          docker image inspect bugzilla-dashboard:readonly --format '{{.Size}}'
+      - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+        with:
+          context: .
+          file: docker/dashboard.Dockerfile
+          target: dashboard-lab
+          tags: bugzilla-dashboard:lab
+          load: true
+          push: false
+          cache-from: type=gha,scope=dashboard-lab
+          cache-to: type=gha,mode=max,scope=dashboard-lab
+      - name: Notice missing Stream A images
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+        run: |
+          for image in api chat; do
+            if [ ! -f "docker/$image.Dockerfile" ]; then
+              echo "::notice::docker/$image.Dockerfile absent; Stream A build skipped"
+            fi
+          done
+          docker image inspect bugzilla-dashboard:lab --format '{{.Size}}'
+      - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        if: (github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')) && hashFiles('docker/api.Dockerfile') != ''
+        with:
+          context: .
+          file: docker/api.Dockerfile
+          tags: bugzilla-api:ci
+          load: true
+          push: false
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+      - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        if: (github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')) && hashFiles('docker/chat.Dockerfile') != ''
+        with:
+          context: .
+          file: docker/chat.Dockerfile
+          tags: bugzilla-chat:ci
+          load: true
+          push: false
+          cache-from: type=gha,scope=chat
+          cache-to: type=gha,mode=max,scope=chat
+  # compose-smoke:
+  #   TODO: OVERVIEW §6 step 5: Stream A provides compose.ci.yaml + mock bundle;
+  #   add readiness, preset parity and feedback smoke before making this required.
