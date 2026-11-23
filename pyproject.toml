@@ -16,7 +16,7 @@ serving = [
     "PyYAML==6.0.2", "duckdb==1.4.4", "pytz==2026.6", "numpy==1.26.4",
     "jsonschema==4.24.0", "langgraph==0.6.11", "langsmith==0.4.37",
     "groq==0.30.0", "tqdm==4.67.1", "faiss-cpu==1.11.0",
-    "sentence-transformers==3.4.1", "torch==2.6.0",
+    "sentence-transformers==3.4.1", "torch==2.6.0", "mlflow-skinny==2.22.1",
 ]
 ui = ["streamlit==1.45.1", "httpx==0.28.1"]
 dashboard = [
@@ -28,6 +28,9 @@ dev = ["pytest==8.3.5", "pytest-cov==6.1.1", "ruff==0.11.13", "httpx==0.28.1"]
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["bugzilla_qa*", "bugzilla_serving*"]
+
+[tool.setuptools.package-data]
+"bugzilla_serving.chat_ui" = ["assets/*.css", "static/fonts/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -45,6 +48,11 @@ line-length = 100
 include = [
     "src/bugzilla_serving/**/*.py", "tests/contracts/**/*.py",
     "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
+    "scripts/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
+    "tests/a_quota/**/*.py",
+    "tests/a_tracing/**/*.py",
+    "tests/a_ui/**/*.py",
+    "scripts/check_serving_tracing.py",
 ]
 
 [tool.ruff.lint]

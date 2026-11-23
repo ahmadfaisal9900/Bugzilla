@@ -1,0 +1,295 @@
+/* Layout and details Streamlit's theme can't express. Colours, font and radius are set in
+   .streamlit/config.toml; these tokens repeat them for custom markup. Values follow kapa.ai's app. */
+:root {
+  --canvas: #f1f1f2;            /* app frame and sidebar */
+  --pane: #f9f9fa;              /* main panel */
+  --raised: #ffffff;            /* inputs, cards, the active nav item */
+  --ink: #0e0f11;               /* headings and primary labels (18:1) */
+  --text: #1e1e1e;              /* answer text */
+  --secondary: #56595e;         /* descriptions (6.7:1 on the pane) */
+  --tertiary: #6b6c6f;          /* metadata (5.0:1 on the pane, 4.6:1 on the canvas) */
+  --line: rgb(14 15 17 / .08);
+  --line-strong: rgb(14 15 17 / .14);
+  --fill: rgb(60 60 67 / .07);  /* chips, hover rows, the question pill */
+  --accent: #3853da;
+  --accent-strong: #1733c3;
+  --shadow-raised: 0 1px 2px rgb(0 0 0 / .05), 0 4px 10px rgb(0 0 0 / .04);
+
+  --fs-h1: 24px;
+  --fs-h2: 16px;
+  --fs-body: 14px;
+  --fs-small: 13px;
+  --fs-meta: 12px;
+
+  --sidebar: 248px;
+  --content: 880px;             /* pages override this with components.page_width() */
+}
+
+/* ---- Frame: a grey canvas with the page in a raised pane, like kapa ----------------------- */
+.stApp, [data-testid="stAppViewContainer"] { background: var(--canvas); }
+[data-testid="stHeader"] { display: none; }
+[data-testid="stAppViewContainer"] > section:not([data-testid="stSidebar"]) {
+  margin: 8px 8px 8px 0; height: calc(100dvh - 16px);
+  background: var(--pane); border: 1px solid var(--line); border-radius: 12px;
+}
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) > section:not([data-testid="stSidebar"]) {
+  margin-left: 8px;
+}
+/* Style-only markdown blocks shouldn't add gaps. */
+[data-testid="stElementContainer"]:has(> [data-testid="stMarkdown"] style) { display: none; }
+
+/* Full-width pane, with each page's content centred at its own width. */
+[data-testid="stMainBlockContainer"] { max-width: none; padding: 0 0 2.5rem; }
+[data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > * {
+  width: min(var(--content), calc(100% - 4rem)) !important; margin-inline: auto;
+}
+[data-testid="stBottom"] > div { background: var(--pane); }
+[data-testid="stBottomBlockContainer"] { max-width: min(var(--content), calc(100% - 4rem)); padding: .75rem 0 1.25rem; }
+
+/* Top bar: where you are on the left, API status on the right. */
+[data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has(.top-bar) {
+  width: 100% !important; position: sticky; top: 0; z-index: 50; background: var(--pane); border-radius: 12px 12px 0 0;
+}
+.top-bar {
+  display: flex; align-items: center; justify-content: space-between; height: 44px; padding: 0 20px;
+  border-bottom: 1px solid var(--line); font-size: var(--fs-small);
+}
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) .top-bar { padding-left: 52px; }
+/* The "open sidebar" control sits inside the top bar's left end. */
+[data-testid="stSidebarCollapsedControl"] { top: 15px; left: 18px; z-index: 60; }
+.top-bar .crumb { color: var(--ink); font-weight: 500; }
+.top-bar .status { color: var(--tertiary); font-size: var(--fs-meta); display: inline-flex; align-items: center; }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; }
+.dot.ok { background: #16a34a; }
+.dot.down { background: #dc2626; }
+
+/* ---- Type scale ----------------------------------------------------------------------------- */
+/* Streamlit styles h1/h2 itself, hence !important on our levels. */
+.page-title {
+  font-size: var(--fs-h1) !important; font-weight: 500 !important; line-height: 1.25 !important;
+  letter-spacing: -.025em !important; color: var(--ink) !important; padding: 0 !important; margin: 2.5rem 0 0 !important;
+}
+.page-description { font-size: var(--fs-body); line-height: 1.5; color: var(--secondary); margin: .35rem 0 1.25rem; }
+.section-label {
+  display: flex; justify-content: space-between; gap: 1rem; margin: 1.25rem 0 0; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--line); font-size: var(--fs-meta); font-weight: 500; color: var(--tertiary);
+}
+.section-label.plain { border-bottom: 0; padding-bottom: 0; margin-top: 2rem; }
+.meta { font-size: var(--fs-meta); color: var(--tertiary); margin: 0; }
+[data-testid="stWidgetLabel"] p { font-size: var(--fs-meta); font-weight: 500; color: var(--secondary); }
+[data-testid="stCaptionContainer"] { color: var(--tertiary); }
+/* Streamlit renders slider numbers in its code font; keep one family everywhere. */
+[data-testid="stSliderThumbValue"], [data-testid="stSliderTickBarMin"], [data-testid="stSliderTickBarMax"] {
+  font-family: inherit !important; font-size: var(--fs-meta);
+}
+
+/* ---- Controls --------------------------------------------------------------------------------- */
+[data-testid^="stBaseButton-secondary"], [data-testid="stBaseLinkButton-secondary"], [data-testid="stPopoverButton"] {
+  background: var(--raised); border: 1px solid var(--line-strong); color: var(--ink);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .04); min-height: 34px; padding: 0 .8rem;
+}
+[data-testid^="stBaseButton-secondary"]:hover, [data-testid="stBaseLinkButton-secondary"]:hover, [data-testid="stPopoverButton"]:hover {
+  border-color: rgb(14 15 17 / .24); color: var(--ink); background: var(--raised);
+}
+[data-testid^="stBaseButton"] p, [data-testid="stBaseLinkButton-secondary"] p, [data-testid="stPopoverButton"] p {
+  font-size: var(--fs-small); font-weight: 500; white-space: nowrap;
+}
+[data-baseweb="select"] > div, [data-baseweb="input"], [data-baseweb="base-input"] {
+  background: var(--raised); border-color: var(--line-strong); font-size: var(--fs-small);
+}
+[data-baseweb="select"] > div { min-height: 34px; }
+[data-testid="stTextInputRootElement"] { height: 34px; }
+.st-key-chat-controls { margin-bottom: .25rem; gap: .75rem; }
+.st-key-chat-controls [data-testid="stExpander"] details { background: var(--raised); }
+.st-key-chat-controls [data-testid="stExpander"] summary p { font-size: var(--fs-small) !important; color: var(--ink) !important; }
+.badge { display: inline-flex; align-items: center; height: 24px; margin-bottom: 5px; padding: 0 8px; border-radius: 6px;
+         background: rgb(56 83 218 / .1); color: var(--accent-strong); font-size: var(--fs-meta); font-weight: 500; white-space: nowrap; }
+
+/* ---- Sidebar ---------------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  [data-testid="stSidebar"][aria-expanded="true"] { width: var(--sidebar) !important; min-width: var(--sidebar) !important; }
+}
+[data-testid="stSidebar"] { background: var(--canvas); }
+[data-testid="stSidebarHeader"] { position: absolute; top: 14px; right: 10px; height: auto; padding: 0; z-index: 2; }
+[data-testid="stSidebarUserContent"] { padding: 14px 12px 14px; }
+[data-testid="stSidebarUserContent"] [data-testid="stVerticalBlock"] { gap: 2px; min-height: calc(100dvh - 28px); }
+.brand { display: flex; align-items: center; height: 32px; padding: 0 8px; margin-bottom: 18px;
+         font-size: var(--fs-small); font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has([data-testid="stButton"]) { margin-bottom: 10px; }
+/* Streamlit pulls page links together with a negative margin; our 32px rows don't need it. */
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has([data-testid="stPageLink"]) { margin: 0; }
+[data-testid="stSidebar"] [data-testid="stPageLink"] a {
+  box-sizing: border-box; height: 32px; min-height: 0; padding: 0 8px; margin: 0; border-radius: 6px; gap: 8px;
+  background: transparent; align-items: center;
+}
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover { background: var(--fill); }
+[data-testid="stSidebar"] [data-testid="stPageLink"] p { font-size: var(--fs-small); font-weight: 500; color: #3c3c43; }
+[data-testid="stSidebar"] [data-testid="stPageLink"] [data-testid="stIconMaterial"] { font-size: 17px; color: var(--tertiary); }
+/* The current page is marked from app.py (components.mark_current_page). */
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has(.nav-group) { margin: 14px 0 2px; }
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has(.nav-group) [data-testid="stMarkdown"],
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has(.nav-group) [data-testid="stMarkdownContainer"] { margin-bottom: 0; }
+[data-testid="stSidebar"] p.nav-group { margin: 0 8px !important; line-height: 20px; font-size: var(--fs-meta); font-weight: 500; color: var(--tertiary); }
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has(.sidebar-footer) { margin-top: auto; }
+.sidebar-footer { padding: 12px 8px 0; border-top: 1px solid var(--line); font-size: var(--fs-meta);
+                  line-height: 1.55; color: var(--tertiary); }
+
+/* ---- Ask: empty state ------------------------------------------------------------------------- */
+/* Numbered example rows, like kapa's setup steps. */
+.st-key-examples { counter-reset: example; gap: 0; }
+.st-key-examples [data-testid="stElementContainer"] { border-bottom: 1px solid var(--line); }
+.st-key-examples button {
+  width: 100%; justify-content: flex-start; gap: 0; border: 0; border-radius: 0; background: transparent;
+  box-shadow: none; padding: .8rem .25rem; min-height: 0;
+}
+.st-key-examples button::before {
+  counter-increment: example; content: counter(example, decimal-leading-zero); flex: none; width: 2.1rem;
+  text-align: left; font-size: var(--fs-small); color: var(--tertiary); font-variant-numeric: tabular-nums;
+}
+.st-key-examples button::after { content: "→"; margin-left: auto; padding-left: 1rem; color: var(--tertiary); opacity: 0; transition: opacity .15s; }
+.st-key-examples button p { font-size: var(--fs-body); font-weight: 500; color: var(--ink); text-align: left; white-space: normal; }
+/* The kind and bug number sit above each question, small and quiet, as context for a demo. */
+.st-key-examples button strong { display: block; margin-bottom: 2px; font-size: var(--fs-meta); font-weight: 500;
+                                 color: var(--tertiary); letter-spacing: .01em; }
+.st-key-examples button:hover { background: var(--fill); }
+.st-key-examples button:hover::after { opacity: 1; }
+.st-key-examples button:hover p { color: var(--accent); }
+
+/* Fact panel beside the examples. */
+.st-key-archive {
+  margin-top: 1.25rem; padding: 14px 16px; gap: .4rem; background: var(--raised);
+  border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-raised);
+}
+.st-key-archive p { font-size: var(--fs-small); color: var(--secondary); line-height: 2; margin: 0; }
+.st-key-archive strong { color: var(--ink); font-weight: 500; }
+.st-key-archive span[role="img"] { font-size: 16px !important; color: var(--tertiary); margin-right: 8px; vertical-align: -3px; }
+
+/* Task tiles, like kapa's use-case grid: an icon box, a title, one line, a hairline on top. */
+.st-key-tasks [data-testid="stHorizontalBlock"] { gap: 1.5rem; }
+.st-key-tasks button {
+  width: 100%; height: 100%; flex-direction: column; align-items: flex-start; justify-content: flex-start;
+  border: 0; border-radius: 0; background: transparent; box-shadow: none; padding: 14px 0 6px; text-align: left;
+}
+.st-key-tasks button > span:first-child {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; margin: 0 0 10px; border-radius: 7px;
+  background: var(--raised); border: 1px solid var(--line-strong); color: var(--secondary); font-size: 15px;
+}
+/* Streamlit gives button icons a 7px right margin and a 1.25rem box, which pushes the glyph
+   off-centre inside the tile's square. Reset both so it sits in the middle. */
+.st-key-tasks button > span:first-child [data-testid="stIconMaterial"] {
+  margin: 0 !important; width: 16px; height: 16px; font-size: 16px; line-height: 16px;
+  display: grid; place-items: center;
+}
+.st-key-tasks button p { font-size: var(--fs-small); color: var(--secondary); white-space: normal; text-align: left; line-height: 1.45; font-weight: 400; }
+.st-key-tasks button strong { display: block; margin-bottom: 2px; font-size: var(--fs-body); font-weight: 500; color: var(--ink); }
+.st-key-tasks button:hover { background: transparent; }
+.st-key-tasks button:hover strong { color: var(--accent); }
+.st-key-tasks [data-testid="stColumn"] { border-top: 1px solid var(--line); }
+
+/* ---- Conversation, styled after kapa's widget ------------------------------------------------- */
+.user-msg { display: flex; justify-content: flex-end; margin: 1.25rem 0 .25rem; }
+.user-msg p { margin: 0; max-width: 80%; padding: 8px 14px; border-radius: 14px; background: var(--fill);
+              color: var(--ink); font-size: var(--fs-body); line-height: 1.5; }
+[class*="st-key-answer-"] { gap: .6rem; }
+[class*="st-key-answer-"] [data-testid="stMarkdownContainer"] > p,
+[class*="st-key-answer-"] [data-testid="stMarkdownContainer"] li { font-size: 15px; line-height: 1.6; color: var(--text); }
+p.rationale { font-size: var(--fs-body) !important; color: var(--secondary) !important; margin: 0; }
+
+/* Collapsed "how it was answered" box and the live status box share kapa's thought-box look. */
+[data-testid="stExpander"] details { border: 1px solid var(--line-strong); border-radius: 8px; background: transparent; }
+[data-testid="stExpander"] summary { padding: .45rem .75rem; color: var(--tertiary); }
+[data-testid="stExpander"] summary p { font-size: var(--fs-meta) !important; font-weight: 500 !important; color: var(--tertiary) !important; }
+[data-testid="stExpander"] summary:hover p, [data-testid="stExpander"] summary:hover { color: var(--ink) !important; }
+[data-testid="stExpanderToggleIcon"] { color: var(--tertiary); width: 16px; height: 16px; }
+[data-testid="stExpanderDetails"] { padding: 0 .75rem .6rem; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: .2rem 1.25rem; margin: 0; font-size: var(--fs-meta); }
+.facts dt { color: var(--tertiary); }
+.facts dd { margin: 0; color: var(--secondary); }
+
+/* Sources: small neutral chips. */
+.sources { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: .4rem 0 0; }
+.sources-label { margin-right: 4px; font-size: var(--fs-meta); font-weight: 500; color: var(--tertiary); }
+a.chip, span.chip {
+  display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 6px; background: var(--fill);
+  color: var(--ink) !important; font-size: var(--fs-meta); font-weight: 500; text-decoration: none; font-variant-numeric: tabular-nums;
+}
+a.chip:hover { background: rgb(56 83 218 / .1); color: var(--accent) !important; }
+.source-list { list-style: none; padding: 0; margin: .25rem 0 .5rem; border-top: 1px solid var(--line); }
+.source-list li { padding: .65rem 0; margin: 0; border-bottom: 1px solid var(--line); }
+.source-list a { font-size: var(--fs-body); font-weight: 500; color: var(--accent); text-decoration: none; }
+.source-list p { margin: .2rem 0 0 !important; font-size: var(--fs-small) !important; color: var(--secondary) !important; }
+
+/* Feedback row: quiet, under the answer. */
+[class*="st-key-answer-"] [data-testid="stHorizontalBlock"] { margin-top: .1rem; }
+[class*="st-key-answer-"] [data-testid="stPopoverButton"] {
+  border: 0; box-shadow: none; background: transparent; min-height: 28px; padding: 0 .4rem;
+}
+[class*="st-key-answer-"] [data-testid="stPopoverButton"] p { font-size: var(--fs-meta); color: var(--tertiary); }
+
+/* Chat input: a raised white box. */
+[data-testid="stChatInput"] {
+  background: var(--raised); border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: var(--shadow-raised);
+}
+[data-testid="stChatInput"] textarea { font-size: var(--fs-body); }
+[data-testid="stChatInputSubmitButton"] { border-radius: 8px; }
+
+/* Alerts: neutral by default, tinted only for warnings and errors. */
+[data-testid="stAlertContainer"] { border-radius: 8px; border: 1px solid var(--line); }
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentInfo"]) { background: var(--raised); color: var(--secondary); }
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentWarning"]) { background: #fffaeb; color: #6b4e00; border-color: #f5e3b3; }
+[data-testid="stAlertContainer"] [data-testid="stMarkdownContainer"] p { font-size: var(--fs-small) !important; line-height: 1.5; }
+
+/* ---- Cited bugs ------------------------------------------------------------------------------- */
+[data-testid="stDataFrame"] { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--raised); }
+.st-key-bug-detail [data-testid="stLinkButton"] { margin-top: .5rem; }
+.st-key-bug-detail {
+  padding: 18px 20px; gap: .75rem; background: var(--raised); border: 1px solid var(--line);
+  border-radius: 12px; box-shadow: var(--shadow-raised);
+}
+.detail-title { font-size: 20px !important; font-weight: 500 !important; letter-spacing: -.02em; padding: 0 !important; margin: 0 0 .75rem !important; }
+.detail-title a { color: var(--ink) !important; text-decoration: none; }
+.detail-title a::after { content: " ↗"; color: var(--tertiary); font-size: 16px; }
+.detail-title a:hover { color: var(--accent) !important; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; padding: .6rem 0; border-block: 1px solid var(--line); }
+.stats div + div { padding-left: .9rem; border-left: 1px solid var(--line); }
+.stats dt { font-size: var(--fs-meta); color: var(--tertiary); }
+.stats dd { margin: .1rem 0 0; font-size: var(--fs-body); font-weight: 500; color: var(--ink); }
+.detail-label { font-size: var(--fs-meta) !important; font-weight: 500 !important; color: var(--tertiary) !important; padding: 0 !important; margin: 1rem 0 .25rem !important; }
+.detail-list { list-style: none; padding: 0; margin: 0; }
+.detail-list li { margin: 0; padding: .45rem 0; border-bottom: 1px solid var(--line); font-size: var(--fs-small); color: var(--secondary); line-height: 1.5; }
+.detail-list li:last-child { border-bottom: 0; }
+
+/* ---- History and About ------------------------------------------------------------------------- */
+.st-key-history { gap: 0; }
+.st-key-history > [data-testid="stElementContainer"] > [data-testid="stExpander"] details,
+.st-key-history [data-testid="stExpander"] details:not([data-testid="stExpanderDetails"] details) {
+  border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+}
+.st-key-history [data-testid="stExpanderDetails"] { padding-bottom: 1rem; }
+.st-key-history summary p { font-size: var(--fs-body) !important; color: var(--ink) !important; }
+.st-key-prose { max-width: 680px; }
+.st-key-prose h2.section-title { font-size: var(--fs-h2) !important; font-weight: 500 !important; color: var(--ink) !important;
+                                 padding: 1.1rem 0 0 !important; margin: 1.1rem 0 .3rem !important; border-top: 1px solid var(--line); }
+.st-key-prose h2.section-title:first-of-type { margin-top: .25rem !important; }
+.st-key-prose p { margin: 0; font-size: var(--fs-body); line-height: 1.6; color: var(--secondary); }
+.st-key-prose b { color: var(--ink); font-weight: 500; }
+
+/* ---- Phones ----------------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  [data-testid="stAppViewContainer"] > section:not([data-testid="stSidebar"]) {
+    margin: 0 !important; height: 100dvh; border: 0; border-radius: 0;
+  }
+  [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > * {
+    width: calc(100% - 2rem) !important;
+  }
+  [data-testid="stBottomBlockContainer"] { max-width: calc(100% - 2rem); }
+  .top-bar { padding-left: 52px !important; border-radius: 0; }
+  [data-testid="stSidebarCollapsedControl"] { top: 7px; left: 10px; }
+  /* Keep the first screen short on phones: the archive facts live on About, tasks become rows. */
+  [data-testid="stColumn"]:has(.st-key-archive) { display: none; }
+  .st-key-tasks [data-testid="stColumn"] { border-top: 0; border-bottom: 1px solid var(--line); }
+  .st-key-tasks button { flex-direction: row; align-items: flex-start; gap: 12px; padding: 12px 0; }
+  .st-key-tasks button > span:first-child { margin: 2px 0 0; flex: none; }
+  .page-title { font-size: 22px !important; margin-top: 1.5rem !important; }
+  .st-key-tasks [data-testid="stHorizontalBlock"] { gap: 0; }
+}

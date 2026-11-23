@@ -1,0 +1,49 @@
+# Production stack: pulls the images CD pushed to GHCR. On the host:
+#   IMAGE_TAG=v0.1.0 docker compose pull && IMAGE_TAG=v0.1.0 docker compose up -d
+# The serving bundle is copied to the host separately (docs/DEPLOYMENT.md) and mounted read-only.
+name: bugzilla
+
+x-common: &common
+  env_file: .env
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  api:
+    <<: *common
+    image: ${IMAGE_PREFIX:-ghcr.io/ahmadfaisal9900/bugzilla}-api:${IMAGE_TAG:?set IMAGE_TAG}
+    environment:
+      BUNDLE_DIR: /bundle
+    volumes:
+      - ./serving_bundle:/bundle:ro
+      - appdata:/app/outputs        # feedback DB, LLM cache and quota ledger survive redeploys
+    ports:
+      - "8000:8000"
+
+  chat:
+    <<: *common
+    image: ${IMAGE_PREFIX:-ghcr.io/ahmadfaisal9900/bugzilla}-chat:${IMAGE_TAG:?set IMAGE_TAG}
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      api: { condition: service_healthy }
+    ports:
+      - "8501:8501"
+
+  dashboard:
+    <<: *common
+    # Built from the dashboard-readonly target of docker/dashboard.Dockerfile (dashboard stream).
+    # It writes its snapshot cache inside the container and does not read the API's appdata.
+    image: ${IMAGE_PREFIX:-ghcr.io/ahmadfaisal9900/bugzilla}-dashboard:${IMAGE_TAG:?set IMAGE_TAG}
+    environment:
+      API_URL: http://api:8000
+      DASHBOARD_LAB_ENABLED: "false"
+    depends_on:
+      api: { condition: service_healthy }
+    ports:
+      - "8502:8502"
+
+volumes:
+  appdata:

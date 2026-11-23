@@ -1,0 +1,175 @@
+# Continuous delivery: test the stack, push images to GHCR, deploy over SSH, roll back on failure.
+#
+# Triggers: a v* tag push (build, push, deploy) or a manual run (deploy only when asked).
+# Secrets (Settings > Secrets and variables > Actions): DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY.
+# Every action is pinned to a commit SHA; the comment says which release it is.
+name: cd
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy to the host after pushing images"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Oracle Always Free A1 is ARM, so build both. Use linux/amd64 alone for an x86 host.
+  PLATFORMS: linux/amd64,linux/arm64
+  APP_DIR: bugzilla   # folder in the deploy user's home on the host
+
+jobs:
+  smoke:
+    name: Compose smoke test (fixture bundle, mock LLM)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Fetch pinned retrieval models
+        run: |
+          python3 -m pip install --quiet huggingface_hub==0.30.2
+          python3 scripts/fetch_models.py
+      - name: Build and start the CI stack
+        run: |
+          dashboard=""
+          if [ -f docker/dashboard.Dockerfile ]; then dashboard="--profile dashboard"; fi
+          docker compose -f compose.ci.yaml $dashboard up --build -d
+      - name: Smoke test
+        run: |
+          if [ ! -f docker/dashboard.Dockerfile ]; then export SMOKE_DASHBOARD=0; fi
+          bash scripts/smoke.sh
+      - name: Logs on failure
+        if: failure()
+        run: docker compose -f compose.ci.yaml --profile dashboard logs --no-color --tail 200
+      - name: Stop the stack
+        if: always()
+        run: docker compose -f compose.ci.yaml --profile dashboard down -v
+
+  images:
+    name: Build and push ${{ matrix.service }}
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: true
+      matrix:
+        service: [api, chat, dashboard]
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Image name and tag
+        id: meta
+        run: |
+          owner="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then tag="${GITHUB_REF_NAME}"; else tag="sha-${GITHUB_SHA::7}"; fi
+          echo "image=ghcr.io/${owner}/bugzilla-${{ matrix.service }}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          if [ -f "docker/${{ matrix.service }}.Dockerfile" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Fetch pinned retrieval models
+        if: matrix.service == 'api'
+        run: |
+          python3 -m pip install --quiet huggingface_hub==0.30.2
+          python3 scripts/fetch_models.py
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        if: steps.meta.outputs.present
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        if: steps.meta.outputs.present
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        if: steps.meta.outputs.present
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        if: steps.meta.outputs.present
+        with:
+          context: .
+          file: docker/${{ matrix.service }}.Dockerfile
+          # The dashboard Dockerfile ends in a Lab stage; production ships the read-only one.
+          target: ${{ matrix.service == 'dashboard' && 'dashboard-readonly' || '' }}
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+      - name: Skipped (no Dockerfile yet)
+        if: ${{ !steps.meta.outputs.present }}
+        run: echo "docker/${{ matrix.service }}.Dockerfile does not exist yet; nothing to build."
+
+  deploy:
+    name: Deploy ${{ needs.images.outputs.tag }}
+    needs: images
+    if: github.ref_type == 'tag' || inputs.deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    env:
+      TAG: ${{ needs.images.outputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          cat > ~/.ssh/config <<EOF
+          Host deploy
+            HostName $DEPLOY_HOST
+            User ${{ secrets.DEPLOY_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+          EOF
+      - name: Copy compose file and smoke script
+        run: |
+          ssh deploy "mkdir -p ~/${APP_DIR}/scripts"
+          scp compose.yaml deploy:~/${APP_DIR}/compose.yaml
+          scp scripts/smoke.sh deploy:~/${APP_DIR}/scripts/smoke.sh
+      - name: Pull and start ${{ env.TAG }}
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ssh deploy "cd ~/${APP_DIR} \
+            && echo '${GHCR_TOKEN}' | docker login ghcr.io -u '${{ github.actor }}' --password-stdin \
+            && export IMAGE_TAG='${TAG}' \
+            && docker compose pull && docker compose up -d --remove-orphans; \
+            status=\$?; docker logout ghcr.io >/dev/null; exit \$status"
+      - name: R0 smoke query (no LLM calls)
+        id: smoke
+        run: |
+          ssh deploy "cd ~/${APP_DIR} \
+            && export SERVING_API_KEY=\"\$(grep '^SERVING_API_KEY=' .env | cut -d= -f2-)\" \
+            && SMOKE_DASHBOARD=0 bash scripts/smoke.sh --r0-only"
+      - name: Record ${{ env.TAG }} as last good
+        run: ssh deploy "cd ~/${APP_DIR} && echo '${TAG}' > .last_good"
+      - name: Roll back to .last_good
+        if: failure()
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ssh deploy "cd ~/${APP_DIR} && test -s .last_good \
+            && echo '${GHCR_TOKEN}' | docker login ghcr.io -u '${{ github.actor }}' --password-stdin \
+            && export IMAGE_TAG=\"\$(cat .last_good)\" \
+            && echo \"Rolling back to \$IMAGE_TAG\" \
+            && docker compose pull && docker compose up -d --remove-orphans; \
+            status=\$?; docker logout ghcr.io >/dev/null; exit \$status"

@@ -464,6 +464,21 @@ Use the roadmap's predefined numerical tolerances where appropriate; do not choo
 
 ## 15. Deeper documentation
 
+For the serving data package, see [Stream A, A1](docs/mlops/STREAM_A.md#a1-serving-bundle).
+`python scripts/build_serving_bundle.py --out serving_bundle` previews the copy;
+add `--apply` to build it. The current local runtime supplies C1 only; C0/C2 are
+reported as missing. The generated folder stays gitignored.
+
+The serving API is `bugzilla_serving.api.app:app`. Set `BUNDLE_DIR`, `SERVING_API_KEY`
+and `LLM_PROVIDER=mock` in `.env`, then run
+`python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1`.
+See [Stream A, A2](docs/mlops/STREAM_A.md) for the authenticated request command,
+MLflow presets and quota guards. [LangSmith monitoring](docs/LANGSMITH_MONITORING.md)
+documents sampled traces, feedback and the final checks.
+Protected API requests send the `.env` secret in the `X-API-Key` HTTP header.
+Near the local quota thresholds, the API returns sources through R0. Each session
+may submit six questions per minute; further requests receive HTTP 429.
+
 - [Scientific roadmap](docs/reference/research_roadmap.tex): research questions, rubric and fairness controls.
 - [v3 benchmark](docs/BENCHMARK_V3.md): question generation, review and dataset coverage.
 - [Retrieval harness](docs/RETRIEVAL_V3.md): corpus variants, metrics and outputs.
