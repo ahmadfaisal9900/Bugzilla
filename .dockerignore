@@ -1,0 +1,23 @@
+# Keep build contexts small and free of secrets: code, configs, prompts, test fixtures and (for
+# the API) models go in. No "!" re-inclusions (tests/b_ci checks this).
+.git/
+.github/
+.venv/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+.env*
+outputs/
+Dataset/
+logs/
+serving_bundle/
+serving_bundle.zip
+.serving-build-*/
+.dvc/
+mlruns/
+results/
+data/
+docs/
+Frontend/
+.coverage*
+htmlcov/

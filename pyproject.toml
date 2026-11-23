@@ -29,6 +29,9 @@ dev = ["pytest==8.3.5", "pytest-cov==6.1.1", "ruff==0.11.13", "httpx==0.28.1"]
 where = ["src"]
 include = ["bugzilla_qa*", "bugzilla_serving*"]
 
+[tool.setuptools.package-data]
+"bugzilla_serving.chat_ui" = ["assets/*.css", "static/fonts/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src", "."]
@@ -48,6 +51,7 @@ include = [
     "scripts/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
     "tests/a_quota/**/*.py",
     "tests/a_tracing/**/*.py",
+    "tests/a_ui/**/*.py",
     "scripts/check_serving_tracing.py",
 ]
 

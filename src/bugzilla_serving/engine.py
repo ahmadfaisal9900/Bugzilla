@@ -112,6 +112,9 @@ class Runner:
             if cfg.corpus not in self.manifest.get("available_corpora", []):
                 raise ValueError("corpus: not included in this bundle")
             self.backend._engine = self._serving_engine
+        elif cfg.retriever == "R1":
+            # Synthetic fixtures ship lexical indexes only, so R1 must not load dense models.
+            self.backend._engine = self._serving_engine
         # Every override is applied before lazy model/index construction. Research caches
         # are bypassed: their keys do not include these runtime hyperparameters.
         self.backend.cache_manifests = {}
