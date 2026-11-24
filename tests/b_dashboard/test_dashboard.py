@@ -18,7 +18,7 @@ from bugzilla_serving.dashboard.data.common import display_frame, family_cell, t
 from bugzilla_serving.tracking.backfill import retrieval_runs
 from bugzilla_serving.tracking.client import TrackingClient, params_for
 
-APP = ROOT / "src/bugzilla_serving/dashboard/app.py"
+APP = ROOT / "src/bugzilla_serving/dashboard/legacy_app.py"
 
 
 def module(path, name):

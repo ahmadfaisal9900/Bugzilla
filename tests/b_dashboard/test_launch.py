@@ -16,7 +16,7 @@ from streamlit.proto.ForwardMsg_pb2 import ForwardMsg
 from tornado.websocket import websocket_connect
 
 ROOT = Path(__file__).resolve().parents[2]
-APP = ROOT / "src/bugzilla_serving/dashboard/app.py"
+APP = ROOT / "src/bugzilla_serving/dashboard/legacy_app.py"
 PAGES = {
     "Overview",
     "Answer evaluation",

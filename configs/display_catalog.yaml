@@ -30,7 +30,7 @@ families:
   F2:  {name: "Lifecycle & timing", short: "Time to fix, reopen counts — from change history", example: "How many calendar hours elapsed before bug 1794818 first reached FIXED?"}
   F3:  {name: "Counting", short: "How many bugs match a condition", example: "How many dev-partition bugs have component Search?"}
   F4:  {name: "Bug relationships", short: "Blocks / depends-on / duplicate links", example: "Which bugs does bug 1854980 depend on?"}
-  F5:  {name: "Reasons (LLM-graded)", short: "Graded by an LLM judge against the human-reviewed reference from the frozen benchmark", example: "What reason is stated in the cited comment for bug 1708248?"}
+  F5:  {name: "Reasons (LLM-graded)", short: "Graded by Claude Opus 5.5 against the human-reviewed reference from the frozen benchmark", example: "What reason is stated in the cited comment for bug 1708248?"}
   F6:  {name: "Unanswerable", short: "The records can't answer it — correct is to decline", example: "How many engineer work hours did bug 1798041 require?"}
   F6H: {name: "Hard unanswerable", short: "Looks answerable but isn't — correct is to decline", example: "What exact export timestamp establishes the archived fields for bug 1707396?"}
   KI:  {name: "Find bug by description", short: "Identify a bug from a description, no ID given", example: "Which bug report describes: Pocket section in German displays English topics?"}

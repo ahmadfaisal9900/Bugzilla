@@ -907,3 +907,47 @@ variant/audit/judge-selector tests); Ruff check/format pass (87 Python files, in
 Only existing dependency warnings, none from our code. No API/remote MLflow or
 LangSmith calls, commits or pushes. Prior staged files and unrelated PDFs remain
 preserved; generated packets/analysis are ignored and un-staged.
+
+## B8 — offline results pack (2026-11-23)
+
+Expected → found: original three-source pilot ledgers, completed 122-row router-v2
+ledger, imported 60-answer external Reasons verdict packet, two complete dev-only
+retrieval summaries, freeze/index metadata and 72 original-code byte pins all
+present. Generated outputs/analysis/results_pack/results_pack.md and 27 CSVs;
+reproducer and bounded validation script are alongside them. All ten systems use
+scorer v2, the same 122 eligible question identities and one external Reasons judge.
+Overall averages nine family accuracies equally. Original ledgers/code unchanged;
+no live calls, MLflow writes, commits or pushes. Dataset test counts use metadata
+only; no test gold is opened/exported. See the report for exact denominators,
+usage lower bounds, cache-count granularity and development-tuning limitations.
+
+## B9 — final dashboard and publication commands (2026-11-23)
+
+Inventory confirmed B8 pack and imported judge results, saved MLflow snapshot,
+original nine pages and 72-byte-hash baseline. All nine pre-edit AppTests passed;
+no page crash was reproduced. Streamlit's torch.classes watcher exception was
+reproduced and saved under outputs/analysis/b9/. The new three-tab app reads local
+B8 CSVs first and ordinary tabs never import research/PyTorch. The new launcher
+disables the incompatible watcher; password and Advanced gates remain in place.
+
+Added route-weighted system_cost.csv (0.573246 calls/question; 914.084918 tokens),
+validated/cacheable results_source, final-results dry-run/apply publication and
+nine ordered config registrations with idempotent run/version tags. Source names
+are Core/Extended benchmark and Natural rewrites. Earlier router results are
+filtered before renaming the evaluated router. Old page tests target a regression
+harness, not the current user navigation. Default app warm reruns measured ~0.23 s;
+a real local Streamlit websocket session rendered seven charts without exceptions.
+
+75 focused tests passed across bounded invocations: final UI/publication/byte pins,
+retained dashboard/B5/tracking regressions, scorer selectors, secret guards, and
+two real local launch tests. Ruff and format checks passed; only existing third-
+party Pydantic warnings. No research/contracts/API/Docker/compose edits, live LLM
+calls, DagsHub writes, commits or pushes. Existing display-catalog/verdict edits
+were preserved. See docs/mlops/B9_DASHBOARD.md for commands and full scope.
+
+Champion is blocked, not moved: shared RunConfig cannot represent the evaluated
+identity/metadata; Runner still builds the earlier graph/tools; API remains a
+Phase 0 stub. All three route probes report loader FAIL. Registry stores evaluated
+configs as research artifacts and marks serving blocked; it never substitutes
+the earlier implementation. Stream A integration and the obsolete Docker startup
+snapshot job are listed with exact files/functions in the B9 runbook.

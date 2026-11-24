@@ -1,0 +1,7 @@
+Path,Questions,latency_p50_s,latency_p95_s,Source
+Database path (model answer),4,60.184,110.93939999999998,Preserved source answers
+Bug dossier with cited comment,6,60.205,60.39,Preserved source answers
+Database path (parser),82,0.035,0.04,Current local computation or failed request
+Bug dossier,6,10.0315,39.003249999999994,Original downstream system answers
+Smart search,23,30.143,59.748,Original downstream system answers
+Failed,1,0.501,0.501,Current local computation or failed request

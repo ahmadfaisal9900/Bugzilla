@@ -1,0 +1,1221 @@
+Declined,Family,Origin,Scorer 2 verdict,Source,Status,System,qid
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_09b006748d0b8d182253
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Closed-book,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Closed-book,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Closed-book,q_27791f312c9c478bfaed
+True,Bug relationships,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_2eca34f4e9431df809b7
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_3cce2a85bc1ec8aa483e
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_4486ec2813041522a208
+True,Bug relationships,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Closed-book,q_51d0dfe177d6f2885f66
+True,Bug relationships,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Closed-book,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_6815339a29fca2b0a6a7
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_686021bf3ab450fd2ec2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Closed-book,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Closed-book,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Closed-book,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Closed-book,q_9940488831c9bb81264a
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Closed-book,q_a5c70180da726d9445de
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_adb067b9b97eebe455d1
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_b770c26229f85c947dbc
+True,Bug relationships,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_c839d38a0b56104c4de0
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Closed-book,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Closed-book,q_e39e28aa7f034f2ef4f4
+True,Bug relationships,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_ea991d340566fc903e31
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_ecc7daafbbc3bc92ca64
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_f821d5a7d2148d961471
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Closed-book,q_faccb3ba563ab7ca68c7
+True,Bug relationships,original pilot,INCORRECT,Phase 5,ok,Closed-book,q_fd926740120468f215ef
+True,Counting,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_14dea18947f819a165f2
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_1684d765b0495e493817
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_17c17eb13a9fa4d2a6b4
+True,Counting,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_1ff9db21c37498214734
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_23fd50faa7fcb65e8180
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_45e9307006cfa002436c
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_64f5bc5dd888c2759fc8
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_7526ae258e9488275a1f
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_78ac30960aeba120ec11
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_7b48530f87e7d332df6e
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_90a3fe83a93721a2e2c9
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_93f22f3036a4f50820c3
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_a2bcc0c362e1feb00c3b
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_a2c95b9f68ea01c1c3b8
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_adcaaaac1df677ec21b0
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_c95c78bed9162eeb6c23
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_d13b1b77b018f58c7171
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_d73d4296a1ac26490fdb
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_dcb5cb325c23f50bd387
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Closed-book,natural_e55ee6422fa26a42ed73
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_0104248abe17554a341d3f67
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_017a541299b56a0852e0a661
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_051f88995fc706e2e61a0018
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_0ccf01bbd6311acb2f919017
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_0e028998f497de601074ee28
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_136eca8ea14b0cc14f932df9
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_13b1d27d94419f10879fac40
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_1ad904c2da865346f1cbdade
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_1b3ff16f909ac2e93a8c7422
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_23e46c6baa915b5d46451ced
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_24c291ff9ec21897dcdd78a8
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_281e56a72d58a775f9a1e3b6
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_2c77e957ad5cc1585e0b0e33
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_315be90cc9884d93d950e584
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_3691a70c89c351876dfe3efe
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_3757e7e43f8cd08f013c500c
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_4236ca0257a99af1bb359b5c
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_482cedebbfb07b797056c24f
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_4eb9d0e24fe41de3a6031844
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_553e4bce382f3aa2f9a89485
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_5c557111d7384a2c6de8f6b0
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_646f091178401b26dfbcb9f7
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_70823e5a01217ee34baa83df
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_76c9dc08b0fada21f06697e3
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_876ab493ff66e744fa43c09e
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_894929c5879358ee5df05d1a
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_8e6b14886df3fc053c301bb4
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_96c760cadadeb0dbc5677ea0
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_9c969dadf9ea9e4b26d4b8cd
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_a376de6654a3ee0175177998
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_a3ddb4fb49d64113ec030b47
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_b72e73192e9037d14e4b0b6a
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_bae1b77c28a3d1956bcec8af
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_c11305bda7d7e3bc874efa48
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_c19818af0bbc18295ee3377e
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_c315632c627ea11d5edabce0
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_c6fd38e2bb827ead5273e5db
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_d20db75cbfb4f45155d3c87d
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_d2ac1393d67741df1eaf2286
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_d58921a62453b0f37938a6df
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_d611c18bc36b31969ea0a740
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_ddd76440f9c9d1962a9f297b
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_e2b33bc52b1ad989c1470d3d
+True,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Closed-book,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Closed-book,v3_faa25690da3bc35ad5e794d3
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_09b006748d0b8d182253
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Keyword search,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Keyword search,q_103fc1febfb8153ed3d2
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Keyword search,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Keyword search,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Keyword search,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Keyword search,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Keyword search,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Keyword search,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Keyword search,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Keyword search,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_6815339a29fca2b0a6a7
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_686021bf3ab450fd2ec2
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Keyword search,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Keyword search,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Keyword search,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Keyword search,q_9940488831c9bb81264a
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Keyword search,q_a5c70180da726d9445de
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Keyword search,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Keyword search,q_c839d38a0b56104c4de0
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Keyword search,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Keyword search,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Keyword search,q_ea991d340566fc903e31
+True,Field lookup,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_ecc7daafbbc3bc92ca64
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Keyword search,q_f821d5a7d2148d961471
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Keyword search,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Keyword search,q_fd926740120468f215ef
+True,Counting,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Keyword search,natural_1684d765b0495e493817
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_17c17eb13a9fa4d2a6b4
+True,Counting,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_1ff9db21c37498214734
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_23fd50faa7fcb65e8180
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_45e9307006cfa002436c
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Keyword search,natural_7526ae258e9488275a1f
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_78ac30960aeba120ec11
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_7b48530f87e7d332df6e
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_90a3fe83a93721a2e2c9
+False,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Keyword search,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Keyword search,natural_a2c95b9f68ea01c1c3b8
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Keyword search,natural_c95c78bed9162eeb6c23
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_d13b1b77b018f58c7171
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_d73d4296a1ac26490fdb
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_dcb5cb325c23f50bd387
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Keyword search,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_0ccf01bbd6311acb2f919017
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_136eca8ea14b0cc14f932df9
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_13b1d27d94419f10879fac40
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_1ad904c2da865346f1cbdade
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_281e56a72d58a775f9a1e3b6
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_482cedebbfb07b797056c24f
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_876ab493ff66e744fa43c09e
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_bae1b77c28a3d1956bcec8af
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_c315632c627ea11d5edabce0
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_c6fd38e2bb827ead5273e5db
+True,Field lookup,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_d58921a62453b0f37938a6df
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Keyword search,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Keyword search,v3_faa25690da3bc35ad5e794d3
+False,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Smart search,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Smart search,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Smart search,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Smart search,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Smart search,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Smart search,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Smart search,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Smart search,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Smart search,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Smart search,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Smart search,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Smart search,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Smart search,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Smart search,q_6815339a29fca2b0a6a7
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Smart search,q_686021bf3ab450fd2ec2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Smart search,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Smart search,q_7e52cb5dac94d7614825
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Smart search,q_8635c48a2ee113d4c738
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Smart search,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Smart search,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Smart search,q_9940488831c9bb81264a
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Smart search,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Smart search,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Smart search,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Smart search,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Smart search,q_c839d38a0b56104c4de0
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Smart search,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Smart search,q_df73d0a04940f296b92e
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Smart search,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Smart search,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Smart search,q_ecc7daafbbc3bc92ca64
+False,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Smart search,q_f821d5a7d2148d961471
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Smart search,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Smart search,q_fd926740120468f215ef
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Smart search,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_1684d765b0495e493817
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_17c17eb13a9fa4d2a6b4
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Smart search,natural_1ff9db21c37498214734
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_23fd50faa7fcb65e8180
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Smart search,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_7526ae258e9488275a1f
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_78ac30960aeba120ec11
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Smart search,natural_90a3fe83a93721a2e2c9
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_a2c95b9f68ea01c1c3b8
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Smart search,natural_d13b1b77b018f58c7171
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_d73d4296a1ac26490fdb
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_dcb5cb325c23f50bd387
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Smart search,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_0f94357d810c2641525ab6e3
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_136eca8ea14b0cc14f932df9
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_13b1d27d94419f10879fac40
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_1ad904c2da865346f1cbdade
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_281e56a72d58a775f9a1e3b6
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_37021ad71cb9586c33fa98a7
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_482cedebbfb07b797056c24f
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_723375c40ddf63cdc87e31f5
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_876ab493ff66e744fa43c09e
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_bae1b77c28a3d1956bcec8af
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_bb5fff7e16d6b379f9ddade7
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_c315632c627ea11d5edabce0
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_d58921a62453b0f37938a6df
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Smart search,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Smart search,v3_faa25690da3bc35ad5e794d3
+False,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_6815339a29fca2b0a6a7
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_686021bf3ab450fd2ec2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_7e52cb5dac94d7614825
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_8635c48a2ee113d4c738
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_9940488831c9bb81264a
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_c839d38a0b56104c4de0
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_df73d0a04940f296b92e
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_ecc7daafbbc3bc92ca64
+False,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Query rewriting,q_f821d5a7d2148d961471
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Query rewriting,q_fd926740120468f215ef
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Query rewriting,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_1684d765b0495e493817
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_17c17eb13a9fa4d2a6b4
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Query rewriting,natural_1ff9db21c37498214734
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_23fd50faa7fcb65e8180
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Query rewriting,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_7526ae258e9488275a1f
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_78ac30960aeba120ec11
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Query rewriting,natural_90a3fe83a93721a2e2c9
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_a2c95b9f68ea01c1c3b8
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Query rewriting,natural_d13b1b77b018f58c7171
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_d73d4296a1ac26490fdb
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_dcb5cb325c23f50bd387
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Query rewriting,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_0f94357d810c2641525ab6e3
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_136eca8ea14b0cc14f932df9
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_13b1d27d94419f10879fac40
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_1ad904c2da865346f1cbdade
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_281e56a72d58a775f9a1e3b6
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_37021ad71cb9586c33fa98a7
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_482cedebbfb07b797056c24f
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_723375c40ddf63cdc87e31f5
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_876ab493ff66e744fa43c09e
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_bae1b77c28a3d1956bcec8af
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_bb5fff7e16d6b379f9ddade7
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_c315632c627ea11d5edabce0
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_d58921a62453b0f37938a6df
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Query rewriting,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Query rewriting,v3_faa25690da3bc35ad5e794d3
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_6815339a29fca2b0a6a7
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_686021bf3ab450fd2ec2
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_878bcc2579afe2d4b68f
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_953d6724ed6e3e4748b9
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_9940488831c9bb81264a
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_c839d38a0b56104c4de0
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_ecc7daafbbc3bc92ca64
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_f821d5a7d2148d961471
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Self-checking search,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Self-checking search,q_fd926740120468f215ef
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_1684d765b0495e493817
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_17c17eb13a9fa4d2a6b4
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_1ff9db21c37498214734
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_23fd50faa7fcb65e8180
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_7526ae258e9488275a1f
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_78ac30960aeba120ec11
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_90a3fe83a93721a2e2c9
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_a2c95b9f68ea01c1c3b8
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Self-checking search,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_d13b1b77b018f58c7171
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,error,Self-checking search,natural_d73d4296a1ac26490fdb
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_dcb5cb325c23f50bd387
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Self-checking search,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_136eca8ea14b0cc14f932df9
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_13b1d27d94419f10879fac40
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_1ad904c2da865346f1cbdade
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_281e56a72d58a775f9a1e3b6
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_482cedebbfb07b797056c24f
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_876ab493ff66e744fa43c09e
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_b2bc89e6f3d9680ca77268c1
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_bae1b77c28a3d1956bcec8af
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_c315632c627ea11d5edabce0
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_d58921a62453b0f37938a6df
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Self-checking search,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Self-checking search,v3_faa25690da3bc35ad5e794d3
+False,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_0cf05d22d7593912855a
+False,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_103fc1febfb8153ed3d2
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_6815339a29fca2b0a6a7
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_686021bf3ab450fd2ec2
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_75254f1c7965693227cc
+False,Reasons (LLM-graded),original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_878bcc2579afe2d4b68f
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_9940488831c9bb81264a
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_c839d38a0b56104c4de0
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_cac169e33cd8b5d5b59c
+False,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_ecc7daafbbc3bc92ca64
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_f821d5a7d2148d961471
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Full bug dossier,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Full bug dossier,q_fd926740120468f215ef
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_1684d765b0495e493817
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_17c17eb13a9fa4d2a6b4
+True,Counting,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_1ff9db21c37498214734
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_23fd50faa7fcb65e8180
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_64f5bc5dd888c2759fc8
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_7526ae258e9488275a1f
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_78ac30960aeba120ec11
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_90a3fe83a93721a2e2c9
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_a2c95b9f68ea01c1c3b8
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_d13b1b77b018f58c7171
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Full bug dossier,natural_d73d4296a1ac26490fdb
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_dcb5cb325c23f50bd387
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Full bug dossier,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_0f94357d810c2641525ab6e3
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_136eca8ea14b0cc14f932df9
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_13b1d27d94419f10879fac40
+True,Counting,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_1ad904c2da865346f1cbdade
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_281e56a72d58a775f9a1e3b6
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_482cedebbfb07b797056c24f
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_723375c40ddf63cdc87e31f5
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_876ab493ff66e744fa43c09e
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_b2bc89e6f3d9680ca77268c1
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_bae1b77c28a3d1956bcec8af
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_bb5fff7e16d6b379f9ddade7
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_c315632c627ea11d5edabce0
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_d58921a62453b0f37938a6df
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Full bug dossier,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Full bug dossier,v3_faa25690da3bc35ad5e794d3
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_6815339a29fca2b0a6a7
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_686021bf3ab450fd2ec2
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_953d6724ed6e3e4748b9
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_9940488831c9bb81264a
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_c839d38a0b56104c4de0
+False,Counting,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_ecc7daafbbc3bc92ca64
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_f821d5a7d2148d961471
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Linked-bugs search,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Linked-bugs search,q_fd926740120468f215ef
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_1684d765b0495e493817
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_17c17eb13a9fa4d2a6b4
+False,Counting,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_1ff9db21c37498214734
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_23fd50faa7fcb65e8180
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_7526ae258e9488275a1f
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_78ac30960aeba120ec11
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_90a3fe83a93721a2e2c9
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_a2c95b9f68ea01c1c3b8
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Linked-bugs search,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_d13b1b77b018f58c7171
+True,Lifecycle & timing,original pilot,INCORRECT,Natural rewrites,error,Linked-bugs search,natural_d73d4296a1ac26490fdb
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_dcb5cb325c23f50bd387
+True,Field lookup,original pilot,INCORRECT,Natural rewrites,ok,Linked-bugs search,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_09613a08038f2282a43e6147
+False,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_136eca8ea14b0cc14f932df9
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_13b1d27d94419f10879fac40
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_1ad904c2da865346f1cbdade
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_281e56a72d58a775f9a1e3b6
+False,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,error,Linked-bugs search,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_482cedebbfb07b797056c24f
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_876ab493ff66e744fa43c09e
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_b2bc89e6f3d9680ca77268c1
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_bae1b77c28a3d1956bcec8af
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_c315632c627ea11d5edabce0
+False,Counting,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_d58921a62453b0f37938a6df
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Linked-bugs search,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Linked-bugs search,v3_faa25690da3bc35ad5e794d3
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Database tools,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Database tools,q_0cf05d22d7593912855a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Database tools,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Database tools,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Database tools,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Database tools,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Database tools,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Database tools,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Database tools,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Database tools,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Database tools,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Database tools,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Database tools,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Database tools,q_6815339a29fca2b0a6a7
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Database tools,q_686021bf3ab450fd2ec2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Database tools,q_75254f1c7965693227cc
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Database tools,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Database tools,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Database tools,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Database tools,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Database tools,q_9940488831c9bb81264a
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Database tools,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Database tools,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Database tools,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Database tools,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Database tools,q_c839d38a0b56104c4de0
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Database tools,q_cac169e33cd8b5d5b59c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Database tools,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Database tools,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Database tools,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Database tools,q_ecc7daafbbc3bc92ca64
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Database tools,q_f821d5a7d2148d961471
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Database tools,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Database tools,q_fd926740120468f215ef
+False,Counting,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_1684d765b0495e493817
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_17c17eb13a9fa4d2a6b4
+False,Counting,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_1ff9db21c37498214734
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_23fd50faa7fcb65e8180
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_7526ae258e9488275a1f
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_78ac30960aeba120ec11
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_90a3fe83a93721a2e2c9
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_a2c95b9f68ea01c1c3b8
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_d13b1b77b018f58c7171
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_d73d4296a1ac26490fdb
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_dcb5cb325c23f50bd387
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Database tools,natural_e55ee6422fa26a42ed73
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_0104248abe17554a341d3f67
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_017a541299b56a0852e0a661
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,error,Database tools,v3_136eca8ea14b0cc14f932df9
+False,Multi-step,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_13b1d27d94419f10879fac40
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_1ad904c2da865346f1cbdade
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_1b3ff16f909ac2e93a8c7422
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_23e46c6baa915b5d46451ced
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_24c291ff9ec21897dcdd78a8
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_281e56a72d58a775f9a1e3b6
+True,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,error,Database tools,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_315be90cc9884d93d950e584
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_3757e7e43f8cd08f013c500c
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_4236ca0257a99af1bb359b5c
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_482cedebbfb07b797056c24f
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_646f091178401b26dfbcb9f7
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_70823e5a01217ee34baa83df
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,error,Database tools,v3_76c9dc08b0fada21f06697e3
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_876ab493ff66e744fa43c09e
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_894929c5879358ee5df05d1a
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_8e6b14886df3fc053c301bb4
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_96c760cadadeb0dbc5677ea0
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_9c969dadf9ea9e4b26d4b8cd
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_b72e73192e9037d14e4b0b6a
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_bae1b77c28a3d1956bcec8af
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_c315632c627ea11d5edabce0
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_d2ac1393d67741df1eaf2286
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_d58921a62453b0f37938a6df
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_d611c18bc36b31969ea0a740
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_ddd76440f9c9d1962a9f297b
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Database tools,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Database tools,v3_faa25690da3bc35ad5e794d3
+True,Lifecycle & timing,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_09b006748d0b8d182253
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Auto-router,q_0cf05d22d7593912855a
+False,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Auto-router,q_0f02c856b8576c53962d
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Auto-router,q_103fc1febfb8153ed3d2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_25ca7696bb093bcc4eb6
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Auto-router,q_27791f312c9c478bfaed
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Auto-router,q_2eca34f4e9431df809b7
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Auto-router,q_3cce2a85bc1ec8aa483e
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Auto-router,q_4486ec2813041522a208
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Auto-router,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Auto-router,q_51d0dfe177d6f2885f66
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Auto-router,q_5fc01675039dff53011c
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Auto-router,q_639f25ec01824d49c28e
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_6815339a29fca2b0a6a7
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_686021bf3ab450fd2ec2
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_75254f1c7965693227cc
+False,Reasons (LLM-graded),original pilot,CORRECT,Phase 5,ok,Auto-router,q_7e52cb5dac94d7614825
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Auto-router,q_8635c48a2ee113d4c738
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Auto-router,q_878bcc2579afe2d4b68f
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_953d6724ed6e3e4748b9
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Auto-router,q_9940488831c9bb81264a
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Auto-router,q_9b4f4c54225ff920a46a
+True,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Auto-router,q_a5c70180da726d9445de
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Auto-router,q_adb067b9b97eebe455d1
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Auto-router,q_b770c26229f85c947dbc
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Auto-router,q_c839d38a0b56104c4de0
+True,Counting,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_cac169e33cd8b5d5b59c
+False,Reasons (LLM-graded),original pilot,INCORRECT,Phase 5,ok,Auto-router,q_df73d0a04940f296b92e
+True,Unanswerable,original pilot,CORRECT,Phase 5,ok,Auto-router,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Auto-router,q_ea991d340566fc903e31
+False,Field lookup,original pilot,CORRECT,Phase 5,ok,Auto-router,q_ecc7daafbbc3bc92ca64
+False,Lifecycle & timing,original pilot,CORRECT,Phase 5,ok,Auto-router,q_f821d5a7d2148d961471
+False,Unanswerable,original pilot,INCORRECT,Phase 5,ok,Auto-router,q_faccb3ba563ab7ca68c7
+False,Bug relationships,original pilot,CORRECT,Phase 5,ok,Auto-router,q_fd926740120468f215ef
+False,Counting,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_14dea18947f819a165f2
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_1684d765b0495e493817
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_17c17eb13a9fa4d2a6b4
+False,Counting,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_1ff9db21c37498214734
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_23fd50faa7fcb65e8180
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_45e9307006cfa002436c
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_64f5bc5dd888c2759fc8
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Auto-router,natural_7526ae258e9488275a1f
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_78ac30960aeba120ec11
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_90a3fe83a93721a2e2c9
+True,Bug relationships,original pilot,INCORRECT,Natural rewrites,ok,Auto-router,natural_93f22f3036a4f50820c3
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_a2c95b9f68ea01c1c3b8
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_adcaaaac1df677ec21b0
+False,Bug relationships,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_d13b1b77b018f58c7171
+False,Lifecycle & timing,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_d73d4296a1ac26490fdb
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_dcb5cb325c23f50bd387
+False,Field lookup,original pilot,CORRECT,Natural rewrites,ok,Auto-router,natural_e55ee6422fa26a42ed73
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_0104248abe17554a341d3f67
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_011ebf3cf89ca55a816f1149
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_017a541299b56a0852e0a661
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_024301342c9615e171c99c3e
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_051f88995fc706e2e61a0018
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_09613a08038f2282a43e6147
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_0e028998f497de601074ee28
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,error,Auto-router,v3_136eca8ea14b0cc14f932df9
+False,Multi-step,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_13b1d27d94419f10879fac40
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_1ad904c2da865346f1cbdade
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_281e56a72d58a775f9a1e3b6
+True,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,error,Auto-router,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_315be90cc9884d93d950e584
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_35b1c4d1c88f4bc12bb67151
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_37021ad71cb9586c33fa98a7
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_482cedebbfb07b797056c24f
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_70823e5a01217ee34baa83df
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,original pilot,INCORRECT,Benchmark v3,error,Auto-router,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_876ab493ff66e744fa43c09e
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_894929c5879358ee5df05d1a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_95174ed43f1de3060de2772f
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_a376de6654a3ee0175177998
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_bae1b77c28a3d1956bcec8af
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_c315632c627ea11d5edabce0
+False,Counting,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_d58921a62453b0f37938a6df
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_ee695ae6afe43c3b7e33a92c
+True,Multi-step,original pilot,INCORRECT,Benchmark v3,ok,Auto-router,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,original pilot,CORRECT,Benchmark v3,ok,Auto-router,v3_faa25690da3bc35ad5e794d3
+False,Lifecycle & timing,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_09b006748d0b8d182253
+False,Field lookup,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_0cf05d22d7593912855a
+False,Reasons (LLM-graded),preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_0f02c856b8576c53962d
+False,Reasons (LLM-graded),preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_103fc1febfb8153ed3d2
+False,Counting,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_25ca7696bb093bcc4eb6
+True,Unanswerable,carried forward,CORRECT,Phase 5,ok,Auto-router v2,q_27791f312c9c478bfaed
+False,Bug relationships,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_2eca34f4e9431df809b7
+False,Field lookup,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_3cce2a85bc1ec8aa483e
+False,Field lookup,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_4486ec2813041522a208
+False,Bug relationships,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_44ad225a6d43e12c108c
+True,Lifecycle & timing,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_51d0dfe177d6f2885f66
+False,Bug relationships,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_5fc01675039dff53011c
+False,Reasons (LLM-graded),preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_639f25ec01824d49c28e
+True,Counting,preserved v2,INCORRECT,Phase 5,ok,Auto-router v2,q_6815339a29fca2b0a6a7
+False,Counting,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_686021bf3ab450fd2ec2
+False,Counting,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_75254f1c7965693227cc
+False,Reasons (LLM-graded),preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_7e52cb5dac94d7614825
+True,Unanswerable,carried forward,CORRECT,Phase 5,ok,Auto-router v2,q_8635c48a2ee113d4c738
+True,Unanswerable,carried forward,CORRECT,Phase 5,ok,Auto-router v2,q_878bcc2579afe2d4b68f
+False,Counting,preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_953d6724ed6e3e4748b9
+True,Unanswerable,carried forward,CORRECT,Phase 5,ok,Auto-router v2,q_9940488831c9bb81264a
+False,Lifecycle & timing,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_9b4f4c54225ff920a46a
+False,Reasons (LLM-graded),preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_a5c70180da726d9445de
+False,Field lookup,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_adb067b9b97eebe455d1
+False,Field lookup,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_b770c26229f85c947dbc
+False,Bug relationships,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_c839d38a0b56104c4de0
+False,Counting,preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_cac169e33cd8b5d5b59c
+False,Reasons (LLM-graded),preserved v2,INCORRECT,Phase 5,ok,Auto-router v2,q_df73d0a04940f296b92e
+True,Unanswerable,carried forward,CORRECT,Phase 5,ok,Auto-router v2,q_e39e28aa7f034f2ef4f4
+False,Bug relationships,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_ea991d340566fc903e31
+False,Field lookup,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_ecc7daafbbc3bc92ca64
+False,Lifecycle & timing,preserved v2,CORRECT,Phase 5,ok,Auto-router v2,q_f821d5a7d2148d961471
+False,Unanswerable,carried forward,INCORRECT,Phase 5,ok,Auto-router v2,q_faccb3ba563ab7ca68c7
+False,Bug relationships,parser-built,CORRECT,Phase 5,ok,Auto-router v2,q_fd926740120468f215ef
+False,Counting,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_14dea18947f819a165f2
+False,Bug relationships,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_1684d765b0495e493817
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_17c17eb13a9fa4d2a6b4
+False,Counting,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_1ff9db21c37498214734
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_23fd50faa7fcb65e8180
+False,Lifecycle & timing,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_45e9307006cfa002436c
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_64f5bc5dd888c2759fc8
+False,Bug relationships,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_7526ae258e9488275a1f
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_78ac30960aeba120ec11
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_7b48530f87e7d332df6e
+False,Lifecycle & timing,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_90a3fe83a93721a2e2c9
+True,Bug relationships,parser-built,INCORRECT,Natural rewrites,ok,Auto-router v2,natural_93f22f3036a4f50820c3
+False,Bug relationships,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_a2bcc0c362e1feb00c3b
+False,Bug relationships,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_a2c95b9f68ea01c1c3b8
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_adcaaaac1df677ec21b0
+False,Bug relationships,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_c95c78bed9162eeb6c23
+False,Lifecycle & timing,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_d13b1b77b018f58c7171
+False,Lifecycle & timing,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_d73d4296a1ac26490fdb
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_dcb5cb325c23f50bd387
+False,Field lookup,parser-built,CORRECT,Natural rewrites,ok,Auto-router v2,natural_e55ee6422fa26a42ed73
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_0104248abe17554a341d3f67
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_011ebf3cf89ca55a816f1149
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_017a541299b56a0852e0a661
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_024301342c9615e171c99c3e
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_051f88995fc706e2e61a0018
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_0653baf5b6c1b9705b622611
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_09613a08038f2282a43e6147
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_0b91748d0094c32d222d04bd
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_0ccf01bbd6311acb2f919017
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_0e028998f497de601074ee28
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_0f94357d810c2641525ab6e3
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_136eca8ea14b0cc14f932df9
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_13b1d27d94419f10879fac40
+False,Counting,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_16911b9ae12cae02c201d505
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_1ad904c2da865346f1cbdade
+True,Find bug by description,carried forward,INCORRECT,Benchmark v3,ok,Auto-router v2,v3_1b3ff16f909ac2e93a8c7422
+False,Find bug by description,carried forward,INCORRECT,Benchmark v3,ok,Auto-router v2,v3_23e46c6baa915b5d46451ced
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_24c291ff9ec21897dcdd78a8
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_281e56a72d58a775f9a1e3b6
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_2c77e957ad5cc1585e0b0e33
+False,Counting,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_315be90cc9884d93d950e584
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_35b1c4d1c88f4bc12bb67151
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_3691a70c89c351876dfe3efe
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_37021ad71cb9586c33fa98a7
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_3757e7e43f8cd08f013c500c
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_4236ca0257a99af1bb359b5c
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_482cedebbfb07b797056c24f
+False,Find bug by description,carried forward,INCORRECT,Benchmark v3,ok,Auto-router v2,v3_4eb9d0e24fe41de3a6031844
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_4fda206b835d660cdfe5c6b0
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_553e4bce382f3aa2f9a89485
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_5c557111d7384a2c6de8f6b0
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_646f091178401b26dfbcb9f7
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_67ed021f4c7ef19a6e48c858
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_70823e5a01217ee34baa83df
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_723375c40ddf63cdc87e31f5
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_76c9dc08b0fada21f06697e3
+False,Find bug by description,carried forward,INCORRECT,Benchmark v3,ok,Auto-router v2,v3_79bb45ec3449635fdd8aae57
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_876ab493ff66e744fa43c09e
+True,Find bug by description,failed,INCORRECT,Benchmark v3,error,Auto-router v2,v3_891fb323c13f3cd89c2d67ae
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_894929c5879358ee5df05d1a
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_8e6b14886df3fc053c301bb4
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_9105524617d84554e0ebbb8e
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_95174ed43f1de3060de2772f
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_96c760cadadeb0dbc5677ea0
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_9c969dadf9ea9e4b26d4b8cd
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_a376de6654a3ee0175177998
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_a3ddb4fb49d64113ec030b47
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_a5c93955826f47eef74e2a80
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_b2bc89e6f3d9680ca77268c1
+True,Find bug by description,carried forward,INCORRECT,Benchmark v3,ok,Auto-router v2,v3_b4d42aa0b5f18e1e0aa257c3
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_b72e73192e9037d14e4b0b6a
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_bae1b77c28a3d1956bcec8af
+False,Counting,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_bb5fff7e16d6b379f9ddade7
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_bd18af5d52fe6e06292e5c4e
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_c11305bda7d7e3bc874efa48
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_c19818af0bbc18295ee3377e
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_c315632c627ea11d5edabce0
+False,Counting,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_c405fd55813cd6dfaf9f9b72
+True,Hard unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_c6fd38e2bb827ead5273e5db
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_d20db75cbfb4f45155d3c87d
+False,Field lookup,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_d2ac1393d67741df1eaf2286
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_d58921a62453b0f37938a6df
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_d611c18bc36b31969ea0a740
+False,Find bug by description,carried forward,INCORRECT,Benchmark v3,ok,Auto-router v2,v3_ddd76440f9c9d1962a9f297b
+False,Find bug by description,carried forward,CORRECT,Benchmark v3,ok,Auto-router v2,v3_e2b33bc52b1ad989c1470d3d
+False,Bug relationships,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_ee695ae6afe43c3b7e33a92c
+False,Multi-step,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_eea2bf2c636e3ba691cbe015
+True,Unanswerable,parser-built,CORRECT,Benchmark v3,ok,Auto-router v2,v3_faa25690da3bc35ad5e794d3

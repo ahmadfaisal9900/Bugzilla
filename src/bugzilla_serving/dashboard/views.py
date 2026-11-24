@@ -602,10 +602,14 @@ def error_analysis():
 def widgets(start):
     spec = load_spec()
     fields = spec["hyperparameters"]
+    systems = fields["system_id"]["choices"]
+    if st.session_state.get("final_dashboard"):
+        systems = [s for s in systems if s != "S8"]
+    initial = start.get("system_id", "S2")
     system = st.selectbox(
         "System",
-        fields["system_id"]["choices"],
-        index=fields["system_id"]["choices"].index(start.get("system_id", "S2")),
+        systems,
+        index=systems.index(initial if initial in systems else "S2"),
         help=fields["system_id"]["help"],
         format_func=lambda v: L.name("systems", v),
     )
@@ -643,7 +647,13 @@ def widgets(start):
             continue
         if key == "query_transform":
             values[key] = values["retriever"]
-            st.caption(f"{knob['label']}: {values[key]} (matches S3 retriever)")
+            if st.session_state.get("final_dashboard"):
+                st.caption(
+                    f"{knob['label']}: {L.name('retrievers', values[key])} "
+                    "(matches the search method)"
+                )
+            else:
+                st.caption(f"{knob['label']}: {values[key]} (matches S3 retriever)")
             continue
         if choices:
             default = default if default in choices else knob["default"]
@@ -659,6 +669,13 @@ def widgets(start):
                     kind={"corpus": "corpora", "retriever": "retrievers"}.get(key): L.name(kind, v)
                 )
                 if key in ("corpus", "retriever")
+                else (
+                    lambda v: {
+                        "answer-v1": "Standard prompt",
+                        "answer-v2-compact": "Compact prompt",
+                    }.get(v, str(v))
+                )
+                if key == "prompt_version"
                 else str,
                 key=f"knob-{system}-{key}",
             )
