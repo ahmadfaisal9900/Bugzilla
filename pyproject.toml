@@ -16,7 +16,7 @@ serving = [
     "PyYAML==6.0.2", "duckdb==1.4.4", "pytz==2026.6", "numpy==1.26.4",
     "jsonschema==4.24.0", "langgraph==0.6.11", "langsmith==0.4.37",
     "groq==0.30.0", "tqdm==4.67.1", "faiss-cpu==1.11.0",
-    "sentence-transformers==3.4.1", "torch==2.6.0", "mlflow-skinny==2.22.1",
+    "sentence-transformers==6.3.0", "torch==2.6.0", "mlflow-skinny==2.22.1",
 ]
 ui = ["streamlit==1.45.1", "httpx==0.28.1"]
 dashboard = [
