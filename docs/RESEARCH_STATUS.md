@@ -2,6 +2,14 @@
 
 ## Current phase
 
+2026-11-23 demo hardening, phase 1: read-only diagnosis confirms that both routers
+leave the reported 1809146 discussion question ambiguous. The bundled cohort
+contains that bug, but zero comments and only one metadata chunk. The YAML
+Recommended fallback is legacy S8; S8v2 is still excluded by the serving contract.
+The original request's retrieval/context/model output remains unavailable.
+See `docs/DEMO_DIAGNOSIS.md`. No live calls or research-code changes; fixes and
+deployment preparation remain pending the missing-evidence/scope decisions.
+
 2026-11-23 CI provisioning follow-up: The reported main-branch failure is caused
 by CI's global HF_HUB_OFFLINE=1 reaching its model-download steps. Those two
 steps now override HF_HUB_OFFLINE and TRANSFORMERS_OFFLINE to 0; tests and serving
