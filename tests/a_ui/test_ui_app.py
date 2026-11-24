@@ -56,7 +56,7 @@ def _ask(app, question):
 
 def test_abstention_shows_closest_sources(app):
     text = _ask(app, "something unknown")
-    assert "couldn't find enough evidence" in text and "Closest reports" in text
+    assert "Not enough evidence in the archive." in text and "Closest reports" in text
 
 
 def test_degraded_shows_sources_without_answer(app):

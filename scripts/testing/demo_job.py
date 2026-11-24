@@ -79,14 +79,28 @@ def main():
     }[args.stage]
     if args.case and args.stage == "live":
         commands[0] += ["--case", args.case]
+    identity_commands = [list(c) for c in commands]
     if args.resume and args.stage in ("mock", "live") and (folder / "demo_check.json").is_file():
         commands[0] += ["--resume", str(folder / "demo_check.json")]
     version = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     diff = subprocess.check_output(
-        ["git", "diff", "HEAD", "--", "src", "scripts", "configs", "tests"]
+        [
+            "git",
+            "diff",
+            "HEAD",
+            "--",
+            "src",
+            "scripts",
+            "configs",
+            "tests",
+            "dashboard",
+            "pyproject.toml",
+        ]
     )
     identity = hashlib.sha256(
-        json.dumps([version, hashlib.sha256(diff).hexdigest(), commands], sort_keys=True).encode()
+        json.dumps(
+            [version, hashlib.sha256(diff).hexdigest(), identity_commands], sort_keys=True
+        ).encode()
     ).hexdigest()
     state = dict(
         state="DRY_RUN",

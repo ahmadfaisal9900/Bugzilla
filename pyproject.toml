@@ -66,7 +66,8 @@ include = [
     "scripts/mlops/log_final_results.py", "scripts/mlops/register_all_systems.py",
     "tests/b_tracking/**/*.py", "scripts/mlops/backfill_*.py", "scripts/mlops/publish_preset.py",
     "tests/b_experiments/**/*.py", "scripts/mlops/make_eval_sets.py", "scripts/mlops/run_experiment.py",
-    "tests/demo/**/*.py", "scripts/testing/demo_*.py",
+    "tests/demo/**/*.py", "scripts/testing/demo_*.py", "dashboard/*.py",
+    "scripts/mlops/build_cloud_snapshot.py", "scripts/testing/cloud_dashboard_check.py",
     "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py", "conftest.py",
 ]
 

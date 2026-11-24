@@ -144,3 +144,111 @@ After a quota downgrade the chat shows the R0 sources-only banner. Stop live
 checks and use retrieval-only mode or the saved development dashboard; do not
 raise provider limits. Use TRACE_SAMPLE=1.0 for the demo and restore the normal
 sampling rate afterward.
+
+## Chat sharing (5b)
+
+Start order: API → readiness → chat → optional read-only dashboard. The local
+launcher manages this order through API startup and starts the UIs. Keep the
+API process bound to loopback. Warm up with the zero-call field lookup for bug
+1809146; the first description search loads local embedding/reranking models
+and can take longer than subsequent questions. Run the four-case live check
+before opening the public tunnel.
+
+Install cloudflared on Debian/Ubuntu Linux (owner terminal, matching architecture):
+
+```bash
+curl -fL "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$(dpkg --print-architecture).deb" -o /tmp/cloudflared.deb
+sudo dpkg -i /tmp/cloudflared.deb
+bash scripts/app/share_demo.sh --dry-run
+bash scripts/app/share_demo.sh
+```
+
+Expected: both local health checks pass, followed by an HTTPS
+`*.trycloudflare.com` URL. Only chat port 8501 is exposed. The browser uses
+Streamlit's connection; chat-to-API SSE stays on localhost. Cloudflare Quick
+Tunnels do not support SSE, so never expose the API through this script. The
+session limiter and Groq quota guard remain active. Ctrl-C ends the temporary
+tunnel. If it drops, use `http://localhost:8501` and restart sharing for a new URL.
+Do not publish the serving API key in a URL or browser setting.
+
+References: [Cloudflare Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
+and [cloudflared releases](https://github.com/cloudflare/cloudflared/releases).
+
+## Lightweight dashboard (5a)
+
+Community Cloud entrypoint: `dashboard/streamlit_app.py`, Python 3.11. Its adjacent
+`dashboard/requirements.txt` pins only dashboard/client dependencies; do not
+install this repository package or the serving extra. The entrypoint adds src
+and unconditionally disables Lab and advanced engine views. Root Streamlit
+configuration is unchanged, preserving the chat's theme.
+
+Configure the repository `ahmadfaisal9900/Bugzilla`, the reviewed branch (currently
+`fix/demo-hardening`) and that entrypoint in Community Cloud. Paste the placeholder
+keys in `.streamlit/secrets.toml.example` into Advanced settings with real values.
+Credentials come from `st.secrets` or environment variables and are never logged.
+No real secrets.toml is committed.
+
+The app tries the B9 `final-results` results-pack artifact first, then its bundled
+read-only snapshot. The 232 KiB snapshot contains 12 allowlisted CSVs: dev
+aggregates and 1,098 per-question verdict rows identified by qid only, with no
+question text, gold or test rows. Its builder verifies every qid against the
+fixed pilot122-v2 dev roster and records source hashes. Snapshot data describes
+the historical evaluation; serving changes have not been re-evaluated.
+
+Local AppTest rendered successfully with **191.23 MiB peak process RSS**, without
+importing torch, sentence-transformers, the engine or Lab. This used the existing
+iqfm environment with matching direct dependency versions; a clean installation
+and Community Cloud execution are not yet validated.
+
+Run the clean installation/render/server health gate yourself (downloads packages):
+
+```bash
+bash scripts/phases/run_phase11_demo_validation.sh --stage cloud --dry-run
+bash scripts/phases/run_phase11_demo_validation.sh --stage cloud --run --run-dir results/demo_jobs/cloud
+```
+
+Expected: requirements-only venv, pip check success, no torch installed, AppTest
+PASS, peak RSS below 700 MiB, and Streamlit health PASS. Inspect
+`results/demo_jobs/cloud/render.json`, `peak_rss.txt`, `server.log` and
+`summary.json`. The script uses loopback port 8599 and stops its own server.
+
+For hosting measurements, first start all three real Compose services. With the
+promoted S8v2 champion and SERVING_API_KEY in the terminal:
+
+```bash
+bash scripts/phases/run_phase11_demo_validation.sh --stage resources --dry-run
+bash scripts/phases/run_phase11_demo_validation.sh --stage resources --run --run-dir results/demo_jobs/resources
+```
+
+Expected: resources.json with each image size in bytes and per-container Docker
+MemUsage before and after one deterministic database question (zero Groq calls).
+These are Docker working-set readings, not process peak RSS. **Container image
+sizes and idle/after-question RAM are unmeasured here**; Docker builds and running
+service measurements remain owner-run. No resource figures have been invented.
+
+If `actionlint` is missing before the checks stage, install the CI-pinned binary
+into a temporary tools directory:
+
+```bash
+mkdir -p /tmp/bugzilla-tools
+curl -fsSL https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz -o /tmp/bugzilla-tools/actionlint.tgz
+tar -xzf /tmp/bugzilla-tools/actionlint.tgz -C /tmp/bugzilla-tools actionlint
+export PATH="/tmp/bugzilla-tools:$PATH"
+```
+
+On other CPU architectures, select the matching actionlint release asset.
+
+References: [Community Cloud dependencies](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies),
+[deployment](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy)
+and [secrets](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management).
+
+## Final bounded checks for this branch
+
+The final demo directory passed 48 checks; the cloud/UI/route/historical-cap
+subset passed 31, and API/Lab/quota/tool-coverage checks passed. Global Ruff
+check and formatting passed; shell syntax checks passed. Real-bundle field,
+reopen, unknown first-FIXED and missing-comment probes all completed with zero
+model calls and no errors. The full offline suite, actionlint, Compose smoke,
+clean venv installation, live Groq checks and container measurements remain
+owner-run gates. Registry promotion, public tunnel and Cloud deployment were
+not executed by the agent.

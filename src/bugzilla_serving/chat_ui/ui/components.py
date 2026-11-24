@@ -126,6 +126,7 @@ def user_message(text: str) -> None:
 ROUTES = {
     "abstain_low_evidence": "S4 · Stopped (evidence below threshold)",
     "routing_error": "Router couldn't choose",
+    "outside_archive": "Outside the Firefox sample",
 }
 
 

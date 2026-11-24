@@ -1,0 +1,5 @@
+Origin,Questions,Fresh calls this resume,Historical source calls (separate),Source tokens in,Source tokens out,Source latency p50 ms,Source latency p95 ms
+parser-built,82,0,0,0,0,35.0,40.0
+preserved v2,10,0,15,41983,2334,60205.0,93124.19999999994
+carried forward,29,0,6,2448,204,34.0,39116.199999999975
+failed,1,1,0,N/A,N/A,501.0,501.0

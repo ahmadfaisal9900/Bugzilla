@@ -154,6 +154,8 @@ def degraded_config(config):
         s4_tau=None,
         s5_dossier_budget=None,
         s7_max_tool_steps=None,
+        router_rules_version=None,
+        tool_route_version=None,
     )
     if retriever in ("R1", "R2"):
         values["rrf_k"] = None

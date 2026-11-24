@@ -2,6 +2,16 @@
 
 ## Current phase
 
+2026-11-23 B11 deployment preparation: added chat-only Quick Tunnel launcher,
+read-only Community Cloud entrypoint and adjacent lightweight pinned requirements,
+remote-first results-pack loading and a 232 KiB allowlisted dev snapshot. Local
+cloud AppTest rendered at 191.23 MiB peak RSS with no engine/Lab/torch imports.
+Fresh requirements-only venv, Docker resource measurements/builds and live checks
+are owner-run via the phase11 wrapper; commands are in docs/DEMO_RUNBOOK.md.
+All 48 final demo tests pass, including R0 quota downgrade and safe tool-coverage
+fallback; the 31-test cloud/UI/route/historical-cap subset also passes.
+No registry promotion, public sharing, Cloud deployment or Groq calls occurred.
+
 2026-11-23 B11 pre-router and demo checks: serving-only explicit-ID scope flag,
 discussion/dossier fallback, cohort refusal and capped/truncation-marked packing
 are implemented. All 44 bounded synthetic demo tests passed; 10 real C1

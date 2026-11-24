@@ -150,12 +150,19 @@ def run(args, send=None):
 
     done = {r["case"] for r in result["rows"]}
     print("case | route | abstained | cited | latency_s | PASS/FAIL | reason", flush=True)
+    recent_starts = []
     for case in cases:
         if case["id"] in done:
             continue
         if args.live and result["actual_calls"] + call_ceiling(case) > args.max_requests:
             raise ValueError("Remaining cap is insufficient; checkpoint saved")
+        if args.live and len(recent_starts) >= 6:
+            pause = max(0, 60.1 - (time.monotonic() - recent_starts[-6]))
+            if pause:
+                print(f"Waiting {pause:.1f}s for the session rate limit", flush=True)
+                time.sleep(pause)
         start = time.monotonic()
+        recent_starts.append(start)
         try:
             overrides = {"provider": "groq" if args.live else "mock"}
             if args.mock:
@@ -264,6 +271,8 @@ def main():
         result = run(args)
     except ValueError as exc:
         parser.exit(2, str(exc) + "\n")
+    if result["state"] == "DRY_RUN":
+        print(json.dumps(result, indent=2))
     if result["state"] == "FAIL":
         sys.exit(1)
 

@@ -97,6 +97,7 @@ def setup(tmp_path, monkeypatch):
         provider="mock",
         top_k=10,
         s5_dossier_budget=4096,
+        serving_bug_scope=True,
         router_rules_version="json-tools-v2",
         tool_route_version="json-tools-v2",
     )
@@ -231,3 +232,46 @@ def test_demo_check_mock_against_api(setup, tmp_path):
     with pytest.raises(ValueError, match="at least 5"):
         module.run(args, sender)
     sender.assert_not_called()
+
+
+def test_v2_quota_degrades_to_r0(setup):
+    from types import SimpleNamespace
+
+    from bugzilla_serving.quota import degraded_config
+
+    degraded = degraded_config(setup)
+    assert degraded.system_id == "R0" and degraded.serving_bug_scope
+    assert degraded.router_rules_version is degraded.tool_route_version is None
+    with TestClient(api.create_app()) as client:
+        client.app.state.quota_check = lambda c: SimpleNamespace(
+            action="degrade", reason="Demo quota"
+        )
+        response = client.post(
+            "/v1/ask",
+            headers={"X-API-Key": "parity-test-key"},
+            json={
+                "session_id": "quota-v2",
+                "message": "Comments on bug 100000",
+                "preset_slug": "recommended",
+                "overrides": setup.model_dump(),
+            },
+        )
+        assert response.status_code == 200, response.text
+        record = response.json()["record"]
+        assert record["degraded"] and record["route"] == "R0" and record["llm_calls"] == 0
+        assert {e["bug_id"] for e in record["evidence"]} == {"100000"}
+
+
+def test_existing_bug_outside_tool_coverage_uses_dossier(setup):
+    with build_fixture_runner(setup, CitedMock()) as runner:
+        result = runner.run("How many comments are there on bug 100000?")
+    assert result.route == "S5" and result.route_rule == "database_coverage_dossier_serving"
+    assert not result.errors and result.llm_calls == 1
+    assert "comment-100000:0" in result.answer.citations
+
+
+def test_refused_population_does_not_fall_back_to_dossier(setup):
+    with build_fixture_runner(setup, CitedMock()) as runner:
+        result = runner.run("How many bugs in the test partition for bug 100000?")
+    assert result.route == "S7v2" and result.answer.abstain
+    assert result.llm_calls == 0 and not result.errors

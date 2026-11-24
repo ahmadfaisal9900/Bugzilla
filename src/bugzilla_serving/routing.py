@@ -22,6 +22,10 @@ def explicit_ids(question):
 
 
 def tool_question(question):
+    question = re.sub(r"what blocks (bug\s+#?\s*\d+)", r"blockers of \1", question, flags=re.I)
+    question = re.sub(
+        r"which bugs block (bug\s+#?\s*\d+)", r"bugs blocking \1", question, flags=re.I
+    )
     question = re.sub(r"does (bug\s+#?\s*\d+) depend on", r"\1 depends on", question, flags=re.I)
     return re.sub(r"does (bug\s+#?\s*\d+) block\b", r"\1 blocks", question, flags=re.I)
 
@@ -102,9 +106,31 @@ class ServingGraphV2(AnswerGraphV2):
             return dict(context=context, context_map=mapping, context_ids=list(mapping.values()))
         return super().pack_context(state)
 
+    def _dossier_answer(self, state):
+        updated = dict(state, route="S5", raw_output=None)
+        retrieved = self.retrieve(updated)
+        updated.update(retrieved)
+        packed = self.pack_context(updated)
+        updated.update(packed)
+        generated = {} if updated.get("raw_output") is not None else super().generate(updated)
+        return {
+            **retrieved,
+            **packed,
+            **generated,
+            "route": "S5",
+            "route_rule": "database_coverage_dossier_serving",
+        }
+
     def generate(self, state):
         if state["route"] == "S7v2":
+            from bugzilla_qa.answering_v2.json_tools import preparse
+
             state = dict(state, question=tool_question(state["question"]))
+            parsed = preparse(state)
+            if parsed["facts"].get("refused_population"):
+                return super().generate(state)
+            if explicit_ids(state["question"]) and parsed["plan"] is None:
+                return self._dossier_answer(state)
         result = super().generate(state)
         # A supported-but-unknown lifecycle fact is a valid decline. A rejected tool
         # or unavailable field for an existing bug gets its public dossier instead.
@@ -125,17 +151,5 @@ class ServingGraphV2(AnswerGraphV2):
                 and all(v is None for v in tool.get("fields", {}).values())
             )
             if unavailable:
-                updated = dict(state, route="S5", raw_output=None)
-                retrieved = self.retrieve(updated)
-                updated.update(retrieved)
-                packed = self.pack_context(updated)
-                updated.update(packed)
-                generated = super().generate(updated)
-                return {
-                    **retrieved,
-                    **packed,
-                    **generated,
-                    "route": "S5",
-                    "route_rule": "database_coverage_dossier_serving",
-                }
+                return self._dossier_answer(state)
         return result

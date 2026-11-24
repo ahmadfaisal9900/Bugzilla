@@ -74,6 +74,8 @@ CHOICES: dict[str, dict[str, str]] = {
         "S5": "S5 · Full bug dossier (long context)",
         "S6": "S6 · Graph expansion (linked bugs)",
         "S7": "S7 · Database tools",
+        "S7v2": "Database path",
+        "S8v2": "Auto-router",
         "S8": "S8 · Router (picks S2, S5 or S7)",
         "ORACLE": "Oracle (diagnostic only)",
     },

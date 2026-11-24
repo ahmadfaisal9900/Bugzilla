@@ -256,8 +256,8 @@ def test_registry_cache_and_champion(monkeypatch):
     assert not any(p.is_champion for p in fallback)
 
 
-def test_evaluated_auto_router_is_refused_through_both_loaders(client):
-    """Keep the integration failure explicit; never substitute the legacy S8 graph."""
+def test_historical_auto_router_budget_requires_capped_config(client):
+    """Historical 12k dossiers require an explicit capped serving config."""
     import yaml
 
     from bugzilla_serving.tracking.final_registry import champion_check

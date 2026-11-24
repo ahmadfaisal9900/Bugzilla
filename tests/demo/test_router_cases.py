@@ -18,3 +18,16 @@ def test_routes(case):
     else:
         actual = {"fast": "S1", "deep": "S5"}[case["mode"]]
     assert actual == case["expected_route"]
+
+
+def test_blocking_direction_is_explicit():
+    from bugzilla_qa.answering_v2.json_tools import preparse
+    from bugzilla_serving.routing import tool_question
+
+    for question, direction in [
+        ("What blocks bug 1771951?", "incoming"),
+        ("Which bugs block bug 1771951?", "incoming"),
+        ("Which bugs does bug 1771951 block?", "outgoing"),
+    ]:
+        plan = preparse({"question": tool_question(question)})["plan"]
+        assert plan["tool"] == "get_linked_bugs" and plan["args"]["direction"] == direction

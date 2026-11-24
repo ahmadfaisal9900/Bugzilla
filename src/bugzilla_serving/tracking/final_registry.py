@@ -82,7 +82,7 @@ def champion_check(config_text, version=None, registry=None):
                         route=r,
                         status="FAIL",
                         stage="shared config loader",
-                        reason="Evaluated router identity is unsupported by the serving contract.",
+                        reason="Candidate is not executable under the serving contract and caps.",
                         detail=str(exc),
                         file="src/bugzilla_serving/contracts/run_config.py",
                         function="RunConfig; Registry.get_config -> executable",
@@ -295,7 +295,9 @@ def register(
         )
         if system == "Auto-router":
             tags.update(
-                serving_status="blocked: shared loader does not support evaluated graph",
+                serving_status="ready"
+                if check["passed"]
+                else "blocked: historical config fails serving gate",
                 promotion_policy=json.dumps(policy, sort_keys=True),
                 champion_check=json.dumps(check, sort_keys=True),
             )
