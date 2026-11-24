@@ -1,0 +1,4 @@
+Retriever,Corpus,Baseline,Source,Family,Metric,n,Difference,CI low,CI high,p,Holm p,State
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,22,1.0,1.0,1.0,9.999000099990002e-05,0.0197980201979802,CLUSTER_BOOTSTRAP
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,22,1.0,1.0,1.0,9.999000099990002e-05,0.0197980201979802,CLUSTER_BOOTSTRAP
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,4,0.0,0.0,0.0,1.0,1.0,CLUSTER_BOOTSTRAP

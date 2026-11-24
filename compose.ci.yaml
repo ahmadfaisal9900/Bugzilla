@@ -1,0 +1,65 @@
+# CI and local smoke stack: builds the images here, serves the synthetic fixture bundle and uses
+# the mock LLM, so it needs no keys, no real data and no network at runtime.
+#   docker compose -f compose.ci.yaml up --build -d && bash scripts/testing/smoke.sh
+# All three services start by default; dashboard uses the read-only Docker target.
+name: bugzilla-ci
+
+x-api-build: &api-build
+  build: { context: ., dockerfile: docker/api.Dockerfile }
+  image: bugzilla-api:ci
+
+x-ci-env: &ci-env
+  SERVING_API_KEY: ci-smoke-key
+  LLM_PROVIDER: mock
+  TRACE_SAMPLE: "0"
+  LANGSMITH_TRACING: "false"
+  DASHBOARD_LAB_ENABLED: "false"
+
+services:
+  fixture:
+    <<: *api-build
+    # One-shot: writes the synthetic bundle (20 made-up bugs) into a shared volume, then exits.
+    user: root
+    command: ["python", "scripts/testing/build_fixture_bundle.py", "--output", "/fixture/bundle"]
+    volumes:
+      - fixture:/fixture
+
+  api:
+    <<: *api-build
+    environment:
+      <<: *ci-env
+      BUNDLE_DIR: /fixture/bundle
+    volumes:
+      - fixture:/fixture:ro
+      - appdata:/app/outputs
+    depends_on:
+      fixture: { condition: service_completed_successfully }
+    ports:
+      - "8000:8000"
+
+  chat:
+    build: { context: ., dockerfile: docker/chat.Dockerfile }
+    image: bugzilla-chat:ci
+    environment:
+      <<: *ci-env
+      API_URL: http://api:8000
+    depends_on:
+      api: { condition: service_healthy }
+    ports:
+      - "8501:8501"
+
+  dashboard:
+    build: { context: ., dockerfile: docker/dashboard.Dockerfile, target: dashboard-readonly }
+    image: bugzilla-dashboard:ci
+    environment:
+      <<: *ci-env
+      API_URL: http://api:8000
+      LANGSMITH_SOURCE: fixture
+    depends_on:
+      api: { condition: service_healthy }
+    ports:
+      - "8502:8502"
+
+volumes:
+  fixture:
+  appdata:

@@ -210,7 +210,7 @@ def build(root, output):
 
 
 PAGE = r'''<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bugzilla evaluation results</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bugzilla review</title>
 <style>
 :root{--bg:#f5f6f8;--surface:#fff;--sunken:#f3f4f7;--line:#e4e7ec;--line-strong:#d0d5dd;--text:#1d2433;--muted:#5f6b7a;--faint:#98a1ad;
 --accent:#3b5bdb;--accent-soft:#eaeefd;--accent-text:#2f4ac0;
@@ -357,7 +357,7 @@ caption{text-align:left;font-weight:600;padding-bottom:4px}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
-  <div class="brand">Bugzilla evaluation results</div>
+  <div class="brand">Bugzilla answer review</div>
   <div class="prog"><b id="progTxt"></b><div class="bar"><i id="progBar"></i></div></div>
   <div class="tools">
     <label class="initials"><input id="me" maxlength="8" placeholder="Initials" aria-label="Your initials" autocomplete="off"></label>
@@ -421,7 +421,7 @@ const S={status:'human',q:'',r:'',unblind:false};
 const FAM={F1:'Bug fields',F2:'Time to fix',F3:'Counting bugs',F4:'Linked bugs',F5:'Reasons in comments',F6:'Info not in data',KI:'Find the bug',MH:'Multi-step links',F6H:'Should decline'};
 const ST={human:{label:'Needs human review',hint:'The computer could not grade this answer. Decide if it is correct, then check its evidence.'},
   evidence:{label:'Needs evidence check',hint:'The answer was already graded automatically. Only decide whether the evidence supports it.'},
-  reviewed:{label:'Review decisions',hint:'You can change your decision and save again.'},
+  reviewed:{label:'Reviewed by you',hint:'You can change your decision and save again.'},
   correct:{label:'Correct'},incorrect:{label:'Incorrect'},ungraded:{label:'Not graded yet'},all:{label:'All responses'}};
 let storageOK=true;
 function load(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){storageOK=false;return d}}

@@ -28,7 +28,7 @@ No editable install manifest currently exists. Install only dependencies require
 ## Phase 0 smoke checks
 
 ```bash
-bash scripts/smoke/check_structure.sh
+bash scripts/testing/check_structure.sh
 PYTHONPATH=src python -c 'import bugzilla_qa, bugzilla_qa.data, bugzilla_qa.benchmark, bugzilla_qa.retrieval, bugzilla_qa.methods, bugzilla_qa.evaluation, bugzilla_qa.app'
 ```
 
@@ -61,7 +61,7 @@ After the user's full run, inspect the machine report and update `docs/DATA_EXPL
 Previous Phase 2 invocation was:
 
 ```bash
-bash scripts/run_phase02_audit.sh
+bash scripts/phases/run_phase02_audit.sh
 ```
 
 Its completed-source checkpoint behavior and output layout are retained for reproducibility; its results are already reviewed in the summary linked above.
@@ -119,8 +119,8 @@ Strict mode requires event, observed and ingested times by cutoff. Retrospective
 The user's generated run is `outputs/benchmark/phase05/run-65c5be3381f66811/` (169 QIDs + 6 challenges, seed 317). Do not rerun generation or overwrite its queue. For source/gold-generation reproducibility on a future amended version, see [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md). To build read-only validation reports and sanitized comment packets for the current pinned run, execute from the existing Project root in the free DuckDB Python environment:
 
 ```bash
-bash scripts/run_phase05_agent_review_prep.sh --dry-run --batch 10
-bash scripts/run_phase05_agent_review_prep.sh --batch 10 --resume
+bash scripts/phases/run_phase05_agent_review_prep.sh --dry-run --batch 10
+bash scripts/phases/run_phase05_agent_review_prep.sh --batch 10 --resume
 ```
 
 Then use Prompt 5B in [PHASE05_ASSISTED_REVIEW_PROTOCOL.md](PHASE05_ASSISTED_REVIEW_PROTOCOL.md) for one F5 packet batch at a time. Automated recommendations stay separate from the original CSV. The human reviewer checks all retained F5 and challenge items plus required factual/F6 spot checks, completes the exact CSV fields and `review_signoff.json`, then may run the freeze validator. Optional `--limit 10` creates a separate prefix and cannot replace the full packet report. See [PHASE05_BENCHMARK.md](PHASE05_BENCHMARK.md) for source/gold logic and freeze checks.
@@ -128,8 +128,8 @@ Then use Prompt 5B in [PHASE05_ASSISTED_REVIEW_PROTOCOL.md](PHASE05_ASSISTED_REV
 After source review and human sign-off only:
 
 ```bash
-bash scripts/run_phase05_validate_freeze.sh --dry-run --seed 317
-bash scripts/run_phase05_validate_freeze.sh --seed 317 --resume
+bash scripts/phases/run_phase05_validate_freeze.sh --dry-run --seed 317
+bash scripts/phases/run_phase05_validate_freeze.sh --seed 317 --resume
 ```
 
 Freeze reads/hashes the 1.89-GB canonical DB once per validation, recomputes deterministic gold, and writes checksummed question/gold artifacts. No source CSV, API job or model call runs. Keep gold/SQL/templates/review text out of inference/retrieval logs; only question exports enter later methods. Do not tune on test/challenge questions. Report actual candidate/review/frozen counts before beginning a later phase.
@@ -142,14 +142,14 @@ Follow [RETRIEVAL_V3.md](RETRIEVAL_V3.md) for setup, outputs, runtime estimates
 and the complete commands. From Project, run in order:
 
 ```bash
-bash scripts/run_phase09_retrieval_v3.sh build --dry-run
-bash scripts/run_phase09_retrieval_v3.sh build --resume
-bash scripts/run_phase09_retrieval_v3.sh eval --dry-run
-bash scripts/run_phase09_retrieval_v3.sh eval --resume
-bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
-bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --enable-llm --max-requests 750 --resume
-bash scripts/run_phase09_retrieval_v3.sh select --latest --dry-run
-bash scripts/run_phase09_retrieval_v3.sh select --latest
+bash scripts/phases/run_phase09_retrieval_v3.sh build --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh build --resume
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --resume
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --enable-llm --max-requests 750 --resume
+bash scripts/phases/run_phase09_retrieval_v3.sh select --latest --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh select --latest
 ```
 
 Only continue to selection after both dev runs report COMPLETE. PARTIAL / exit 2
@@ -163,7 +163,7 @@ selects R7b/C1. Reuse those caches/indexes. Follow ANSWERING_SYSTEMS.md in order
 install requirements-answering.txt; suggest-tau --dry-run then --write;
 plan; fixed --limit-per-family 3 --run-tag pilot --trace pilot; advancing
 --limit 25 daily dev batches with --enable-llm/--max-requests/--resume.
-The runner is scripts/run_phase10_answering.sh; default is zero-call plan.
+The runner is scripts/phases/run_phase10_answering.sh; default is zero-call plan.
 Public context and verified separate Phase 4 history only. All predictions are
 ignored/versioned; PARTIAL means resume after resolving its blocker. No answer
 scoring, Phase 5/v3 regeneration or locked-test tuning. Old M3 is deprecated,

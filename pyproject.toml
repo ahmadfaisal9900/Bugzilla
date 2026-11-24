@@ -16,7 +16,7 @@ serving = [
     "PyYAML==6.0.2", "duckdb==1.4.4", "pytz==2026.6", "numpy==1.26.4",
     "jsonschema==4.24.0", "langgraph==0.6.11", "langsmith==0.4.37",
     "groq==0.30.0", "tqdm==4.67.1", "faiss-cpu==1.11.0",
-    "sentence-transformers==3.4.1", "torch==2.6.0",
+    "sentence-transformers==3.4.1", "torch==2.6.0", "mlflow-skinny==2.22.1",
 ]
 ui = ["streamlit==1.45.1", "httpx==0.28.1"]
 dashboard = [
@@ -29,10 +29,19 @@ dev = ["pytest==8.3.5", "pytest-cov==6.1.1", "ruff==0.11.13", "httpx==0.28.1"]
 where = ["src"]
 include = ["bugzilla_qa*", "bugzilla_serving*"]
 
+[tool.setuptools.package-data]
+"bugzilla_serving.chat_ui" = ["assets/*.css", "static/fonts/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src", "."]
+pythonpath = ["src", ".", "tests"]
 addopts = '-m "not live and not integration"'
+filterwarnings = [
+    # LangGraph 0.6.11 imports the serializer without the new allowed_objects option.
+    'ignore:The default value of `allowed_objects` will change:langchain_core._api.deprecation.LangChainPendingDeprecationWarning:langgraph.cache.base',
+    # Starlette TestClient imports the deprecated AnyIO BlockingPortal alias.
+    'ignore:The anyio.abc.BlockingPortal alias is deprecated.*:DeprecationWarning:starlette.testclient',
+]
 markers = [
     "unit: offline unit checks", "contract: shared Phase 0 contracts",
     "ui: UI checks", "integration: explicitly requested integration checks",
@@ -44,7 +53,20 @@ target-version = "py311"
 line-length = 100
 include = [
     "src/bugzilla_serving/**/*.py", "tests/contracts/**/*.py",
-    "scripts/build_fixture_bundle.py", "scripts/seed_mlflow_fixture.py", "pyproject.toml",
+    "src/bugzilla_qa/answering_v2/**/*.py",
+    "scripts/mlops/parity_check.py", "scripts/mlops/langsmith_smoke.py", "scripts/mlops/rollback_champion.py",
+    "scripts/mlops/grade_f5.py", "scripts/mlops/preview_promotion.py",
+    "scripts/mlops/export_f5_grading_packet.py", "scripts/mlops/import_f5_verdicts.py",
+    "scripts/app/verify_bundle.py", "scripts/mlops/build_dashboard_snapshot.py",
+    "scripts/testing/build_fixture_bundle.py", "scripts/testing/seed_mlflow_fixture.py", "pyproject.toml",
+    "scripts/app/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
+    "tests/a_quota/**/*.py", "tests/a_tracing/**/*.py", "tests/a_ui/**/*.py",
+    "scripts/app/check_serving_tracing.py",
+    "scripts/app/live_smoke.py", "scripts/app/run_dashboard.py", "scripts/mlops/build_results_pack.py",
+    "scripts/mlops/log_final_results.py", "scripts/mlops/register_all_systems.py",
+    "tests/b_tracking/**/*.py", "scripts/mlops/backfill_*.py", "scripts/mlops/publish_preset.py",
+    "tests/b_experiments/**/*.py", "scripts/mlops/make_eval_sets.py", "scripts/mlops/run_experiment.py",
+    "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py", "conftest.py",
 ]
 
 [tool.ruff.lint]
@@ -53,5 +75,30 @@ select = ["E", "F", "I"]
 [tool.coverage.run]
 source = ["bugzilla_serving"]
 
+[tool.coverage.paths]
+# The clean-checkout smoke test runs the same tracked sources in a temporary
+# directory. Merge its subprocess measurements rather than counting a second,
+# mostly unexecuted copy of the package in the coverage denominator.
+serving = ["src/bugzilla_serving", "*/clean source/src/bugzilla_serving"]
+
 [tool.coverage.report]
 show_missing = true
+fail_under = 70
+
+# Pre-existing Phase 0 formatting is owned by A/shared contracts. Do not
+# reformat those files as part of B4; remove exclusions with owner approval.
+[tool.ruff.format]
+exclude = [
+    "scripts/testing/build_fixture_bundle.py", "src/bugzilla_serving/api/stub.py",
+    "src/bugzilla_serving/engine.py", "src/bugzilla_serving/contracts/api_models.py",
+    "src/bugzilla_serving/contracts/records.py", "tests/contracts/conftest.py",
+    "tests/contracts/test_contracts.py",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Existing engine import order; Stream A maintains this file.
+"src/bugzilla_serving/engine.py" = ["I001"]
+
+"scripts/testing/build_fixture_bundle.py" = ["E501"]
+"src/bugzilla_serving/api/stub.py" = ["I001", "E501"]
+"tests/contracts/test_contracts.py" = ["I001", "E501"]

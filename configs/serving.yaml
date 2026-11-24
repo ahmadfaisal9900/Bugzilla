@@ -7,6 +7,9 @@
 # s4_tau/s7_max_tool_steps/query_transform -> AnswerGraph.retrieve/generate/tool
 # rrf_k -> retrieval_v3.registry.Engine.base/graph and Backend.corrective
 # prompt_version -> AnswerGraph._call; serving.engine maps version to known existing prompt
+tracing:
+  trace_sample: 0.2
+  daily_cap: 150
 models:
   gpt-oss-20b:
     provider: groq
@@ -151,14 +154,14 @@ hyperparameters:
   s5_dossier_budget:
     type: integer
     default: 4096
-    label: Deep-read budget
-    help: Evidence-byte bound for all public records of selected bugs.
+    label: Evidence size (bytes)
+    help: Evidence size, UTF-8 bytes; all public records of selected bugs.
     applies_to:
     - S5
     - S8
     advanced: true
     min: 128
-    max: 4096
+    max: 12000
   s7_max_tool_steps:
     type: integer
     default: 4

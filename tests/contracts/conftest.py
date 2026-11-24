@@ -34,7 +34,7 @@ def offline(monkeypatch):
 
 @pytest.fixture
 def fixture_bundle(tmp_path, monkeypatch):
-    builder = module(ROOT / "scripts/build_fixture_bundle.py", "p0_builder")
+    builder = module(ROOT / "scripts/testing/build_fixture_bundle.py", "p0_builder")
     bundle = builder.build(tmp_path / "serving_bundle")
     builder.samples(tmp_path)
     monkeypatch.setenv("BUNDLE_DIR", str(bundle))

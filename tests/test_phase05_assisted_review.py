@@ -14,6 +14,14 @@ from bugzilla_qa.data.normalize import digest
 
 
 class AssistedReviewFixtureTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.fixture_root = Path(temporary.name)
+        manifest = self.fixture_root / Path(ar.BASE_DUCKDB_REL).with_name("manifest.json")
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text(json.dumps({"synthetic": True}))
+
     def test_review_decision_schema_and_statuses(self):
         self.assertEqual(ar.QUEUE_COLUMNS[-11:], (
             "decision", "reviewer", "reviewed_at_utc", "source_checked", "rationale_present",
@@ -97,7 +105,7 @@ class AssistedReviewFixtureTests(unittest.TestCase):
               "source_row_key": "row-31", "source_url": "https://bugzilla.mozilla.org/show_bug.cgi?id=31",
               "fields": {"component": "UI"}}], "gold": {"type": "string", "value": "UI"},
              "scope": {"snapshot_as_of_utc": None}}
-        result = ar.validate_f1(q, db, Path("."))
+        result = ar.validate_f1(q, db, self.fixture_root)
         self.assertEqual(result["status"], "PASS")
         self.assertTrue(all(result["checks"].values()))
         db.close()
@@ -195,7 +203,7 @@ class AssistedReviewFixtureTests(unittest.TestCase):
              "source_coverage": {"matching_bug_ids_sha256": digest(sorted(matching))},
              "sql": {"query": "SELECT count(DISTINCT bug_id) FROM bugs WHERE bug_id IN (SELECT unnest(?)) AND component = ?",
                 "parameters": [universe, "Messaging System"]}, "bug_ids": sorted(matching), "gold": {"type": "integer", "value": 1}}
-        result = ar.validate_f3(q, db, Path("."), {"members": members}, pop_rows, True,
+        result = ar.validate_f3(q, db, self.fixture_root, {"members": members}, pop_rows, True,
                                 expected_partition_counts={"dev": 2, "test": 3})
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["independent_recomputation"]["python_count"], 1)
@@ -221,11 +229,11 @@ class AssistedReviewFixtureTests(unittest.TestCase):
         q = {"question": "Return the complete numeric set. Snapshot date and historical validity are UNKNOWN.",
              "evidence": [evidence], "gold": {"type": "id_set", "value": [target]},
              "bug_ids": ["31", target], "split": ar.phase05.partition(317, "31")}
-        result = ar.validate_f4(q, db, Path("."))
+        result = ar.validate_f4(q, db, self.fixture_root)
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["independent_recomputation"]["target_count"], 1)
         q["gold"]["value"] = []
-        self.assertEqual(ar.validate_f4(q, db, Path("."))["status"], "FAIL")
+        self.assertEqual(ar.validate_f4(q, db, self.fixture_root)["status"], "FAIL")
         db.close()
 
     def test_f6_is_bounded_and_possible_effort_mentions_stay_unknown(self):
@@ -238,12 +246,12 @@ class AssistedReviewFixtureTests(unittest.TestCase):
              "scope": {"corpus": "frozen archive and selective API evidence", "snapshot_as_of_utc": None},
              "evidence": [{"fields": {"available_fields": ["product", "component", "snapshot_status", "snapshot_resolution"],
                                         "engineer_hours_field": "ABSENT", "snapshot_as_of_utc": None}}]}
-        self.assertEqual(ar.validate_f6(q, db, api, Path("."))["status"], "PASS")
+        self.assertEqual(ar.validate_f6(q, db, api, self.fixture_root)["status"], "PASS")
         db.execute("UPDATE bugs SET summary='Developer spent 4 hours investigating' WHERE bug_id='31'")
-        self.assertEqual(ar.validate_f6(q, db, api, Path("."))["status"], "UNKNOWN")
+        self.assertEqual(ar.validate_f6(q, db, api, self.fixture_root)["status"], "UNKNOWN")
         db.execute("UPDATE bugs SET summary='summary' WHERE bug_id='31'")
         db.execute("INSERT INTO comments VALUES ('31','The developer spent 4 hours testing')")
-        self.assertEqual(ar.validate_f6(q, db, api, Path("."))["status"], "UNKNOWN")
+        self.assertEqual(ar.validate_f6(q, db, api, self.fixture_root)["status"], "UNKNOWN")
         api.close()
         db.close()
 

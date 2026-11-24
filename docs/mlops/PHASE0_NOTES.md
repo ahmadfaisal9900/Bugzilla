@@ -123,7 +123,7 @@ installation using the PyTorch CPU wheel index. Keep the declared version consis
 
 ```bash
 # Generate synthetic files only; no APIs, datasets or model downloads.
-PYTHONPATH=src python scripts/build_fixture_bundle.py
+PYTHONPATH=src python scripts/testing/build_fixture_bundle.py
 # Generate/review the initial schema snapshot once, after installing the exact pins.
 UPDATE_SNAPSHOTS=1 python -m pytest tests/contracts/test_contracts.py -k openapi_snapshot -q
 # Run the shared gate and existing no-download research regressions.
@@ -134,7 +134,7 @@ python -m ruff format --check
 
 ```bash
 # Local fake tracking/registry only: nine runs, three config versions, two presets.
-PYTHONPATH=src python scripts/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
+PYTHONPATH=src python scripts/testing/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
 # Repeating the seed command should report created_runs=0.
 mlflow ui --backend-store-uri file:./outputs/mlflow-phase0 --host 127.0.0.1 --port 5000
 ```
@@ -153,3 +153,79 @@ synthetic tags/configs only, and publishes a synthetic fixture champion.
    only if it should be represented separately in a future reviewed contract.
 3. Both collaborators review the shared code and initial snapshot before A/B work.
    No live inference, DagsHub/LangSmith operations, deployment or pushes occurred.
+
+## Approved amendments — 2026-11-21
+
+Approved by **ahmadfaisal9900; partner notified**:
+
+- `RunConfig.validate_against(spec, mode="execute"|"record")` now separates
+  execution eligibility from archival recording. Default `execute` retains
+  serving ranges, applicability, allowed combinations and model caps. Engine/API
+  call sites remain unchanged and therefore execute-strict.
+- `record` preserves known typed configuration fields without numeric serving
+  caps/applicability checks. Enum identity, forbidden extra fields, strict types
+  and finite values still apply. Numeric bounds live in execute validation;
+  the execute-facing OpenAPI schema is unchanged.
+- `CONFIG_ORIGIN_TAG = "config_origin"` is exported in `names.py`. Only
+  `source=backfill` may use `historical`/`reconstructed` record validation.
+  Historical ledger imports use `historical`; review-only reconstruction uses
+  `reconstructed`. Neither implies deployability.
+- Preset publication and champion configuration loading always revalidate in
+  execute mode. A policy override cannot bypass this gate. Historical 12,000-token
+  S5/S8 dossiers remain recorded faithfully and cannot be published unchanged.
+- Missing exact pilot prediction references permit a review-only backfill;
+  cost/latency/token metrics are omitted. No synthetic replacement ledgers.
+
+The missing `tests/contracts/openapi.json` artifact was restored from the
+unchanged Phase 0 stub. Its JSON was compared byte-for-byte with OpenAPI generated
+using the pre-amendment RunConfig: identical. No API implementation or contract
+shape was changed. Golden RunConfig hashes remain covered by the original tests.
+
+### Approved amendment: pending family counts (2026-11-21)
+
+At ahmadfaisal9900's explicit request, `answer.<FAMILY>.pending` is now an allowed
+nonnegative integer metric alongside `.score` and `.n`. It records shared human
+review exclusions, not errors. No RunConfig, API or execution contract changed.
+
+### Approved amendment: usage accounting (2026-11-22)
+
+At ahmadfaisal9900's explicit request, `cost.usage_missing_n` and
+`cost.llm_calls_per_question` are allowed metrics. Cached token totals remain
+artifact columns, preserving the existing cached-token metric contract. Serving
+configuration and API contracts are unchanged.
+
+## Amendment 2 — dossier evidence cap (2026-11-22)
+
+Approved by both collaborators in the B6 instruction. The former 4,096 dossier
+maximum was a conservative Phase 0 placeholder, not a Groq quota limit. Raise
+only s5_dossier_budget.max to 12,000; retain its 4,096 default, the separate
+context_budget_tokens maximum, model operational cap, tool-step and other caps.
+The label/help explicitly identify UTF-8 evidence bytes. The RunConfig validator
+uses this knob's own byte range rather than comparing it to a token-input cap.
+Its fields, hash serialization and OpenAPI schema remain unchanged.
+
+Evidence from the accepted pilot: S5 reports 235,702 input tokens / 127 calls =
+1,855.9 input tokens per call, with a 12,000-byte dossier budget, on the same
+8,000 TPM / 200,000 TPD / 30 RPM / 1,000 RPD free tier. This is an observed
+mean, not a maximum or proof every future request fits.
+
+Engine resolution is unchanged: it loads runtime.json, then updates
+dossier_tokens from cfg.s5_dossier_budget when provided; otherwise it uses the
+serving.yaml default. Thus explicit 12,000 overrides bundle runtime 4,096. A
+4,096-era config remains valid. Input estimates use complete historical system
+usage when available, otherwise UTF-8 bytes/3. The send-time gate estimates the
+whole request, including schema/tools and system instructions; it trims only
+evidence when needed, or rejects fixed overhead that cannot fit. Estimated
+input + maximum output (2,048) must fit 90% of TPM (7,200). One pacing instance
+covers router, rewriting, tools and answers across a job. Daily quota guard and
+explicit request caps remain active. The bytes/3 fallback is an estimate, not
+a tokenizer or an architectural model-context measurement.
+
+B6 additionally approves the explicit answer.macro_excl_F5 tracking metric,
+bounded to [0,1], to preserve comparisons to pre-F5 scores. LLM-reference
+semantic grades are imported only from a complete fingerprint-bound verdict
+ledger; no research scorer or review file is changed.
+
+Integration: API options/config validation must read the same dossier cap and
+unit from serving.yaml. Its provider path must enforce the same request gate;
+Stream B's pacing adapter alone does not alter the unmerged Stream A API.

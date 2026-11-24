@@ -44,8 +44,9 @@ def _bundle(path: Path):
             raise ValueError("bundle: path traversal")
         if file.stat().st_size != meta["bytes"]:
             raise ValueError("bundle: size mismatch")
-        if hashlib.sha256(file.read_bytes()).hexdigest() != meta["sha256"]:
-            raise ValueError("bundle: checksum mismatch")
+        with file.open("rb") as handle:
+            if hashlib.file_digest(handle, "sha256").hexdigest() != meta["sha256"]:
+                raise ValueError("bundle: checksum mismatch")
     return manifest
 
 
@@ -63,7 +64,13 @@ class Runner:
         defaults = {k: v["default"] for k, v in spec["hyperparameters"].items()}
         self.cfg = cfg.validate_against(spec)
         self.root = Path(os.environ.get("BUNDLE_DIR", "serving_bundle")).resolve()
-        self.manifest = _bundle(self.root)
+        metadata = json.loads((self.root / "manifest.json").read_text(encoding="utf-8"))
+        if metadata.get("synthetic"):
+            self.manifest = _bundle(self.root)
+        else:
+            from .bundle import load_bundle
+
+            self.manifest = load_bundle(self.root).manifest
         runtime = self.manifest["runtime_config"]
         if runtime not in self.manifest["files"]:
             raise ValueError("bundle: runtime config must be manifest-listed")
@@ -101,6 +108,13 @@ class Runner:
                 )
         self.provider = provider
         self.backend = Backend(self.config, self.root, provider)
+        if not self.manifest.get("synthetic"):
+            if cfg.corpus not in self.manifest.get("available_corpora", []):
+                raise ValueError("corpus: not included in this bundle")
+            self.backend._engine = self._serving_engine
+        elif cfg.retriever == "R1":
+            # Synthetic fixtures ship lexical indexes only, so R1 must not load dense models.
+            self.backend._engine = self._serving_engine
         # Every override is applied before lazy model/index construction. Research caches
         # are bypassed: their keys do not include these runtime hyperparameters.
         self.backend.cache_manifests = {}
@@ -138,9 +152,44 @@ class Runner:
             finally:
                 db.close()
             self._source_override = str(db_path)
-        self.examples = list(read_jsonl(self.root / self.manifest["dev_questions"]))
+        # The accepted real bundle uses text-only examples; their dev scope is
+        # declared by the checksum-verified manifest. Structured rows still
+        # require an explicit dev split, including any future metadata format.
+        self.examples = [
+            {"question": q["text"], "split": "dev"} if set(q) == {"text"} else q
+            for q in read_jsonl(self.root / self.manifest["dev_questions"])
+        ]
         if any(q.get("split") != "dev" for q in self.examples):
             raise ValueError("bundle: non-dev question refused")
+        if any(not isinstance(q.get("question"), str) or not q["question"].strip()
+               for q in self.examples):
+            raise ValueError("bundle: expected nonempty question or text-only example")
+
+    def _serving_engine(self):
+        from bugzilla_qa.retrieval_v3.registry import Engine
+        from bugzilla_qa.retrieval_v3.transforms import QueryTransforms
+
+        backend = self.backend
+        if backend.engine is None:
+            if self.cfg.retriever == "R1":
+                edges = json.loads((backend.index / "graph.json").read_text())
+                backend.engine = Engine(backend.docs, backend.directory / "lexical.sqlite",
+                                        None, None, edges, backend.rc)
+            else:
+                from sentence_transformers import CrossEncoder, SentenceTransformer
+
+                from bugzilla_qa.retrieval_v3.runner import load_engine
+
+                cache = str(self.root / "models/huggingface/hub")
+                rc = backend.rc
+                embed = SentenceTransformer(rc["embedding_model"],
+                                            revision=rc["embedding_revision"], device=rc["device"],
+                                            cache_folder=cache, local_files_only=True)
+                cross = CrossEncoder(rc["reranker_model"], revision=rc["reranker_revision"],
+                                     device=rc["device"], cache_dir=cache, local_files_only=True)
+                backend.engine = load_engine(backend.directory, rc, (embed, cross),
+                                             QueryTransforms(self.provider))
+        return backend.engine
 
     def run(self, question: str, on_event: Callable | None = None) -> AnswerRecord:
         from bugzilla_qa.answering.graph import AnswerGraph
@@ -189,7 +238,9 @@ class Runner:
                     return result
 
             try:
-                with tracing_context(enabled=False):
+                from .tracing import active
+
+                with tracing_context(enabled=active()):
                     graph = ProgressGraph(
                         outer.config, outer.provider, outer.backend, tools,
                         outer.prompt, lambda state: None,

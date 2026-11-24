@@ -17,8 +17,8 @@ From the existing project root, in the environment where the model and FAISS wer
 ```bash
 cd "/home/ict317/master's/ENSF 621/Project"
 conda activate iqfm
-bash scripts/run_eval_extension.sh --dry-run --resume
-bash scripts/run_eval_extension.sh --resume
+bash scripts/phases/run_eval_extension.sh --dry-run --resume
+bash scripts/phases/run_eval_extension.sh --resume
 ```
 
 The second command is a long development-only v2 job: draft bank, proposed natural review, tokenizer-aware corpus, lexical and dense indexes, retrieval, dev tuning and M3 dev. It makes no LLM calls. Its progress and `pipeline_summary.json` report stage outcomes. It uses a new identity; it does not overwrite v1. Input corpus/seed/changed code each affect identity. `--resume` verifies saved hashes and resumes embedding shards/retrieval rows; an interrupted corpus export restarts that stage. Model weights may download on first use. No runtime or disk guarantee is available; budget multiple GB and potentially hours on CPU.
@@ -26,21 +26,21 @@ The second command is a long development-only v2 job: draft bank, proposed natur
 To open the localhost wording review after bank generation:
 
 ```bash
-bash scripts/run_phase07_natural_review.sh --resume
+bash scripts/phases/run_phase07_natural_review.sh --resume
 ```
 
 Open `http://127.0.0.1:8766/`. Enter your name once; the browser remembers it. Review the items shown, tick the ones you have checked, and use **Approve selected** or **Reject selected**. **Select this page** and **Clear selection** help with batches. All classification choices are visible for each item; use the batch classification buttons to set the same choice for selected items. An `INVALID` item cannot be approved. Decisions are saved individually to the existing ignored review CSV. The `AMBIGUOUS_NEEDS_CLARIFICATION` track contains no bug referent in model-facing text. To export actual approvals and run their development retrieval:
 
 ```bash
-bash scripts/run_eval_extension.sh --stage natural-approved --resume
-bash scripts/run_eval_extension.sh --stage natural-retrieval --resume
+bash scripts/phases/run_eval_extension.sh --stage natural-approved --resume
+bash scripts/phases/run_eval_extension.sh --stage natural-retrieval --resume
 ```
 
 For a limited, explicit opt-in local Ollama smoke **after retrieval**, replace the model placeholder with an already installed model. The request budget counts attempts, including failures; no external provider is used:
 
 ```bash
-bash scripts/run_eval_extension.sh --stage inference --enable-llm --model YOUR_INSTALLED_MODEL --max-requests 5 --resume
-bash scripts/run_eval_extension.sh --stage score --resume
+bash scripts/phases/run_eval_extension.sh --stage inference --enable-llm --model YOUR_INSTALLED_MODEL --max-requests 5 --resume
+bash scripts/phases/run_eval_extension.sh --stage score --resume
 ```
 
 Each invocation permits at most five local model calls; repeat only if desired. Full development inference requires approximately one call per pending question per included generator method plus M0, up to six per question where all five retrievers returned results; failed calls also consume the cap. It is resumable. No amount of retrieval quality alone establishes answer quality.
@@ -56,8 +56,8 @@ The v2 clean split reduces reuse of v1 test parents but cannot turn the same und
 The user completed the v2 run at `outputs/eval_extension/bank-dacb7ca0ceb7e0ef/`: 693 selected items, six F2, 14,443 indexed chunks and zero reported embedding truncations. The reviewed natural track contains 110 approvals: 51 development and 59 test. Development retrieval finished for all 51; known-citation results are provisional and F3 retrieval metrics are not applicable. The saved M3 development results have 31 F3 `NO_INTENT` outputs because the parser rejected the explicitly scoped sample wording. A parser fix passes tiny fixtures; run the separately versioned development rerun in your terminal:
 
 ```bash
-bash scripts/run_phase07_m3_repair.sh --dry-run
-bash scripts/run_phase07_m3_repair.sh --resume
+bash scripts/phases/run_phase07_m3_repair.sh --dry-run
+bash scripts/phases/run_phase07_m3_repair.sh --resume
 ```
 
 Its printed output directory contains `identity.json`, `predictions.jsonl`, and `summary.json`; the previous M3 outputs remain unchanged. `--limit N` creates a separate limited identity and is not a full result. This correction has not yet been evaluated on real development questions.
@@ -65,8 +65,8 @@ Its printed output directory contains `identity.json`, `predictions.jsonl`, and 
 The original Phase 5 queue now contains the 64 signed row reviews copied from the human sheet. A local backup and transfer audit preserve the prior queue; `review_signoff.json` is still unsigned. After the reviewer checks the retained questions and signs that file as described in `PHASE05_ASSISTED_REVIEW_PROTOCOL.md`, run:
 
 ```bash
-bash scripts/run_phase05_validate_freeze.sh --dry-run --run outputs/benchmark/phase05/run-65c5be3381f66811 --seed 317
-bash scripts/run_phase05_validate_freeze.sh --run outputs/benchmark/phase05/run-65c5be3381f66811 --seed 317 --resume
+bash scripts/phases/run_phase05_validate_freeze.sh --dry-run --run outputs/benchmark/phase05/run-65c5be3381f66811 --seed 317
+bash scripts/phases/run_phase05_validate_freeze.sh --run outputs/benchmark/phase05/run-65c5be3381f66811 --seed 317 --resume
 ```
 
 The dry run does not check signatures or hash data. Only a successful full validator can create the original freeze. The v2 bank and track seals and a complete QA evaluation remain separate later gates. The machine-readable current inventory is `outputs/eval_extension/handoff_quality_status.json` (local and ignored).

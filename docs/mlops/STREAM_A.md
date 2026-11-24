@@ -1,8 +1,8 @@
 # Stream A: Serving & Chat (FastAPI, Chat UI, LangSmith tracing, CD, hosting)
 
-Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 contracts and fixtures. Until integration, it uses `scripts/seed_mlflow_fixture.py` instead of the real MLflow, and `MockProvider` instead of Groq.
+Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 contracts and fixtures. Until integration, it uses `scripts/testing/seed_mlflow_fixture.py` instead of the real MLflow, and `MockProvider` instead of Groq.
 
-**Owns:** `src/bugzilla_serving/api/`, `bundle.py`, `quota.py`, `tracing.py`, `chat_ui/`, `engine.py` (maintenance), `scripts/build_serving_bundle.py`, `docker/api.Dockerfile`, `docker/chat.Dockerfile`, `compose*.yaml`, `.github/workflows/cd.yml`, `docs/DEPLOYMENT.md`, `tests/a_*`.
+**Owns:** `src/bugzilla_serving/api/`, `bundle.py`, `quota.py`, `tracing.py`, `chat_ui/`, `engine.py` (maintenance), `scripts/app/build_serving_bundle.py`, `docker/api.Dockerfile`, `docker/chat.Dockerfile`, `compose*.yaml`, `.github/workflows/cd.yml`, `docs/DEPLOYMENT.md`, `tests/a_*`.
 
 **Never touches:** `tracking/`, `experiments/`, `dashboard/`, `ci.yml`, research code. Shared files only through a PR both people approve.
 
@@ -10,7 +10,7 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 
 ## A1. Serving bundle
 
-- `scripts/build_serving_bundle.py --out serving_bundle/`. Dry-run by default; `--apply` writes.
+- `scripts/app/build_serving_bundle.py --out serving_bundle/`. Dry-run by default; `--apply` writes.
 - Contents:
   - a DuckDB with `bugs` + `bug_links` metadata, public comments for the 3,000 cohort bugs, and the Phase 4 history overlay;
   - corpora C0/C1/C2 with their FTS5 + FAISS indexes;
@@ -20,6 +20,42 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 
 **Done when:** the real bundle builds locally, the manifest shows no test files, and the loader works on the synthetic fixture bundle and the real one.
 
+Local A1 status: the builder and loader are implemented. The available Phase 11 runtime
+contains C1 only; C0 and C2 are absent. The built bundle records that limitation and
+the runner refuses missing corpora. Do not duplicate C1 under another corpus name.
+The real C1 bundle contains the 3,000-bug database, history, existing indexes, pinned
+model snapshots and 299 text-only Phase 5/v3 dev examples. No test questions or gold
+files are included. `load_bundle(path).examples()` returns a list of strings;
+`load_bundle(path).db` is read-only. Close the bundle when the application shuts down.
+
+From the repo root, with `iqfm` active:
+
+```powershell
+python scripts/app/build_serving_bundle.py --out serving_bundle
+python scripts/app/build_serving_bundle.py --out serving_bundle --apply
+python -m pytest tests/a_bundle -q
+```
+
+The first command only previews files and sizes. An existing output folder is never
+overwritten; choose another `--out` to rebuild. Add `--require-all` to refuse a build
+unless all three corpora are present. The builder copies data and model snapshots;
+it does not regenerate indexes, download models or call Groq. Copy the complete
+`serving_bundle/` folder to the host, alongside the installed application. It is
+gitignored. The source defaults come from the local `official_runtime/answering.json`;
+`--root` and `--runtime` allow the same layout on another machine.
+
+Real-data smoke check, without API calls:
+
+```powershell
+$env:BUNDLE_DIR = "serving_bundle"
+python -c "from bugzilla_serving.engine import build_runner; from bugzilla_serving.contracts.run_config import RunConfig; r=build_runner(RunConfig(system_id='S1',retriever='R1',provider='mock')); a=r.run('What component is bug 1701902 in?',on_event=print); print(a); r.close()"
+```
+
+Expect four status events, real Firefox sources and a mock abstention. A successful
+mock check verifies the package and retrieval wiring, not answer quality or every
+dense/reranking method. C0/C2 support remains pending delivery of their real indexes.
+An additional local S2/R2 mock check also passed using only the packaged model weights.
+
 ## A2. API core (FastAPI, `/v1`, contract section 4.4)
 
 - App factory; the bundle, indexes and model weights load at startup; one uvicorn worker; the engine runs in a threadpool.
@@ -28,7 +64,50 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
   - `ask`, `chat/stream` (SSE events exactly as in the contract), `feedback`.
 - **Presets source:** MLflow registry (`bugzilla-qa-config`, versions tagged `published=true`, plus alias `champion`), cached for 5 min. Falls back to `configs/presets.yaml` if MLflow is unreachable. Develop against the seeded local MLflow store.
 - **Request flow:** preset config + user overrides → `RunConfig` validation (`invalid_config` 422 with a field-level message the UI can show) → quota check → `engine.build_runner(cfg).run(question, on_event=…)` → SSE events.
-- Auth: `SERVING_API_KEY` header (the chat UI sends it), except on `health`.
+- Auth: `X-API-Key` header, compared against the `SERVING_API_KEY` environment variable, except on `health`.
+
+A2 is implemented in `api/app.py`; the Phase 0 stub and OpenAPI snapshot stay unchanged.
+The API loads the verified bundle at startup and caches up to four runners. Runner
+calls are serialized and run in worker threads because their search state is mutable.
+Published MLflow presets are cached for five minutes, with YAML fallback. Feedback
+is saved in `outputs/serving/feedback.sqlite`; LangSmith run IDs remain null until A4.
+
+With `iqfm` active, set these entries in the ignored `.env` (keep your other entries):
+
+```dotenv
+BUNDLE_DIR=serving_bundle
+SERVING_API_KEY=choose_a_local_secret
+LLM_PROVIDER=mock
+MLFLOW_TRACKING_URI=file:./outputs/mlflow-phase0
+```
+
+```powershell
+python scripts/testing/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
+python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1
+```
+
+The API reads `.env` automatically; existing environment variables take precedence.
+Open `http://127.0.0.1:8000/docs` to inspect the unchanged contract. The frozen schema
+has no Swagger Authorize button, so use the key header when calling protected routes.
+In another terminal, replace the example key below with your `.env` value:
+
+```powershell
+$body = '{"session_id":"local","message":"What component is bug 1701902 in?","preset_slug":"fast","overrides":{"provider":"mock"}}'
+$body | curl.exe -N -H "X-API-Key: choose_a_local_secret" -H "Content-Type: application/json" --data-binary '@-' http://127.0.0.1:8000/v1/chat/stream
+```
+
+Use `/v1/ask` instead for one JSON response. `/health` means `/v1/health`; it needs no
+key. Every other `/v1` route requires the header. Request configuration errors return
+422 with the field name; incorrect keys return 401. Stream failures emit `error`
+then `done`; successful streams emit four `status` events, `evidence`, `answer`, `done`.
+
+The quota endpoint reports local provider-ledger request counts and known successful
+token usage, not the provider's remaining balance. A3 supplies the token/minute check,
+session limits and R0 fallback described below. A4 adds tracing and remote feedback.
+
+```powershell
+python -m pytest tests/a_api tests/a_bundle tests/contracts tests/test_answering_graphs.py tests/test_retrieval_v3.py -q
+```
 
 ## A3. Quota and graceful degradation
 
@@ -38,12 +117,46 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 - `/v1/quota` exposes used/limit per model for the UI banner.
 - Optional, if time allows: a bring-your-own Groq key header, request-scoped and never stored or logged.
 
+A3 is implemented in `src/bugzilla_serving/quota.py` and the API. Daily counts reuse
+the research `quota_report()`; only the last-minute window is added over the same
+ledger. Live questions switch to R0 at 90% of daily requests/tokens, an active provider
+cooldown, the minute request limit, or when recent tokens plus
+`context_budget_tokens + 800` exceed TPM. Unverified recent usage also selects R0.
+R1–R6 are retained; R7 falls back to R1. Method-specific generation settings are
+cleared. The response has sources, `degraded=true`, zero LLM calls and a reason;
+degraded streams send one extra status event before the usual sequence.
+
+Each session may submit six valid questions in a rolling minute, including mock
+and source-only questions. The seventh returns HTTP 429 and `Retry-After` before
+joining the inference queue. Sessions expire in memory and reset on restart; keep
+the documented single worker. Mocks skip provider-budget checks. `/v1/quota` uses
+the default context estimate for its `degraded_now` flag; each question uses its
+actual configured context budget.
+
+These are per-question local prechecks, not reserved provider quota. Token totals
+exclude unknown failed-request usage, provider reset times may differ from the local
+Pacific calendar, and output/tool calls can exceed the estimate. No guarantee of the
+provider's remaining balance is made. The original ledger is never edited.
+
+```powershell
+python -m pytest tests/a_quota tests/a_api -q
+```
+
 ## A4. LangSmith tracing and feedback
 
 - One root run per chat message in project `ensf621-serving`, with the metadata keys from contract section 4.6. Sampling is set by `trace_sample` (default 0.2), with a daily trace cap.
 - Child runs show retrieval (sources + scores), generation and tools.
 - `/v1/feedback` → `create_feedback(run_id, key="user_rating", score, comment)` when the request was traced, and is always stored in local SQLite.
 - `docs/LANGSMITH_MONITORING.md`: how to filter the built-in Monitor charts by `preset_slug`, `model` and `degraded`.
+
+A4 is implemented in `tracing.py`. Sampling defaults to 20%, capped at 150 daily
+attempts in the local SQLite store. Missing keys quietly disable tracing. Root IDs
+are returned by `/ask` and the SSE `done` event; feedback is always stored locally
+and sent to LangSmith when a trace ID exists. Credentials are redacted at the SDK
+write boundary as well as in API outputs. See
+[the monitoring guide](../LANGSMITH_MONITORING.md) for the offline checks, one-question
+live check and two captured screenshots. Use `python scripts/app/check_serving_tracing.py`
+to preview; `--live` explicitly submits the mock question and feedback.
 
 ## A5. Chat UI (user-facing; Streamlit chat components)
 
@@ -80,7 +193,7 @@ Design goals: fast perceived response, plain language, no S0–S8/R1–R7 jargon
   - the bundle mounted read-only; an app-data volume; `env_file: .env`;
   - `DASHBOARD_LAB_ENABLED=false` on the host.
 - `compose.ci.yaml`: fixture bundle, `LLM_PROVIDER=mock`, local builds.
-- `scripts/smoke.sh`: `/v1/ready`, one `/v1/ask` per preset with mock, chat page and dashboard return 200.
+- `scripts/testing/smoke.sh`: `/v1/ready`, one `/v1/ask` per preset with mock, chat page and dashboard return 200.
 - `.github/workflows/cd.yml`:
   - triggered by tags `v*` and manual dispatch;
   - build and push all three images to GHCR, using amd64 + arm64 if the host is ARM;

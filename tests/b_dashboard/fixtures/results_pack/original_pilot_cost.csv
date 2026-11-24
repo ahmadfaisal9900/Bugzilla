@@ -1,0 +1,10 @@
+System,Pilot questions,Fresh calls,Calls / question,Tokens in (reported lower bound),Tokens out (reported lower bound),Tokens / question,Latency p50 ms,Latency p95 ms,Attempt rows with LLM cache hit,Attempt rows with retrieval cache hit,Rows with incomplete usage,Recorded attempts
+Closed-book,125,126,1.008,63607,9989,588.768,1749.0,48206.8,0,0,1,125
+Keyword search,125,133,1.064,241424,12477,2031.208,13981.0,55376.79999999999,0,0,1,126
+Smart search,125,260,2.08,276710,23324,2400.272,33354.0,60151.0,0,0,0,125
+Query rewriting,125,0,0.0,0,0,0.0,30.0,42.8,125,125,0,125
+Self-checking search,125,121,0.968,232493,12990,1963.864,9284.0,51918.4,0,0,3,127
+Full bug dossier,125,127,1.016,235702,14196,1999.184,6090.0,51099.6,3,0,0,125
+Linked-bugs search,125,50,0.4,94926,5696,804.976,1950.0,35357.19999999998,79,0,4,125
+Database tools,125,409,3.272,319245,27566,2774.488,52277.5,120082.0,3,0,77,128
+Auto-router,125,69,0.552,22318,2782,200.8,364.0,48670.94999999997,125,19,47,125

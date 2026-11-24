@@ -1,0 +1,9 @@
+e04251b845632dc9343bf9e12644503af3ebdf74:build/lib/bugzilla_serving/engine.py:generic-api-key:73
+
+# Verified historical junit traceback false positives, not credentials.
+# Line 50: cfg.s5_dossier_budget; line 127: utf8_byte_upper_bound.
+3942dc306baed21c9afc9a33943a66f2c639916d:junit.xml:generic-api-key:50
+3942dc306baed21c9afc9a33943a66f2c639916d:junit.xml:generic-api-key:127
+# Reviewed false positives: a config value name (token_counter) and a docs placeholder API key.
+ae01988d2cfcf6af9741cfedaba8f62eaf0ed85a:src/bugzilla_serving/experiments/v2_jobs.py:generic-api-key:111
+51b73b8797aa61dbdad45db560daf95e0c2c8795:docs/mlops/STREAM_A.md:curl-auth-header:96

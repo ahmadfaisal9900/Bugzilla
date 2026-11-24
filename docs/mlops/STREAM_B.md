@@ -2,7 +2,7 @@
 
 Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 contracts, the engine adapter and the fixtures. It never calls the FastAPI service. Until integration it uses the sample LangSmith export instead of real chat traffic.
 
-**Owns:** `src/bugzilla_serving/tracking/`, `experiments/`, `dashboard/`, `scripts/backfill_*.py`, `scripts/run_experiment.py`, `scripts/publish_preset.py`, `configs/eval_sets.yaml`, `docker/dashboard.Dockerfile`, `.github/workflows/ci.yml`, `.github/dependabot.yml`, pytest/ruff/coverage config, `tests/b_*`.
+**Owns:** `src/bugzilla_serving/tracking/`, `experiments/`, `dashboard/`, `scripts/backfill_*.py`, `scripts/mlops/run_experiment.py`, `scripts/mlops/publish_preset.py`, `configs/eval_sets.yaml`, `docker/dashboard.Dockerfile`, `.github/workflows/ci.yml`, `.github/dependabot.yml`, pytest/ruff/coverage config, `tests/b_*`.
 
 **Never touches:** `api/`, `chat_ui/`, `compose*.yaml`, `cd.yml`, research code. Shared files only through a PR both people approve.
 
@@ -12,15 +12,15 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 
 - MLflow is the DagsHub-hosted server, set via `MLFLOW_TRACKING_URI` / `MLFLOW_TRACKING_USERNAME` / `MLFLOW_TRACKING_PASSWORD`. All tests use a local `file:` store in a temp directory.
 - `tracking/` wraps logging so every run follows contract section 4.5 (experiment names, params, required tags, metric names, artifacts). A validator rejects anything off-contract.
-- `scripts/backfill_answer_eval.py` reads the partner's dev evaluation outputs and logs one run per system into `research-answer-eval`. Each run carries per-family score and n, macro score, abstention/failure rates, cost, latency and intervals if the partner computed them.
-- `scripts/backfill_retrieval_eval.py` reads the retrieval `summary.json` files and logs one run per (retriever, corpus) into `research-retrieval-eval`, with the `retr.*` metrics.
+- `scripts/mlops/backfill_answer_eval.py` reads the partner's dev evaluation outputs and logs one run per system into `research-answer-eval`. Each run carries per-family score and n, macro score, abstention/failure rates, cost, latency and intervals if the partner computed them.
+- `scripts/mlops/backfill_retrieval_eval.py` reads the retrieval `summary.json` files and logs one run per (retriever, corpus) into `research-retrieval-eval`, with the `retr.*` metrics.
 - Both scripts: dry-run by default; idempotent (keyed by `config_hash` + source); no question text or gold logged; test results only ever as `split=test-aggregate` metrics.
 
 **Done when:** the dashboard leaderboard can be fully populated from the backfilled runs alone.
 
 ## B2. Experiment runner (the backend of the Experiment Lab)
 
-- `experiments/runner.py`, also exposed as `scripts/run_experiment.py`. Input: `RunConfig` + eval set + limit.
+- `experiments/runner.py`, also exposed as `scripts/mlops/run_experiment.py`. Input: `RunConfig` + eval set + limit.
 - Steps:
   1. **Validate** the config against `configs/serving.yaml`.
   2. **Preflight:** estimated LLM calls and tokens vs today's remaining per-model quota, read from the provider ledger. Refuse if it doesn't fit.
@@ -33,7 +33,7 @@ Read `mlops_overview.md` first. This stream depends **only** on the Phase 0 cont
 
 ## B3. Registry: presets and champion
 
-`scripts/publish_preset.py --run-id <id> --slug fast --label "Fast" --description "…" [--champion] [--apply]`:
+`scripts/mlops/publish_preset.py --run-id <id> --slug fast --label "Fast" --description "…" [--champion] [--apply]`:
 - registers a version of `bugzilla-qa-config` (a pyfunc wrapper with a `config.yaml` artifact);
 - sets the preset tags and `published=true`;
 - optionally moves the `champion` alias.

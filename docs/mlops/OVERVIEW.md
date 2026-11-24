@@ -108,8 +108,8 @@ flowchart LR
 | `src/bugzilla_serving/api/`, `bundle.py`, `quota.py`, `tracing.py` | A |
 | `src/bugzilla_serving/chat_ui/` | A |
 | `src/bugzilla_serving/tracking/`, `experiments/`, `dashboard/` | B |
-| `scripts/build_serving_bundle.py`, `scripts/seed_*` | A (bundle), Phase 0 (seeds) |
-| `scripts/backfill_*.py`, `scripts/run_experiment.py`, `scripts/publish_preset.py` | B |
+| `scripts/app/build_serving_bundle.py`, `scripts/seed_*` | A (bundle), Phase 0 (seeds) |
+| `scripts/backfill_*.py`, `scripts/mlops/run_experiment.py`, `scripts/mlops/publish_preset.py` | B |
 | `docker/api.Dockerfile`, `docker/chat.Dockerfile`, `compose*.yaml`, `.github/workflows/cd.yml`, `docs/DEPLOYMENT.md` | A |
 | `docker/dashboard.Dockerfile`, `.github/workflows/ci.yml`, `.github/dependabot.yml`, `pyproject` test/lint config | B |
 | `tests/contracts/`, `tests/fixtures/` | Shared |
@@ -161,7 +161,9 @@ Error codes: `invalid_config` (422), `rate_limited` (429 + `retry_after`), `inte
 - **Run params:** every RunConfig field + `config_hash`.
 - **Required tags:** `source` (backfill|lab|ci), `eval_set`, `datasets`, `split` (dev|test-aggregate), `scorer`, `git_sha`.
 - **Metric names:**
-  - answers: `answer.<FAMILY>.score`, `answer.<FAMILY>.n`, `answer.macro`;
+  - answers: `answer.<FAMILY>.score`, `answer.<FAMILY>.n`, `answer.<FAMILY>.pending`, `answer.macro`;
+    `.pending` is a nonnegative integer shared human-review exclusion count
+    (owner-requested amendment, 2026-11-21); terminal/format failures remain in `.n` as incorrect;
   - abstention and failures: `abstain.correct_rate`, `abstain.false_rate`, `fail.rate`;
   - cost and latency: `cost.llm_calls`, `cost.tokens_in`, `cost.tokens_out`, `latency.p50_ms`, `latency.p95_ms`;
   - retrieval: `retr.<DATASET>.<FAMILY>.<metric>` (e.g. `retr.v3.KI.recall_at_10`).
@@ -203,7 +205,7 @@ Done by one person, reviewed and approved by the other. Deliverables:
    - sample SSE event and `AnswerRecord` JSON;
    - a sample LangSmith feedback/run export;
    - a sample partner eval output.
-4. `scripts/seed_mlflow_fixture.py`: creates a local file-based MLflow store with 3 fake runs, a champion and 2 presets. A uses it before B's real backfill exists.
+4. `scripts/testing/seed_mlflow_fixture.py`: creates a local file-based MLflow store with 3 fake runs, a champion and 2 presets. A uses it before B's real backfill exists.
 5. `tests/contracts/` tests both streams must keep green: RunConfig validation, hash stability, OpenAPI snapshot (initially a stub app), MLflow naming checker, LangSmith metadata checker.
 6. `CODEOWNERS`, `.env.example`, empty package skeletons per the ownership table, and the minimal `pyproject` deps.
 

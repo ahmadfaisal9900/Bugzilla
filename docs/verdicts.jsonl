@@ -1,0 +1,60 @@
+{"item_id": "072e010fb9cb470a86e9d75d2b7a8c43", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "073cb1cccd494f45b3b3731d3c004951", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "077aabf74daa403aa7ce2e77b4793607", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "1163da22e1f74e9fa3a085085a2ae6d3", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "122dfdfcfdfc44e99cedb31afb5127bc", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "1adb34b79b36442bbdc80cc60408a2b2", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "1b389e55b2b54aa18bfcd5c830b44a8e", "verdict": "correct", "reason": "States the same reason as the reference: it should be a level-2 heading because it looks like one and matches the settings heading."}
+{"item_id": "22896a1b41ce43abaf3f7e6d92a08061", "verdict": "correct", "reason": "Gives the same reason: a race in overflow checking, since the call was synchronous after resize only while layout was flushed synchronously."}
+{"item_id": "2a262855c2274f6a9cbb8dd1500b81af", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "2fbeb6492ae5409f932d7342cee7338f", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "30e39703deea4e49ac982f36fbedd28b", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "332d8632167144baa20bf6ecf1e8a910", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "3c42ad2eea784f13a8e131434f2c04ce", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "43d9439e9a51484aab4f9c7d92cb340a", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "4eb556da89154926b1f5ac828071cd56", "verdict": "incorrect", "reason": "Reports the PDF behaviour inconsistency instead of the referenced reason about the text/xml entry and the Windows-specific XML issue."}
+{"item_id": "52830a1eb15a4f0ebf8393755e2c26db", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "52eb458c6ce84745bee88f8e60223a5d", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "5f107d62de7c4d97beeaebb16b0cd9e1", "verdict": "incorrect", "reason": "Gives the ESR case (branding change, low risk) rather than the stated reason that moz-phab uplift is broken."}
+{"item_id": "6026b90efac144ba9475fe13bab13843", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "61cd03c79823437d938a869b61a00e32", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "68043b80aeff4bc3ab291982e0a330ee", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "6952f75dea8e4a65b35ec18c1190f21c", "verdict": "incorrect", "reason": "Gives the ESR case (branding change, low risk) rather than the stated reason that moz-phab uplift is broken."}
+{"item_id": "6b8113e645c3458cb9cf99195b4f0978", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "7335b04f4ec64f23a3b2ca675024d7c4", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "754f561e793e46dbb8fe7b2adbf93f8e", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "767c8c979f2243aa941226465e720a51", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "78a8c25be1a64b8c86daffce9b5aae48", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "78e526c040ac4f3eafb253f058c005f9", "verdict": "incorrect", "reason": "Reports the PDF behaviour inconsistency instead of the referenced reason about the text/xml entry and the Windows-specific XML issue."}
+{"item_id": "81514f8071734eee8aa9442f31ba4c1d", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "8739289cca7b4264a1e8bedbf9522bb0", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "8a85722737674c4eb22ebe49bc4ca9df", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "8d65b9b01c434083a039196561eebd9e", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "94b34a365631475b88f7dee422d60b98", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "9c119ae2e085465184c9fd3b4fee058b", "verdict": "incorrect", "reason": "Reports the PDF behaviour inconsistency instead of the referenced reason about the text/xml entry and the Windows-specific XML issue."}
+{"item_id": "9dc6e42b8a3a4a8cbf3c1d9888bedab5", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "a1cc3b8b4a444859b6f45e99faaf4348", "verdict": "correct", "reason": "Includes the reference reason that manage-more-settings cannot be a link because about:preferences cannot be linked; the extra slider detail does not contradict it."}
+{"item_id": "a8773ff8026a42688d4b7ab8e1d0b7e8", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "aaa4ecc4048a439098fe6ace4244744a", "verdict": "correct", "reason": "Includes the reference reason that manage-more-settings cannot be a link because about:preferences cannot be linked; the extra slider detail does not contradict it."}
+{"item_id": "b316f8b6ebd147358a30f6dae5bf8515", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "b318504b40384ad8bfb42d10f21c2a84", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "bd20c5fcd6c24d3dafa90779f3fd5519", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "c2f6f1e11953488d87fba266feca56bd", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "c93277c21e014213836b8a5498dac9ce", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "caaa77e3136741ebaa8def397e704abb", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "d11cebdc5fd14d99a6f3e70b686215da", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "d1f38a9bf66a4e598075a34e56ff92cc", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "d7f7622df70f404bbe1492b9d4474b54", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "dccdb5f1e9044a288f5fcf1996462df1", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "de0e7a066a124352b0ad373a594d70a5", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "e071ead767804cedb96403947f72b849", "verdict": "correct", "reason": "Same reason as the reference: the ESR uplift was requested manually because moz-phab uplift is broken."}
+{"item_id": "e0fab4b9e9444377b9acd6f1ee6d61ec", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "e23b528c4b4d4c148faf7ef2512d7dbd", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "e5b90dfbeef8435c82c9a3e0d6d7e294", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "e5c8f9914f01459e92510bf227952ebc", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "edf7a9d6f3c34111abd9ce0864727ff5", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "ee5ee6b5b2144d5cb627444216e7b2a3", "verdict": "correct", "reason": "Same reason as the reference: it cannot be a link because about:preferences is not a traditional linkable page."}
+{"item_id": "eee104241b5d4fab9a61c4c89998ddbb", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "f2c768d165a1425fad3ae99f10af54af", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}
+{"item_id": "f434c3bc65d4410f83dd077286f988aa", "verdict": "correct", "reason": "States the same constraint as the reference: no more messages should be dispatched to threads at or after XPCOMShutdownThreads."}
+{"item_id": "fb2f58b0ce8048219d74685cd180c81c", "verdict": "incorrect", "reason": "Declined although the cited comment and the reference give an explicit reason."}

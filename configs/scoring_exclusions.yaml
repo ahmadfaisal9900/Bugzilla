@@ -1,0 +1,6 @@
+version: f3_test_scope_v1
+reason: Dev-labelled F3 aggregates retain expanded-v2 test-population scope; excluded from all development scoring and runs. Never compute test populations.
+qids:
+  - v3_32a15a37c79becf4fcfa7085
+  - v3_3e67864a44bf9484ad5f5a8a
+  - v3_f0f6f6f8844506e3e480ec86
