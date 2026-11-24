@@ -2,6 +2,13 @@
 
 ## Current phase
 
+2026-11-23 S8v2 serving prerequisite: owner confirms the live champion was S2,
+not the Auto-router. Added serving-only V2 graph/tools selection, contract enum
+and version metadata, a 4096-byte S8v2 dossier cap and API/Lab four-route mock
+parity. Legacy config hashes are preserved. Promotion/rollback is prepared in
+the B9 CLI with --serving-demo, dry-run by default; no registry mutation or
+live Groq call was made. See docs/DEMO_RUNBOOK.md for Faiz’s contract changes.
+
 2026-11-23 demo hardening, phase 1: read-only diagnosis confirms that both routers
 leave the reported 1809146 discussion question ambiguous. The bundled cohort
 contains that bug, but zero comments and only one metadata chunk. The YAML

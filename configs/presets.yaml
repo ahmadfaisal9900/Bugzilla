@@ -1,14 +1,18 @@
 presets:
 - slug: recommended
   label: Recommended
-  description: Fallback configuration; no performance claim.
+  description: "Best on our evaluation (92.5%): routes each question to the database, the bug dossier or smart search"
   config:
-    system_id: S8
+    system_id: S8v2
+    router_rules_version: json-tools-v2
+    tool_route_version: json-tools-v2
+    s5_dossier_budget: 4096
+    s7_max_tool_steps: 4
     retriever: R7b
     corpus: C1
     provider: groq
     model: openai/gpt-oss-20b
-    top_k: 5
+    top_k: 10
     temperature: 0.0
     context_budget_tokens: 3000
     prompt_version: answer-v1
@@ -29,9 +33,10 @@ presets:
   is_champion: false
 - slug: deep
   label: Deep read
-  description: Fallback configuration; no performance claim.
+  description: Full bug dossier capped at 4,096 bytes
   config:
     system_id: S5
+    s5_dossier_budget: 4096
     retriever: R7b
     corpus: C1
     provider: groq

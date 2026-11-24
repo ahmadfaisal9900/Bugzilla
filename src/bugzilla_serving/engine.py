@@ -225,12 +225,19 @@ class Runner:
             state = dict(answer=_abstain(), route="R0", route_rule="retrieval_only",
                          retrieved=docs, usage=[], errors=[], cache_hit=cached)
         else:
-            tools = Tools(self.config, self.root, self.backend)
+            graph_type = AnswerGraph
+            tools_type = Tools
+            if self.cfg.system_id == "S8v2":
+                from bugzilla_qa.answering_v2.graph import AnswerGraphV2
+                from bugzilla_qa.answering_v2.tools import ToolsV2
+
+                graph_type, tools_type = AnswerGraphV2, ToolsV2
+            tools = tools_type(self.config, self.root, self.backend)
             if self._source_override:
                 tools.source["canonical_db"] = self._source_override
             outer = self
 
-            class ProgressGraph(AnswerGraph):
+            class ProgressGraph(graph_type):
                 def retrieve(self, state):
                     result = super().retrieve(state)
                     emit("retrieved", f"Found {len(result['retrieved'])} sources")

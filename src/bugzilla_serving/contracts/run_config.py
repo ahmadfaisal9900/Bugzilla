@@ -12,7 +12,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 ROOT = Path(__file__).resolve().parents[3]
-SYSTEM_IDS = ("R0", *(f"S{i}" for i in range(9)), "ORACLE")
+SYSTEM_IDS = ("R0", *(f"S{i}" for i in range(9)), "S8v2", "ORACLE")
 RETRIEVERS = ("R1", "R2", "R3", "R4", "R5", "R6", "R7a", "R7b")
 FIXED_RETRIEVERS = {"S0": "R1", "S1": "R1", "S4": "R5", "S6": "R6", "ORACLE": "R1"}
 
@@ -40,7 +40,9 @@ def _optional_limits(minimum, maximum=None):
 class RunConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True, strict=True, allow_inf_nan=False)
 
-    system_id: Literal["R0", "S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "ORACLE"] = "S2"
+    system_id: Literal[
+        "R0", "S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S8v2", "ORACLE"
+    ] = "S2"
     retriever: Literal["R1", "R2", "R3", "R4", "R5", "R6", "R7a", "R7b"] = "R7b"
     corpus: Literal["C0", "C1", "C2"] = "C1"
     provider: Literal["groq", "mock"] = "groq"
@@ -54,6 +56,9 @@ class RunConfig(BaseModel):
     s7_max_tool_steps: int | None = Field(default=None, json_schema_extra=_optional_limits(1, 4))
     rrf_k: int | None = Field(default=None, json_schema_extra=_optional_limits(1, 200))
     query_transform: Literal["R7a", "R7b"] | None = None
+
+    router_rules_version: Literal["json-tools-v2"] | None = None
+    tool_route_version: Literal["json-tools-v2"] | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -123,14 +128,21 @@ class RunConfig(BaseModel):
                 errors.append("query_transform: must match the S3 retriever")
         if self.rrf_k is not None and self.retriever in ("R1", "R2"):
             errors.append("rrf_k: not consumed by R1/R2")
+        if self.system_id == "S8v2" and (self.s5_dossier_budget or 4096) > 4096:
+            errors.append("s5_dossier_budget: S8v2 serving cap is 4096 bytes")
         if errors:
             raise ValueError("; ".join(errors))
         return self
 
 
 def config_hash(cfg: RunConfig) -> str:
+    values = cfg.model_dump(mode="json")
+    # Preserve every existing config hash when extension fields are unset.
+    for field in ("router_rules_version", "tool_route_version"):
+        if values[field] is None:
+            values.pop(field)
     payload = json.dumps(
-        cfg.model_dump(mode="json"),
+        values,
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,

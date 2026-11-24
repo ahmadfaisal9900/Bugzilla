@@ -95,10 +95,11 @@ def estimate(cfg, items, *, root=ROOT, now=None, history=None, max_requests=None
         "S6": 2,
         "S7": steps + 3 + steps * transform,
         "S8": steps + 5 + (steps + 1) * transform,
+        "S8v2": 8,
         "ORACLE": 2,
     }[cfg.system_id]
     context = cfg.context_budget_tokens
-    if cfg.system_id in ("S5", "S8"):
+    if cfg.system_id in ("S5", "S8", "S8v2"):
         context = max(context, cfg.s5_dossier_budget or defaults["s5_dossier_budget"]["default"])
     prompt = (
         Path(root)
@@ -122,7 +123,7 @@ def estimate(cfg, items, *, root=ROOT, now=None, history=None, max_requests=None
         input_tokens = math.ceil(measured) if measured is not None else math.ceil(overhead / 3)
     planned_trim = False
     if (
-        cfg.system_id in ("S5", "S8")
+        cfg.system_id in ("S5", "S8", "S8v2")
         and input_tokens + llm["max_output_tokens"] > 0.9 * limits["tpm"]
         and math.ceil(overhead / 3) + llm["max_output_tokens"] <= 0.9 * limits["tpm"]
     ):

@@ -37,6 +37,7 @@ hyperparameters:
     - S6
     - S7
     - S8
+    - S8v2
     - ORACLE
     advanced: false
     choices: *id001
@@ -100,6 +101,7 @@ hyperparameters:
     - S5
     - S6
     - S8
+    - S8v2
     advanced: true
     min: 1
     max: 50
@@ -118,6 +120,7 @@ hyperparameters:
     - S6
     - S7
     - S8
+    - S8v2
     - ORACLE
     advanced: true
     min: 0.0
@@ -159,6 +162,7 @@ hyperparameters:
     applies_to:
     - S5
     - S8
+    - S8v2
     advanced: true
     min: 128
     max: 12000
@@ -170,6 +174,7 @@ hyperparameters:
     applies_to:
     - S7
     - S8
+    - S8v2
     advanced: true
     min: 1
     max: 4
@@ -187,6 +192,7 @@ hyperparameters:
     - S6
     - S7
     - S8
+    - S8v2
     advanced: true
     min: 1
     max: 200
@@ -201,6 +207,22 @@ hyperparameters:
     choices:
     - R7a
     - R7b
+  router_rules_version:
+    type: choice
+    default: null
+    label: Router rules version
+    help: Evaluated V2 router identity.
+    applies_to: [S8v2]
+    advanced: true
+    choices: [json-tools-v2]
+  tool_route_version:
+    type: choice
+    default: null
+    label: Database route version
+    help: Evaluated text JSON tools implementation.
+    applies_to: [S8v2]
+    advanced: true
+    choices: [json-tools-v2]
 default_config:
   system_id: S2
   retriever: R7b
