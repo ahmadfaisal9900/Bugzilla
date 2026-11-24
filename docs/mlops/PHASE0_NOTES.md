@@ -123,7 +123,7 @@ installation using the PyTorch CPU wheel index. Keep the declared version consis
 
 ```bash
 # Generate synthetic files only; no APIs, datasets or model downloads.
-PYTHONPATH=src python scripts/build_fixture_bundle.py
+PYTHONPATH=src python scripts/testing/build_fixture_bundle.py
 # Generate/review the initial schema snapshot once, after installing the exact pins.
 UPDATE_SNAPSHOTS=1 python -m pytest tests/contracts/test_contracts.py -k openapi_snapshot -q
 # Run the shared gate and existing no-download research regressions.
@@ -134,7 +134,7 @@ python -m ruff format --check
 
 ```bash
 # Local fake tracking/registry only: nine runs, three config versions, two presets.
-PYTHONPATH=src python scripts/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
+PYTHONPATH=src python scripts/testing/seed_mlflow_fixture.py --tracking-uri file:./outputs/mlflow-phase0
 # Repeating the seed command should report created_runs=0.
 mlflow ui --backend-store-uri file:./outputs/mlflow-phase0 --host 127.0.0.1 --port 5000
 ```

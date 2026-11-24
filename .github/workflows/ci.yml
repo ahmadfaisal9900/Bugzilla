@@ -130,7 +130,7 @@ jobs:
         run: |
           store="$RUNNER_TEMP/dashboard-fixture"
           mkdir -p "$store"
-          docker run --rm --user "$(id -u):$(id -g)" -v "$store:$store" --entrypoint python bugzilla-dashboard:readonly scripts/seed_mlflow_fixture.py --tracking-uri "file:$store/mlruns"
+          docker run --rm --user "$(id -u):$(id -g)" -v "$store:$store" --entrypoint python bugzilla-dashboard:readonly scripts/testing/seed_mlflow_fixture.py --tracking-uri "file:$store/mlruns"
           docker run -d --name dashboard-ci -p 8502:8502 -v "$store:$store:ro" -e "MLFLOW_TRACKING_URI=file:$store/mlruns" -e LANGSMITH_SOURCE=fixture -e DASHBOARD_LAB_ENABLED=false bugzilla-dashboard:readonly
           trap 'docker logs dashboard-ci; docker rm -f dashboard-ci' EXIT
           timeout 90 bash -c 'until curl --fail --silent http://localhost:8502/_stcore/health; do sleep 2; done'
@@ -155,6 +155,11 @@ jobs:
             fi
           done
           docker image inspect bugzilla-dashboard:lab --format '{{.Size}}'
+      - name: Provision pinned API image models
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+        run: |
+          python3 -m pip install huggingface_hub==0.30.2
+          python3 scripts/app/fetch_models.py
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         if: (github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')) && hashFiles('docker/api.Dockerfile') != ''
         with:
@@ -175,6 +180,26 @@ jobs:
           push: false
           cache-from: type=gha,scope=chat
           cache-to: type=gha,mode=max,scope=chat
-  # compose-smoke:
-  #   TODO: OVERVIEW §6 step 5: Stream A provides compose.ci.yaml + mock bundle;
-  #   add readiness, preset parity and feedback smoke before making this required.
+  compose-smoke:
+    needs: lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Fetch pinned image models
+        run: |
+          pip install huggingface_hub==0.30.2
+          python scripts/app/fetch_models.py
+      - name: Start all three services with synthetic evidence and mock provider
+        run: docker compose -f compose.ci.yaml up --build -d
+      - name: Verify ready, modes, UIs and feedback
+        run: bash scripts/testing/smoke.sh
+      - name: Logs on failure
+        if: failure()
+        run: docker compose -f compose.ci.yaml logs --no-color --tail 100
+      - name: Clean up
+        if: always()
+        run: docker compose -f compose.ci.yaml down -v

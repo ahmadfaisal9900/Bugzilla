@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 
 from bugzilla_serving.contracts.api_models import AskResponse
 from bugzilla_serving.contracts.run_config import ROOT, RunConfig
@@ -55,7 +56,9 @@ def check(cfg, items, api_url, *, client=None, build=None, provider="mock", max_
     cfg = cfg.model_copy(update={"provider": provider}).validate_against()
     selected = _mock_provider() if provider == "mock" else live_provider(cfg, max_requests, ROOT)
     owned = client is None
-    client = client or httpx.Client(timeout=120)
+    client = client or httpx.Client(
+        timeout=120, headers={"X-API-Key": os.environ.get("SERVING_API_KEY", "")}
+    )
     result = []
     try:
         with (

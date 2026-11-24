@@ -69,7 +69,7 @@ def test_tabs_names_and_cache():
 def test_empty_and_password(monkeypatch, tmp_path):
     monkeypatch.setenv("DASHBOARD_RESULTS_DIR", str(tmp_path / "absent"))
     app = AppTest.from_file(str(APP)).run()
-    assert not app.exception and "scripts/build_results_pack.py" in app.info[0].value
+    assert not app.exception and "scripts/mlops/build_results_pack.py" in app.info[0].value
     monkeypatch.setenv("DASHBOARD_PASSWORD", "fixture-login")
     app = AppTest.from_file(str(APP)).run()
     assert app.text_input[0].label == "Dashboard password"

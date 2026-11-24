@@ -150,7 +150,7 @@ def jobs():
 
 def publication(*args, **kwargs):
     # Reuse the existing CLI's policy and execute-mode gate without changing B1.
-    path = ROOT / "scripts/publish_preset.py"
+    path = ROOT / "scripts/mlops/publish_preset.py"
     spec = importlib.util.spec_from_file_location("dashboard_publish", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

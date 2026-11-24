@@ -12,7 +12,7 @@ import unittest
 
 import duckdb
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'scripts/export_sample_bundle.py'
+SCRIPT = Path(__file__).resolve().parents[1] / 'scripts/app/export_sample_bundle.py'
 spec = importlib.util.spec_from_file_location('sample_bundle', SCRIPT)
 bundle = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(bundle)
@@ -24,7 +24,7 @@ class SampleBundleTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         (self.root / 'docs').mkdir()
-        shutil.copy2(SCRIPT.parents[1] / 'docs/SAMPLE_DATA_HANDOFF.md', self.root / 'docs/SAMPLE_DATA_HANDOFF.md')
+        shutil.copy2(SCRIPT.parents[2] / 'docs/SAMPLE_DATA_HANDOFF.md', self.root / 'docs/SAMPLE_DATA_HANDOFF.md')
         base, api = self.root / 'base', self.root / 'api'
         base.mkdir(); api.mkdir()
         db = duckdb.connect(str(base / 'canonical.duckdb'))

@@ -1,8 +1,95 @@
-# Bugzilla — ENSF 621 evaluation handoff
+# Bugzilla — ask questions about Firefox bugs
+
+A chat app that answers questions about Firefox bug reports and shows which reports each answer
+came from, plus a dashboard for experiment results. The research behind it starts at section 1.
+
+## How to run it
+
+You need Git, Python 3.11 and Docker Desktop. Docker is needed for option B in step 5; offline pytest also runs directly in Python.
+
+### Linux launch and integration checks
+
+From the existing checkout with Python dependencies installed:
+
+```bash
+source .venv/bin/activate
+cp .env.example .env  # first setup only; fill in local values
+bash scripts/app/run_local.sh --dashboard
+```
+
+Windows PowerShell: `.\scripts\app\run_local.ps1` (all three services),
+or add `-NoDashboard` for API/chat. Linux omits the dashboard unless
+`--dashboard` is supplied. Both require a verified dev serving bundle.
+`bash scripts/app/run_dashboard.sh` launches the dashboard alone.
+
+Offline checks: `bash scripts/testing/test_coverage.sh` on Linux;
+`.\scripts\testing\test_coverage.ps1` on Windows through Docker.
+Use `docker compose -f compose.local.yaml up --build` for the local Docker stack.
+See the [integration audit](docs/mlops/INTEGRATION_AUDIT.md),
+[contracts](docs/mlops/OVERVIEW.md), [Stream A](docs/mlops/STREAM_A.md),
+[Stream B](docs/mlops/STREAM_B.md) and [CI](docs/mlops/CI.md).
+The evaluated Auto-router remains refused by the shared loader; see the audit
+before attempting champion publication. No live deployment is claimed.
+
+### 1. Get the code
+
+```
+git clone https://github.com/ahmadfaisal9900/Bugzilla.git
+cd Bugzilla
+```
+
+### 2. Install
+
+```
+python -m venv .venv
+.venv\Scripts\activate                 # Mac/Linux: source .venv/bin/activate
+pip install ".[serving,ui,dashboard,dev]"
+python scripts/app/fetch_models.py
+```
+
+### 3. Add your settings
+
+Copy `.env.example` to `.env` and fill it in. The comments in the file explain each value. You need
+at least `GROQ_API_KEY` and `SERVING_API_KEY`.
+
+### 4. Get the data
+
+The app reads its data from a `serving_bundle` folder, which is too big for git. Get it from a
+teammate and put it in the project folder.
+
+### 5. Run
+
+There are two ways. Both start the same three parts: the API, the chat and the dashboard.
+
+**Option A: script** (quickest, no Docker; Windows)
+
+```
+.\scripts\app\run_local.ps1
+```
+
+**Option B: Docker** (the same containers the server runs; needs Docker Desktop)
+
+```
+docker compose -f compose.local.yaml up --build
+```
+
+Either way, open http://localhost:8501 for the chat and http://localhost:8502 for the dashboard.
+Try asking "What component is bug 1850926 filed under?" Ctrl+C stops it.
+
+### 6. Run the tests
+
+```
+.\scripts\testing\test_coverage.ps1       # Mac/Linux: bash scripts/testing/test_coverage.sh
+```
+
+The coverage report is saved to `results/coverage/html/index.html`.
+
+To put the app online, see [Deployment](docs/DEPLOYMENT.md). Every script is listed in
+[scripts/README.md](scripts/README.md).
 
 ## 1. What this project is
 
-**Memorize, retrieve, or query?** We compare closed-book LLMs, retrieval and structured tools for Firefox bug-history QA. The [roadmap](docs/reference/research_roadmap.tex) defines the research plan. Compare methods on development and locked test sets first; turn the best supported method into an application afterward. The partner's immediate task is **answer evaluation**, separate from retrieval quality.
+**Memorize, retrieve, or query?** We compare closed-book LLMs, retrieval and structured tools for Firefox bug-history QA. The [roadmap](docs/reference/research_roadmap.tex) defines the research plan. Compare methods on development and locked test sets first; turn the best supported method into an application afterward. The evaluation partner's immediate task is **answer evaluation**, separate from retrieval quality.
 
 ## 2. Project status at a glance
 
@@ -13,19 +100,24 @@
 | Natural rewrites | Approved: 51 dev / 59 test |
 | Retrieval variants and selected retriever | Done, dev-only selection: R7b/C1 |
 | S0–S8 + ORACLE answering systems | Implemented; offline fixture tests pass |
-| Dev answering run | 80-question pilot complete: 720 answer slots across S0–S8; full dev roster not completed |
-| Answer scoring | Automatic scoring complete for the pilot; human review pending |
-| F5 grading / locked test | Owner-run LLM reference grading/import pending; locked test unchanged |
+| Dev answering run | 125-question pilot complete: 1,125 answer slots across S0–S8; full dev roster not completed |
+| Answer scoring | 86 required answer grades and 358 evidence decisions imported after user review and verification |
+| Locked test | Not run; the reviewed pilot is development evidence |
 
-### First 30 minutes for the partner
+### Getting started with the research evaluation
+
+For the evaluation partner reviewing answer quality (not needed to run the app):
+
 
 1. Install the environment and dependencies in section 3.
 2. Create the ignored `.env` with your Groq key; add LangSmith credentials only if needed.
 3. Run the three offline unit-test commands in section 10.
 4. Run `quota` and `plan` from section 11; these make zero API calls.
-5. Open `outputs/evaluation/phase11/START_HERE.html` to inspect the pilot results and review answers. Section 12 explains scoring, review and run commands. The combined `REVIEW.csv` beside the page is the Excel alternative.
+5. Open `outputs/evaluation/phase11/pilot125/START_HERE.html` for the main reviewed results. Section 12 explains scoring, review and run commands. The combined `REVIEW.csv` beside the page is the Excel alternative.
 
-## 3. Setup
+## 3. Research setup
+
+Only needed for the research pipelines below. To run the app, see [How to run it](#how-to-run-it).
 
 Use Git, Bash and **Python 3.10+** (3.11 recommended). The backend is **Groq**, configured as `openai/gpt-oss-20b`. Work in the existing clone; never initialize a nested repository.
 
@@ -60,10 +152,14 @@ prompts/                     Shared answering prompts
 src/bugzilla_qa/answering/    LangGraph systems, read-only tools and prediction runner
 src/bugzilla_qa/retrieval_v3/ Corpus variants, retriever registry and retrieval evaluation
 src/bugzilla_qa/llm/          Shared provider, cache and request ledger
-scripts/                     Terminal entry points
+scripts/app/                 Run and package the app (run_local.ps1, fetch_models.py, bundles)
+scripts/testing/             Coverage, smoke tests and test fixtures (see scripts/README.md)
+scripts/mlops/               MLflow, LangSmith and promotion tools
+scripts/phases/              One runner per research phase
 tests/                      Offline fixture tests
 docs/                       Scientific plan and system documentation
 outputs/                    Mostly ignored data bundle, indexes and predictions
+results/                    Small tracked result sets; results/coverage/ holds local test reports
 requirements-answering.txt   Complete dependency stack
 pyproject.toml               Package installation and Python requirement
 ```
@@ -132,7 +228,7 @@ for key in ('phase05_dir', 'v3_dir', 'natural_questions'):
 PYCONFIG
 ```
 
-The clone provides everything needed to inspect benchmark questions, answers, labels and scope. Running retrieval/answer generation still requires the runtime bundle described in setup. Prediction ledgers remain local and must be transferred separately to score existing runs. The S0–S8 scorer and resumable runner are implemented; explanation and grounding grades need human review. With the verified shared source export and prepared local index, run `./scripts/run_phase11_evaluation.ps1 --shared-source --enable-llm --max-requests 900`. This uses the 350 official development questions with a reconstructed runtime. See [S evaluation](docs/PHASE11_EVALUATION.md) for checks, reports and resume instructions.
+The clone provides everything needed to inspect benchmark questions, answers, labels and scope. Running retrieval/answer generation still requires the runtime bundle described in setup. Prediction ledgers remain local and must be transferred separately to score existing runs. The S0–S8 scorer and resumable runner are implemented; explanation and grounding grades need human review. With the verified shared source export and prepared local index, run `./scripts/phases/run_phase11_evaluation.ps1 --shared-source --enable-llm --max-requests 900`. This uses the 350 official development questions with a reconstructed runtime. See [S evaluation](docs/PHASE11_EVALUATION.md) for checks, reports and resume instructions.
 
 ## 6. Retrieval
 
@@ -165,10 +261,10 @@ Builds and dev-only selection are done and shipped with the data bundle; do not 
 
 ```bash
 # Inspect existing workflow plans with no models loaded, API calls or writes to indexes/selection.
-bash scripts/run_phase09_retrieval_v3.sh build --dry-run
-bash scripts/run_phase09_retrieval_v3.sh eval --dry-run
-bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
-bash scripts/run_phase09_retrieval_v3.sh select --latest --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh build --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh select --latest --dry-run
 ```
 
 `outputs/retrieval/v3/run-*/` contains per-question ranked IDs, JSON/Markdown summaries, top-50 public retrieval cache, config and manifest. Index variants are under `outputs/indexes/retrieval_v3/build-*/C0|C1|C2/`.
@@ -191,7 +287,7 @@ Statistics: paired parent/`cluster_id` bootstrap, 10,000 resamples, seed 317; sa
 
 ## 7. Answering systems
 
-Entry point: `src/bugzilla_qa/answering/cli.py`, wrapped by `scripts/run_phase10_answering.sh`. These systems produce **predictions only**.
+Entry point: `src/bugzilla_qa/answering/cli.py`, wrapped by `scripts/phases/run_phase10_answering.sh`. These systems produce **predictions only**.
 
 Counts exclude transport retries. One repair may add a request; caches can reduce calls to zero. Transforms consume the same request cap.
 
@@ -235,13 +331,13 @@ LangGraph: `load_question → router → retrieve → pack_context → generate 
 
 | Entry point | Purpose / key flags | Safe inspection command |
 | --- | --- | --- |
-| `scripts/run_phase09_retrieval_v3.sh` | Retrieval inspection; `build`/`eval`/`select`, `--dry-run`, `--retrievers` | `bash scripts/run_phase09_retrieval_v3.sh --help` |
-| `scripts/run_phase10_answering.sh` | `plan`/`run`/`quota`/`suggest-tau`/`upload-dev`; `--dataset`, `--resume`, `--max-requests` | `bash scripts/run_phase10_answering.sh --help` |
-| `scripts/llm_ping.py` | Provider check; `--dry-run`, `--role`, `--model`, `--max-requests 1` | `python scripts/llm_ping.py --help` |
-| `scripts/smoke/check_structure.sh` | Structure/import check; no flags | `bash scripts/smoke/check_structure.sh` |
+| `scripts/phases/run_phase09_retrieval_v3.sh` | Retrieval inspection; `build`/`eval`/`select`, `--dry-run`, `--retrievers` | `bash scripts/phases/run_phase09_retrieval_v3.sh --help` |
+| `scripts/phases/run_phase10_answering.sh` | `plan`/`run`/`quota`/`suggest-tau`/`upload-dev`; `--dataset`, `--resume`, `--max-requests` | `bash scripts/phases/run_phase10_answering.sh --help` |
+| `scripts/app/llm_ping.py` | Provider check; `--dry-run`, `--role`, `--model`, `--max-requests 1` | `python scripts/app/llm_ping.py --help` |
+| `scripts/testing/check_structure.sh` | Structure/import check; no flags | `bash scripts/testing/check_structure.sh` |
 | Unit tests | Offline answering, provider and retrieval fixtures | Three commands in section 10 |
 
-Older phase scripts under `scripts/` prepare data/benchmarks; that preparation is finished and should not be rerun. Package CLI equivalents are `python -m bugzilla_qa.answering.cli` and `python -m bugzilla_qa.retrieval_v3.cli`. The S evaluation and review entry point is `scripts/run_phase11_evaluation.ps1`; open `outputs/evaluation/phase11/START_HERE.html` for the saved comparison and review controls.
+Older phase scripts under `scripts/phases/` prepare data/benchmarks; that preparation is finished and should not be rerun. Package CLI equivalents are `python -m bugzilla_qa.answering.cli` and `python -m bugzilla_qa.retrieval_v3.cli`. The S evaluation and review entry point is `scripts/phases/run_phase11_evaluation.ps1`; open `outputs/evaluation/phase11/pilot125/START_HERE.html` for the saved comparison and review controls.
 
 ## 9. Observability
 
@@ -268,14 +364,14 @@ PYTHONPATH=src python -m unittest discover -s tests -p test_retrieval_v3.py -q
 
 ```bash
 # 3. Zero-cost CLI/provider checks and batch planning; expect help, DRY_RUN and offline quota diagnostics.
-python scripts/llm_ping.py --dry-run
-bash scripts/run_phase10_answering.sh quota
-bash scripts/run_phase10_answering.sh plan --dataset v3 --limit 25 --resume
+python scripts/app/llm_ping.py --dry-run
+bash scripts/phases/run_phase10_answering.sh quota
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 --limit 25 --resume
 ```
 
 ```bash
 # 4. Optional live check — USES API QUOTA: exactly one attempted ping, or a reported provider/budget failure.
-python scripts/llm_ping.py --role generator --enable-llm --max-requests 1
+python scripts/app/llm_ping.py --role generator --enable-llm --max-requests 1
 ```
 
 ```bash
@@ -299,12 +395,12 @@ PY
 
 ```bash
 # 6. Inspect the fixed one-question plan; expect zero actual calls and the selected QID only.
-bash scripts/run_phase10_answering.sh plan --dataset v3 --qid "$smoke_qid" --run-tag smoke-one --resume
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 --qid "$smoke_qid" --run-tag smoke-one --resume
 ```
 
 ```bash
 # 7. Optional live wiring smoke — USES API QUOTA: at most 12 HTTP attempts total across S0–S8; cache hits can make it zero.
-bash scripts/run_phase10_answering.sh run --dataset v3 --qid "$smoke_qid" \
+bash scripts/phases/run_phase10_answering.sh run --dataset v3 --qid "$smoke_qid" \
   --run-tag smoke-one --enable-llm --max-requests 12 --trace --resume
 ```
 
@@ -316,12 +412,12 @@ The full development run is **not complete**. The command below is the intended 
 
 ```bash
 # Estimate pending work and quota days with zero API calls; expect DRY_RUN with per-system call/token estimates.
-bash scripts/run_phase10_answering.sh plan --dataset v3 --limit 25 --resume
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 --limit 25 --resume
 ```
 
 ```bash
 # USES API QUOTA: process up to 25 pending questions per system, with at most 200 HTTP attempts for the entire invocation.
-bash scripts/run_phase10_answering.sh run --dataset v3 --limit 25 \
+bash scripts/phases/run_phase10_answering.sh run --dataset v3 --limit 25 \
   --enable-llm --max-requests 200 --resume
 ```
 
@@ -342,8 +438,8 @@ PY
 
 ```bash
 # Check local usage/cooldowns with zero calls, then estimate the full pending dev workload and days.
-bash scripts/run_phase10_answering.sh quota
-bash scripts/run_phase10_answering.sh plan --dataset v3 --resume
+bash scripts/phases/run_phase10_answering.sh quota
+bash scripts/phases/run_phase10_answering.sh plan --dataset v3 --resume
 ```
 
 The local guard's date resets at **midnight America/Los_Angeles**. This is the implemented local accounting window; **do not assume Groq's server token quota resets then**. Groq response headers/cooldowns and the active-model dashboard are authoritative. Planner days are request-budget estimates, not promises under token limits; there is no configured token/day guard. Wait for an indicated cooldown instead of repeatedly spending requests on 429s.
@@ -381,27 +477,26 @@ A provider-failure fallback can have `abstain=true` but `status=error`: **not a 
 
 ### B. Answer evaluation
 
-The S scorer covers typed answers, abstentions, failures, paired cluster comparisons and blinded human review exports. The fixed 80-question development pilot has 720 resolved answer slots across S0 through S8. Human review remains pending; no final answer-accuracy or locked-test comparison is claimed.
+The S scorer covers typed answers, abstentions, failures, paired cluster comparisons and blinded review exports. The main development pilot has 125 questions and 1,125 resolved answer slots across S0 through S8. The user confirmed completing manual review; 86 answer grades and 358 evidence decisions are imported. Verification corrected two explanation grades and one evidence decision. The original export and the corrections are preserved beside the results in `REVIEW_completed.csv` and `review_verification.json`. The locked test has not run.
 
 The evaluation runner automatically generates one review page and one combined review CSV after scoring, including when a quota stop leaves a partial result:
 
 ```powershell
-.\scripts\run_phase11_evaluation.ps1 --shared-source --pilot-size 80 --enable-llm
-Start-Process ".\outputs\evaluation\phase11\START_HERE.html"
+.\scripts\phases\run_phase11_evaluation.ps1 --shared-source --pilot-size 125 --enable-llm --output outputs/evaluation/phase11/pilot125
 ```
 
 Repeat the evaluation command to resume saved progress. Available keys are read automatically from `.env`: `GROQ_API_KEY` and optional `GROQ_API_KEY_2`, `_3` and `_4`. One key is enough; missing entries are skipped and duplicate values are used once. Environment variables override matching `.env` entries. There is no need to list keys in the command. The default cap is 900 HTTP attempts per invocation, shared across all keys; `--max-requests` can override it. The shared-source option requires the matching local source databases and prepared runtime/index bundle; it verifies those inputs before inference. The old generated-question sample workflow has been removed.
 
-To extend the pilot to 125 questions, use `--pilot-size 125 --output outputs/evaluation/phase11/pilot125`. This retains the original 80 and adds 45 questions, producing 1,125 answer slots across the nine methods while reusing the 720 existing answers. The new review page is in that output folder. The collections remain separate; this deliberately selected development pilot is not a random estimate of the full 350-question roster.
+The 125-question selection retains the original 80 and adds 45 questions. The collections remain separate: 34 Phase 5, 20 natural and 71 v3 questions. This deliberately selected development pilot is not a random estimate of the full 350-question roster.
 
-Open `outputs/evaluation/phase11/START_HERE.html` by double-clicking it or using the command above. It is a self-contained local page: no web server or API key is needed to view the shared file. It shows every method response, its grading status, references and evidence. Method names can be revealed for comparison. The combined `REVIEW.csv` beside it is the Excel alternative. These two generated files are allowed through `.gitignore`; databases, prediction ledgers, caches and logs remain ignored. The page generator lives in `src/bugzilla_qa/evaluation/review.py`.
+Open `outputs/evaluation/phase11/pilot125/START_HERE.html` by double-clicking it. It is a self-contained local page: no web server or API key is needed to view it. It shows every method response, its grading status, references and evidence. Method names can be revealed for comparison. The combined `REVIEW.csv` beside it is the Excel alternative. Databases, prediction ledgers, caches and logs remain ignored. The page generator lives in `src/bugzilla_qa/evaluation/review.py`.
 
 ```powershell
-.\scripts\run_phase11_evaluation.ps1 --review
-.\scripts\run_phase11_evaluation.ps1 --import-review "$env:USERPROFILE\Downloads\REVIEW_completed.csv"
+.\scripts\phases\run_phase11_evaluation.ps1 --output outputs/evaluation/phase11/pilot125 --review
+.\scripts\phases\run_phase11_evaluation.ps1 --output outputs/evaluation/phase11/pilot125 --import-review outputs/evaluation/phase11/pilot125/REVIEW_verified.csv
 ```
 
-These commands rebuild the view or import review decisions from saved results without model requests. For the full configured question roster, omit `--pilot-size 80`. See [the review instructions](docs/PHASE11_EVALUATION.md#start-here).
+These commands rebuild the view or import the checked review decisions without model requests. For the full configured question roster, omit `--pilot-size 125` and use a separate output folder. See [the review instructions](docs/PHASE11_EVALUATION.md#start-here).
 
 ### C. Evaluation rules
 
@@ -464,6 +559,22 @@ Use the roadmap's predefined numerical tolerances where appropriate; do not choo
 | Import error / Python version mismatch | Activate the correct environment and install `requirements-answering.txt`; use package installation or `PYTHONPATH=src` for fixture commands |
 
 ## 15. Deeper documentation
+
+For the serving data package, see [Stream A, A1](docs/mlops/STREAM_A.md#a1-serving-bundle).
+`python scripts/app/build_serving_bundle.py --out serving_bundle` previews the copy;
+add `--apply` to build it. The current local runtime supplies C1 only; C0/C2 are
+reported as missing. The generated folder stays gitignored.
+
+The serving API is `bugzilla_serving.api.app:app`; the [Quick start](#how-to-run-it)
+runs it with the chat and dashboard. To start the API alone, run
+`python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1`
+(set `LLM_PROVIDER=mock` only for offline checks without a Groq key).
+See [Stream A, A2](docs/mlops/STREAM_A.md) for the authenticated request command,
+MLflow presets and quota guards. [LangSmith monitoring](docs/LANGSMITH_MONITORING.md)
+documents sampled traces, feedback and the final checks.
+Protected API requests send the `.env` secret in the `X-API-Key` HTTP header.
+Near the local quota thresholds, the API returns sources through R0. Each session
+may submit six questions per minute; further requests receive HTTP 429.
 
 - [Scientific roadmap](docs/reference/research_roadmap.tex): research questions, rubric and fairness controls.
 - [v3 benchmark](docs/BENCHMARK_V3.md): question generation, review and dataset coverage.

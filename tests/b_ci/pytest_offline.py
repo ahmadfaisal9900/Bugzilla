@@ -5,6 +5,8 @@ credentials/model overrides must never replace temporary synthetic .env values.
 """
 
 import os
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -38,10 +40,33 @@ def pytest_configure(config):
         os.environ.pop("MLFLOW_TRACKING_URI", None)
 
 
+def fixture_env_reader(reader, root):
+    """Ignore the owner's checkout .env while preserving temporary fixture files."""
+
+    def read(path):
+        if Path(path).resolve() == (root / ".env").resolve():
+            return {}
+        return reader(path)
+
+    return read
+
+
 @pytest.fixture(autouse=True)
 def deny_external_http(monkeypatch):
     import httpx
     import requests
+
+    from bugzilla_qa.llm import provider
+
+    previous = os.environ.copy()
+    original = provider.env_values
+    safe = fixture_env_reader(original, Path(__file__).resolve().parents[2])
+    # Patch already imported aliases as well as imports performed during a test.
+    for name, module in list(sys.modules.items()):
+        if name.startswith(("bugzilla_qa", "bugzilla_serving")) and (
+            getattr(module, "env_values", None) is original
+        ):
+            monkeypatch.setattr(module, "env_values", safe)
 
     def denied(*args, **kwargs):
         raise AssertionError("Offline tests refuse external HTTP; use a fixture client")
@@ -52,3 +77,8 @@ def deny_external_http(monkeypatch):
     monkeypatch.setattr(requests.sessions.Session, "request", denied)
     monkeypatch.setattr(httpx.HTTPTransport, "handle_request", denied)
     monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", async_denied)
+    yield
+    # App startup sets environment defaults without pytest's monkeypatch helper.
+    # Restore those too, so subsequent provider tests keep their own fixture keys.
+    os.environ.clear()
+    os.environ.update(previous)

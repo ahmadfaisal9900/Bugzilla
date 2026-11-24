@@ -171,7 +171,7 @@ if accepting the full **two-day** estimate. No live command below was run here.
 conda activate iqfm
 export PYTHONPATH="$PWD/src:$PWD${PYTHONPATH:+:$PYTHONPATH}"
 python -m bugzilla_serving.experiments.rescore
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2   > outputs/analysis/b7b/scorer-v2-backfill-plan.json
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2   > outputs/analysis/b7b/scorer-v2-backfill-plan.json
 ```
 
 Expected: 27 changed rows, nine dry-run scorer-v2 plans, F3 n=12, no promotion;
@@ -180,8 +180,8 @@ zero API/MLflow calls.
 2. Print both scope plans and save the chosen run identity (zero calls):
 
 ```bash
-scripts/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --dry-run   > outputs/analysis/b7b/one-day-full-plan.json
-scripts/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --scope priority --dry-run   | tee outputs/analysis/b7b/one-day-priority-plan.json
+scripts/phases/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --dry-run   > outputs/analysis/b7b/one-day-full-plan.json
+scripts/phases/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --scope priority --dry-run   | tee outputs/analysis/b7b/one-day-priority-plan.json
 LEDGER="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["ledger"])'   outputs/analysis/b7b/one-day-priority-plan.json)"
 ```
 
@@ -192,7 +192,7 @@ Expected: required 79/43 carried, 271,770 tokens, fits_one_day=false; chosen
 
 ```bash
 for invocation in 1 2 3 4 5; do
-  scripts/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 --scope priority     --enable-llm --max-requests 25     | tee "outputs/analysis/b7b/one-day-run-${invocation}.json"
+  scripts/phases/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 --scope priority     --enable-llm --max-requests 25     | tee "outputs/analysis/b7b/one-day-run-${invocation}.json"
 done
 python -c 'import json,sys; s=json.load(open(sys.argv[1])); assert s["completed"] == s["total"], s; print(s)'   "$(dirname -- "$LEDGER")/summary.json"
 ```
@@ -205,8 +205,8 @@ budget exhaustion must stop; this check prevents treating partial runs as comple
 
 ```bash
 F5_VERDICTS="$(dirname -- "$LEDGER")/f5-verdicts.jsonl"
-scripts/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --dry-run
-scripts/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --enable-llm --max-requests 6
+scripts/phases/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --dry-run
+scripts/phases/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --enable-llm --max-requests 6
 ```
 
 Expected: six pending in dry-run; six completed source-bound judgments, at most
@@ -216,11 +216,11 @@ regraded and no separate S7v2 grading is scheduled.
 5. Backfill to your MLflow store, then rebuild the snapshot (zero Groq calls):
 
 ```bash
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm   --scorer-version 1 --apply --resume
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm   --scorer-version 2 --apply --resume
-scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --dry-run
-scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --apply
-LANGSMITH_SOURCE=fixture python scripts/build_dashboard_snapshot.py --max-requests 1000
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm   --scorer-version 1 --apply --resume
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm   --scorer-version 2 --apply --resume
+scripts/phases/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --dry-run
+scripts/phases/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2   --ledger "$LEDGER" --f5-verdicts "$F5_VERDICTS" --apply
+LANGSMITH_SOURCE=fixture python scripts/mlops/build_dashboard_snapshot.py --max-requests 1000
 ```
 
 Expected: old v1 runs retained with exclusions; nine distinct scorer-v2 runs and

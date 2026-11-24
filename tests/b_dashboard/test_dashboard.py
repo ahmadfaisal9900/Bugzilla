@@ -66,7 +66,7 @@ def offline(monkeypatch, tmp_path):
 def store(tmp_path, monkeypatch):
     uri = (tmp_path / "mlruns").as_uri()
     monkeypatch.setenv("MLFLOW_TRACKING_URI", uri)
-    module(ROOT / "scripts/seed_mlflow_fixture.py", "dashboard_seed").seed(uri)
+    module(ROOT / "scripts/testing/seed_mlflow_fixture.py", "dashboard_seed").seed(uri)
     # MLflow's set_tracking_uri restores its previous value through os.environ.
     monkeypatch.setenv("MLFLOW_TRACKING_URI", uri)
     directory = tmp_path / "retrieval"

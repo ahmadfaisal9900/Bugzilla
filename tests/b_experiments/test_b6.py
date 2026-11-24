@@ -294,7 +294,7 @@ def test_rollback_local_store(tmp_path):
     import importlib.util
 
     spec = importlib.util.spec_from_file_location(
-        "seed_b6", ROOT / "scripts/seed_mlflow_fixture.py"
+        "seed_b6", ROOT / "scripts/testing/seed_mlflow_fixture.py"
     )
     seed = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(seed)

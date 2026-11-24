@@ -1,7 +1,7 @@
 # Current dashboard
 
 The entrypoint is now the three-tab final development-results app. Run
-`scripts/run_dev_dashboard.sh`; optional settings come from the explicit
+`scripts/app/run_dev_dashboard.sh`; optional settings come from the explicit
 `DASHBOARD_ENV_FILE=.env` option. See [the B9 runbook](../../../docs/mlops/B9_DASHBOARD.md)
 for data loading, publication, registration and the serving promotion blocker.
 The multipage material below documents retained legacy components and tests.
@@ -16,7 +16,7 @@ in `pyproject.toml`. This dashboard never calls the FastAPI service.
 
 ```bash
 conda activate iqfm
-python scripts/seed_mlflow_fixture.py --tracking-uri "file:$PWD/outputs/mlflow/dashboard-demo"
+python scripts/testing/seed_mlflow_fixture.py --tracking-uri "file:$PWD/outputs/mlflow/dashboard-demo"
 MLFLOW_TRACKING_URI="file:$PWD/outputs/mlflow/dashboard-demo" \
 LANGSMITH_SOURCE=fixture DASHBOARD_LAB_ENABLED=true \
 python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
@@ -84,9 +84,9 @@ Stale data remains visible; it never triggers a background refresh on a rerun.
 `DASHBOARD_PROFILE=1` logs individual SDK/data calls and full renders to stderr
 and adds sidebar timing panels. It records labels/durations, never call arguments.
 
-Build explicitly with `scripts/build_dashboard_snapshot.py --max-requests 1000`;
+Build explicitly with `scripts/mlops/build_dashboard_snapshot.py --max-requests 1000`;
 `--dry-run` only prints the destination. The resumable operator wrapper is
-`scripts/run_phase05_dashboard_snapshot.sh` (B5 operational work, not research
+`scripts/phases/run_phase05_dashboard_snapshot.sh` (B5 operational work, not research
 Phase 5). It saves timestamped logs and summary JSON. Artifact checkpoints are
 immutable; repeat the command to resume. `DASHBOARD_CACHE_DIR` overrides the
 cache root. A failed refresh retains the last successful snapshot.

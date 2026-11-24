@@ -104,7 +104,7 @@ Read `docs/mlops/OVERVIEW.md`, `STREAM_B.md` and `STREAM_A.md` before inventory.
 
 ## Stream B prerequisite recheck — 2026-11-21
 
-The current user instruction identifies **`feature/mlops` as the integration branch**, resolving the branch preference in the previous inventory. The checked-out branch remains `main`. Read-only `git ls-tree` inspection confirms that the local `feature/mlops` tracked tree also lacks `src/bugzilla_serving/contracts/`, `src/bugzilla_serving/engine.py`, `configs/serving.yaml`, `tests/contracts/` and `scripts/seed_mlflow_fixture.py`. The binding overview still names `mlops`; no shared spec was edited.
+The current user instruction identifies **`feature/mlops` as the integration branch**, resolving the branch preference in the previous inventory. The checked-out branch remains `main`. Read-only `git ls-tree` inspection confirms that the local `feature/mlops` tracked tree also lacks `src/bugzilla_serving/contracts/`, `src/bugzilla_serving/engine.py`, `configs/serving.yaml`, `tests/contracts/` and `scripts/testing/seed_mlflow_fixture.py`. The binding overview still names `mlops`; no shared spec was edited.
 
 | Expected → found | Result |
 | --- | --- |
@@ -732,7 +732,7 @@ flag the dev/test-population policy conflict, not a proven wrong numeric gold.
 Record presence cannot prove untruncated evidence text; historical official_runtime
 is absent. The report states these attribution/provenance limits explicitly.
 
-Reproducible local command: `scripts/run_phase07_failure_audit.sh --apply --limit 37
+Reproducible local command: `scripts/phases/run_phase07_failure_audit.sh --apply --limit 37
 --max-requests 0` after activating iqfm. Default/`--dry-run` writes nothing.
 The task's bounded real audit completed in under one second, zero API requests.
 Input hashes are retained in ignored provenance.json; deterministic rebuild is

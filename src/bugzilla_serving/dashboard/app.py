@@ -55,7 +55,7 @@ def main():
             st.title("Bugzilla development results")
             st.info(
                 "No saved results yet. Generate the local results pack with "
-                "PYTHONPATH=src:. python scripts/build_results_pack.py, or set "
+                "PYTHONPATH=src:. python scripts/mlops/build_results_pack.py, or set "
                 "MLFLOW_TRACKING_URI to read a logged final-results pack."
             )
             return

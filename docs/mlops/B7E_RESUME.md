@@ -119,7 +119,7 @@ conda activate iqfm
 export PYTHONPATH="$PWD/src:$PWD${PYTHONPATH:+:$PYTHONPATH}"
 B7E_SOURCE="outputs/predictions/v2/dev/run-cf2c6f2cf859a3c6/S8v2.jsonl"
 python -m bugzilla_serving.experiments.b7e_report
-scripts/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 \
+scripts/phases/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 \
   --scope changed --resume-from "$B7E_SOURCE" --dry-run \
   | tee outputs/analysis/b7e/resume-plan.json
 B7E_LEDGER="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["ledger"])' \
@@ -141,7 +141,7 @@ ledger; preserving them does not charge them again. Backfill labels new costs as
 resume_incremental. Unchanged routes are carried, not credited as cache hits.
 
 ```bash
-scripts/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 \
+scripts/phases/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 \
   --scope changed --resume-from "$B7E_SOURCE" --enable-llm --max-requests 25
 python -c 'import json,sys; s=json.load(open(sys.argv[1])); assert s["completed"] == s["total"], s; print(s)' \
   "$(dirname -- "$B7E_LEDGER")/summary.json"
@@ -159,7 +159,7 @@ The packet already exists at `outputs/analysis/f5_packet/packet.md` and contains
 all 60 candidates. Exporting again preserves random IDs for unchanged answers:
 
 ```bash
-python scripts/export_f5_grading_packet.py --ledger "$B7E_SOURCE"
+python scripts/mlops/export_f5_grading_packet.py --ledger "$B7E_SOURCE"
 ```
 
 The default output directory contains packet.jsonl and packet.md (blind), a
@@ -172,7 +172,7 @@ Save all 60 judge output JSON lines to a local file, then import once for every
 system using the actual model name, not a fabricated value:
 
 ```bash
-python scripts/import_f5_verdicts.py --verdicts "/path/to/external-verdicts.jsonl" \
+python scripts/mlops/import_f5_verdicts.py --verdicts "/path/to/external-verdicts.jsonl" \
   --judge "ACTUAL JUDGE MODEL NAME"
 ```
 
@@ -190,14 +190,14 @@ update. Finish the resume before backfilling S8v2:
 ```bash
 B7E_VERDICTS="outputs/analysis/f5_packet/verdicts.jsonl"
 for version in 1 2; do
-  python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm \
+  python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm \
     --f5-verdicts "$B7E_VERDICTS" --scorer-version "$version" --apply --resume
 done
-scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 \
+scripts/phases/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 \
   --ledger "$B7E_LEDGER" --f5-verdicts "$B7E_VERDICTS" --dry-run
-scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 \
+scripts/phases/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 \
   --ledger "$B7E_LEDGER" --f5-verdicts "$B7E_VERDICTS" --apply
-LANGSMITH_SOURCE=fixture python scripts/build_dashboard_snapshot.py --max-requests 1000
+LANGSMITH_SOURCE=fixture python scripts/mlops/build_dashboard_snapshot.py --max-requests 1000
 ```
 
 MLflow/snapshot commands are owner-only network operations with zero model calls.
@@ -224,7 +224,7 @@ Files changed for B7e:
 - New `src/bugzilla_qa/answering_v2/json_tools.py`; updated variant `graph.py` and `tools.py`.
 - New `experiments/v2_resume.py`, `f5_packet.py`, `b7e_report.py`; updated `v2_jobs.py`, `preflight.py`, `token_budget.py`, `runner.py` under `src/bugzilla_serving/`.
 - Updated `tracking/f5_gold.py`, `tracking/backfill.py` and `dashboard/views.py` under `src/bugzilla_serving/`.
-- New `scripts/export_f5_grading_packet.py` and `scripts/import_f5_verdicts.py`; included both in the existing Ruff scope in `pyproject.toml` (no dependency/version changes).
+- New `scripts/mlops/export_f5_grading_packet.py` and `scripts/mlops/import_f5_verdicts.py`; included both in the existing Ruff scope in `pyproject.toml` (no dependency/version changes).
 - New `tests/b_experiments/test_b7e.py`; updated variant regression tests and dashboard judge-selector tests.
 - Updated `docs/AGENT_NOTES.md`, `BACKFILL_MAPPING.md`, `STREAM_B_HANDOFF.md` and the superseded `B7_ONE_DAY_PLAN.md`; added this runbook.
 

@@ -114,7 +114,7 @@ def generate(root):
         for event in events or {"No saved error message"}:
             errors[event] += 1
     plans, _ = answer_runs(source, "ledgers", root, f5_gold="llm", scorer_version="2")
-    from scripts.preview_promotion import preview
+    from scripts.mlops.preview_promotion import preview
 
     policy = preview(plans)
     summary = dict(
