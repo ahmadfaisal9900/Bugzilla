@@ -1,0 +1,463 @@
+Retriever,Corpus,Baseline,Source,Family,Metric,CI low,CI high
+Semantic,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.0
+Semantic,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.7272727272727273,1.0
+Hierarchical,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.8636363636363636,1.0
+Reranked,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.2727272727272727
+Reranked,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.36363636363636365
+Graph expansion,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.2727272727272727
+Graph expansion,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.36363636363636365
+Semantic,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.7272727272727273,1.0
+Hierarchical,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.8636363636363636,1.0
+Reranked,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.2727272727272727
+Reranked,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.36363636363636365
+Graph expansion,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.0,0.2727272727272727
+Graph expansion,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.0,0.36363636363636365
+Semantic,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,-0.45454545454545453,0.0
+Semantic,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,-0.6818181818181818,-0.3181818181818182
+Hybrid,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,-0.13636363636363635,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,-0.45454545454545453,-0.18181818181818182
+Hierarchical,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.5454545454545454,1.0
+Hierarchical,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.3181818181818182,0.6818181818181818
+Reranked,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.09090909090909091,0.5454545454545454
+Reranked,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.3181818181818182,0.6818181818181818
+Graph expansion,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.09090909090909091,0.5454545454545454
+Graph expansion,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.3181818181818182,0.6818181818181818
+Semantic,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-1.0,0.0
+Semantic,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,-0.5,0.0
+Hybrid,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-0.5,0.0
+Hybrid,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.5,0.5
+Reranked,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-1.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,-0.5,0.0
+Hybrid,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-0.5,0.0
+Hybrid,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.5,0.5
+Reranked,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-1.0,-1.0
+Semantic,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,-0.5,-0.5
+Hybrid,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-0.5,-0.5
+Hybrid,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.5,0.5
+Reranked,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-0.5,0.0
+Reranked,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Graph expansion,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,-0.5,0.0
+Graph expansion,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Semantic,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.9130434782608695,-0.5652173913043478
+Semantic,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.9130434782608695,-0.5652173913043478
+Hybrid,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.13043478260869565,0.0
+Hybrid,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.13043478260869565,0.0
+Reranked,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.13043478260869565,0.0
+Graph expansion,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.9130434782608695,-0.5652173913043478
+Semantic,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.9130434782608695,-0.5652173913043478
+Hybrid,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.13043478260869565,0.0
+Hybrid,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.13043478260869565,0.0
+Reranked,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.13043478260869565,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.9565217391304348,-0.6521739130434783
+Semantic,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-1.0,-0.782608695652174
+Hybrid,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.391304347826087,-0.043478260869565216
+Hybrid,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.21739130434782608,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,0.0,0.2608695652173913
+Hierarchical,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.13043478260869565
+Reranked,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.6956521739130435,-0.17391304347826086
+Reranked,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.30434782608695654,0.043478260869565216
+Graph expansion,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.6956521739130435,-0.17391304347826086
+Graph expansion,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.30434782608695654,0.043478260869565216
+Semantic,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.8333333333333334,-0.16666666666666666
+Semantic,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.8333333333333334,-0.16666666666666666
+Hybrid,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.16666666666666666,0.8333333333333334
+Reranked,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Reranked,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.16666666666666666,0.8333333333333334
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.16666666666666666,0.8333333333333334
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.8333333333333334,-0.16666666666666666
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-1.0,-0.3333333333333333
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.5,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.6666666666666666
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.6666666666666666
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.6666666666666666
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-1.0,-0.3333333333333333
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-1.0,-0.3333333333333333
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.5,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.5,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.5
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.3333333333333333,0.6666666666666666
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.5,0.5
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.3333333333333333,0.6666666666666666
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.5,0.5
+Semantic,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Semantic,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,1.0,1.0
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.5416666666666666,0.6666666666666666
+Reranked,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,1.0,1.0
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.5416666666666666,0.6666666666666666
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,-0.75,0.0
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,-0.3333333333333333,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,-0.75,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,-0.25,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.25,1.0
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.3333333333333333,0.5833333333333334
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,1.0
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.25
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,1.0
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.25
+Semantic,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-1.0,-0.3333333333333333
+Semantic,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-1.0,-1.0
+Hybrid,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-1.0,0.2
+Hybrid,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-0.375,0.0
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Reranked,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-1.0,-0.3333333333333333
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-1.0,-1.0
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-1.0,0.2
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-0.375,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-0.6666666666666666,0.0
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-1.0,-1.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-0.6666666666666666,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-1.0,-0.3333333333333333
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.3333333333333333,1.0
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-0.5714285714285714,0.8
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-0.875,0.0
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-0.5714285714285714,0.8
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-0.875,0.0
+Semantic,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Semantic,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.16666666666666666,0.8333333333333334
+Hierarchical,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.16666666666666666,0.8333333333333334
+Reranked,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.6666666666666666
+Hierarchical,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.16666666666666666,0.8333333333333334
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.16666666666666666,0.8333333333333334
+Hierarchical,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.5,1.0
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Reranked,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Graph expansion,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.6065573770491803,-0.3384615384615385
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.7903225806451613,-0.5441176470588235
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.48333333333333334,-0.21739130434782608
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.3333333333333333,-0.08064516129032258
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.38095238095238093,0.6461538461538462
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.19402985074626866,0.4375
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.3174404761904762,0.5846153846153846
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.14285714285714285,0.36923076923076925
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.3174404761904762,0.5846153846153846
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.14285714285714285,0.36923076923076925
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.6818181818181818,-0.4126984126984127
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.8181818181818182,-0.578125
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.42857142857142855,-0.171875
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.29850746268656714,-0.04918032786885246
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.30303030303030304,0.5714285714285714
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.16923076923076924,0.40580842391304334
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.24193548387096775,0.5074626865671642
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.11290322580645161,0.3333333333333333
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.24193548387096775,0.5074626865671642
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.11290322580645161,0.3333333333333333
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.9583476027397261,-0.8064516129032258
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-1.0,-0.8923076923076924
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.5625,-0.3064516129032258
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.1076923076923077,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.015873015873015872,0.15151515151515152
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.0,0.04918032786885246
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.0,0.14285714285714285
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.0,0.04918032786885246
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.0,0.14285714285714285
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.0,0.04918032786885246
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,-1.0,-0.8214285714285714
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,-1.0,-0.8214285714285714
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,-1.0,-0.8214285714285714
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,-1.0,-0.8214285714285714
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,-1.0,-0.8928571428571429
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,-1.0,-0.8928571428571429
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,-0.8214285714285714,-0.43333333333333335
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,-0.4482758620689655,-0.125
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,-0.8214285714285714,-0.43333333333333335
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,-0.4482758620689655,-0.125
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.23809523809523808,0.023809523809523808
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.25,0.0
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.011904761904761904,0.11904761904761904
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.38095238095238093,-0.07142857142857142
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.2261904761904762,0.0
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.011904761904761904,0.16666666666666666
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.011904761904761904,0.16666666666666666
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.23809523809523808,0.023809523809523808
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.2619047619047619,0.011904761904761904
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.023809523809523808,0.10714285714285714
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.38095238095238093,-0.07142857142857142
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.25,0.0
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.023809523809523808,0.15476190476190477
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.023809523809523808,0.15476190476190477
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.30952380952380953,-0.047619047619047616
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.2857142857142857,-0.0473214285714329
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.07142857142857142,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.05952380952380952,0.07142857142857142
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.38095238095238093,-0.047619047619047616
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.21428571428571427,-0.04702380952381818
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.0
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.03571428571428571,0.11904761904761904
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.0
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.03571428571428571,0.11904761904761904
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.0,0.0
+Semantic,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,-0.125,0.125
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.0,0.0
+Hybrid,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,-0.125,0.0
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Hierarchical,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.125,0.5
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Reranked,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.08333333333333333,0.3333333333333333
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Graph expansion,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.125,0.5833333333333333
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.0,0.0
+Semantic,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,-0.125,0.125
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.0,0.0
+Hybrid,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,-0.125,0.0
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Hierarchical,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.125,0.5
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Reranked,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.08333333333333333,0.3333333333333333
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Graph expansion,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.125,0.5833333333333333
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.0,0.0
+Semantic,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,-0.25,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.0,0.0
+Hybrid,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,-0.25,0.0
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.625,1.0
+Hierarchical,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.16666666666666666,0.5
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Reranked,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.0,0.41666666666666663
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+Graph expansion,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.25,0.5833333333333333
+HyDE,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.2727272727272727,0.7272727272727273
+HyDE,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.5454545454545454,0.9545454545454546
+Multi-query,Original passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,1.0,1.0
+Multi-query,Original passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,1.0,1.0
+HyDE,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.2727272727272727,0.7272727272727273
+HyDE,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.5454545454545454,0.9090909090909091
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,1.0,1.0
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,1.0,1.0
+HyDE,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.5,0.9545454545454546
+HyDE,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.2727272727272727,0.6363636363636364
+Multi-query,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,hit_at_5,0.5454545454545454,1.0
+Multi-query,Passages with bug header,Keyword (BM25),Natural rewrites,Field lookup,recall_at_10,0.3181818181818182,0.6818181818181818
+HyDE,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+HyDE,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.25,0.25
+HyDE,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.25,0.25
+HyDE,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+HyDE,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.0,0.25
+Multi-query,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,hit_at_5,0.0,0.0
+Multi-query,Passages with bug header,Keyword (BM25),Natural rewrites,Lifecycle & timing,recall_at_10,0.5,0.5
+HyDE,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.34782608695652173,-0.043478260869565216
+HyDE,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.30434782608695654,0.0
+Multi-query,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.34782608695652173,-0.043478260869565216
+HyDE,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.30434782608695654,0.0
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,-0.17391304347826086,0.08695652173913043
+HyDE,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,-0.2608695652173913,0.08695652173913043
+Multi-query,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,hit_at_5,0.0,0.2608695652173913
+Multi-query,Passages with bug header,Keyword (BM25),Natural rewrites,Bug relationships,recall_at_10,0.0,0.13043478260869565
+HyDE,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.5,0.5
+HyDE,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.5,0.5
+Multi-query,Original passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.16666666666666666,0.8333333333333334
+Multi-query,Original passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.16666666666666666,0.8333333333333334
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.5,0.5
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.5,0.0
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.16666666666666666,0.8333333333333334
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.6666666666666666
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,-0.5,0.5
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,-0.6666666666666666,0.3333333333333333
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,hit_at_5,0.0,0.6666666666666666
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Field lookup,recall_at_10,0.0,0.5
+HyDE,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,1.0
+HyDE,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.5
+Multi-query,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,1.0,1.0
+Multi-query,Original passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.41666666666666663,0.6666666666666666
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,1.0
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.0,0.5
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,1.0,1.0
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.41666666666666663,0.6666666666666666
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.0,1.0
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.08333333333333333,0.4583333333333333
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,hit_at_5,0.25,1.0
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Lifecycle & timing,recall_at_10,0.3333333333333333,0.5833333333333334
+HyDE,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+HyDE,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Multi-query,Original passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,0.0,0.6666666666666666
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-0.5714285714285714,0.8
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,-0.6666666666666666,0.0
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,hit_at_5,-0.3333333333333333,1.0
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+HyDE,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.6666666666666666
+HyDE,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.6666666666666666
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),hit_at_5,0.0,0.0
+Multi-query,Passages with bug header,Keyword (BM25),Phase 5,Reasons (LLM-graded),recall_at_10,0.0,0.0
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.1,0.4507042253521127
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.029850746268656716,0.28125
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.39344262295081966,0.6615384615384615
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.20967741935483872,0.45588235294117646
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.029850746268656716,0.3709677419354839
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.04918032786885246,0.2463768115942029
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.3181818181818182,0.5873015873015873
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.18181818181818182,0.421875
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,-0.328125,-0.08064516129032258
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,-0.203125,-0.029411764705882353
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,hit_at_5,0.015873015873015872,0.15151515151515152
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Field lookup,recall_at_10,0.0,0.04918032786885246
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,-0.32142857142857145,-0.03571428571428571
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,-0.1724137931034483,0.0
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,hit_at_5,0.0,0.0
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Bug relationships,recall_at_10,0.0,0.0
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.07142857142857142,0.07142857142857142
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.08333333333333333,0.10714285714285714
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.047619047619047616,0.11904761904761904
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.07142857142857142,0.07142857142857142
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.09523809523809523,0.09523809523809523
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,0.0,0.07142857142857142
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.047619047619047616,0.11904761904761904
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.07142857142857142,0.0
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.09523809523809523,0.11904761904761904
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,hit_at_5,-0.14285714285714285,0.0
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Find bug by description,recall_at_10,-0.11904761904761904,0.13095238095238096
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+HyDE,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.041666666666666664,0.29166666666666663
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.25,1.0
+Multi-query,Original passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.08333333333333333,0.4583333333333333
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.125,0.875
+HyDE,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.041666666666666664,0.29166666666666663
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.25,1.0
+Multi-query,Full-text passages,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.08333333333333333,0.4583333333333333
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.25,1.0
+HyDE,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.0,0.3333333333333333
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,hit_at_5,0.25,1.0
+Multi-query,Passages with bug header,Keyword (BM25),Benchmark v3,Multi-step,recall_at_10,0.20833333333333331,0.3333333333333333

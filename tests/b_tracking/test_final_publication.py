@@ -20,7 +20,9 @@ def fixture_config(system):
         mode="json"
     )
     if internal == "S8v2":
-        cfg.update(system_id=internal, router_rules_version="json-tools-v2")
+        cfg.update(
+            system_id=internal, router_rules_version="json-tools-v2", s5_dossier_budget=12000
+        )
     return cfg
 
 

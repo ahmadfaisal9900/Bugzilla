@@ -1,0 +1,10 @@
+System,Calls / question,Tokens / question,Latency p50 ms,Latency p95 ms
+Closed-book,1.008,588.768,1749.0,48206.799999999996
+Keyword search,1.064,2031.208,13981.0,55376.79999999999
+Smart search,2.08,2400.272,33354.0,60151.0
+Query rewriting,0.0,0.0,30.0,42.8
+Self-checking search,0.968,1963.864,9284.0,51918.4
+Full bug dossier,1.016,1999.184,6090.0,51099.6
+Linked-bugs search,0.4,804.976,1950.0,35357.19999999998
+Database tools,3.272,2774.488,52277.5,120082.0
+Auto-router,0.552,200.8,364.0,48670.94999999997

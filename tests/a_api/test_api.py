@@ -256,8 +256,8 @@ def test_registry_cache_and_champion(monkeypatch):
     assert not any(p.is_champion for p in fallback)
 
 
-def test_evaluated_auto_router_is_refused_through_both_loaders(client):
-    """Keep the integration failure explicit; never substitute the legacy S8 graph."""
+def test_historical_auto_router_budget_requires_capped_config(client):
+    """Historical 12k dossiers require an explicit capped serving config."""
     import yaml
 
     from bugzilla_serving.tracking.final_registry import champion_check
@@ -267,7 +267,7 @@ def test_evaluated_auto_router_is_refused_through_both_loaders(client):
     cfg.update(
         system_id="S8v2", router_rules_version="json-tools-v2", tool_route_version="json-tools-v2"
     )
-    with pytest.raises(ValueError, match="system_id"):
+    with pytest.raises(ValueError, match="4096"):
         executable(cfg)
     check = champion_check(yaml.safe_dump(cfg))
     assert not check["passed"]
@@ -290,7 +290,7 @@ def test_evaluated_auto_router_is_refused_through_both_loaders(client):
         )
         assert response.status_code == 422
         assert response.json()["code"] == "invalid_config"
-        assert "system_id" in response.json()["message"]
+        assert "4096" in response.json()["message"]
     assert not client.app.state.runners
 
 

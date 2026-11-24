@@ -1,0 +1,171 @@
+{
+  "eval_set": "dev-pilot-122",
+  "split": "dev",
+  "question_text": false,
+  "gold": false,
+  "test_data": false,
+  "files": {
+    "final_scores.csv": {
+      "source_sha256": "faa07779d1ec572ce2d10b02a389c55e7b642451341c91253dfa6355733deeff",
+      "rows": 10,
+      "columns": [
+        "System",
+        "Field lookup",
+        "Lifecycle & timing",
+        "Counting",
+        "Bug relationships",
+        "Reasons (LLM-graded)",
+        "Unanswerable",
+        "Find bug by description",
+        "Multi-step",
+        "Hard unanswerable",
+        "Overall %"
+      ]
+    },
+    "overall_bootstrap.csv": {
+      "source_sha256": "9c91a4db89b082a432ea30fa9f1c684e6aaa2943fe9627f16e36e0376a7e9c3e",
+      "rows": 10,
+      "columns": [
+        "System",
+        "Overall %",
+        "95% CI low %",
+        "95% CI high %"
+      ]
+    },
+    "per_question_scores.csv": {
+      "source_sha256": "b907ec86fe23fe72b4f8cfac0bd21b9c3c7ce745999e9313a136db394fe8b987",
+      "rows": 1098,
+      "columns": [
+        "System",
+        "Source",
+        "Family",
+        "qid",
+        "Scorer 2 verdict",
+        "Origin",
+        "Declined",
+        "Status"
+      ]
+    },
+    "abstention_failures.csv": {
+      "source_sha256": "e32efd8d266cb2340ca4df42285f9d1d830c3122d755e4dec7af4a6da8988eb6",
+      "rows": 10,
+      "columns": [
+        "System",
+        "Declines / all questions",
+        "Correct declines / Unanswerable + Hard unanswerable",
+        "False declines / answerable",
+        "Wrong non-declined answers / answerable",
+        "Errors / all questions"
+      ]
+    },
+    "original_pilot_cost.csv": {
+      "source_sha256": "93c53f343c1ba602cbd1ae3e8a91444312e25bccaeb1ba6c074b28ae0456e3fc",
+      "rows": 9,
+      "columns": [
+        "System",
+        "Calls / question",
+        "Tokens / question",
+        "Latency p50 ms",
+        "Latency p95 ms"
+      ]
+    },
+    "v2_cost_by_origin.csv": {
+      "source_sha256": "0fdf039eec53ce48043da554298dcc72334e912068ba27b051b47b3261883fd2",
+      "rows": 4,
+      "columns": [
+        "Origin",
+        "Questions",
+        "Fresh calls this resume",
+        "Historical source calls (separate)",
+        "Source tokens in",
+        "Source tokens out",
+        "Source latency p50 ms",
+        "Source latency p95 ms"
+      ]
+    },
+    "routing_by_family.csv": {
+      "source_sha256": "69132e9ec6aac1bc141dadd3ce7de76fe6878d9a470a9d7ec406a728741eb7b6",
+      "rows": 13,
+      "columns": [
+        "Family",
+        "Chosen route",
+        "Final answer component",
+        "Final answer used LLM",
+        "Rows",
+        "Final generation count",
+        "Correct / total"
+      ]
+    },
+    "accuracy_by_source.csv": {
+      "source_sha256": "6df9bb546043d3851572ddba6a00a15d0f81d3b513ba06962eb2d3b3b0394df1",
+      "rows": 3,
+      "columns": [
+        "Source",
+        "Closed-book",
+        "Keyword search",
+        "Smart search",
+        "Query rewriting",
+        "Self-checking search",
+        "Full bug dossier",
+        "Linked-bugs search",
+        "Database tools",
+        "Auto-router v2"
+      ]
+    },
+    "retrieval_pairs.csv": {
+      "source_sha256": "d701c724fced0a7d71bb7ca64fa67bc098290cede144a052c70bde7973575a8c",
+      "rows": 24,
+      "columns": [
+        "Retriever",
+        "Corpus",
+        "Selection macro Recall@10",
+        "Macro Hit@5 (eligible cells)",
+        "Macro MRR@10 (eligible cells)",
+        "Macro nDCG@10 (eligible cells)",
+        "Find bug by description bug Hit@5",
+        "Multi-step full evidence@10",
+        "Selection latency p50 ms",
+        "Selection latency p95 ms",
+        "Selection questions",
+        "Selected"
+      ]
+    },
+    "retrieval_family_comparison.csv": {
+      "source_sha256": "aa0542a0bc8343895e941de738c0010a9d96ec65fe669bc03230f76a26e62715",
+      "rows": 81,
+      "columns": [
+        "Retriever",
+        "Corpus",
+        "Source",
+        "Family",
+        "n",
+        "recall_at_10",
+        "hit_at_5",
+        "bug_hit_at_5",
+        "mh_full_evidence_at_10"
+      ]
+    },
+    "retrieval_bootstrap_vs_keyword.csv": {
+      "source_sha256": "697959343b686f36ca1003b675fbb8d3448463d7d09540490af0c3cd5b036699",
+      "rows": 462,
+      "columns": [
+        "Retriever",
+        "Corpus",
+        "Baseline",
+        "Source",
+        "Family",
+        "Metric",
+        "CI low",
+        "CI high"
+      ]
+    },
+    "judge_agreement.csv": {
+      "source_sha256": "d36ce06a57d6a5025521accffbebd0e09801a01e38c8223bc98cd66ffd5113cd",
+      "rows": 1,
+      "columns": [
+        "External judge"
+      ]
+    }
+  },
+  "dev_roster_sha256": "9c7a9f930ff599e643738edbd7a021649b1e544a6ba5769d776383d269af968b"
+}

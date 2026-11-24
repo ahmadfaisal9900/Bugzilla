@@ -205,6 +205,8 @@ jobs:
         run: docker compose -f compose.ci.yaml up --build -d
       - name: Verify ready, modes, UIs and feedback
         run: bash scripts/testing/smoke.sh
+      - name: Mock demo route smoke
+        run: SERVING_API_KEY=ci-smoke-key python scripts/testing/demo_check.py --mock
       - name: Logs on failure
         if: failure()
         run: docker compose -f compose.ci.yaml logs --no-color --tail 100

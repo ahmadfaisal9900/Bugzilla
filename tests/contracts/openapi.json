@@ -615,6 +615,18 @@
             "title": "Retriever",
             "type": "string"
           },
+          "router_rules_version": {
+            "anyOf": [
+              {
+                "const": "json-tools-v2",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Router Rules Version"
+          },
           "rrf_k": {
             "anyOf": [
               {
@@ -664,6 +676,17 @@
             ],
             "title": "S7 Max Tool Steps"
           },
+          "serving_bug_scope": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Serving Bug Scope"
+          },
           "system_id": {
             "default": "S2",
             "enum": [
@@ -677,6 +700,7 @@
               "S6",
               "S7",
               "S8",
+              "S8v2",
               "ORACLE"
             ],
             "title": "System Id",
@@ -688,6 +712,18 @@
             "minimum": 0.0,
             "title": "Temperature",
             "type": "number"
+          },
+          "tool_route_version": {
+            "anyOf": [
+              {
+                "const": "json-tools-v2",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Route Version"
           },
           "top_k": {
             "default": 5,

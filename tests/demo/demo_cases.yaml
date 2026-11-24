@@ -1,0 +1,26 @@
+# Public development subjects only. Generated-answer assertions require --live.
+cases:
+- {id: field, question: 'What component is recorded for bug 1809146?', mode: recommended, expected_route: S7v2, must_abstain: false, must_cite_bug: '1809146', answer_regex: 'Messaging System', max_seconds: 30}
+- {id: status, question: 'What is the status of bug 1809146?', mode: recommended, expected_route: S7v2, must_abstain: false, answer_regex: 'RESOLVED', max_seconds: 30}
+- {id: product, question: 'What product is recorded for bug 1708248?', mode: recommended, expected_route: S7v2, must_abstain: false, answer_regex: 'Firefox', max_seconds: 30}
+- {id: reopened, question: 'How many transitions into REOPENED for bug 1718774?', mode: recommended, expected_route: S7v2, must_abstain: false, answer_regex: '^1$', max_seconds: 30}
+- {id: first-fixed, question: 'How many calendar hours before bug 1718774 first reached FIXED?', mode: recommended, expected_route: S7v2, must_abstain: true, max_seconds: 30}
+- {id: count, question: 'How many bugs in the downloaded cohort?', mode: recommended, expected_route: S7v2, must_abstain: false, answer_regex: '^3000$', max_seconds: 30}
+- {id: component-count, question: 'How many bugs in the downloaded cohort have component Search?', mode: recommended, expected_route: S7v2, must_abstain: false, max_seconds: 30}
+- {id: depends, question: 'Which bugs does bug 1771951 depend on?', mode: recommended, expected_route: S7v2, must_abstain: false, max_seconds: 30}
+- {id: blocks, question: 'Which bugs does bug 1771951 block?', mode: recommended, expected_route: S7v2, must_abstain: false, must_cite_bug: '1771951', max_seconds: 60}
+- {id: what-blocks, question: 'What blocks bug 1771951?', mode: recommended, expected_route: S7v2, must_abstain: false, max_seconds: 30}
+- {id: multi-step, question: 'Within the downloaded cohort, bug 1771951 depends on which bugs, and which of those have recorded resolved FIXED state?', mode: recommended, expected_route: S7v2, must_abstain: false, max_seconds: 30}
+- {id: cited-why, question: 'What reason is in cited comment 62e3ce2cdf5cc38e6eda8a8b4d717cdeedfc099cea72ce1aa59ee7b272dc9e00 for bug 1708248?', mode: recommended, expected_route: S5, must_abstain: false, must_cite_bug: '1708248', max_seconds: 60}
+- {id: discussion-missing, question: "Do we know about bug 1809146? If so, what's the dev comments regarding this?", mode: recommended, expected_route: S5, must_abstain: true, must_cite_bug: '1809146', max_seconds: 60}
+- {id: discussion, question: 'What are the comments on bug 1708248?', mode: recommended, expected_route: S5, must_abstain: false, must_cite_bug: '1708248', max_seconds: 60}
+- {id: dossier, question: 'Tell me about bug 1809146', mode: recommended, expected_route: S5, must_abstain: false, must_cite_bug: '1809146', max_seconds: 60}
+- {id: fast-id, question: 'Tell me about bug 1708248', mode: fast, expected_route: S1, must_abstain: false, must_cite_bug: '1708248', max_seconds: 60}
+- {id: deep, question: 'Explain bug 1708248', mode: deep, expected_route: S5, must_abstain: false, must_cite_bug: '1708248', max_seconds: 60}
+- {id: find-description-1, question: 'Which bug report describes: Refactor code to replace deprecated document.popupNode references with menupopup.triggerNode in context menu implementations. Give the bug ID.', mode: recommended, expected_route: S2, must_abstain: false, max_seconds: 60}
+- {id: find-description-2, question: 'Which bug report describes: Test timed out during browser_default_bookmark_location.js execution. Give the bug ID.', mode: recommended, expected_route: S2, must_abstain: false, max_seconds: 60}
+- {id: work-hours, question: 'How many engineering work hours for bug 1718774?', mode: recommended, expected_route: S7v2, must_abstain: true, max_seconds: 30}
+- {id: outside, question: 'Tell me about bug 1000000', mode: recommended, expected_route: outside_archive, must_abstain: true, max_seconds: 30}
+- {id: outside-fast, question: 'Comments on bug 1000000', mode: fast, expected_route: outside_archive, must_abstain: true, max_seconds: 30}
+- {id: typo, question: 'tell me abut bug 1708248 dev coments', mode: recommended, expected_route: S5, must_abstain: false, must_cite_bug: '1708248', max_seconds: 60}
+- {id: no-id-component, question: 'What issues affect the Messaging System component?', mode: recommended, expected_route: S2, must_abstain: false, max_seconds: 60}

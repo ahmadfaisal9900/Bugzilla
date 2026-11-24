@@ -150,3 +150,10 @@ __pycache__/
 /coverage.xml
 /junit.xml
 /results/coverage/
+
+# Owner-run demo reports and resumable job logs
+/results/demo_check/
+/results/demo_jobs/
+
+# Local Streamlit credentials; the placeholder example remains tracked.
+.streamlit/secrets.toml

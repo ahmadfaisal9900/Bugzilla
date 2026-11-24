@@ -2,6 +2,51 @@
 
 ## Current phase
 
+2026-11-23 B11 full-suite follow-up: the owner-run check reported 597 passed /
+2 failed in 208 seconds. A fake credential's six-digit suffix entered bug-ID
+extraction, triggering an outside-cohort response before graph child traces.
+The serving runner now sanitizes known credentials before ID detection,
+retrieval and provider prompts; the tracing regression also checks the route,
+searched bug and redacted provider prompt. The standalone UI mock now includes
+the three added nullable config fields. All 20 tracing/UI-contract regressions
+pass in the owner's .venv, plus 11 API/Lab parity and guard checks; global
+Ruff and formatting pass. Full-suite success
+is not yet established; rerun in a new job directory, preserving the failed log.
+No contract/research-code changes, registry writes or live-provider requests.
+
+2026-11-23 B11 deployment preparation: added chat-only Quick Tunnel launcher,
+read-only Community Cloud entrypoint and adjacent lightweight pinned requirements,
+remote-first results-pack loading and a 232 KiB allowlisted dev snapshot. Local
+cloud AppTest rendered at 191.23 MiB peak RSS with no engine/Lab/torch imports.
+Fresh requirements-only venv, Docker resource measurements/builds and live checks
+are owner-run via the phase11 wrapper; commands are in docs/DEMO_RUNBOOK.md.
+All 48 final demo tests pass, including R0 quota downgrade and safe tool-coverage
+fallback; the 31-test cloud/UI/route/historical-cap subset also passes.
+No registry promotion, public sharing, Cloud deployment or Groq calls occurred.
+
+2026-11-23 B11 pre-router and demo checks: serving-only explicit-ID scope flag,
+discussion/dossier fallback, cohort refusal and capped/truncation-marked packing
+are implemented. All 44 bounded synthetic demo tests passed; 10 real C1
+retrieval-only checks and a 10-test API/Lab/contract subset passed. Offline
+route diff is 6/122 changed, listed in docs/DEMO_ROUTE_DIFF.md (no tuning).
+The mock CLI passed against TestClient; Compose/full suite/actionlint and live
+checks remain owner-run. No Groq calls or remote registry mutations.
+
+2026-11-23 S8v2 serving prerequisite: owner confirms the live champion was S2,
+not the Auto-router. Added serving-only V2 graph/tools selection, contract enum
+and version metadata, a 4096-byte S8v2 dossier cap and API/Lab four-route mock
+parity. Legacy config hashes are preserved. Promotion/rollback is prepared in
+the B9 CLI with --serving-demo, dry-run by default; no registry mutation or
+live Groq call was made. See docs/DEMO_RUNBOOK.md for Faiz’s contract changes.
+
+2026-11-23 demo hardening, phase 1: read-only diagnosis confirms that both routers
+leave the reported 1809146 discussion question ambiguous. The bundled cohort
+contains that bug, but zero comments and only one metadata chunk. The YAML
+Recommended fallback is legacy S8; S8v2 is still excluded by the serving contract.
+The original request's retrieval/context/model output remains unavailable.
+See `docs/DEMO_DIAGNOSIS.md`. No live calls or research-code changes; fixes and
+deployment preparation remain pending the missing-evidence/scope decisions.
+
 2026-11-23 CI provisioning follow-up: The reported main-branch failure is caused
 by CI's global HF_HUB_OFFLINE=1 reaching its model-download steps. Those two
 steps now override HF_HUB_OFFLINE and TRANSFORMERS_OFFLINE to 0; tests and serving

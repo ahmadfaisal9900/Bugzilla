@@ -11,7 +11,10 @@ esac
 PYTHON="${PYTHON:-python}"
 export PYTHONPATH="$TASK_ROOT/src:$TASK_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 # Parse .env as data with the existing parser; never execute its values as shell code.
-while IFS= read -r -d '' entry; do export "$entry"; done < <("$PYTHON" - <<'PY'
+while IFS= read -r -d '' entry; do
+  TASK_KEY="${entry%%=*}"
+  if ! [[ -v "$TASK_KEY" ]]; then export "$entry"; fi
+done < <("$PYTHON" - <<'PY'
 from bugzilla_qa.llm.provider import env_values
 import sys
 for key, value in env_values('.env').items():
