@@ -76,23 +76,23 @@ From Project with the existing `iqfm` environment:
 ```bash
 conda activate iqfm
 python -m pip install -r requirements-v3.txt
-bash scripts/run_phase09_retrieval_v3.sh --help
+bash scripts/phases/run_phase09_retrieval_v3.sh --help
 
 # 1. New indexes. C0 is copied/reused; C1/C2 are newly embedded.
-bash scripts/run_phase09_retrieval_v3.sh build --dry-run
-bash scripts/run_phase09_retrieval_v3.sh build --resume
+bash scripts/phases/run_phase09_retrieval_v3.sh build --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh build --resume
 
 # 2. All offline retrievers, all three corpora, dev only.
-bash scripts/run_phase09_retrieval_v3.sh eval --dry-run
-bash scripts/run_phase09_retrieval_v3.sh eval --resume
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --resume
 
 # 3. R7 plan (zero calls), then the opt-in capped run.
-bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
-bash scripts/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --enable-llm --max-requests 750 --resume
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh eval --retrievers R7a R7b --enable-llm --max-requests 750 --resume
 
 # 4. Only after both dev summaries say COMPLETE.
-bash scripts/run_phase09_retrieval_v3.sh select --latest --dry-run
-bash scripts/run_phase09_retrieval_v3.sh select --latest
+bash scripts/phases/run_phase09_retrieval_v3.sh select --latest --dry-run
+bash scripts/phases/run_phase09_retrieval_v3.sh select --latest
 ```
 
 Build expects COMPLETE, C1/C2 truncated_chunks=0; rerunning --resume verifies

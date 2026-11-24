@@ -20,8 +20,8 @@ Optional `GROQ_MODEL` / `GROQ_AUX_MODEL` override the configured model.
 ~~~bash
 conda activate iqfm
 python -m pip install -r requirements-v3.txt
-python scripts/llm_ping.py --dry-run
-python scripts/llm_ping.py --enable-llm --max-requests 1
+python scripts/app/llm_ping.py --dry-run
+python scripts/app/llm_ping.py --enable-llm --max-requests 1
 ~~~
 
 Expect the dry run to show `provider: groq`, model `openai/gpt-oss-20b`, and zero
@@ -50,8 +50,8 @@ code revision. Original Phase 5 frozen files remain protected.
 ## User-terminal generation
 
 ~~~bash
-bash scripts/run_phase08_v3_generate.sh --dry-run --seed 317
-bash scripts/run_phase08_v3_generate.sh --enable-llm --max-requests 120 --seed 317 --resume
+bash scripts/phases/run_phase08_v3_generate.sh --dry-run --seed 317
+bash scripts/phases/run_phase08_v3_generate.sh --enable-llm --max-requests 120 --seed 317 --resume
 ~~~
 
 The dry run prints two explicitly synthetic example prompts, the effective aux
@@ -66,7 +66,7 @@ Optional preparation performs source checks and summary embeddings without
 LLM calls:
 
 ~~~bash
-bash scripts/run_phase08_v3_generate.sh --prepare --seed 317 --resume
+bash scripts/phases/run_phase08_v3_generate.sh --prepare --seed 317 --resume
 ~~~
 
 Preparation may download the pinned sentence-transformer weights. Full jobs
@@ -104,8 +104,8 @@ Important artifacts:
   verdict and note fields.
 
 ~~~bash
-bash scripts/run_phase08_v3_validate.sh --latest --dry-run
-bash scripts/run_phase08_v3_validate.sh --latest --resume
+bash scripts/phases/run_phase08_v3_validate.sh --latest --dry-run
+bash scripts/phases/run_phase08_v3_validate.sh --latest --resume
 ~~~
 
 Expected: PASS, all retained questions checked, zero mismatches. The generated
@@ -120,9 +120,9 @@ AMBIGUOUS, WRONG or LEAK and explain concerns in note. Real decisions must come
 from the reviewer; scripts never approve actual rows.
 
 ~~~bash
-bash scripts/run_phase08_v3_freeze.sh --latest --dry-run
-bash scripts/run_phase08_v3_freeze.sh --latest
-bash scripts/run_phase08_v3_freeze.sh --latest --resume
+bash scripts/phases/run_phase08_v3_freeze.sh --latest --dry-run
+bash scripts/phases/run_phase08_v3_freeze.sh --latest
+bash scripts/phases/run_phase08_v3_freeze.sh --latest --resume
 ~~~
 
 Freeze rejects partial/limited jobs, missing reviews, failed rechecks, changed

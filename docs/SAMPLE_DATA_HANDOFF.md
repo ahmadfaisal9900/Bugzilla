@@ -7,8 +7,8 @@ The data lives outside Git on the project owner's machine. Do not download the f
 From the existing Project repository, activate the environment containing DuckDB 1.4.4 (for example `conda activate iqfm`), then:
 
 ```bash
-bash scripts/run_phase05_share_sample.sh --dry-run
-bash scripts/run_phase05_share_sample.sh --resume
+bash scripts/phases/run_phase05_share_sample.sh --dry-run
+bash scripts/phases/run_phase05_share_sample.sh --resume
 ```
 
 The runner prints the exact archive path under ignored `outputs/share/firefox-sample-seed317-<version>.tar.gz`. Share that **one archive**. Its sibling directory contains `summary.json` with actual table counts, archive size and SHA-256, plus `checkpoint.json`; logs are timestamped under `outputs/share/logs/`. To choose an explicit new location use `--output outputs/share/my-sample-handoff --resume`. `--limit 2` makes a marked preview, not the requested complete sample. Do not share a preview as the full corpus.

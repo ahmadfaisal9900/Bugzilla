@@ -12,7 +12,8 @@ COPY src/bugzilla_serving ./src/bugzilla_serving
 # dashboard extra deliberately excludes serving (and therefore torch).
 RUN pip install '.[dashboard]' 'pydantic==2.11.7' && python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
 COPY configs ./configs
-COPY scripts/publish_preset.py scripts/seed_mlflow_fixture.py scripts/build_dashboard_snapshot.py ./scripts/
+COPY scripts/mlops/publish_preset.py scripts/mlops/build_dashboard_snapshot.py ./scripts/mlops/
+COPY scripts/testing/seed_mlflow_fixture.py ./scripts/testing/
 COPY docker/dashboard-entrypoint.sh ./docker/dashboard-entrypoint.sh
 COPY tests/fixtures/sample_langsmith_runs.json ./tests/fixtures/sample_langsmith_runs.json
 RUN mkdir -p /app/outputs && chown -R dashboard:dashboard /app /home/dashboard
@@ -26,7 +27,8 @@ CMD ["python", "-m", "streamlit", "run", "src/bugzilla_serving/dashboard/app.py"
 FROM dashboard-readonly AS dashboard-lab
 USER root
 COPY src/bugzilla_qa ./src/bugzilla_qa
-COPY scripts/run_experiment.py scripts/make_eval_sets.py scripts/build_fixture_bundle.py ./scripts/
+COPY scripts/mlops/run_experiment.py scripts/mlops/make_eval_sets.py ./scripts/mlops/
+COPY scripts/testing/build_fixture_bundle.py ./scripts/testing/
 COPY tests/fixtures ./tests/fixtures
 RUN pip install 'torch==2.6.0+cpu' --index-url https://download.pytorch.org/whl/cpu \
     && pip install '.[serving]' 'huggingface-hub==0.33.4'

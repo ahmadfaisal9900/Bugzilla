@@ -279,7 +279,7 @@ def test_policy_and_registry(tmp_path):
     run = registry.client.get_run(run_id)
     policy = read(ROOT / "configs/promotion.yaml")
     assert assess(run, [run], policy)["allowed"]
-    pub = module(ROOT / "scripts/publish_preset.py")
+    pub = module(ROOT / "scripts/mlops/publish_preset.py")
     preview = pub.publish(registry, run_id, "fast", "Fast", "Synthetic only")
     assert preview["policy"]["status"] == "not applicable (preset only)"
     assert all(

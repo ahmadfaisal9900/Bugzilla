@@ -89,16 +89,16 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
 1. **Prepare the F5 judgments, then backfill local, then DagsHub, then refresh.**
 
    ```bash
-   scripts/run_phase06_f5_grade.sh --dry-run --limit 6 --max-requests 6
+   scripts/phases/run_phase06_f5_grade.sh --dry-run --limit 6 --max-requests 6
    # The separately authorized job you chose to run: six batches, 54 verdicts.
-   scripts/run_phase06_f5_grade.sh --enable-llm --limit 6 --max-requests 6
-   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm \
+   scripts/phases/run_phase06_f5_grade.sh --enable-llm --limit 6 --max-requests 6
+   python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm \
      --tracking-uri "$LOCAL_TRACKING_URI"
-   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm \
+   python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm \
      --tracking-uri "$LOCAL_TRACKING_URI" --apply
-   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm
-   python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --apply
-   scripts/run_phase05_dashboard_snapshot.sh --max-requests 1000
+   python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm
+   python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm --apply
+   scripts/phases/run_phase05_dashboard_snapshot.sh --max-requests 1000
    ```
 
    Expected first: DRY_RUN, six batches, 54 pending rows, zero API calls. The live
@@ -125,7 +125,7 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
    In another, with the same environment:
 
    ```bash
-   python scripts/parity_check.py --api-url http://127.0.0.1:8000 \
+   python scripts/mlops/parity_check.py --api-url http://127.0.0.1:8000 \
      --config-source champion --provider mock --n 3
    # An exact evaluated config can instead be selected with --config-source run:ID.
    ```
@@ -140,7 +140,7 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
    To deliberately create another single test trace later:
 
    ```bash
-   python scripts/langsmith_smoke.py
+   python scripts/mlops/langsmith_smoke.py
    LANGSMITH_SOURCE=live DASHBOARD_LAB_ENABLED=true \
      python -m streamlit run src/bugzilla_serving/dashboard/app.py --server.port 8502
    ```
@@ -157,8 +157,8 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
    local store's version number matches DagsHub).
 
    ```bash
-   python scripts/rollback_champion.py
-   python scripts/rollback_champion.py --to-version "$S2_VERSION" \
+   python scripts/mlops/rollback_champion.py
+   python scripts/mlops/rollback_champion.py --to-version "$S2_VERSION" \
      --reason 'Demo: return to the previously published Smart search'
    ```
 
@@ -172,13 +172,13 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
 5. **Minimal live Lab loop, published Fast/S1 unchanged.**
 
    ```bash
-   python scripts/run_experiment.py --registry-presets --preset fast \
+   python scripts/mlops/run_experiment.py --registry-presets --preset fast \
      --bundle ./serving_bundle --eval-set smoke-5 --max-requests 8 \
      --label live-smoke-s1 --dry-run
-   python scripts/run_experiment.py --registry-presets --preset fast \
+   python scripts/mlops/run_experiment.py --registry-presets --preset fast \
      --bundle ./serving_bundle --eval-set smoke-5 --max-requests 8 \
      --label live-smoke-s1 --enable-llm
-   scripts/run_phase05_dashboard_snapshot.sh --max-requests 1000
+   scripts/phases/run_phase05_dashboard_snapshot.sh --max-requests 1000
    ```
 
    Expected on fresh daily quota: fits=true and fits_request_cap=true. Five normal
@@ -194,9 +194,9 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
 
    ```bash
    # Current view without generating/scoring F5:
-   python scripts/preview_promotion.py
+   python scripts/mlops/preview_promotion.py
    # Run only after step 1 has produced the complete saved judgment ledger:
-   python scripts/preview_promotion.py --f5-gold llm
+   python scripts/mlops/preview_promotion.py --f5-gold llm
    ```
 
    Expected execute validation: S1–S6 and S8 pass; S0/S7 retain their recorded
@@ -207,19 +207,19 @@ export LOCAL_TRACKING_URI="file:$PWD/outputs/mlflow/b1-ledgers"
 
    ```bash
    # POLICY_WINNER_RUN_ID must be the policy-allowed historical run on DagsHub.
-   python scripts/publish_preset.py --run-id "$POLICY_WINNER_RUN_ID" \
+   python scripts/mlops/publish_preset.py --run-id "$POLICY_WINNER_RUN_ID" \
      --slug recommended --label Recommended --description 'Policy-selected dev config' \
      --champion
    # Only after that dry-run passes; no --override-policy:
-   python scripts/publish_preset.py --run-id "$POLICY_WINNER_RUN_ID" \
+   python scripts/mlops/publish_preset.py --run-id "$POLICY_WINNER_RUN_ID" \
      --slug recommended --label Recommended --description 'Policy-selected dev config' \
      --champion --apply
    # Keep S2 selectable without changing its configuration:
-   python scripts/publish_preset.py --run-id "$S2_RUN_ID" --slug smart \
+   python scripts/mlops/publish_preset.py --run-id "$S2_RUN_ID" --slug smart \
      --label 'Smart search' --description 'Published Smart search configuration'
-   python scripts/publish_preset.py --run-id "$S2_RUN_ID" --slug smart \
+   python scripts/mlops/publish_preset.py --run-id "$S2_RUN_ID" --slug smart \
      --label 'Smart search' --description 'Published Smart search configuration' --apply
-   python scripts/rollback_champion.py --to-version "$S2_VERSION" \
+   python scripts/mlops/rollback_champion.py --to-version "$S2_VERSION" \
      --reason 'Demo: return to Smart search'
    ```
 
@@ -460,9 +460,9 @@ outputs/analysis/b7b/. No MLflow write.
 2. Inspect both MLflow versions and the unchanged policy (zero inference quota):
 
 ```bash
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 1
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2
-python scripts/preview_promotion.py --f5-gold llm --scorer-version 2
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 1
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2
+python scripts/mlops/preview_promotion.py --f5-gold llm --scorer-version 2
 ```
 
 Expected: nine plans per version, F3 n=12 and both macro metrics; policy selects
@@ -473,8 +473,8 @@ editable installation or PYTHONPATH set as in command 1).
 MLFLOW_TRACKING_URI (no credentials in arguments/history):
 
 ```bash
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 1 --apply --resume
-python scripts/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2 --apply --resume
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 1 --apply --resume
+python scripts/mlops/backfill_answer_eval.py --mode ledgers --f5-gold llm --scorer-version 2 --apply --resume
 ```
 
 Expected: existing v1 IDs updated only for the required exclusions, nine distinct
@@ -486,10 +486,10 @@ uploaders.
 4. Reproduce plans (zero live calls; no models loaded):
 
 ```bash
-scripts/run_phase07_v2.sh plan --system S7v2 --eval-set fix-pilot-tools --dry-run
-scripts/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --dry-run
-scripts/run_phase07_v2.sh plan --system S7v2 --eval-set fix-holdout --dry-run
-scripts/run_phase07_v2.sh plan --system S8v2 --eval-set fix-holdout --dry-run
+scripts/phases/run_phase07_v2.sh plan --system S7v2 --eval-set fix-pilot-tools --dry-run
+scripts/phases/run_phase07_v2.sh plan --system S8v2 --eval-set pilot122-v2 --dry-run
+scripts/phases/run_phase07_v2.sh plan --system S7v2 --eval-set fix-holdout --dry-run
+scripts/phases/run_phase07_v2.sh plan --system S8v2 --eval-set fix-holdout --dry-run
 ```
 
 Expected: DRY_RUN, actual_api_calls=0, counts/reservations above. The full pilot
@@ -500,8 +500,8 @@ command on a subsequent quota day after PAUSED_QUOTA, until COMPLETE. Optional
 --limit caps newly completed questions per invocation without changing the roster.
 
 ```bash
-scripts/run_phase07_v2.sh run --system S7v2 --eval-set fix-pilot-tools --enable-llm --max-requests 25
-scripts/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 --enable-llm --max-requests 25
+scripts/phases/run_phase07_v2.sh run --system S7v2 --eval-set fix-pilot-tools --enable-llm --max-requests 25
+scripts/phases/run_phase07_v2.sh run --system S8v2 --eval-set pilot122-v2 --enable-llm --max-requests 25
 ```
 
 Expected: timestamped summary/manifest and immutable completed prediction rows in
@@ -515,10 +515,10 @@ unless a fresh preflight establishes remaining allowance.
 then plan and run source-bound grading on the next quota day:
 
 ```bash
-scripts/run_phase07_v2.sh grade --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --dry-run
-scripts/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --dry-run
-scripts/run_phase07_v2.sh grade --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --enable-llm --max-requests 6
-scripts/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --enable-llm --max-requests 6
+scripts/phases/run_phase07_v2.sh grade --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --dry-run
+scripts/phases/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --dry-run
+scripts/phases/run_phase07_v2.sh grade --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --enable-llm --max-requests 6
+scripts/phases/run_phase07_v2.sh grade --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --enable-llm --max-requests 6
 ```
 
 Expected: six requests per new system before cache hits, maximum 43,200 tokens
@@ -529,10 +529,10 @@ applied to new answers. Grading checkpoints each question; repeat to resume.
 7. New-ledger backfill, dry-run first and then explicit owner apply:
 
 ```bash
-scripts/run_phase07_v2.sh backfill --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --dry-run
-scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --dry-run
-scripts/run_phase07_v2.sh backfill --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --apply
-scripts/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --apply
+scripts/phases/run_phase07_v2.sh backfill --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --dry-run
+scripts/phases/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --dry-run
+scripts/phases/run_phase07_v2.sh backfill --system S7v2 --eval-set fix-pilot-tools --ledger "$S7_LEDGER" --f5-verdicts outputs/analysis/b7b/S7v2-f5.jsonl --apply
+scripts/phases/run_phase07_v2.sh backfill --system S8v2 --eval-set pilot122-v2 --ledger "$S8_LEDGER" --f5-verdicts outputs/analysis/b7b/S8v2-f5.jsonl --apply
 ```
 
 Expected: complete source/checksum-bound research-answer-eval runs with
@@ -543,8 +543,8 @@ new F5 verdict file, F5 remains pending, not an invented score.
 8. Optional holdout, starting the next quota day after the required stages:
 
 ```bash
-scripts/run_phase07_v2.sh run --system S7v2 --eval-set fix-holdout --enable-llm --max-requests 25
-scripts/run_phase07_v2.sh run --system S8v2 --eval-set fix-holdout --enable-llm --max-requests 25
+scripts/phases/run_phase07_v2.sh run --system S7v2 --eval-set fix-holdout --enable-llm --max-requests 25
+scripts/phases/run_phase07_v2.sh run --system S8v2 --eval-set fix-holdout --enable-llm --max-requests 25
 ```
 
 Expected: fifteen development F3 questions each. Use separate quota days and
@@ -556,8 +556,8 @@ reserved tokens each; conservative upper 150/1,080,000, split into daily caps.
 9. Snapshot rebuild after uploads (zero inference quota):
 
 ```bash
-LANGSMITH_SOURCE=fixture python scripts/build_dashboard_snapshot.py --dry-run
-LANGSMITH_SOURCE=fixture python scripts/build_dashboard_snapshot.py --max-requests 1000
+LANGSMITH_SOURCE=fixture python scripts/mlops/build_dashboard_snapshot.py --dry-run
+LANGSMITH_SOURCE=fixture python scripts/mlops/build_dashboard_snapshot.py --max-requests 1000
 ```
 
 Expected: explicit MLflow snapshot fetch with no live LangSmith request; COMPLETE

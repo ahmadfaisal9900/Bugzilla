@@ -100,7 +100,7 @@ for image in api chat; do
 done
 docker image inspect bugzilla-dashboard:readonly bugzilla-dashboard:lab --format '{{.RepoTags}} {{.Size}} bytes'
 B4_SMOKE="$(mktemp -d)"
-docker run --rm --user "$(id -u):$(id -g)" -v "$B4_SMOKE:$B4_SMOKE" --entrypoint python bugzilla-dashboard:readonly scripts/seed_mlflow_fixture.py --tracking-uri "file:$B4_SMOKE/mlruns"
+docker run --rm --user "$(id -u):$(id -g)" -v "$B4_SMOKE:$B4_SMOKE" --entrypoint python bugzilla-dashboard:readonly scripts/testing/seed_mlflow_fixture.py --tracking-uri "file:$B4_SMOKE/mlruns"
 chmod -R a+rX "$B4_SMOKE" # Synthetic fixture only; readable by container UID 10001.
 docker run -d --name dashboard-ci -p 8502:8502 -v "$B4_SMOKE:$B4_SMOKE:ro" -e "MLFLOW_TRACKING_URI=file:$B4_SMOKE/mlruns" -e LANGSMITH_SOURCE=fixture -e DASHBOARD_LAB_ENABLED=false bugzilla-dashboard:readonly
 timeout 90 bash -c 'until curl --fail --silent http://localhost:8502/_stcore/health; do sleep 2; done'

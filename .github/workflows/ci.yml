@@ -130,7 +130,7 @@ jobs:
         run: |
           store="$RUNNER_TEMP/dashboard-fixture"
           mkdir -p "$store"
-          docker run --rm --user "$(id -u):$(id -g)" -v "$store:$store" --entrypoint python bugzilla-dashboard:readonly scripts/seed_mlflow_fixture.py --tracking-uri "file:$store/mlruns"
+          docker run --rm --user "$(id -u):$(id -g)" -v "$store:$store" --entrypoint python bugzilla-dashboard:readonly scripts/testing/seed_mlflow_fixture.py --tracking-uri "file:$store/mlruns"
           docker run -d --name dashboard-ci -p 8502:8502 -v "$store:$store:ro" -e "MLFLOW_TRACKING_URI=file:$store/mlruns" -e LANGSMITH_SOURCE=fixture -e DASHBOARD_LAB_ENABLED=false bugzilla-dashboard:readonly
           trap 'docker logs dashboard-ci; docker rm -f dashboard-ci' EXIT
           timeout 90 bash -c 'until curl --fail --silent http://localhost:8502/_stcore/health; do sleep 2; done'

@@ -136,4 +136,17 @@ __pycache__/
 /outputs/evaluation/phase11/pilot125/*
 !/outputs/evaluation/phase11/pilot125/START_HERE.html
 !/outputs/evaluation/phase11/pilot125/REVIEW.csv
-serving_bundle/
+
+/serving_bundle/
+/.serving-build-*/
+
+# Local build and test leftovers
+/build/
+*.egg-info/
+.coverage
+/serving_bundle.zip
+
+# Test reports (CI writes them at the root; scripts/testing/test_coverage.* writes results/coverage/).
+/coverage.xml
+/junit.xml
+/results/coverage/
