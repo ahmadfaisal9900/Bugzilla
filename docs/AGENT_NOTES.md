@@ -951,3 +951,31 @@ Phase 0 stub. All three route probes report loader FAIL. Registry stores evaluat
 configs as research artifacts and marks serving blocked; it never substitutes
 the earlier implementation. Stream A integration and the obsolete Docker startup
 snapshot job are listed with exact files/functions in the B9 runbook.
+
+## 2026-11-23 — CI coverage source identity repair
+
+Inventory (expected → found): unchanged 70% gate → CI `test` job;
+canonical serving sources → canonical tree plus a second `clean source` tree
+reported by pytest-cov's inherited subprocess instrumentation;
+current read-only UI smoke test → stale nine-page navigation, now three tabs.
+Working tree was clean at entry. No research, shared contracts, API, or CD edits.
+
+Added coverage path equivalence for the clean-checkout fixture. Its subprocess
+lines merge into the canonical serving files; no modules are omitted and the
+70% threshold stays unchanged. A regression combines distinct executed lines
+from the two locations and proves both survive under one canonical filename.
+Updated the subprocess UI smoke test to use the committed CSV fixture and assert
+three tabs/seven charts without research imports or remote access.
+
+Validation: all seven CI boundary tests pass, including source-path merge and
+read-only rendering. Offline tests run in bounded file batches; socket-dependent
+FastAPI and Streamlit tests run separately with localhost permitted. Ruff check,
+format check, and diff whitespace checks pass. Existing Pydantic deprecation
+warnings remain third-party issues. No live services, commits, or pushes.
+
+Final combined result: 431/431 tests passed across bounded invocations;
+4,459/5,658 serving statements covered (78.81%), zero temporary duplicate source
+filenames, and `coverage report --fail-under=70` exits successfully. Diagnostic
+reports are in `/tmp/bugzilla-coverage/final/`; coverage batches used threshold
+zero only while collecting partial data, followed by the unchanged 70% gate on
+the combined complete measurements. Full Ruff check/format: 95 files pass.

@@ -67,6 +67,12 @@ select = ["E", "F", "I"]
 [tool.coverage.run]
 source = ["bugzilla_serving"]
 
+[tool.coverage.paths]
+# The clean-checkout smoke test runs the same tracked sources in a temporary
+# directory. Merge its subprocess measurements rather than counting a second,
+# mostly unexecuted copy of the package in the coverage denominator.
+serving = ["src/bugzilla_serving", "*/clean source/src/bugzilla_serving"]
+
 [tool.coverage.report]
 show_missing = true
 

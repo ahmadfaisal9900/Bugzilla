@@ -21,12 +21,10 @@ def denied(*args, **kwargs):
     raise AssertionError("No external services in readonly test")
 requests.sessions.Session.request = denied
 httpx.HTTPTransport.handle_request = denied
-app = AppTest.from_file("src/bugzilla_serving/dashboard/app.py").run()
-for page in ("overview", "answer_eval", "retrieval_eval", "cost_latency",
-             "error_analysis", "experiment_lab", "compare_runs", "production"):
-    if page != "overview":
-        app.switch_page(f"pages/{page}.py").run()
-    assert not app.exception, app.exception
+app = AppTest.from_file("src/bugzilla_serving/dashboard/app.py", default_timeout=10).run()
+assert not app.exception, app.exception
+assert [tab.label for tab in app.tabs] == ["Results", "Compare", "How it works & links"]
+assert len(app.get("plotly_chart")) >= 7
 assert "torch" not in sys.modules
 assert "bugzilla_serving.engine" not in sys.modules
 assert not any(m.startswith("bugzilla_serving.experiments") for m in sys.modules)
@@ -44,6 +42,8 @@ assert not any(m.startswith("bugzilla_serving.experiments") for m in sys.modules
         LANGCHAIN_TRACING_V2="false",
         MLFLOW_TRACKING_URI=(tmp_path / "empty").as_uri(),
         HF_HUB_OFFLINE="1",
+        DASHBOARD_RESULTS_DIR=str(ROOT / "tests/b_dashboard/fixtures/results_pack"),
+        DASHBOARD_REMOTE_ENABLED="false",
     )
     result = subprocess.run(
         [sys.executable, "-c", script],
@@ -170,3 +170,20 @@ def test_fixture_jobs_work_without_local_outputs_or_ignored_indexes(tmp_path):
         timeout=25,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_clean_checkout_coverage_merges_into_canonical_sources(tmp_path):
+    """Child pytest coverage must neither duplicate nor discard tracked code."""
+    from coverage import Coverage, CoverageData
+
+    canonical = ROOT / "src/bugzilla_serving/tracking/environment.py"
+    copied = tmp_path / "clean source/src/bugzilla_serving/tracking/environment.py"
+    data_file = str(tmp_path / "measurements")
+    child = CoverageData(basename=data_file + ".child")
+    child.add_lines({str(canonical): {3}, str(copied): {5}})
+    child.write()
+    cov = Coverage(data_file=data_file, config_file=str(ROOT / "pyproject.toml"))
+    cov.combine(data_paths=[str(tmp_path)], strict=True)
+    data = cov.get_data()
+    assert set(data.measured_files()) == {str(canonical)}
+    assert set(data.lines(str(canonical))) == {3, 5}
