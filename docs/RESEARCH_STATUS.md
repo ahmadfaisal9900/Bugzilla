@@ -2,6 +2,13 @@
 
 ## Current phase
 
+2026-11-23 CI provisioning follow-up: The reported main-branch failure is caused
+by CI's global HF_HUB_OFFLINE=1 reaching its model-download steps. Those two
+steps now override HF_HUB_OFFLINE and TRANSFORMERS_OFFLINE to 0; tests and serving
+retain offline defaults. A bounded workflow regression verifies the boundary.
+Model downloads, Docker builds and the full workflow remain owner-run; no new
+model or evaluation result is claimed.
+
 2026-11-23 MLOps integration audit: merged local Stream A tip `3160874` into
 `integration/merge-audit` with merge commit `efa8bd5`, preserving B9 and all 72
 research hashes. Added Linux launchers, updated B9 script paths, repaired preset

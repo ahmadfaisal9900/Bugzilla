@@ -224,3 +224,20 @@ def test_workspace_env_is_ignored_but_fixture_env_is_read(tmp_path):
     fixture = tmp_path / "fixture/.env"
     assert reader(fixture) == {"KEY": "synthetic"}
     assert reads == [fixture]
+
+
+def test_model_provisioning_is_online_without_relaxing_offline_defaults():
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    assert workflow["env"]["HF_HUB_OFFLINE"] == "1"
+    assert workflow["env"]["TRANSFORMERS_OFFLINE"] == "1"
+    provisioning = [
+        step
+        for job in workflow["jobs"].values()
+        for step in job["steps"]
+        if "scripts/app/fetch_models.py" in step.get("run", "")
+    ]
+    assert len(provisioning) == 2
+    for step in provisioning:
+        assert step["env"]["HF_HUB_OFFLINE"] == "0"
+        assert step["env"]["TRANSFORMERS_OFFLINE"] == "0"
+        assert "huggingface_hub==0.30.2" in step["run"]

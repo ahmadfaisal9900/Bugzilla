@@ -156,6 +156,10 @@ jobs:
           done
           docker image inspect bugzilla-dashboard:lab --format '{{.Size}}'
       - name: Provision pinned API image models
+        env:
+          # Provisioning needs network access; tests and serving remain offline.
+          HF_HUB_OFFLINE: '0'
+          TRANSFORMERS_OFFLINE: '0'
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
         run: |
           python3 -m pip install huggingface_hub==0.30.2
@@ -190,6 +194,10 @@ jobs:
         with:
           python-version: '3.11'
       - name: Fetch pinned image models
+        env:
+          # Provisioning needs network access; tests and serving remain offline.
+          HF_HUB_OFFLINE: '0'
+          TRANSFORMERS_OFFLINE: '0'
         run: |
           pip install huggingface_hub==0.30.2
           python scripts/app/fetch_models.py
