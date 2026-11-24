@@ -79,6 +79,14 @@ __pycache__/
 .cache/
 *.log
 
+# Generated test/coverage/security reports belong in CI artifacts, not Git.
+.coverage
+.coverage.*
+/coverage.xml
+/junit.xml
+/htmlcov/
+/results.sarif
+
 # Final evaluation releases: exact small artifacts only; all other outputs stay ignored.
 !/outputs/benchmark/phase05/run-65c5be3381f66811/
 /outputs/benchmark/phase05/run-65c5be3381f66811/*

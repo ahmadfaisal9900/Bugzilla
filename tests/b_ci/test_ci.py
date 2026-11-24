@@ -187,3 +187,29 @@ def test_clean_checkout_coverage_merges_into_canonical_sources(tmp_path):
     data = cov.get_data()
     assert set(data.measured_files()) == {str(canonical)}
     assert set(data.lines(str(canonical))) == {3, 5}
+
+
+def test_generated_reports_are_ignored_without_hiding_sources():
+    reports = [
+        ".coverage",
+        ".coverage.worker-1",
+        "coverage.xml",
+        "junit.xml",
+        "htmlcov/index.html",
+        "results.sarif",
+    ]
+    result = subprocess.run(
+        ["git", "check-ignore", "--no-index", "--stdin"],
+        cwd=ROOT,
+        input="\n".join(reports) + "\n",
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert set(result.stdout.splitlines()) == set(reports)
+    source = subprocess.run(
+        ["git", "check-ignore", "--no-index", "src/bugzilla_serving/dashboard/app.py"],
+        cwd=ROOT,
+        capture_output=True,
+    )
+    assert source.returncode == 1

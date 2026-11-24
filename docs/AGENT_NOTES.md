@@ -979,3 +979,23 @@ filenames, and `coverage report --fail-under=70` exits successfully. Diagnostic
 reports are in `/tmp/bugzilla-coverage/final/`; coverage batches used threshold
 zero only while collecting partial data, followed by the unchanged 70% gate on
 the combined complete measurements. Full Ruff check/format: 95 files pass.
+
+## 2026-11-24 — Generated-report secret scan false positives
+
+Inventory (expected → found): reports only as CI artifacts → `junit.xml` and
+`.coverage` tracked; ignore rules → no test-report patterns; scanner → pinned
+Gitleaks 8.24.3, default rules and exact fingerprint ignore file. Verified the
+two reported junit snippets are `cfg.s5_dossier_budget` and the literal token
+counter name `utf8_byte_upper_bound`, not credentials. Added only their exact
+commit/file/rule/line fingerprints so historical scans remain usable; no broad
+rule/path exclusion. Added generated-report ignore patterns and a regression
+that checks reports are ignored while application source remains visible.
+Owner must untrack the two reports with `git rm --cached -- junit.xml .coverage`;
+this retains local files. No history rewriting or pushes. Gitleaks executable
+is unavailable locally, so the actual scanner rerun remains owner/CI validation.
+
+Hosting: current app requires a Streamlit Python server; GitHub Pages supports
+static files only. A Pages deployment would require a static results export;
+Streamlit Community Cloud can run the app, provided the real results CSVs or
+configured read-only artifact access and its dependencies are supplied. No
+hosting/deployment or results publication was performed.
