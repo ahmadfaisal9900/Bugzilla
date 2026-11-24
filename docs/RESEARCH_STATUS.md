@@ -2,6 +2,18 @@
 
 ## Current phase
 
+2026-11-23 B11 full-suite follow-up: the owner-run check reported 597 passed /
+2 failed in 208 seconds. A fake credential's six-digit suffix entered bug-ID
+extraction, triggering an outside-cohort response before graph child traces.
+The serving runner now sanitizes known credentials before ID detection,
+retrieval and provider prompts; the tracing regression also checks the route,
+searched bug and redacted provider prompt. The standalone UI mock now includes
+the three added nullable config fields. All 20 tracing/UI-contract regressions
+pass in the owner's .venv, plus 11 API/Lab parity and guard checks; global
+Ruff and formatting pass. Full-suite success
+is not yet established; rerun in a new job directory, preserving the failed log.
+No contract/research-code changes, registry writes or live-provider requests.
+
 2026-11-23 B11 deployment preparation: added chat-only Quick Tunnel launcher,
 read-only Community Cloud entrypoint and adjacent lightweight pinned requirements,
 remote-first results-pack loading and a 232 KiB allowlisted dev snapshot. Local

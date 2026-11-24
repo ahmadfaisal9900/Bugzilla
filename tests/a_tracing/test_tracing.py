@@ -133,12 +133,32 @@ def client(tmp_path, monkeypatch):
         yield result
 
 
-def test_trace_and_feedback_have_sdk_children(client, caplog):
+def test_trace_and_feedback_have_sdk_children(client, caplog, monkeypatch):
+    prompts = []
+    build = api.build_runner
+
+    def capture_prompts(config):
+        runner = build(config)
+        generate = runner.provider.generate_json
+
+        def checked_generate(prompt, *args, **kwargs):
+            prompts.append(prompt)
+            return generate(prompt, *args, **kwargs)
+
+        runner.provider.generate_json = checked_generate
+        return runner
+
+    monkeypatch.setattr(api, "build_runner", capture_prompts)
     response = client.post(
         "/v1/ask", headers=HEADERS, json={**BODY, "message": BODY["message"] + SECRET}
     )
     assert response.status_code == 200
     value = response.json()
+    # SECRET ends in six digits: redaction must precede the cohort/ID guard.
+    assert value["record"]["route"] == "S1"
+    assert {e["bug_id"] for e in value["record"]["evidence"]} == {"100000"}
+    assert prompts and all(SECRET not in prompt for prompt in prompts)
+    assert any("[redacted]" in prompt for prompt in prompts)
     assert value["langsmith_run_id"]
     creates = [call.kwargs for call in client.sdk.create_run.call_args_list]
     roots = [call for call in creates if call["name"] == "Bugzilla chat"]

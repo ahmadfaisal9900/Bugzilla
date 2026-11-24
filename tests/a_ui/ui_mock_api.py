@@ -40,6 +40,9 @@ _BASE_CONFIG = {
     "s7_max_tool_steps": None,
     "rrf_k": None,
     "query_transform": None,
+    "router_rules_version": None,
+    "serving_bug_scope": None,
+    "tool_route_version": None,
 }
 PRESETS = [
     {

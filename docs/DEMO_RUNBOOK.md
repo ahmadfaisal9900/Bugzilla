@@ -252,3 +252,29 @@ model calls and no errors. The full offline suite, actionlint, Compose smoke,
 clean venv installation, live Groq checks and container measurements remain
 owner-run gates. Registry promotion, public tunnel and Cloud deployment were
 not executed by the agent.
+
+
+## Owner full-suite follow-up
+
+The first owner-run full suite reported **597 passed, 2 failed** (208 seconds).
+The failures were a numeric credential suffix mistaken for an out-of-cohort bug
+ID (therefore no child graph trace), and a UI mock missing the three new nullable
+RunConfig fields. Known credentials are now sanitized before all serving ID
+extraction/retrieval/provider use; the mock includes the missing fields.
+The strengthened tracing test verifies both actual graph execution and absence
+of the credential in provider prompts. All 20 tracing/UI-contract checks pass
+in the same .venv, plus all 11 API/Lab parity and guard checks, with no external
+SDK requests. Ruff and formatting pass.
+
+The full suite and subsequent actionlint gate still need an owner rerun. Use a
+new directory: code changed, so resuming the old job is deliberately refused.
+The failed results/demo_jobs/checks logs remain unchanged.
+
+```bash
+PYTHON="$PWD/.venv/bin/python" bash scripts/phases/run_phase11_demo_validation.sh --stage checks --dry-run --run-dir results/demo_jobs/checks-after-fix
+PYTHON="$PWD/.venv/bin/python" bash scripts/phases/run_phase11_demo_validation.sh --stage checks --run --run-dir results/demo_jobs/checks-after-fix
+```
+
+Expected: pytest reports no failures and summary.json is COMPLETE only after
+Ruff, formatting and actionlint also pass. Keep the champion unchanged until
+this gate and the separately documented live checks pass.

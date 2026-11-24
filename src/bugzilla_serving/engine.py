@@ -224,6 +224,11 @@ class Runner:
 
         if not isinstance(question, str) or not question.strip() or len(question) > 6000:
             raise ValueError("question: expected 1..6000 characters")
+        from .tracing import sanitize
+
+        # Remove known credentials before ID detection, retrieval or provider prompts.
+        # A numeric credential suffix must never be treated as another bug ID.
+        question = sanitize(question)
         start = time.perf_counter()
         before = self.provider.calls
         event_start = len(getattr(self.provider, "events", []))
