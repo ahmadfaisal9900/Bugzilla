@@ -45,43 +45,61 @@ def render() -> None:
     state = get_state()
     ready = data.api_ready()
     catalog = _load_catalog() if ready else None
+    panel = catalog is not None and controls.panel_open(state)
 
-    components.page_width(880)
-    components.page_header("Ask about Firefox bugs", components.HEADER_NOTE)
+    # With settings open the page widens and the panel sits on the right, like a playground's
+    # run settings; the conversation keeps its reading width on the left.
+    components.page_width(1240 if panel else 880)
+    if panel:
+        main, side = st.columns([2.5, 1], gap="large")
+    else:
+        main, side = st.container(), None
+
+    with main:
+        components.page_header("Ask about Firefox bugs", components.HEADER_NOTE)
+        if catalog is None:
+            st.error(
+                "The bug archive service isn't reachable right now, so new questions are paused. "
+                "Earlier answers in this session are still shown below."
+            )
+            _history(state)
     if catalog is None:
-        st.error(
-            "The bug archive service isn't reachable right now, so new questions are paused. "
-            "Earlier answers in this session are still shown below."
-        )
-        _history(state)
         st.chat_input(PLACEHOLDER, disabled=True)
         return
 
-    preset, overrides = _chat_controls(state, catalog)
-    _banners(state)
-    if state.turns:
-        _history(state)
-    else:
-        _welcome(state, catalog)
+    with main:
+        preset = _chat_controls(catalog, panel)
+    overrides = controls.custom_settings(catalog, preset)
+    if side is not None:
+        with side:
+            controls.settings_panel(catalog, preset, state)
+    with main:
+        _banners(state)
+        if state.turns:
+            _history(state)
+        else:
+            _welcome(state, catalog)
 
     limited = state.rate_limit_seconds > 0
     typed = st.chat_input(PLACEHOLDER, disabled=limited, max_chars=6000)
     question = typed or state.pending_question
     state.pending_question = None
     if question and not limited:
-        _answer(state, catalog, preset, overrides, question.strip())
+        with main:
+            _answer(state, catalog, preset, overrides, question.strip())
 
 
-def _chat_controls(state: AppState, catalog: Catalog):
-    """Mode picker with the "Custom settings" badge beside it, then Advanced settings."""
+def _chat_controls(catalog: Catalog, panel: bool):
+    """Mode picker, the "Custom settings" badge, and the Settings button on the right."""
     with st.container(key="chat-controls"):
-        mode, badge, _ = st.columns([2.2, 1.6, 4.2], vertical_alignment="bottom")
+        mode, badge, button = st.columns([2.2, 3.2, 1.6], vertical_alignment="bottom")
         with mode:
             preset = controls.mode_picker(catalog)
-        overrides = controls.advanced_settings(catalog, preset, state)
         with badge:
-            controls.custom_badge(overrides)
-    return preset, overrides
+            controls.custom_badge(controls.custom_settings(catalog, preset))
+        with button:
+            controls.settings_button(panel)
+    return preset
 
 
 def _load_catalog() -> Catalog | None:
@@ -116,25 +134,15 @@ def _rate_limit_countdown() -> None:
 
 
 def _welcome(state: AppState, catalog: Catalog) -> None:
-    """Empty state, laid out like kapa's onboarding: numbered examples, a fact panel, task tiles."""
-    examples, facts = st.columns([3, 2], gap="large")
-    with examples:
-        shown = starters(catalog.examples)
-        if shown:
-            components.section_label("Try an example")
-            with st.container(key="examples"):
-                for index, example in enumerate(shown):
-                    label = f"**{example.tag}** {example.question}"
-                    if st.button(label, key=f"example:{index}", use_container_width=True):
-                        _ask_later(state, example.question)
-    with facts, st.container(key="archive"):
-        st.markdown("**About the archive**")
-        st.markdown(
-            ":material/database: About 3,000 Firefox bug reports  \n"
-            ":material/link: Saved from Mozilla Bugzilla, not live  \n"
-            ":material/fact_check: Every answer lists the reports it used  \n"
-            ":material/tune: Mode changes how hard it searches"
-        )
+    """Empty state: numbered examples, then task tiles. Archive facts live on the About page."""
+    shown = starters(catalog.examples)
+    if shown:
+        components.section_label("Try an example")
+        with st.container(key="examples"):
+            for index, example in enumerate(shown):
+                label = f"**{example.tag}** {example.question}"
+                if st.button(label, key=f"example:{index}", use_container_width=True):
+                    _ask_later(state, example.question)
 
     components.section_label("Research tasks", rule=False)
     questions = task_questions(catalog.examples)
@@ -198,8 +206,7 @@ def _remember_error(state: AppState, error: ApiError) -> None:
         if error.field:
             state.invalid_setting = (error.field, error.message)
         state.notice = (
-            f"One of the advanced settings isn't valid ({error.message}). "
-            "Open Advanced settings to fix it."
+            f"One of the advanced settings isn't valid ({error.message}). Open Settings to fix it."
         )
     elif error.status == 401:
         state.notice = "The frontend's API key was rejected. Check SERVING_API_KEY."

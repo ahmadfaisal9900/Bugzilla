@@ -21,9 +21,9 @@ SORTS: dict[str, Callable[[list[CitedBug]], list[CitedBug]]] = {
 
 
 def render() -> None:
-    components.page_width(1120)
+    components.page_width(880)
     components.page_header(
-        "Cited bugs", "Bug reports used by answers in this session, and what each said."
+        "Cited bugs", "Bug reports used by answers in this session. Select one to see what it said."
     )
     bugs = get_state().cited_bugs()
     if not bugs:
@@ -32,7 +32,7 @@ def render() -> None:
         )
         return
 
-    search, sort, _ = st.columns([3, 1.3, 2.7], vertical_alignment="bottom")
+    search, sort = st.columns([3, 1.2], vertical_alignment="bottom")
     query = search.text_input(
         "Search cited bugs",
         placeholder="Search by bug number, evidence or question",
@@ -43,16 +43,14 @@ def render() -> None:
     order = sort.selectbox("Sort", list(SORTS), label_visibility="collapsed", key="cited-sort")
     shown = SORTS[order](matching(bugs, query))
 
-    table, detail = st.columns([3, 2], gap="large")
-    with table:
-        selected = _table(shown)
-        count = f"{len(shown)} of {len(bugs)} cited bug{'s' * (len(bugs) != 1)}"
-        components.section_label(count, "Select a row to see its details")
-    with detail:
-        if selected:
-            _detail(selected)
-        else:
-            st.caption("No cited bugs match that search.")
+    components.section_label(f"{len(shown)} of {len(bugs)} cited bug{'s' * (len(bugs) != 1)}")
+    if not shown:
+        st.caption("No cited bugs match that search.")
+        return
+    with st.container(key="bug-list"):
+        for bug in shown:
+            if st.button(_row_label(bug), key=f"bug-row-{bug.bug_id}", use_container_width=True):
+                _detail_dialog(bug)
 
 
 def matching(bugs: list[CitedBug], query: str) -> list[CitedBug]:
@@ -63,58 +61,39 @@ def matching(bugs: list[CitedBug], query: str) -> list[CitedBug]:
     return [b for b in bugs if needle in " ".join([b.bug_id, *b.snippets, *b.questions]).lower()]
 
 
-def _table(bugs: list[CitedBug]) -> CitedBug | None:
-    if not bugs:
-        return None
-    rows = [
-        {
-            "Bug": bug.url or bug.bug_id,
-            "Evidence": bug.snippets[0] if bug.snippets else "",
-            "Cited": bug.times_cited,
-        }
-        for bug in bugs
-    ]
-    event = st.dataframe(
-        rows,
-        key="cited-table",
-        hide_index=True,
-        use_container_width=True,
-        on_select="rerun",
-        selection_mode="single-row",
-        column_config={
-            "Bug": st.column_config.LinkColumn("Bug", display_text=r"id=(\d+)$", width="small"),
-            "Evidence": st.column_config.TextColumn(width="large"),
-            "Cited": st.column_config.NumberColumn(
-                width="small", help="Answers that cited it", format="%d×"
-            ),
-        },
-    )
-    picked = event.selection.rows if event and event.selection else []
-    index = picked[0] if picked and picked[0] < len(bugs) else 0
-    return bugs[index]
+def _row_label(bug: CitedBug) -> str:
+    """Bold bug number and citation count on top, the first line of evidence under it."""
+    cited = f"cited {bug.times_cited}×"
+    evidence = bug.snippets[0] if bug.snippets else "No evidence text."
+    evidence = evidence if len(evidence) <= 150 else evidence[:149].rstrip() + "…"
+    # Button labels are markdown: escape characters that would format the evidence.
+    for char in "\\*_`[]#<>":
+        evidence = evidence.replace(char, "\\" + char)
+    return f"**Bug {bug.bug_id} · {cited}** {evidence}"
+
+
+def _detail_dialog(bug: CitedBug) -> None:
+    """A popup titled with the bug number; Escape or the cross closes it."""
+    st.dialog(f"Bug {bug.bug_id}", width="large")(_detail)(bug)
 
 
 def _detail(bug: CitedBug) -> None:
     """The selected bug: what the archive said about it and where it came up."""
-    title = escape(f"Bug {bug.bug_id}")
-    if bug.url:
-        href = escape(bug.url, quote=True)
-        title = f"<a href='{href}' target='_blank' rel='noopener noreferrer'>{title}</a>"
     evidence = (
-        "".join(f"<li>{escape(s[:400])}</li>" for s in bug.snippets) or "<li>No evidence text.</li>"
+        "".join(f"<li>{escape(s[:600])}</li>" for s in bug.snippets) or "<li>No evidence text.</li>"
     )
     questions = "".join(f"<li>{escape(q)}</li>" for q in bug.questions)
     answers = f"{bug.times_cited} answer{'s' * (bug.times_cited != 1)}"
     with st.container(key="bug-detail"):
         st.markdown(
-            f"<h2 class='detail-title'>{title}</h2>"
             "<dl class='stats'>"
-            f"<div><dt>Cited</dt><dd>{answers}</dd></div>"
-            f"<div><dt>Best match</dt><dd>{bug.best_score:.2f}</dd></div>"
+            f"<div><dt>Cited by</dt><dd>{answers}</dd></div>"
+            f"<div><dt>Best match score</dt><dd>{bug.best_score:.2f}</dd></div>"
             f"<div><dt>Last cited</dt><dd>Question {bug.last_turn + 1}</dd></div>"
             "</dl>"
-            f"<h3 class='detail-label'>Evidence</h3><ul class='detail-list'>{evidence}</ul>"
-            "<h3 class='detail-label'>Asked in this session</h3>"
+            "<h3 class='detail-label'>What the archive says</h3>"
+            f"<ul class='detail-list'>{evidence}</ul>"
+            "<h3 class='detail-label'>Questions that cited it</h3>"
             f"<ul class='detail-list'>{questions}</ul>",
             unsafe_allow_html=True,
         )

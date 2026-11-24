@@ -6,13 +6,13 @@ API key stays on the server.
 
 ![Empty state](images/chat_ui/welcome.png)
 
-| Answer with sources | Advanced settings | Sources-only fallback |
+| Answer with sources | Settings panel | Sources-only fallback |
 |---|---|---|
 | ![](images/chat_ui/answer.png) | ![](images/chat_ui/settings.png) | ![](images/chat_ui/sources-only.png) |
 
-| Cited bugs | History |
-|---|---|
-| ![](images/chat_ui/cited.png) | ![](images/chat_ui/history.png) |
+| Cited bugs | Bug details popup | History |
+|---|---|---|
+| ![](images/chat_ui/cited.png) | ![](images/chat_ui/cited-detail.png) | ![](images/chat_ui/history.png) |
 
 ## Run it
 
@@ -57,7 +57,14 @@ not a landing page.
   in the API dot and warnings.
 - **Structure.** One heading per page, a thin top bar with the page name and API status,
   grouped sidebar navigation, numbered example rows, task tiles with a hairline on top, and a
-  collapsed "Answered in … · N sources checked" box above each answer. No emoji, no hero.
+  collapsed "How this was answered" box above each answer (mode, which system answered, model,
+  sources, time). No emoji, no hero.
+- **Settings in a side panel.** The Settings button opens a panel on the right of the chat,
+  like a model playground's run settings, grouped into Search and Language model. Names use the
+  usual terms (Retriever, Corpus, Top-k, Temperature) and each R/C/S code says what it is
+  (`chat_ui/ui/labels.py`). Changes are kept when the panel closes.
+- **Lists open details.** Cited bugs is a list of rows; selecting one opens a popup with what
+  the archive said and which questions cited it. History shows each question as a card.
 - Tokens live in `.streamlit/config.toml` (theme) and the top of `chat_ui/assets/styles.css`. Change them
   there instead of styling single elements.
 

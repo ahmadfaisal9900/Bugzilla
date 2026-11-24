@@ -9,9 +9,10 @@ import streamlit as st
 
 from ..api import Evidence
 from ..chat import Turn
+from .labels import choice
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
-DEGRADED = "Yes, sources only (free quota used up)"
+DEGRADED = "None, sources only (free quota used up)"
 ARCHIVE_NOTE = "Answers come from the Firefox Bugzilla archive (3,000-bug sample)."
 HEADER_NOTE = (
     "Ask about a bug's component, duplicates, dependencies or how often an issue comes up. "
@@ -122,6 +123,19 @@ def user_message(text: str) -> None:
     _html(f"<div class='user-msg'><p>{escape(text)}</p></div>")
 
 
+ROUTES = {
+    "abstain_low_evidence": "S4 · Stopped (evidence below threshold)",
+    "routing_error": "Router couldn't choose",
+}
+
+
+def answered_by(route: str) -> str:
+    """Which answering system produced the answer, e.g. "S7 · Database tools"."""
+    if not route:
+        return "Not reported"
+    return ROUTES.get(route) or choice("system_id", route)
+
+
 def answer_summary(turn: Turn) -> str:
     """One line on how an answer was made, e.g. "1.8 s · 3 sources"."""
     record = turn.record
@@ -131,20 +145,21 @@ def answer_summary(turn: Turn) -> str:
 
 
 def answer_facts(turn: Turn) -> None:
-    """Mode, model, sources, time and whether the answer was degraded (sources only)."""
+    """Label-over-value pairs: mode, the system that answered, model, sources, time."""
     record = turn.record
     count = len(record.evidence) if record else 0
     seconds = record.latency_ms / 1000 if record else 0.0
-    degraded = bool(record and record.sources_only)
-    _html(
-        "<dl class='facts'>"
-        f"<dt>Mode</dt><dd>{escape(turn.mode_label)}</dd>"
-        f"<dt>Model</dt><dd>{escape(turn.model_label)}</dd>"
-        f"<dt>Sources</dt><dd>{count} checked</dd>"
-        f"<dt>Time</dt><dd>{seconds:.1f} s</dd>"
-        f"<dt>Degraded</dt><dd>{DEGRADED if degraded else 'No'}</dd>"
-        "</dl>"
-    )
+    facts = [
+        ("Mode", turn.mode_label),
+        ("Answered by", answered_by(record.route if record else "")),
+        ("Model", turn.model_label),
+        ("Sources checked", str(count)),
+        ("Time", f"{seconds:.1f} s"),
+    ]
+    if record and record.sources_only:
+        facts.append(("Written answer", DEGRADED))
+    cells = "".join(f"<div><dt>{escape(k)}</dt><dd>{escape(v)}</dd></div>" for k, v in facts)
+    _html(f"<dl class='facts'>{cells}</dl>")
 
 
 def answer_body(turn: Turn, *, details: bool = True) -> None:

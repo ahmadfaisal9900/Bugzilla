@@ -30,9 +30,18 @@ def render() -> None:
     components.section_label(f"{len(turns)} question{'s' * (len(turns) != 1)}", "Newest first")
     with st.container(key="history"):
         for number, turn in reversed(list(enumerate(turns, start=1))):
-            with st.expander(turn.question, expanded=number == len(turns)):
-                meta = (
-                    f"{turn.mode_label} · {components.answer_summary(turn)} · {_ago(turn.asked_at)}"
+            with st.container(key=f"history-{number}"):
+                meta = " · ".join(
+                    [
+                        f"Question {number}",
+                        turn.mode_label,
+                        components.answer_summary(turn),
+                        _ago(turn.asked_at),
+                    ]
                 )
-                st.markdown(f"<p class='meta'>{escape(meta)}</p>", unsafe_allow_html=True)
+                st.markdown(
+                    f"<h3 class='history-question'>{escape(turn.question)}</h3>"
+                    f"<p class='history-meta'>{escape(meta)}</p>",
+                    unsafe_allow_html=True,
+                )
                 components.answer_body(turn, details=False)

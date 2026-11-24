@@ -41,18 +41,27 @@ def test_page_renders_with_answers(page):
     assert len([m for m in app.markdown if "page-title" in m.value]) == 1  # one heading per page
 
 
-def test_history_lists_each_question_once():
+def test_history_lists_each_question_once_newest_first():
     app = page_app("history").run()
-    assert [e.label for e in app.expander] == [
-        "quota check",
-        "Which component is bug 1000001 filed under?",
-    ]
+    questions = [m.value for m in app.markdown if "history-question" in m.value]
+    assert len(questions) == 2
+    assert "quota check" in questions[0]
+    assert "Which component is bug 1000001 filed under?" in questions[1]
 
 
-def test_cited_bugs_search_filters_the_table():
+def _rows(app):
+    return [b.key for b in app.button if b.key and b.key.startswith("bug-row-")]
+
+
+def test_cited_bugs_search_filters_the_list():
     app = page_app("cited_bugs").run()
-    assert len(app.dataframe[0].value) == 3
+    assert len(_rows(app)) == 3
     app.text_input(key="cited-search").set_value("duplicate").run()
-    assert list(app.dataframe[0].value["Bug"]) == [
-        "https://bugzilla.mozilla.org/show_bug.cgi?id=1000003"
-    ]
+    assert _rows(app) == ["bug-row-1000003"]
+
+
+def test_selecting_a_cited_bug_opens_its_details():
+    app = page_app("cited_bugs").run()
+    app.button(key="bug-row-1000003").click().run()
+    assert not app.exception
+    assert any("What the archive says" in m.value for m in app.markdown)

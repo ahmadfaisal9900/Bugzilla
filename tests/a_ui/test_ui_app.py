@@ -65,16 +65,37 @@ def test_degraded_shows_sources_without_answer(app):
     assert "source-list" in text and "This is a demo answer" not in text
 
 
+def test_settings_panel_opens_and_closes(app):
+    app.run()
+    assert not app.number_input  # closed by default: no settings drawn
+    app.button(key="settings-button").click().run()
+    assert app.number_input(key="setting:recommended:top_k").value == 5
+    assert app.number_input(key="setting:recommended:top_k").label == "Top-k passages"
+    app.button(key="settings-close").click().run()
+    assert not app.number_input
+
+
+def test_changed_setting_is_kept_after_closing_the_panel(app, backend):
+    app.run()
+    app.button(key="settings-button").click().run()
+    app.number_input(key="setting:recommended:top_k").set_value(7).run()
+    app.button(key="settings-close").click().run()
+    assert any("Custom settings" in m.value for m in app.markdown)
+    _ask(app, "Which component is bug 1000001 filed under?")
+    assert backend.requests[-1]["overrides"] == {"top_k": 7}
+
+
 def test_bad_advanced_setting_is_shown_next_to_the_field(app):
     app.run()
-    app.slider(key="setting:recommended:top_k").set_value(40).run()
+    app.button(key="settings-button").click().run()
+    app.number_input(key="setting:recommended:top_k").set_value(40).run()
     assert any("Custom settings" in m.value for m in app.markdown)
     assert app.button(key="reset-settings")
+    app.button(key="settings-close").click().run()
     _ask(app, "Which component is bug 1000001 filed under?")
-    assert any("top_k" in e.value for e in app.error)  # under the field, inside the expander
-    assert "Advanced settings" in [
-        e.label for e in [*app.expander, *app.status]
-    ]  # icon expanders list as status
+    # The panel reopens by itself and shows the API's message under the field.
+    assert app.number_input(key="setting:recommended:top_k")
+    assert any("top_k" in e.value for e in app.error)
 
 
 def test_rate_limit_disables_input(app):
