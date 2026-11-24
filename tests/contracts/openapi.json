@@ -676,6 +676,17 @@
             ],
             "title": "S7 Max Tool Steps"
           },
+          "serving_bug_scope": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Serving Bug Scope"
+          },
           "system_id": {
             "default": "S2",
             "enum": [

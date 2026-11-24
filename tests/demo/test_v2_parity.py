@@ -39,7 +39,7 @@ class CitedMock(MockProvider):
                 answer="Synthetic explanation",
                 answer_type="string",
                 bug_ids=[100000],
-                citations=ids[:1],
+                citations=([i for i in ids if i.startswith("comment-")] or ids)[:1],
                 rationale="The public fixture supports this.",
             )
         return super().generate_json(prompt, schema, **kwargs)
@@ -174,3 +174,60 @@ def test_v2_cap_and_legacy_hash():
         config_hash(RunConfig(system_id="S2", provider="mock"))
         == json.loads((ROOT / "tests/fixtures/config_hashes.json").read_text())["S2"]
     )
+
+
+@pytest.mark.parametrize("system", ["S8v2", "S2", "S1", "S5", "R0"])
+def test_outside_archive_all_modes(setup, system):
+    from bugzilla_serving.engine import build_runner
+
+    cfg = RunConfig(system_id=system, provider="mock")
+    provider = CitedMock()
+    with build_runner(cfg, provider) as runner:
+        value = runner.run("Tell me about bug 1000000")
+    assert value.route == "outside_archive" and value.llm_calls == provider.calls == 0
+    assert value.answer.abstain and "Bug 1000000 isn't in the 3,000-bug" in value.answer.rationale
+    assert "https://bugzilla.mozilla.org/show_bug.cgi?id=1000000" in value.answer.rationale
+
+
+def test_demo_check_mock_against_api(setup, tmp_path):
+    import argparse
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "demo_check", ROOT / "scripts/testing/demo_check.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    args = argparse.Namespace(
+        mock=True,
+        live=False,
+        case=None,
+        limit=None,
+        max_requests=None,
+        dry_run=False,
+        output=tmp_path / "check.json",
+        resume=None,
+    )
+    with TestClient(api.create_app()) as client:
+
+        def send(path, body=None):
+            response = client.request(
+                "POST" if body else "GET", path, headers={"X-API-Key": "parity-test-key"}, json=body
+            )
+            assert response.status_code == 200, response.text
+            return response.json()
+
+        result = module.run(args, send)
+    assert result["state"] == "PASS"
+    assert len(result["rows"]) == 4
+    args.mock, args.live, args.case, args.cases = (
+        False,
+        True,
+        "field,cited-why,find-description-1,outside",
+        ROOT / "tests/demo/demo_cases.yaml",
+    )
+    args.max_requests = 4
+    sender = Mock()
+    with pytest.raises(ValueError, match="at least 5"):
+        module.run(args, sender)
+    sender.assert_not_called()

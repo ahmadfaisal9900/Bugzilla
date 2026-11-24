@@ -57,6 +57,7 @@ class RunConfig(BaseModel):
     rrf_k: int | None = Field(default=None, json_schema_extra=_optional_limits(1, 200))
     query_transform: Literal["R7a", "R7b"] | None = None
 
+    serving_bug_scope: bool | None = None
     router_rules_version: Literal["json-tools-v2"] | None = None
     tool_route_version: Literal["json-tools-v2"] | None = None
 
@@ -138,7 +139,7 @@ class RunConfig(BaseModel):
 def config_hash(cfg: RunConfig) -> str:
     values = cfg.model_dump(mode="json")
     # Preserve every existing config hash when extension fields are unset.
-    for field in ("router_rules_version", "tool_route_version"):
+    for field in ("router_rules_version", "tool_route_version", "serving_bug_scope"):
         if values[field] is None:
             values.pop(field)
     payload = json.dumps(

@@ -2,6 +2,14 @@
 
 ## Current phase
 
+2026-11-23 B11 pre-router and demo checks: serving-only explicit-ID scope flag,
+discussion/dossier fallback, cohort refusal and capped/truncation-marked packing
+are implemented. All 44 bounded synthetic demo tests passed; 10 real C1
+retrieval-only checks and a 10-test API/Lab/contract subset passed. Offline
+route diff is 6/122 changed, listed in docs/DEMO_ROUTE_DIFF.md (no tuning).
+The mock CLI passed against TestClient; Compose/full suite/actionlint and live
+checks remain owner-run. No Groq calls or remote registry mutations.
+
 2026-11-23 S8v2 serving prerequisite: owner confirms the live champion was S2,
 not the Auto-router. Added serving-only V2 graph/tools selection, contract enum
 and version metadata, a 4096-byte S8v2 dossier cap and API/Lab four-route mock

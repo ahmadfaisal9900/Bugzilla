@@ -68,10 +68,7 @@ def main():
             view = st.selectbox("Additional tools", ["None", "Experiment Lab", "Production"])
         if view == "Experiment Lab":
             st.session_state["final_dashboard"] = True
-            st.info(
-                "The evaluated Auto-router is not selectable until its serving "
-                "implementation is supported. Other systems remain available here."
-            )
+            st.info("Auto-router uses the V2 serving adapter with a 4,096-byte dossier cap.")
             from bugzilla_serving.dashboard.views import experiment_lab
 
             experiment_lab()

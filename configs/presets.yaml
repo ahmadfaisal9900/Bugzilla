@@ -10,6 +10,7 @@ presets:
     s7_max_tool_steps: 4
     retriever: R7b
     corpus: C1
+    serving_bug_scope: true
     provider: groq
     model: openai/gpt-oss-20b
     top_k: 10
@@ -24,6 +25,7 @@ presets:
     system_id: S1
     retriever: R1
     corpus: C1
+    serving_bug_scope: true
     provider: groq
     model: openai/gpt-oss-20b
     top_k: 5
@@ -39,6 +41,7 @@ presets:
     s5_dossier_budget: 4096
     retriever: R7b
     corpus: C1
+    serving_bug_scope: true
     provider: groq
     model: openai/gpt-oss-20b
     top_k: 5

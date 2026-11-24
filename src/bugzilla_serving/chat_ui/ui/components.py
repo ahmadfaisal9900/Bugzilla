@@ -182,7 +182,9 @@ def answer_body(turn: Turn, *, details: bool = True) -> None:
         )
         source_list(sources[:5])
     elif record.abstain:
-        st.markdown("I couldn't find enough evidence in the archive to answer that.")
+        st.markdown(
+            record.rationale or "I couldn't find enough evidence in the archive to answer that."
+        )
         if sources:
             source_chips(sources[:5], "Closest reports")
     else:

@@ -137,6 +137,20 @@ class Runner:
         self.backend.by_id = {d["chunk_id"]: d for d in self.backend.docs}
         if cfg.rrf_k is not None:
             self.backend.rc["rrf_k"] = cfg.rrf_k
+        if cfg.serving_bug_scope:
+            from .routing import explicit_ids, ordered_dossier
+
+            retrieve = self.backend.retrieve
+
+            def scoped_retrieve(question, method, k=None, use_cache=True, cached_only=False):
+                ids = explicit_ids(question["question"])
+                if ids:
+                    own = [d for d in self.backend.docs if str(d["bug_id"]) in ids]
+                    ordered = ordered_dossier(own, question["question"])
+                    return ordered[:k or self.config["retrieval_k"]], False
+                return retrieve(question, method, k, use_cache, cached_only)
+
+            self.backend.retrieve = scoped_retrieve
         self._temp = None
         self._source_override = None
         if self.manifest.get("synthetic"):
@@ -164,6 +178,18 @@ class Runner:
         if any(not isinstance(q.get("question"), str) or not q["question"].strip()
                for q in self.examples):
             raise ValueError("bundle: expected nonempty question or text-only example")
+
+    def _cohort_ids(self):
+        import duckdb
+
+        path = self._source_override or self.root / "data/sample.duckdb"
+        if not self._source_override:
+            source = json.loads((self.root / self.config["source_config"]).read_text())
+            path = self.root / source["canonical_db"]
+        with duckdb.connect(str(path), read_only=True) as db:
+            return {str(r[0]) for r in db.execute(
+                "SELECT bug_id FROM sample_membership WHERE seed=?", [self.config["seed"]]
+            ).fetchall()}
 
     def _serving_engine(self):
         from bugzilla_qa.retrieval_v3.registry import Engine
@@ -217,7 +243,22 @@ class Runner:
                 raise ValueError("ORACLE: requires explicit references for a known dev question")
             q["oracle_refs"] = matching["evidence_record_ids"]
         emit("retrieving", "Searching public evidence")
-        if self.cfg.system_id == "R0":
+        from .routing import explicit_ids
+
+        requested = explicit_ids(question)
+        missing = [bug for bug in requested if bug not in self._cohort_ids()]
+        if missing:
+            from bugzilla_qa.answering.contracts import abstention
+
+            bug = missing[0]
+            message = (f"Bug {bug} isn't in the 3,000-bug Firefox sample this tool covers "
+                       f"(filed 2021–2024). https://bugzilla.mozilla.org/show_bug.cgi?id={bug}")
+            emit("retrieved", "Named bug is outside the archive")
+            emit("generating", "Answer generation skipped")
+            state = dict(answer=abstention(message), route="outside_archive",
+                         route_rule="cohort_membership_serving", retrieved=[], usage=[],
+                         errors=[], cache_hit=False)
+        elif self.cfg.system_id == "R0":
             # R7 is rejected for R0 by RunConfig, so this cannot request a transform.
             docs, cached = self.backend.retrieve(q, self.cfg.retriever, use_cache=False)
             emit("retrieved", f"Found {len(docs)} sources")
@@ -228,16 +269,28 @@ class Runner:
             graph_type = AnswerGraph
             tools_type = Tools
             if self.cfg.system_id == "S8v2":
-                from bugzilla_qa.answering_v2.graph import AnswerGraphV2
+                from .routing import ServingGraphV2
                 from bugzilla_qa.answering_v2.tools import ToolsV2
 
-                graph_type, tools_type = AnswerGraphV2, ToolsV2
+                graph_type, tools_type = ServingGraphV2, ToolsV2
             tools = tools_type(self.config, self.root, self.backend)
             if self._source_override:
                 tools.source["canonical_db"] = self._source_override
             outer = self
 
             class ProgressGraph(graph_type):
+                def pack_context(self, state):
+                    if state["route"] == "S5" and outer.cfg.serving_bug_scope:
+                        from .routing import ordered_dossier, pack_dossier
+
+                        docs = ordered_dossier(state["retrieved"], state["question"])
+                        context, mapping = pack_dossier(
+                            docs, min(4096, self.config["dossier_tokens"])
+                        )
+                        return dict(context=context, context_map=mapping,
+                                    context_ids=list(mapping.values()))
+                    return super().pack_context(state)
+
                 def retrieve(self, state):
                     result = super().retrieve(state)
                     emit("retrieved", f"Found {len(result['retrieved'])} sources")
@@ -262,6 +315,12 @@ class Runner:
         for chunk_id in state.get("context_ids", []):
             if chunk_id in self.backend.by_id:
                 evidence.setdefault(chunk_id, self.backend.by_id[chunk_id])
+        if state["answer"]["abstain"] and state["route"] != "outside_archive":
+            searched = requested or sorted({str(d["bug_id"]) for d in evidence.values()}, key=int)
+            label = ", ".join(searched) if searched else "no matching bug IDs"
+            rationale = state["answer"]["rationale"].rstrip(".")
+            state["answer"] = dict(state["answer"], rationale=(
+                rationale[:700] + "; searched bugs: " + label[:240] + "."))
         value = dict(
             answer=state["answer"], route=state["route"], route_rule=state["route_rule"],
             evidence=[dict(

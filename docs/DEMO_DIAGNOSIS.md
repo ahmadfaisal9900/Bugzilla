@@ -2,6 +2,16 @@
 
 Inspected 2026-11-23 at base commit `4b8b615`. No live model calls.
 
+## Confirmed running-API correction
+
+The owner subsequently checked `/v1/presets`: Recommended was the MLflow
+champion **S2 / R7b / C1**, Fast was S1, and Deep read was unpublished. Therefore
+the reported question used Smart search and did not invoke either router.
+The route-function findings below describe the additional V2 routing gap, not
+an observed routing decision in that original request. The local bundle's zero
+comments and metadata-only evidence remain confirmed. See `DEMO_RUNBOOK.md` for
+serving support, promotion preview and rollback commands.
+
 ## Root cause
 
 Both `rule_route` and `route_v2` return `(None, ambiguous_id_query)` for

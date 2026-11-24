@@ -207,6 +207,14 @@ hyperparameters:
     choices:
     - R7a
     - R7b
+  serving_bug_scope:
+    type: choice
+    default: null
+    label: Search the named bug
+    help: Serving-only explicit-ID evidence restriction; historical configs stay unchanged.
+    applies_to: *id001
+    advanced: true
+    choices: [true, false]
   router_rules_version:
     type: choice
     default: null
