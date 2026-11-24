@@ -1,7 +1,7 @@
 # Current dashboard
 
 The entrypoint is now the three-tab final development-results app. Run
-`scripts/run_dev_dashboard.sh`; optional settings come from the explicit
+`scripts/app/run_dev_dashboard.sh`; optional settings come from the explicit
 `DASHBOARD_ENV_FILE=.env` option. See [the B9 runbook](../../../docs/mlops/B9_DASHBOARD.md)
 for data loading, publication, registration and the serving promotion blocker.
 The multipage material below documents retained legacy components and tests.

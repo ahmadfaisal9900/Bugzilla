@@ -254,3 +254,53 @@ def test_registry_cache_and_champion(monkeypatch):
     fallback = store.get()
     assert {p.slug for p in fallback} == {"recommended", "fast", "deep"}
     assert not any(p.is_champion for p in fallback)
+
+
+def test_evaluated_auto_router_is_refused_through_both_loaders(client):
+    """Keep the integration failure explicit; never substitute the legacy S8 graph."""
+    import yaml
+
+    from bugzilla_serving.tracking.final_registry import champion_check
+    from bugzilla_serving.tracking.registry import executable
+
+    cfg = RunConfig(system_id="S8", provider="mock", s5_dossier_budget=12000).model_dump()
+    cfg.update(
+        system_id="S8v2", router_rules_version="json-tools-v2", tool_route_version="json-tools-v2"
+    )
+    with pytest.raises(ValueError, match="system_id"):
+        executable(cfg)
+    check = champion_check(yaml.safe_dump(cfg))
+    assert not check["passed"]
+    assert len(check["routes"]) == 3
+    assert all(row["stage"] == "shared config loader" for row in check["routes"])
+    response = client.post("/v1/ask", headers=HEADERS, json={**BODY, "overrides": cfg})
+    assert response.status_code == 422
+    assert response.json()["code"] == "invalid_config"
+    assert "system_id" in response.json()["message"]
+    assert not client.app.state.runners
+
+
+def test_registry_artifact_champion_is_recommended(tmp_path, monkeypatch):
+    """Standalone B registry versions store config.yaml, without evaluated-run params."""
+    import mlflow.tracking
+    import yaml
+
+    config = RunConfig(system_id="S1", provider="mock")
+    artifact = tmp_path / "config.yaml"
+    artifact.write_text(yaml.safe_dump(config.model_dump()))
+    version = SimpleNamespace(
+        version="3", run_id="registry-carrier", tags={"config_hash": config_hash(config)}
+    )
+    client = Mock()
+    client.search_model_versions.return_value = [version]
+    client.get_model_version_by_alias.return_value = version
+    client.get_run.return_value.data.params = {}
+    client.download_artifacts.return_value = str(artifact)
+    monkeypatch.setenv("MLFLOW_TRACKING_URI", (tmp_path / "store").as_uri())
+    monkeypatch.setattr(mlflow.tracking, "MlflowClient", Mock(return_value=client))
+    recommended = PresetStore().get()[0]
+    assert recommended.slug == "recommended"
+    assert recommended.label == "Recommended"
+    assert recommended.is_champion
+    assert recommended.config == config
+    client.download_artifacts.assert_called_once_with("registry-carrier", "config.yaml")

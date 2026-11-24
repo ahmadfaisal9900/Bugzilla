@@ -66,6 +66,11 @@ print(f"llm_calls={record['llm_calls']} latency_ms={record['latency_ms']:.0f}")
 EOF
   )"; then
     pass "/v1/ask ${label} (${summary})"
+    request_id="$("$PY" -c 'import json,sys; print(json.load(open(sys.argv[1]))["request_id"])' "$out")"
+    feedback_code="$(status_of -H "X-API-Key: ${SERVING_API_KEY}" -H 'Content-Type: application/json' \
+      -d "{\"request_id\":\"${request_id}\",\"score\":1}" "${API_URL}/v1/feedback")"
+    [[ "$feedback_code" == 200 ]] && pass "feedback ${label}" || fail "feedback HTTP ${feedback_code}"
+
   else
     fail "/v1/ask ${label}: unexpected record $(head -c 300 "$out")"
   fi

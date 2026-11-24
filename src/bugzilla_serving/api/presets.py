@@ -60,26 +60,38 @@ class PresetStore:
             versions, key=lambda v: (v.version == champion, int(v.version)), reverse=True
         ):
             tags = version.tags
-            if tags.get("published") != "true" or tags.get("preset_slug") in items:
+            is_champion = str(version.version) == str(champion)
+            slug = "recommended" if is_champion else tags.get("preset_slug")
+            if (not is_champion and tags.get("published") != "true") or slug in items:
                 continue
             try:
                 params = client.get_run(version.run_id).data.params
-                values = {}
-                for field in RunConfig.model_fields:
-                    raw = params[field]
-                    try:
-                        values[field] = json.loads(raw)
-                    except ValueError:
-                        values[field] = raw
-                config = RunConfig(**values).validate_against()
-                if params.get("config_hash") != config_hash(config):
+                if set(RunConfig.model_fields) <= params.keys():
+                    values = {}
+                    for field in RunConfig.model_fields:
+                        raw = params[field]
+                        try:
+                            values[field] = json.loads(raw)
+                        except ValueError:
+                            values[field] = raw
+                    config = RunConfig(**values).validate_against(mode="execute")
+                else:
+                    # Standalone registry versions carry config.yaml rather than run params.
+                    from bugzilla_serving.tracking.client import artifact_tracking_uri
+                    from bugzilla_serving.tracking.registry import executable
+
+                    with artifact_tracking_uri(uri):
+                        path = client.download_artifacts(version.run_id, "config.yaml")
+                    config = executable(yaml.safe_load(Path(path).read_text()))
+                expected = params.get("config_hash") or tags.get("config_hash")
+                if expected != config_hash(config):
                     continue
                 preset = Preset(
-                    slug=tags["preset_slug"],
-                    label=tags["preset_label"],
-                    description=tags["preset_description"],
+                    slug=slug,
+                    label="Recommended" if is_champion else tags["preset_label"],
+                    description=tags.get("preset_description", "Registry champion"),
                     config=config,
-                    is_champion=version.version == champion,
+                    is_champion=is_champion,
                 )
             except (ValueError, KeyError, TypeError):
                 continue

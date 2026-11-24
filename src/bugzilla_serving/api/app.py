@@ -120,7 +120,14 @@ def create_app() -> FastAPI:
                 app.state.tracer.close()
             app.state.bundle.close()
 
-    app = FastAPI(title="Bugzilla QA", version="1.0.0", lifespan=lifespan)
+    app = FastAPI(
+        title="Bugzilla QA",
+        version="1.0.0",
+        lifespan=lifespan,
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
     app.state.ready = False
     errors = {501: {"model": ErrorResponse}}
 

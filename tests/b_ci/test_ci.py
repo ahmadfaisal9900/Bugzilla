@@ -213,3 +213,14 @@ def test_generated_reports_are_ignored_without_hiding_sources():
         capture_output=True,
     )
     assert source.returncode == 1
+
+
+def test_workspace_env_is_ignored_but_fixture_env_is_read(tmp_path):
+    from b_ci.pytest_offline import fixture_env_reader
+
+    reads = []
+    reader = fixture_env_reader(lambda p: reads.append(p) or {"KEY": "synthetic"}, tmp_path)
+    assert reader(tmp_path / ".env") == {}
+    fixture = tmp_path / "fixture/.env"
+    assert reader(fixture) == {"KEY": "synthetic"}
+    assert reads == [fixture]

@@ -217,3 +217,31 @@ def test_live_check_defaults_to_preview(monkeypatch, capsys):
     script.main()
     assert json.loads(capsys.readouterr().out)["state"] == "DRY_RUN"
     check.assert_not_called()
+
+
+def test_private_bundle_comment_never_reaches_mocked_trace(client):
+    """Even checksum-valid private evidence must be refused before serialization."""
+    import hashlib
+    import os
+    from pathlib import Path
+
+    bundle = Path(os.environ["BUNDLE_DIR"])
+    corpus = bundle / "indexes/C1/corpus.jsonl"
+    rows = [json.loads(line) for line in corpus.read_text().splitlines()]
+    sentinel = "PRIVATE_COMMENT_MUST_NOT_REACH_TRACE"
+    rows[0].update(visibility="private", text=sentinel)
+    corpus.write_text("".join(json.dumps(row) + "\n" for row in rows))
+    variant_path = corpus.parent / "manifest.json"
+    variant = json.loads(variant_path.read_text())
+    variant["sha256"]["corpus.jsonl"] = hashlib.sha256(corpus.read_bytes()).hexdigest()
+    variant_path.write_text(json.dumps(variant))
+    manifest_path = bundle / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    for path in (corpus, variant_path):
+        manifest["files"][path.relative_to(bundle).as_posix()].update(
+            bytes=path.stat().st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest()
+        )
+    manifest_path.write_text(json.dumps(manifest))
+    response = client.post("/v1/ask", headers=HEADERS, json=BODY)
+    assert response.status_code == 500
+    assert sentinel not in response.text + repr(client.sdk.mock_calls)
