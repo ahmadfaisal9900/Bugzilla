@@ -5,7 +5,31 @@ came from, plus a dashboard for experiment results. The research behind it start
 
 ## How to run it
 
-You need Git, Python 3.11 and Docker Desktop. Docker is needed for the tests and for option B in step 5.
+You need Git, Python 3.11 and Docker Desktop. Docker is needed for option B in step 5; offline pytest also runs directly in Python.
+
+### Linux launch and integration checks
+
+From the existing checkout with Python dependencies installed:
+
+```bash
+source .venv/bin/activate
+cp .env.example .env  # first setup only; fill in local values
+bash scripts/app/run_local.sh --dashboard
+```
+
+Windows PowerShell: `.\scripts\app\run_local.ps1` (all three services),
+or add `-NoDashboard` for API/chat. Linux omits the dashboard unless
+`--dashboard` is supplied. Both require a verified dev serving bundle.
+`bash scripts/app/run_dashboard.sh` launches the dashboard alone.
+
+Offline checks: `bash scripts/testing/test_coverage.sh` on Linux;
+`.\scripts\testing\test_coverage.ps1` on Windows through Docker.
+Use `docker compose -f compose.local.yaml up --build` for the local Docker stack.
+See the [integration audit](docs/mlops/INTEGRATION_AUDIT.md),
+[contracts](docs/mlops/OVERVIEW.md), [Stream A](docs/mlops/STREAM_A.md),
+[Stream B](docs/mlops/STREAM_B.md) and [CI](docs/mlops/CI.md).
+The evaluated Auto-router remains refused by the shared loader; see the audit
+before attempting champion publication. No live deployment is claimed.
 
 ### 1. Get the code
 
@@ -541,7 +565,7 @@ For the serving data package, see [Stream A, A1](docs/mlops/STREAM_A.md#a1-servi
 add `--apply` to build it. The current local runtime supplies C1 only; C0/C2 are
 reported as missing. The generated folder stays gitignored.
 
-The serving API is `bugzilla_serving.api.app:app`; the [Quick start](#quick-start-run-everything)
+The serving API is `bugzilla_serving.api.app:app`; the [Quick start](#how-to-run-it)
 runs it with the chat and dashboard. To start the API alone, run
 `python -m uvicorn bugzilla_serving.api.app:app --host 127.0.0.1 --port 8000 --workers 1`
 (set `LLM_PROVIDER=mock` only for offline checks without a Groq key).

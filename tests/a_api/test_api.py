@@ -273,10 +273,24 @@ def test_evaluated_auto_router_is_refused_through_both_loaders(client):
     assert not check["passed"]
     assert len(check["routes"]) == 3
     assert all(row["stage"] == "shared config loader" for row in check["routes"])
-    response = client.post("/v1/ask", headers=HEADERS, json={**BODY, "overrides": cfg})
-    assert response.status_code == 422
-    assert response.json()["code"] == "invalid_config"
-    assert "system_id" in response.json()["message"]
+    corpus = client.app.state.bundle.root / "indexes/C1/corpus.jsonl"
+    comment = next(
+        row
+        for row in map(json.loads, corpus.read_text().splitlines())
+        if row.get("kind") == "comment"
+    )
+    samples = [
+        f"What component is recorded for bug {comment['bug_id']}?",
+        f"What reason is in cited comment {comment['record_id']} for bug {comment['bug_id']}?",
+        "Which report describes the fixture issue?",
+    ]
+    for message in samples:
+        response = client.post(
+            "/v1/ask", headers=HEADERS, json={**BODY, "message": message, "overrides": cfg}
+        )
+        assert response.status_code == 422
+        assert response.json()["code"] == "invalid_config"
+        assert "system_id" in response.json()["message"]
     assert not client.app.state.runners
 
 

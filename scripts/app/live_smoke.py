@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 
-from bugzilla_serving.contracts.run_config import ROOT, RunConfig
+from bugzilla_serving.contracts.run_config import ROOT, RunConfig, config_hash
 
 
 def main():
@@ -58,6 +58,7 @@ def main():
         actual_api_calls=0,
         actual_llm_calls=0,
         checks=[],
+        usage_missing=False,
     )
     checkpoint = args.out / "summary.json"
     log = args.out / (dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ".log")
@@ -103,6 +104,7 @@ def main():
                     break
                 # Reserve before sending: crashes consume the request budget.
                 summary["actual_api_calls"] += 1
+                summary["usage_missing"] = True
                 save()
                 response = client.post(
                     "/v1/ask",
@@ -115,6 +117,9 @@ def main():
                 response.raise_for_status()
                 value = response.json()
                 record = value["record"]
+                summary["actual_llm_calls"] += record["llm_calls"]
+                summary["usage_missing"] = False
+                save()
                 if args.feedback_score is not None:
                     feedback = client.post(
                         "/v1/feedback",
@@ -128,9 +133,9 @@ def main():
                 passed = (
                     not record["errors"]
                     and not record["degraded"]
+                    and record["config_hash"] == config_hash(cfg)
                     and (record["route"] == route if route else record["answer"]["abstain"])
                 )
-                summary["actual_llm_calls"] += record["llm_calls"]
                 summary["checks"].append(
                     dict(
                         probe=label,

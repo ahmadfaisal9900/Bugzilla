@@ -62,7 +62,9 @@ include = [
     "scripts/app/build_serving_bundle.py", "tests/a_bundle/**/*.py", "tests/a_api/**/*.py",
     "tests/a_quota/**/*.py", "tests/a_tracing/**/*.py", "tests/a_ui/**/*.py",
     "scripts/app/check_serving_tracing.py",
-    "tests/b_tracking/**/*.py", "scripts/backfill_*.py", "scripts/mlops/publish_preset.py",
+    "scripts/app/live_smoke.py", "scripts/app/run_dashboard.py", "scripts/mlops/build_results_pack.py",
+    "scripts/mlops/log_final_results.py", "scripts/mlops/register_all_systems.py",
+    "tests/b_tracking/**/*.py", "scripts/mlops/backfill_*.py", "scripts/mlops/publish_preset.py",
     "tests/b_experiments/**/*.py", "scripts/mlops/make_eval_sets.py", "scripts/mlops/run_experiment.py",
     "tests/b_dashboard/**/*.py", "tests/b_ci/**/*.py", "conftest.py",
 ]
@@ -72,8 +74,6 @@ select = ["E", "F", "I"]
 
 [tool.coverage.run]
 source = ["bugzilla_serving"]
-# Tests that copy the repo into pytest temp folders (tests/b_ci) must not count as source.
-omit = ["*/pytest-of-*/*"]
 
 [tool.coverage.paths]
 # The clean-checkout smoke test runs the same tracked sources in a temporary
@@ -83,6 +83,7 @@ serving = ["src/bugzilla_serving", "*/clean source/src/bugzilla_serving"]
 
 [tool.coverage.report]
 show_missing = true
+fail_under = 70
 
 # Pre-existing Phase 0 formatting is owned by A/shared contracts. Do not
 # reformat those files as part of B4; remove exclusions with owner approval.

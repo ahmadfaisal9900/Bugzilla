@@ -1,7 +1,7 @@
 # CI and local smoke stack: builds the images here, serves the synthetic fixture bundle and uses
 # the mock LLM, so it needs no keys, no real data and no network at runtime.
 #   docker compose -f compose.ci.yaml up --build -d && bash scripts/testing/smoke.sh
-# The dashboard joins with --profile dashboard (read-only target of docker/dashboard.Dockerfile).
+# All three services start by default; dashboard uses the read-only Docker target.
 name: bugzilla-ci
 
 x-api-build: &api-build
@@ -49,7 +49,6 @@ services:
       - "8501:8501"
 
   dashboard:
-    profiles: [dashboard]
     build: { context: ., dockerfile: docker/dashboard.Dockerfile, target: dashboard-readonly }
     image: bugzilla-dashboard:ci
     environment:

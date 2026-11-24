@@ -1,5 +1,7 @@
 # B9 — final development results dashboard
 
+Integration status and owner verification commands: [INTEGRATION_AUDIT.md](INTEGRATION_AUDIT.md). Historical Phase 0 API notes below predate the merge; S8v2 serving remains refused.
+
 Implemented and smoke-tested offline. No model calls or DagsHub writes were made.
 Publication and registration below are owner commands; default is dry-run.
 
@@ -61,7 +63,7 @@ RuntimeError: Tried to instantiate class '__path__._path', but it does not exist
 
 ### Cost meaning
 
-`python scripts/build_results_pack.py` writes `system_cost.csv` and prints:
+`python scripts/mlops/build_results_pack.py` writes `system_cost.csv` and prints:
 
 ```text
 calls/question = (0*82 + 15 + 2.08*23 + 1.016*6 + 1)/122 = 0.573246
@@ -90,8 +92,8 @@ and apostrophes are supported. No CI test requires `.env`.
    ```bash
    conda activate iqfm
    export PYTHONPATH="$PWD/src:$PWD${PYTHONPATH:+:$PYTHONPATH}"
-   python scripts/build_results_pack.py
-   scripts/run_dev_dashboard.sh
+   python scripts/mlops/build_results_pack.py
+   scripts/app/run_dev_dashboard.sh
    ```
 
    Expected: cost file COMPLETE; open http://localhost:8502. Three tabs, nine
@@ -100,14 +102,14 @@ and apostrophes are supported. No CI test requires `.env`.
    the initial local smoke test). To enable Advanced, set `DASHBOARD_ADVANCED=true`;
    Lab controls additionally require `DASHBOARD_LAB_ENABLED=true`.
    To load link/password environment settings explicitly from the owner’s local
-   file, use `DASHBOARD_ENV_FILE=.env scripts/run_dev_dashboard.sh` (no secrets
+   file, use `DASHBOARD_ENV_FILE=.env scripts/app/run_dev_dashboard.sh` (no secrets
    are printed). Without that option the dashboard does not require `.env`.
 
 2. Preview, then log final results with credentials from the owner's local file:
 
    ```bash
-   python scripts/log_final_results.py --env-file .env
-   python scripts/log_final_results.py --env-file .env --apply
+   python scripts/mlops/log_final_results.py --env-file .env
+   python scripts/mlops/log_final_results.py --env-file .env --apply
    ```
 
    Expected: DRY_RUN then APPLIED. Nine named system runs plus results-pack in
@@ -121,8 +123,8 @@ and apostrophes are supported. No CI test requires `.env`.
    champion while serving support is blocked:
 
    ```bash
-   python scripts/register_all_systems.py --env-file .env
-   python scripts/register_all_systems.py --env-file .env --apply
+   python scripts/mlops/register_all_systems.py --env-file .env
+   python scripts/mlops/register_all_systems.py --env-file .env --apply
    ```
 
    Expected: dry-run prints database/dossier/search FAIL at the shared loader.
@@ -134,7 +136,7 @@ and apostrophes are supported. No CI test requires `.env`.
 4. Requested champion command (currently refuses safely):
 
    ```bash
-   python scripts/register_all_systems.py --env-file .env --apply --move-champion
+   python scripts/mlops/register_all_systems.py --env-file .env --apply --move-champion
    ```
 
    Expected now: REFUSED, exit 2, no registry writes and no champion change.
@@ -199,7 +201,7 @@ Changed application files:
 - `src/bugzilla_serving/dashboard/app.py`, `results_source.py`, `results_app.py`,
   `theme.py`, `views.py`, `legacy_app.py`, `README.md`.
 - `src/bugzilla_serving/tracking/final_results.py`, `final_registry.py`, `environment.py`.
-- `scripts/build_results_pack.py`, `log_final_results.py`, `register_all_systems.py`,
+- `scripts/mlops/build_results_pack.py`, `log_final_results.py`, `register_all_systems.py`,
   `run_dashboard.py`, `run_dev_dashboard.sh`.
 - `tests/b_dashboard/test_final_dashboard.py`, the 13 trimmed CSV fixtures under
   `tests/b_dashboard/fixtures/results_pack/`, and legacy entrypoint references in

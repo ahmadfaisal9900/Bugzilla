@@ -2,6 +2,16 @@
 
 ## Current phase
 
+2026-11-23 MLOps integration audit: merged local Stream A tip `3160874` into
+`integration/merge-audit` with merge commit `efa8bd5`, preserving B9 and all 72
+research hashes. Added Linux launchers, updated B9 script paths, repaired preset
+artifact loading and offline environment isolation, and enabled Compose CI smoke.
+Bounded fixture checks pass. The evaluated S8v2 champion remains refused by the
+shared serving contract; no API parity or promotion is claimed. Full tests,
+coverage, image builds and Compose smoke are owner-run gates per the latest
+instruction. The interrupted merged run measured 81.05% coverage, not a completed
+pass. No push or live service validation. See `docs/mlops/INTEGRATION_AUDIT.md`.
+
 2026-11-22 A4 tracing and feedback: Added sampled serving traces, a durable 150-attempt UTC daily cap, sanitized SDK writes and request-to-trace mapping on `feature/streamA`. Feedback always saves locally and attaches to a traced run when LangSmith is available; failed remote submissions remain pending. The combined regression run passed 134 tests, followed by the final focused API/quota/tracing checks (including the preview-only CLI test). OpenAPI is unchanged. The single authorized live mock question was verified remotely in `ensf621-serving`: one root, 15 child runs, all ten agreed metadata fields and `user_rating=1`. Both live screenshots are in the monitoring guide. Changed-file and all-16-run credential scans passed. No Groq requests were made; the temporary 100% sampling server was stopped. The default remains 20%. No commits or pushes were made.
 
 2026-11-22 A3 quota guard: Added `quota.py` and connected daily 90% request/token thresholds, recent request/token checks, cooldown handling and six-questions-per-minute session admission to the API on `feature/streamA`. Daily totals reuse the research `quota_report()` without changing research code or the provider ledger. Near the thresholds, live questions switch to R0 with local retrieval, sources and an extra explanatory stream status. All 124 targeted quota/API/bundle/Phase 0/research tests passed, including the unchanged OpenAPI snapshot. A fake 91% ledger with the real C1 bundle returned four sources, `degraded=true` and zero LLM calls. These are local per-question estimates, not a guarantee of provider remaining quota or coverage of every tool turn. No live Groq calls, commits or pushes were made. A4 tracing remains outstanding.
