@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import tempfile
 import time
 from pathlib import Path
@@ -11,6 +12,10 @@ from typing import Callable
 
 from .contracts.records import AnswerRecord, StatusData, StatusEvent
 from .contracts.run_config import ROOT, RunConfig, config_hash, load_spec
+
+# "bug 123456", "bug #123456", "bug id: 123456", "bugs 123456"
+_BUG_REFERENCE = re.compile(r"\bbugs?\s*(?:#|id\s*:?)?\s*(\d{4,9})\b", re.IGNORECASE)
+_NUMBER = re.compile(r"\b\d{4,9}\b")
 
 
 def redact(value):
@@ -139,6 +144,7 @@ class Runner:
             self.backend.rc["rrf_k"] = cfg.rrf_k
         self._temp = None
         self._source_override = None
+        self._known_ids: set[str] | None = None
         if self.manifest.get("synthetic"):
             # Synthetic fixtures ship deterministic SQL rather than a version-specific
             # DuckDB binary. They are materialized only in a temporary directory.
@@ -191,9 +197,24 @@ class Runner:
                                              QueryTransforms(self.provider))
         return backend.engine
 
+    def unknown_bugs(self, question: str) -> list[str]:
+        """Bug IDs the question names when none of them appears anywhere in the archive.
+
+        An ID counts as known if it is a sampled bug or is mentioned in any sampled bug's text
+        (links, duplicates), so questions about linked bugs still reach the answering graph.
+        """
+        asked = list(dict.fromkeys(_BUG_REFERENCE.findall(question)))
+        if not asked:
+            return []
+        if self._known_ids is None:
+            known = {str(d["bug_id"]) for d in self.backend.docs}
+            for doc in self.backend.docs:
+                known.update(_NUMBER.findall(doc.get("text", "")))
+            self._known_ids = known
+        return [] if any(b in self._known_ids for b in asked) else asked
+
     def run(self, question: str, on_event: Callable | None = None) -> AnswerRecord:
         from bugzilla_qa.answering.graph import AnswerGraph
-        from bugzilla_qa.answering.tools import Tools
         from langsmith import tracing_context
 
         if not isinstance(question, str) or not question.strip() or len(question) > 6000:
@@ -208,16 +229,27 @@ class Runner:
                 on_event(redact(event.model_dump(mode="json")))
 
         matching = next((q for q in self.examples if q["question"] == question), None)
+        # The serving database holds only the sampled bugs, so "all" means the whole sample.
+        # count_bugs refuses all-scope counts unless the question declares this explicitly.
         q = dict(qid="interactive", question=question, family="UNKNOWN", split="dev",
-                 dataset="serving", freeze_id="serving-bundle", scope={})
+                 dataset="serving", freeze_id="serving-bundle",
+                 scope={"corpus": "all canonical bugs in the serving sample"})
         if matching:
             q.update({k: matching[k] for k in ("qid", "family", "scope") if k in matching})
         if self.cfg.system_id == "ORACLE":
             if not matching or not matching.get("evidence_record_ids"):
                 raise ValueError("ORACLE: requires explicit references for a known dev question")
             q["oracle_refs"] = matching["evidence_record_ids"]
+        missing = [] if matching else self.unknown_bugs(question)
         emit("retrieving", "Searching public evidence")
-        if self.cfg.system_id == "R0":
+        if missing:
+            # Nothing to retrieve or reason over: answer directly, with no LLM call.
+            emit("retrieved", "Found 0 sources")
+            emit("generating", "Not in this archive; answer generation skipped")
+            sampled = len({str(d["bug_id"]) for d in self.backend.docs})
+            state = dict(answer=_not_in_archive(missing, sampled), route="unknown_bug",
+                         route_rule="bug_not_in_archive", retrieved=[], usage=[], errors=[])
+        elif self.cfg.system_id == "R0":
             # R7 is rejected for R0 by RunConfig, so this cannot request a transform.
             docs, cached = self.backend.retrieve(q, self.cfg.retriever, use_cache=False)
             emit("retrieved", f"Found {len(docs)} sources")
@@ -225,12 +257,28 @@ class Runner:
             state = dict(answer=_abstain(), route="R0", route_rule="retrieval_only",
                          retrieved=docs, usage=[], errors=[], cache_hit=cached)
         else:
-            tools = Tools(self.config, self.root, self.backend)
+            from .serving_tools import SERVING_TOOLS, ServingTools, is_ranking_question
+
+            tools = ServingTools(self.config, self.root, self.backend)
             if self._source_override:
                 tools.source["canonical_db"] = self._source_override
             outer = self
 
             class ProgressGraph(AnswerGraph):
+                def router(self, state):
+                    # Ranking questions name no bug and no counting word, so the research rules
+                    # send them to text search, which cannot rank 3,000 bugs. Use the tools.
+                    result = super().router(state)
+                    if (state["system_id"] == "S8" and result["route"] == "S2"
+                            and is_ranking_question(state["question"])):
+                        result.update(route="S7", route_rule="ranking")
+                    return result
+
+                def _call(self, state, prompt, schema=None, tools=None, purpose="answer"):
+                    # Offer the serving tool list (adds count_bugs_by) wherever tools are offered.
+                    offered = SERVING_TOOLS if tools is not None else None
+                    return super()._call(state, prompt, schema, offered, purpose)
+
                 def retrieve(self, state):
                     result = super().retrieve(state)
                     emit("retrieved", f"Found {len(result['retrieved'])} sources")
@@ -274,7 +322,7 @@ class Runner:
             cache_hits=sum(u.get("state") == "CACHE_HIT" for u in usage)
                        + int(state.get("retrieval_cache_hit", False)),
             latency_ms=(time.perf_counter() - start) * 1000,
-            degraded=self.cfg.system_id == "R0", errors=state.get("errors", []),
+            degraded=state["route"] == "R0", errors=state.get("errors", []),
             config_hash=config_hash(self.cfg),
         )
         record = AnswerRecord.model_validate(redact(value))
@@ -296,6 +344,13 @@ class Runner:
 def _abstain():
     return dict(abstain=True, answer=None, answer_type="unknown", bug_ids=[], citations=[],
                 rationale="No generated answer is available; inspect the supplied sources.")
+
+
+def _not_in_archive(bug_ids, sampled):
+    names = ", ".join(bug_ids)
+    subject = f"Bug {names} isn't" if len(bug_ids) == 1 else f"Bugs {names} aren't"
+    return dict(abstain=True, answer=None, answer_type="unknown", bug_ids=[], citations=[],
+                rationale=f"{subject} in this archive, a sample of {sampled:,} Firefox bugs.")
 
 
 def _mock_provider():

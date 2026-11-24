@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import time
-from html import escape
 
 import streamlit as st
 
@@ -27,21 +26,41 @@ def render() -> None:
     if not turns:
         st.info("No questions yet.")
         return
-    components.section_label(f"{len(turns)} question{'s' * (len(turns) != 1)}", "Newest first")
+    query = (
+        st.text_input(
+            "Search history", placeholder="Find a question or answer…", key="history-search"
+        )
+        .strip()
+        .casefold()
+    )
+    selected = [
+        (number, turn)
+        for number, turn in reversed(list(enumerate(turns, start=1)))
+        if not query
+        or query
+        in (turn.question + " " + (turn.record.text if turn.record else turn.error)).casefold()
+    ]
+    components.section_label(
+        f"{len(selected)} of {len(turns)} questions"
+        if query
+        else f"{len(turns)} question{'s' * (len(turns) != 1)}",
+        "Newest first",
+    )
+    if not selected:
+        st.info("No questions match your search.")
     with st.container(key="history"):
-        for number, turn in reversed(list(enumerate(turns, start=1))):
-            with st.container(key=f"history-{number}"):
-                meta = " · ".join(
-                    [
-                        f"Question {number}",
-                        turn.mode_label,
-                        components.answer_summary(turn),
-                        _ago(turn.asked_at),
-                    ]
+        for number, turn in selected:
+            with st.expander(turn.question):
+                status = (
+                    "Not completed"
+                    if turn.record is None
+                    else "Sources only"
+                    if turn.record.sources_only
+                    else "No answer"
+                    if turn.record.abstain
+                    else "Answered"
                 )
-                st.markdown(
-                    f"<h3 class='history-question'>{escape(turn.question)}</h3>"
-                    f"<p class='history-meta'>{escape(meta)}</p>",
-                    unsafe_allow_html=True,
+                st.caption(
+                    f"Question {number} · {status} · {turn.mode_label} · {_ago(turn.asked_at)}"
                 )
                 components.answer_body(turn, details=False)

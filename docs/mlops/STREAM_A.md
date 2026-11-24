@@ -111,32 +111,34 @@ python -m pytest tests/a_api tests/a_bundle tests/contracts tests/test_answering
 
 ## A3. Quota and graceful degradation
 
-- Per-model daily request and token guard at 90% of the configured limits, reusing the provider ledger. A tokens-per-minute pre-check estimates the prompt size.
+- Per-model daily request and token guard at 90% of the configured limits, reusing the provider ledger. The minute check uses recorded requests and tokens.
 - When over the limit, run **R0 retrieval-only** with `degraded=true`, and emit a `status` event explaining it.
-- A per-session rate limit (e.g. 6 questions/min) returns `rate_limited` with `retry_after`.
+- A per-session limit of 12 questions per minute returns `rate_limited` with `retry_after`.
 - `/v1/quota` exposes used/limit per model for the UI banner.
-- Optional, if time allows: a bring-your-own Groq key header, request-scoped and never stored or logged.
 
 A3 is implemented in `src/bugzilla_serving/quota.py` and the API. Daily counts reuse
 the research `quota_report()`; only the last-minute window is added over the same
 ledger. Live questions switch to R0 at 90% of daily requests/tokens, an active provider
-cooldown, the minute request limit, or when recent tokens plus
-`context_budget_tokens + 800` exceed TPM. Unverified recent usage also selects R0.
+cooldown, or when recorded minute requests or tokens reach their limits. A malformed
+or unreadable usage ledger also selects R0.
 R1–R6 are retained; R7 falls back to R1. Method-specific generation settings are
 cleared. The response has sources, `degraded=true`, zero LLM calls and a reason;
 degraded streams send one extra status event before the usual sequence.
 
-Each session may submit six valid questions in a rolling minute, including mock
-and source-only questions. The seventh returns HTTP 429 and `Retry-After` before
-joining the inference queue. Sessions expire in memory and reset on restart; keep
-the documented single worker. Mocks skip provider-budget checks. `/v1/quota` uses
-the default context estimate for its `degraded_now` flag; each question uses its
-actual configured context budget.
+Each session may submit 12 valid questions in a rolling minute, including mock
+and source-only questions. Adjust `quota.questions_per_minute` in
+`configs/serving.yaml`. Over-limit requests return HTTP 429 and `Retry-After` before
+joining the queue. Session counts reset on restart. Mock requests skip provider-budget
+checks. `/v1/quota` reports the same local usage thresholds as the request check.
 
-These are per-question local prechecks, not reserved provider quota. Token totals
-exclude unknown failed-request usage, provider reset times may differ from the local
-Pacific calendar, and output/tool calls can exceed the estimate. No guarantee of the
-provider's remaining balance is made. The original ledger is never edited.
+The minute check leaves the next request's token cost to Groq. A request can still
+receive HTTP 429 when Groq applies its limits. Local token totals exclude unreported
+usage, and the local Pacific guard day can differ from Groq's accounting.
+
+To select a serving credential, set `SERVING_GROQ_KEY_SLOT` to `1`, `2`, `3`, or `4`
+in the ignored `.env` and restart the API. Slot 1 uses `GROQ_API_KEY` by default, and
+slots 2 through 4 use the corresponding numbered variables. All slots use the same
+local ledger and cooldown. Groq sets organization limits across keys.
 
 ```powershell
 python -m pytest tests/a_quota tests/a_api -q

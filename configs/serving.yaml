@@ -10,6 +10,8 @@
 tracing:
   trace_sample: 0.2
   daily_cap: 150
+quota:
+  questions_per_minute: 12
 models:
   gpt-oss-20b:
     provider: groq

@@ -38,12 +38,18 @@ def test_welcome_shows_modes_and_examples(app):
     assert not [b for b in app.sidebar.button if "?" in b.label]  # examples are not duplicated
 
 
-def test_asking_shows_answer_and_feedback(app):
+def test_asking_shows_answer_and_readable_sources_without_feedback(app):
     app.run()
     app.chat_input[0].set_value("What component is bug 1000001 filed under?").run()
     assert not app.exception
     text = " ".join(m.value for m in app.markdown)
     assert "This is a demo answer" in text and "Bug 1000001" in text
+    assert "source-list" in text and "Cited in answer" in text
+    assert "Component: Session Restore" in text
+    assert not app.text_area
+    assert not app.get("feedback")
+    assert not any("Add a comment" in b.label for b in app.button)
+    assert any(e.label.startswith("Answer details") for e in app.expander)
 
 
 def _ask(app, question):
@@ -56,12 +62,19 @@ def _ask(app, question):
 
 def test_abstention_shows_closest_sources(app):
     text = _ask(app, "something unknown")
-    assert "couldn't find enough evidence" in text and "Closest reports" in text
+    assert "couldn't find enough evidence" in text and "Related reports" in text
+
+
+def test_failed_question_stays_with_its_error(app):
+    question = "this one is broken"
+    text = _ask(app, question)
+    assert question in text  # the question is still on screen
+    assert any("Something went wrong" in w.value for w in app.warning)
 
 
 def test_degraded_shows_sources_without_answer(app):
     text = _ask(app, "quota check")
-    assert any("quota is used up" in w.value for w in app.warning)
+    assert any("Answer generation is temporarily limited" in w.value for w in app.warning)
     assert "source-list" in text and "This is a demo answer" not in text
 
 

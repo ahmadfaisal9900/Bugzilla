@@ -1,4 +1,4 @@
-"""Interactive controls: answer mode, advanced settings and feedback."""
+"""Interactive controls for answer mode and advanced settings."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from typing import Any
 
 import streamlit as st
 
-from ..api import ApiClient, ApiError, Catalog, Preset, Setting
-from ..chat import Turn, changed_settings, preset_values
+from ..api import Catalog, Preset, Setting
+from ..chat import changed_settings, preset_values
 from ..state import AppState
 from . import labels
 
@@ -180,30 +180,3 @@ def custom_badge(overrides: dict[str, Any]) -> None:
             f"<span class='badge' title='{escape(names, quote=True)}'>Custom settings</span>",
             unsafe_allow_html=True,
         )
-
-
-def feedback(turn: Turn, client: ApiClient, key: str) -> None:
-    """Thumbs up or down, saved immediately; an optional comment can follow."""
-    if not turn.request_id:
-        return
-    widget = f"feedback:{key}"
-
-    def send(comment: str | None = None) -> None:
-        score = st.session_state.get(widget)
-        if score is None:
-            return
-        try:
-            client.feedback(turn.request_id, int(score), comment)
-            turn.feedback = int(score)
-        except ApiError:
-            st.toast("Feedback couldn't be saved. Please try again.")
-
-    left, right = st.columns([1, 3], vertical_alignment="center")
-    with left:
-        st.feedback("thumbs", key=widget, on_change=send)
-    if turn.feedback is not None:
-        with right, st.popover("Add a comment"):
-            note = st.text_area("What could be better?", max_chars=2000, key=f"note:{key}")
-            if st.button("Send", key=f"send:{key}"):
-                send(note.strip() or None)
-                st.toast("Feedback saved.")

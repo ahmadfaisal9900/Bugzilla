@@ -17,7 +17,9 @@ def get_client() -> ApiClient:
     return ApiClient(Settings.from_env())
 
 
-@st.cache_data(ttl=300, show_spinner=False)
+# cache_resource, not cache_data: no pickling, so a hot reload of the api models (the cached
+# client still builds objects from the old module) cannot crash the page. Neither is mutated.
+@st.cache_resource(ttl=300, show_spinner=False)
 def get_catalog() -> Catalog:
     return get_client().catalog()
 
@@ -27,7 +29,7 @@ def api_ready() -> bool:
     return get_client().is_ready()
 
 
-@st.cache_data(ttl=15, show_spinner=False)
+@st.cache_resource(ttl=15, show_spinner=False)
 def get_quota() -> QuotaStatus | None:
     try:
         return get_client().quota()

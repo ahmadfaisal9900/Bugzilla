@@ -57,14 +57,19 @@ not a landing page.
   in the API dot and warnings.
 - **Structure.** One heading per page, a thin top bar with the page name and API status,
   grouped sidebar navigation, numbered example rows, task tiles with a hairline on top, and a
-  collapsed "How this was answered" box above each answer (mode, which system answered, model,
-  sources, time). No emoji, no hero.
+  answer first, followed by source excerpts and a collapsed "Answer details" section. Evidence
+  counts refer to passages checked; source lists count distinct bug reports. The opaque top bar
+  stays separate from the conversation while scrolling. No emoji, no hero.
 - **Settings in a side panel.** The Settings button opens a panel on the right of the chat,
   like a model playground's run settings, grouped into Search and Language model. Names use the
   usual terms (Retriever, Corpus, Top-k, Temperature) and each R/C/S code says what it is
   (`chat_ui/ui/labels.py`). Changes are kept when the panel closes.
 - **Lists open details.** Cited bugs is a list of rows; selecting one opens a popup with what
-  the archive said and which questions cited it. History shows each question as a card.
+  the archive said and which questions cited it. History is searchable and lists collapsed questions
+  newest first; expand one to read its answer. Sources show the bug link, excerpt and whether the
+  passage was cited or just retrieved. Three reports appear initially, with more available below.
+- **No feedback controls.** The chat has no thumbs or additional-comment form. The feedback API
+  remains available for existing tracing clients.
 - Tokens live in `.streamlit/config.toml` (theme) and the top of `chat_ui/assets/styles.css`. Change them
   there instead of styling single elements.
 
@@ -82,8 +87,8 @@ src/bugzilla_serving/chat_ui/
 ├── state.py                  typed per-session state (turns, rate limit, notices)
 ├── ui/
 │   ├── data.py               cached API access (catalog 5 min, quota 15 s)
-│   ├── components.py         display-only pieces: answer, source chips, header
-│   └── controls.py           inputs: mode picker, advanced settings, feedback
+│   ├── components.py         display-only pieces: answer, source excerpts, header
+│   └── controls.py           inputs: mode picker and advanced settings
 ├── pages/                    one module per screen, each with render()
 ├── assets/styles.css         layout and type scale the theme can't set
 └── static/fonts/             Geist, served by Streamlit's static file serving
@@ -109,7 +114,6 @@ only `ui/` and `pages/` know about Streamlit. That keeps each part small and tes
 | `GET /v1/quota` | `quota()` | Banner when the free quota is nearly used up |
 | `POST /v1/chat/stream` | `stream(body)` | The answer, with live progress (SSE); what the chat uses |
 | `POST /v1/ask` | `ask(body)` | The same answer in one response, without progress |
-| `POST /v1/feedback` | `feedback()` | Thumbs up/down and an optional comment |
 
 `client.chat_body(...)` builds the request body for `stream()` and `ask()`. The catalog
 (`options` plus `examples`) is cached for 5 minutes (`ttl=300`).

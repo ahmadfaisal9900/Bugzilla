@@ -47,12 +47,16 @@
 [data-testid="stBottomBlockContainer"] { max-width: min(var(--content), calc(100% - 4rem)); padding: .75rem 0 1.25rem; }
 
 /* Top bar: where you are on the left, API status on the right. */
-[data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has(.top-bar) {
-  width: 100% !important; position: sticky; top: 0; z-index: 50; background: var(--pane); border-radius: 12px 12px 0 0;
+div:has(> .st-key-app-header) {
+  width: 100% !important; max-width: none !important; position: sticky; top: 0;
+  z-index: 100; background: var(--pane) !important; isolation: isolate;
+  border-radius: 12px 12px 0 0; box-shadow: 0 1px 0 var(--line);
 }
+.st-key-app-header { width: 100% !important; background: var(--pane) !important; }
+.st-key-app-header [data-testid="stMarkdown"] { background: var(--pane); }
 .top-bar {
-  display: flex; align-items: center; justify-content: space-between; height: 44px; padding: 0 20px;
-  border-bottom: 1px solid var(--line); font-size: var(--fs-small);
+  display: flex; align-items: center; justify-content: space-between; min-height: 52px;
+  padding: 0 24px; background: var(--pane); font-size: var(--fs-small);
 }
 [data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) .top-bar { padding-left: 52px; }
 /* The "open sidebar" control sits inside the top bar's left end. */
@@ -202,13 +206,16 @@ p.panel-section {
 .st-key-tasks [data-testid="stColumn"] { border-top: 1px solid var(--line); }
 
 /* ---- Conversation, styled after kapa's widget ------------------------------------------------- */
-.user-msg { display: flex; justify-content: flex-end; margin: 1.25rem 0 .25rem; }
-.user-msg p { margin: 0; max-width: 80%; padding: 8px 14px; border-radius: 14px; background: var(--fill);
+.user-msg { display: flex; justify-content: flex-end; margin: 0 0 1.1rem; }
+.user-msg p { margin: 0; max-width: 85%; padding: 12px 18px; border-radius: 16px 16px 4px 16px; background: var(--fill);
               color: var(--ink); font-size: var(--fs-body); line-height: 1.5; }
-[class*="st-key-answer-"] { gap: .6rem; }
+[class*="st-key-turn-"] { padding: 1.75rem 0 2rem; border-bottom: 1px solid var(--line); }
+[class*="st-key-turn-"]:last-child { border-bottom: 0; }
+[class*="st-key-answer-"] { gap: .9rem; }
+[class*="st-key-answer-"] > div:has(> [data-testid="stExpander"]) { margin-top: .6rem; }
 [class*="st-key-answer-"] [data-testid="stMarkdownContainer"] > p,
 [class*="st-key-answer-"] [data-testid="stMarkdownContainer"] li { font-size: 15px; line-height: 1.6; color: var(--text); }
-p.rationale { font-size: var(--fs-body) !important; color: var(--secondary) !important; margin: 0; }
+p.rationale { font-size: var(--fs-body) !important; line-height: 1.65; color: var(--secondary) !important; margin: .15rem 0 .5rem; }
 
 /* Collapsed "how it was answered" box and the live status box share kapa's thought-box look. */
 [data-testid="stExpander"] details { border: 1px solid var(--line-strong); border-radius: 8px; background: transparent; }
@@ -226,25 +233,21 @@ p.rationale { font-size: var(--fs-body) !important; color: var(--secondary) !imp
 .facts dd { margin: .15rem 0 0; font-size: var(--fs-small); line-height: 1.4; font-weight: 500; color: var(--ink); }
 [data-testid="stExpanderDetails"]:has(.facts) { padding-bottom: .9rem; }
 
-/* Sources: small neutral chips. */
-.sources { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: .4rem 0 0; }
-.sources-label { margin-right: 4px; font-size: var(--fs-meta); font-weight: 500; color: var(--tertiary); }
-a.chip, span.chip {
-  display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 6px; background: var(--fill);
-  color: var(--ink) !important; font-size: var(--fs-meta); font-weight: 500; text-decoration: none; font-variant-numeric: tabular-nums;
+.source-section-title {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  margin: .7rem 0 .1rem; font-size: var(--fs-small); font-weight: 600; color: var(--ink);
 }
-a.chip:hover { background: rgb(56 83 218 / .1); color: var(--accent) !important; }
-.source-list { list-style: none; padding: 0; margin: .25rem 0 .5rem; border-top: 1px solid var(--line); }
-.source-list li { padding: .65rem 0; margin: 0; border-bottom: 1px solid var(--line); }
-.source-list a { font-size: var(--fs-body); font-weight: 500; color: var(--accent); text-decoration: none; }
-.source-list p { margin: .2rem 0 0 !important; font-size: var(--fs-small) !important; color: var(--secondary) !important; }
-
-/* Feedback row: quiet, under the answer. */
-[class*="st-key-answer-"] [data-testid="stHorizontalBlock"] { margin-top: .1rem; }
-[class*="st-key-answer-"] [data-testid="stPopoverButton"] {
-  border: 0; box-shadow: none; background: transparent; min-height: 28px; padding: 0 .4rem;
+.source-section-title span { font-size: var(--fs-meta); font-weight: 400; color: var(--tertiary); }
+.source-list { list-style: none !important; padding: 0 !important; margin: 0 !important; display: grid; gap: .6rem; }
+.source-list li {
+  padding: 14px 16px; margin: 0; background: var(--raised);
+  border: 1px solid var(--line-strong); border-radius: 10px;
 }
-[class*="st-key-answer-"] [data-testid="stPopoverButton"] p { font-size: var(--fs-meta); color: var(--tertiary); }
+.source-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.source-heading span { font-size: var(--fs-meta); color: var(--tertiary); }
+.source-list a { font-size: var(--fs-small); font-weight: 600; color: var(--accent); text-decoration: none; }
+.source-list a:hover { text-decoration: underline; }
+.source-list p { margin: .45rem 0 0 !important; font-size: var(--fs-small) !important; line-height: 1.6 !important; color: var(--secondary) !important; overflow-wrap: anywhere; }
 
 /* Chat input: a raised white box. */
 [data-testid="stChatInput"] {
@@ -288,17 +291,12 @@ a.chip:hover { background: rgb(56 83 218 / .1); color: var(--accent) !important;
 .detail-list li:last-child { border-bottom: 0; }
 
 /* ---- History and About ------------------------------------------------------------------------- */
-.st-key-history { gap: .75rem; margin-top: .75rem; }
-[class*="st-key-history-"] {
-  gap: .5rem; padding: 16px 18px; background: var(--raised); border: 1px solid var(--line);
-  border-radius: 12px; box-shadow: var(--shadow-raised);
-}
-p.history-meta { margin: 0 0 .6rem !important; padding-bottom: .6rem; border-bottom: 1px solid var(--line); font-size: var(--fs-meta) !important; color: var(--tertiary) !important; }
-h3.history-question {
-  font-size: var(--fs-h2) !important; font-weight: 500 !important; line-height: 1.4 !important;
-  color: var(--ink) !important; padding: 0 !important; margin: 0 0 .2rem !important;
-}
-[class*="st-key-history-"] [data-testid="stMarkdownContainer"] > p { font-size: var(--fs-body); line-height: 1.6; color: var(--text); }
+.st-key-history { gap: .75rem; margin-top: .5rem; }
+.st-key-history [data-testid="stExpander"] details { background: var(--raised); border-color: var(--line-strong); border-radius: 12px; }
+.st-key-history [data-testid="stExpander"] summary { padding: 1rem; }
+.st-key-history [data-testid="stExpander"] summary p { font-size: 15px !important; color: var(--ink) !important; line-height: 1.5; }
+.st-key-history [data-testid="stExpanderDetails"] { padding: .25rem 1rem 1.25rem; }
+.st-key-history [data-testid="stMarkdownContainer"] > p { font-size: var(--fs-body); line-height: 1.6; color: var(--text); }
 .st-key-prose { max-width: 680px; }
 .st-key-prose h2.section-title { font-size: var(--fs-h2) !important; font-weight: 500 !important; color: var(--ink) !important;
                                  padding: 1.1rem 0 0 !important; margin: 1.1rem 0 .3rem !important; border-top: 1px solid var(--line); }
@@ -316,6 +314,9 @@ h3.history-question {
   }
   [data-testid="stBottomBlockContainer"] { max-width: calc(100% - 2rem); }
   .top-bar { padding-left: 52px !important; border-radius: 0; }
+  .source-heading { align-items: flex-start; flex-wrap: wrap; gap: .2rem; }
+  .source-list li { padding: 12px; }
+  .user-msg p { max-width: 95%; }
   [data-testid="stSidebarCollapsedControl"] { top: 7px; left: 10px; }
   /* Keep the first screen short on phones: tasks become rows. */
   .st-key-tasks [data-testid="stColumn"] { border-top: 0; border-bottom: 1px solid var(--line); }

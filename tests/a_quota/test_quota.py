@@ -66,7 +66,7 @@ def ledger(guard, requests=0, tokens=0, *, recent=False):
 @pytest.mark.parametrize("requests,expected", [(890, "ok"), (900, "degrade"), (910, "degrade")])
 def test_daily_requests(guard, requests, expected):
     ledger(guard, requests=requests)
-    assert guard.check(RunConfig(), 3800).action == expected
+    assert guard.check(RunConfig()).action == expected
 
 
 @pytest.mark.parametrize(
@@ -74,16 +74,18 @@ def test_daily_requests(guard, requests, expected):
 )
 def test_daily_tokens(guard, tokens, expected):
     ledger(guard, tokens=tokens)
-    assert guard.check(RunConfig(), 3800).action == expected
+    assert guard.check(RunConfig()).action == expected
 
 
-def test_tpm_estimate_and_expiration(guard):
+def test_tpm_uses_observed_usage_and_expires(guard):
     ledger(guard, tokens=7500, recent=True)
-    assert guard.check(RunConfig(), 500).action == "ok"
-    assert guard.check(RunConfig(), 501).action == "degrade"
+    assert guard.check(RunConfig()).action == "ok"
+    assert not guard.status().models[0].degraded_now
+    ledger(guard, tokens=8000, recent=True)
+    assert guard.check(RunConfig()).action == "degrade"
     assert guard.status().models[0].degraded_now
     guard.clock = lambda: datetime.now(timezone.utc) + timedelta(seconds=61)
-    assert guard.check(RunConfig(), 3800).action == "ok"
+    assert guard.check(RunConfig()).action == "ok"
 
 
 def test_cache_hits_do_not_consume_tokens(guard):
@@ -97,24 +99,35 @@ def test_cache_hits_do_not_consume_tokens(guard):
         output_tokens=100,
     )
     (guard.root / "ledger.jsonl").write_text(json.dumps(row) + "\n")
-    assert guard.check(RunConfig(), 3800).action == "ok"
+    assert guard.check(RunConfig()).action == "ok"
     assert guard.status().models[0].used_tokens == 0
 
 
-def test_recent_unknown_usage_falls_back(guard):
+def test_unfinished_requests_count_without_blocking_on_unknown_tokens(guard):
     ledger(guard, requests=1, recent=True)
-    assert guard.check(RunConfig(), 3800).action == "degrade"
-    assert "not yet known" in guard.check(RunConfig(), 3800).reason
+    assert guard.usage(MODEL)["minute_requests"] == 1
+    assert guard.check(RunConfig()).action == "ok"
+
+
+def test_rejected_request_is_not_in_flight(guard):
+    # A Groq 400 ends with ERROR, not SUCCESS; it must not degrade the next minute.
+    now = datetime.now(timezone.utc).isoformat()
+    rows = [
+        dict(provider="groq", model=MODEL, ts=now, status="REQUEST_STARTED", prompt_hash="x"),
+        dict(provider="groq", model=MODEL, ts=now, status="ERROR", prompt_hash="x"),
+    ]
+    (guard.root / "ledger.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    assert guard.check(RunConfig()).action == "ok"
 
 
 def test_corrupt_ledger_falls_back(guard):
     (guard.root / "ledger.jsonl").write_text("invalid JSON")
-    assert guard.check(RunConfig(), 3800).action == "degrade"
+    assert guard.check(RunConfig()).action == "degrade"
 
 
 def test_session_window():
     clock = [0.0]
-    limiter = SessionLimiter(clock=lambda: clock[0])
+    limiter = SessionLimiter(clock=lambda: clock[0], questions_per_minute=6)
     for _ in range(6):
         limiter.admit("one")
     with pytest.raises(SessionRateLimit) as result:
@@ -204,9 +217,9 @@ def test_degraded_stream_has_reason_and_no_llm_calls(client, guard):
     assert answer["degraded"] and answer["llm_calls"] == 0
 
 
-def test_seventh_question_returns_429_before_queueing(client):
+def test_thirteenth_question_returns_429_before_queueing(client):
     body = {**BODY, "overrides": {"provider": "mock"}}
-    for _ in range(6):
+    for _ in range(12):
         assert client.post("/v1/ask", headers=HEADERS, json=body).status_code == 200
     for route in ("ask", "chat/stream"):
         response = client.post("/v1/" + route, headers=HEADERS, json=body)
@@ -220,4 +233,4 @@ def test_request_minute_limit(guard):
     ledger(guard)
     usage = guard.usage(MODEL)
     usage["minute_requests"] = 30
-    assert guard.decision(MODEL, usage, 1).action == "degrade"
+    assert guard.decision(MODEL, usage).action == "degrade"

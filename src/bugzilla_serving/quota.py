@@ -4,7 +4,7 @@ import json
 import math
 import threading
 import time
-from collections import Counter, deque
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
@@ -27,8 +27,11 @@ class SessionRateLimit(Exception):
 
 
 class SessionLimiter:
-    def __init__(self, clock=time.monotonic):
+    def __init__(self, clock=time.monotonic, *, questions_per_minute=12):
+        if type(questions_per_minute) is not int or questions_per_minute < 1:
+            raise ValueError("questions_per_minute must be a positive integer")
         self.clock = clock
+        self.questions_per_minute = questions_per_minute
         self.sessions = {}
         self.lock = threading.Lock()
 
@@ -41,7 +44,7 @@ class SessionLimiter:
             times = self.sessions.setdefault(session_id, deque())
             while times and times[0] <= now - 60:
                 times.popleft()
-            if len(times) >= 6:
+            if len(times) >= self.questions_per_minute:
                 raise SessionRateLimit(max(1, math.ceil(60 - (now - times[0]))))
             times.append(now)
 
@@ -61,8 +64,7 @@ class QuotaGuard:
         config = resolved_config(read_config(self.root / self.llm_config), self.root)
         ledger = self.root / config["ledger"]
         now = self.clock()
-        requests, tokens, unknown = 0, 0, False
-        pending = Counter()
+        requests, tokens = 0, 0
         if ledger.exists():
             with ledger.open(encoding="utf-8") as handle:
                 for line in handle:
@@ -75,26 +77,19 @@ class QuotaGuard:
                     when = datetime.fromisoformat(row["ts"].replace("Z", "+00:00"))
                     if not 0 <= (now - when).total_seconds() < 60:
                         continue
-                    key = row.get("prompt_hash", "")
                     if row["status"] == "REQUEST_STARTED":
                         requests += 1
-                        pending[key] += 1
                     elif row["status"] == "SUCCESS":
-                        if pending[key]:
-                            pending[key] -= 1
-                        if row.get("input_tokens") is None or row.get("output_tokens") is None:
-                            unknown = True
                         tokens += (row.get("input_tokens") or 0) + (row.get("output_tokens") or 0)
         return dict(
             requests=daily["local_guard_day_requests"],
             tokens=daily["local_guard_day_reported_success_tokens"],
             minute_requests=requests,
             minute_tokens=tokens,
-            unknown_minute=unknown or any(pending.values()),
             cooldown=daily["known_cooldown_active"],
         )
 
-    def decision(self, model, usage, estimated_tokens):
+    def decision(self, model, usage):
         limits = self.models[model]
         if usage["cooldown"]:
             return Decision("degrade", "The provider cooldown is active")
@@ -102,21 +97,17 @@ class QuotaGuard:
             return Decision("degrade", "The daily request budget is near its limit")
         if usage["tokens"] >= limits["tpd"] * 0.9:
             return Decision("degrade", "The daily token budget is near its limit")
-        if usage["unknown_minute"]:
-            return Decision("degrade", "Recent provider token usage is not yet known")
         if usage["minute_requests"] >= limits["rpm"]:
             return Decision("degrade", "The request budget for this minute is full")
-        if usage["minute_tokens"] + estimated_tokens > limits["tpm"]:
-            return Decision(
-                "degrade", "This question would exceed the token budget for this minute"
-            )
+        if usage["minute_tokens"] >= limits["tpm"]:
+            return Decision("degrade", "The token budget for this minute is full")
         return Decision("ok")
 
-    def check(self, config, estimated_tokens):
+    def check(self, config):
         if config.provider == "mock" or config.system_id == "R0":
             return Decision("ok")
         try:
-            return self.decision(config.model, self.usage(config.model), estimated_tokens)
+            return self.decision(config.model, self.usage(config.model))
         except (ValueError, KeyError, TypeError, OSError):
             return Decision("degrade", "The local provider usage could not be verified")
 
@@ -131,12 +122,7 @@ class QuotaGuard:
                     limit_requests=limits["rpd"],
                     used_tokens=usage["tokens"],
                     limit_tokens=limits["tpd"],
-                    degraded_now=self.decision(
-                        model,
-                        usage,
-                        self.spec["hyperparameters"]["context_budget_tokens"]["default"] + 800,
-                    ).action
-                    == "degrade",
+                    degraded_now=self.decision(model, usage).action == "degrade",
                 )
             )
         return QuotaResponse(models=models)

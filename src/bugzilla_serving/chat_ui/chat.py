@@ -28,6 +28,7 @@ class Turn:
     mode_label: str
     model_label: str
     record: AnswerRecord | None = None
+    error: str = ""  # set instead of record when the question couldn't be answered
     request_id: str = ""
     feedback: int | None = None  # 1 = helpful, 0 = not helpful
     asked_at: float = field(default_factory=time.time)
@@ -38,7 +39,7 @@ def progress_label(stage: str, detail: str) -> str:
     if stage == "retrieved" and detail:
         return detail if detail.endswith("…") else f"{detail}…"
     if "sources without generating" in detail:  # quota guard notice
-        return "Free quota is low, so showing sources only…"
+        return "Answer generation is limited, showing sources…"
     return STAGE_LABELS.get(stage, detail or "Working…")
 
 

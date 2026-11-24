@@ -3,6 +3,7 @@
 import asyncio
 import hmac
 import json
+import logging
 import os
 import queue
 import sqlite3
@@ -37,6 +38,19 @@ from bugzilla_serving.tracing import Tracer, sanitize
 
 from .presets import PresetStore
 
+logger = logging.getLogger(__name__)
+
+
+def selected_groq_key(values):
+    slot = os.environ.get("SERVING_GROQ_KEY_SLOT", values.get("SERVING_GROQ_KEY_SLOT", "1"))
+    if slot not in ("1", "2", "3", "4"):
+        raise ValueError("SERVING_GROQ_KEY_SLOT must be 1, 2, 3, or 4")
+    name = "GROQ_API_KEY" if slot == "1" else f"GROQ_API_KEY_{slot}"
+    key = os.environ.get(name) or values.get(name)
+    if slot != "1" and not key:
+        raise ValueError(f"{name} is missing for the selected Groq key slot")
+    return key
+
 
 def fail(status, code, message, retry_after=None):
     raise HTTPException(
@@ -55,12 +69,14 @@ def create_app() -> FastAPI:
     @asynccontextmanager
     async def lifespan(app):
         values = env_values(ROOT / ".env")
+        groq_key = selected_groq_key(values)
+        if groq_key:
+            os.environ["GROQ_API_KEY"] = groq_key
         for key, value in values.items():
             if key in (
                 "BUNDLE_DIR",
                 "SERVING_API_KEY",
                 "LLM_PROVIDER",
-                "GROQ_API_KEY",
                 "MLFLOW_TRACKING_URI",
                 "MLFLOW_TRACKING_USERNAME",
                 "MLFLOW_TRACKING_PASSWORD",
@@ -78,7 +94,7 @@ def create_app() -> FastAPI:
         app.state.api_key = os.environ["SERVING_API_KEY"]
         app.state.spec = load_spec()
         app.state.quota_guard = QuotaGuard(app.state.spec)
-        app.state.sessions = SessionLimiter()
+        app.state.sessions = SessionLimiter(**app.state.spec.get("quota", {}))
         app.state.presets = PresetStore()
         app.state.runners = OrderedDict()
         app.state.runner_lock = asyncio.Lock()
@@ -152,7 +168,7 @@ def create_app() -> FastAPI:
             fail(503, "internal", "Local provider usage is unavailable")
 
     def quota_check(config):
-        return app.state.quota_guard.check(config, config.context_budget_tokens + 800)
+        return app.state.quota_guard.check(config)
 
     app.state.quota_check = quota_check
 
@@ -194,7 +210,9 @@ def create_app() -> FastAPI:
             runner.provider.max_requests = runner.provider.calls + 32
         record = runner.run(message, on_event=on_event)
         if record.errors:
-            raise RuntimeError("Runner did not complete successfully")
+            # The graph already replaced a failed step with a validated fallback (usually an
+            # abstention). Return it instead of a 500 so the user sees an answer, and log why.
+            logger.warning("Answer finished with recoverable errors: %s", record.errors)
         return record
 
     def execute(config, message, on_event, request_id, session_id, preset_slug):
@@ -314,6 +332,7 @@ def create_app() -> FastAPI:
             except HTTPException:
                 raise
             except Exception:
+                logger.exception("Answer generation failed")
                 fail(500, "internal", "Answer generation failed")
         return AskResponse(request_id=request_id, record=record, langsmith_run_id=run_id)
 
@@ -351,6 +370,7 @@ def create_app() -> FastAPI:
                 except HTTPException as error:
                     events.put(ErrorEvent(data=error.detail).model_dump(mode="json"))
                 except Exception:
+                    logger.exception("Answer generation failed")
                     events.put(
                         ErrorEvent(
                             data={"code": "internal", "message": "Answer generation failed"}

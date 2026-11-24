@@ -78,6 +78,31 @@ def test_openapi_unchanged():
     assert hashlib.sha256(path.read_bytes()).hexdigest() == original
 
 
+@pytest.mark.parametrize(
+    ("slot", "name"),
+    [
+        ("1", "GROQ_API_KEY"),
+        ("2", "GROQ_API_KEY_2"),
+        ("3", "GROQ_API_KEY_3"),
+        ("4", "GROQ_API_KEY_4"),
+    ],
+)
+def test_serving_groq_key_slot(monkeypatch, slot, name):
+    monkeypatch.delenv("SERVING_GROQ_KEY_SLOT", raising=False)
+    monkeypatch.delenv(name, raising=False)
+    values = {"SERVING_GROQ_KEY_SLOT": slot, name: "test-file-key"}
+    assert api.selected_groq_key(values) == "test-file-key"
+    monkeypatch.setenv(name, "test-process-key")
+    assert api.selected_groq_key(values) == "test-process-key"
+
+
+def test_missing_selected_groq_key_does_not_use_primary(monkeypatch):
+    monkeypatch.setenv("SERVING_GROQ_KEY_SLOT", "4")
+    monkeypatch.delenv("GROQ_API_KEY_4", raising=False)
+    with pytest.raises(ValueError, match="GROQ_API_KEY_4 is missing"):
+        api.selected_groq_key({"GROQ_API_KEY": "test-primary-key"})
+
+
 def test_get_routes(client):
     assert client.get("/v1/health").json() == {"status": "ok"}
     assert client.get("/v1/ready", headers=HEADERS).json() == {"status": "ok"}
@@ -182,6 +207,42 @@ def test_runner_failure_is_safe(client, monkeypatch):
     response = client.post("/v1/chat/stream", headers=HEADERS, json=BODY)
     assert [e["event"] for e in events(response)] == ["error", "done"]
     assert KEY not in response.text
+
+
+def test_recoverable_errors_return_the_fallback_answer(client, monkeypatch):
+    build = api.build_runner
+
+    def with_errors(config):
+        runner = build(config)
+        run = runner.run
+        runner.run = lambda *a, **k: run(*a, **k).model_copy(
+            update={"errors": ["provider_failure:RuntimeError:tool call rejected"]}
+        )
+        return runner
+
+    monkeypatch.setattr(api, "build_runner", with_errors)
+    result = client.post("/v1/ask", headers=HEADERS, json=BODY)
+    assert result.status_code == 200 and result.json()["record"]["answer"]["abstain"]
+    stream = events(client.post("/v1/chat/stream", headers=HEADERS, json=BODY))
+    assert "answer" in [e["event"] for e in stream] and "error" not in [e["event"] for e in stream]
+
+
+def test_bug_missing_from_archive_is_answered_without_llm(client):
+    body = {**BODY, "message": "What component is bug 9999999 filed under?"}
+    record = client.post("/v1/ask", headers=HEADERS, json=body).json()["record"]
+    assert record["route"] == "unknown_bug" and record["llm_calls"] == 0
+    assert record["answer"]["abstain"] and not record["evidence"] and not record["degraded"]
+    assert record["answer"]["rationale"].startswith("Bug 9999999 isn't in this archive")
+    stream = events(client.post("/v1/chat/stream", headers=HEADERS, json=body))
+    assert [e["data"]["stage"] for e in stream if e["event"] == "status"] == [
+        "retrieving",
+        "retrieved",
+        "generating",
+        "done",
+    ]
+    # A sampled bug is not short-circuited.
+    record = client.post("/v1/ask", headers=HEADERS, json=BODY).json()["record"]
+    assert record["route"] != "unknown_bug"
 
 
 def test_runner_cache_is_bounded(client, monkeypatch):

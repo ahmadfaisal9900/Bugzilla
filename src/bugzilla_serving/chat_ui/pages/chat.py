@@ -113,8 +113,8 @@ def _banners(state: AppState) -> None:
     quota = data.get_quota()
     if quota and quota.degraded_now:
         st.info(
-            "The free model quota is nearly used up. New questions return the most relevant "
-            "bug reports without a written answer until it resets.",
+            "Model usage is temporarily limited. New questions may return bug reports without "
+            "a written answer.",
         )
     if state.rate_limit_seconds > 0:
         _rate_limit_countdown()
@@ -164,12 +164,11 @@ def _ask_later(state: AppState, question: str) -> None:
 
 
 def _history(state: AppState) -> None:
-    client = data.get_client()
     for index, turn in enumerate(state.turns):
-        components.user_message(turn.question)
-        with st.container(key=f"answer-{index}"):
-            components.answer_body(turn)
-            controls.feedback(turn, client, key=str(index))
+        with st.container(key=f"turn-{index}"):
+            components.user_message(turn.question)
+            with st.container(key=f"answer-{index}"):
+                components.answer_body(turn)
 
 
 def _answer(state: AppState, catalog: Catalog, preset, overrides, question: str) -> None:
@@ -192,23 +191,36 @@ def _answer(state: AppState, catalog: Catalog, preset, overrides, question: str)
                 )
             except ApiError as error:
                 status.update(label="Couldn't answer this one", state="error")
-                _remember_error(state, error)
+                # Keep the question on screen with the reason under it, rather than losing it.
+                state.turns.append(
+                    chat.Turn(
+                        question=question,
+                        mode_label=preset.display_label,
+                        model_label=catalog.model_labels.get(
+                            str(preset.config.get("model")), "Not reported"
+                        ),
+                        error=_remember_error(state, error),
+                    )
+                )
             else:
                 status.update(label="Answer ready", state="complete")
                 state.turns.append(turn)
     st.rerun()
 
 
-def _remember_error(state: AppState, error: ApiError) -> None:
+def _remember_error(state: AppState, error: ApiError) -> str:
+    """Record what the page needs to react to, and return the message shown under the question."""
     if error.code == "rate_limited":
         state.rate_limited_until = time.time() + (error.retry_after or 60)
-    elif error.code == "invalid_config":
+        return "Too many questions in the last minute. Please wait, then ask again."
+    if error.code == "invalid_config":
         if error.field:
             state.invalid_setting = (error.field, error.message)
         state.notice = (
             f"One of the advanced settings isn't valid ({error.message}). Open Settings to fix it."
         )
-    elif error.status == 401:
+        return "Not sent: one of the advanced settings isn't valid."
+    if error.status == 401:
         state.notice = "The frontend's API key was rejected. Check SERVING_API_KEY."
-    else:
-        state.notice = "Something went wrong while answering. Please try again in a moment."
+        return "Not sent: the API key was rejected."
+    return "Something went wrong while answering. Please try again in a moment."

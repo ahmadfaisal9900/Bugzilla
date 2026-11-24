@@ -45,6 +45,28 @@ def test_sources_only_and_abstain_states(client):
     assert unsure.record.abstain and unsure.record.text == ""
 
 
+def test_database_answers_say_database_query_not_zero_sources():
+    from bugzilla_serving.chat_ui.api import AnswerRecord
+    from bugzilla_serving.chat_ui.chat import Turn
+    from bugzilla_serving.chat_ui.ui.components import sources_checked
+
+    def turn(route, abstain=False, evidence=()):
+        record = AnswerRecord.from_json(
+            {
+                "answer": {"abstain": abstain, "answer": None if abstain else "Address Bar"},
+                "evidence": list(evidence),
+                "route": route,
+            }
+        )
+        return Turn(question="q", mode_label="m", model_label="x", record=record)
+
+    source = {"chunk_id": "c1", "bug_id": "1", "snippet": "s", "score": 1.0}
+    assert sources_checked(turn("S7")) == "Database query"
+    assert sources_checked(turn("S7", evidence=[source])) == "1 passage checked"
+    assert sources_checked(turn("S7", abstain=True)) == "0 passages checked"
+    assert sources_checked(turn("S2")) == "0 passages checked"
+
+
 def test_error_event_raises(client):
     with pytest.raises(ApiError) as error:
         _ask(client, "broken please")
